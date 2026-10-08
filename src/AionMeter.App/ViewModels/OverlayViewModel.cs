@@ -249,6 +249,10 @@ public sealed class OverlayViewModel : ObservableObject
     private string _titleTip = "";
     /// <summary>"5 players · party 4.0M/s" (the fight's length is the clock in the header).</summary>
     public string Footer { get => _footer; set => Set(ref _footer, value); }
+
+    /// <summary>The shown fight is one where the server sent only the player's own hits (see
+    /// <see cref="EncounterSnapshot.OnlyOwnHits"/>).</summary>
+    public bool OnlyOwnHits { get; private set; }
     /// <summary>Letter-spaced card label: "● LIVE FIGHT", "SAVED · 05.10 19:04" …</summary>
     public string HeaderLabel { get => _headerLabel; private set => Set(ref _headerLabel, value); }
     public Brush HeaderBrush { get => _headerBrush; private set => Set(ref _headerBrush, value); }
@@ -287,6 +291,7 @@ public sealed class OverlayViewModel : ObservableObject
             TotalDamage = "—";
             TopHit = "";
             Footer = "";
+            OnlyOwnHits = false;
             SelfPlace = "";
             HasGear = false;
             Rows.Clear();
@@ -319,7 +324,9 @@ public sealed class OverlayViewModel : ObservableObject
             _ => null,
         };
         Detail = partial is not null ? $"{result} · {partial}" : string.IsNullOrEmpty(zone) ? result : $"{zone} · {result}";
-        Footer = $"{T.Players(snap.PlayerCount)} · {T.Party} {PartyDps}";
+        // A world boss whose crowd the server kept from us: the party's DPS would be a fraction of the real one.
+        OnlyOwnHits = snap.OnlyOwnHits;
+        Footer = OnlyOwnHits ? $"{T.Players(snap.PlayerCount)} · {T.OnlyOwnHits}" : $"{T.Players(snap.PlayerCount)} · {T.Party} {PartyDps}";
 
         var top = snap.Combatants.MaxBy(x => x.MaxHit);
         TopHit = top is { MaxHit: > 0 } ? Format.Grouped(top.MaxHit) : "";

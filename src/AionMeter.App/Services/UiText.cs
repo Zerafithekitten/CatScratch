@@ -170,6 +170,10 @@ public sealed class UiText
     /// <summary>"counted from 82% HP": the meter started (or restarted) after the boss had already lost the rest.</summary>
     public string CountedFrom { get; init; } = "counted from {0} HP";
     public string HpUnknown { get; init; } = "max HP unknown";
+    /// <summary>A world boss with a crowd: the server sent this client nobody's hits but the player's own.</summary>
+    public string OnlyOwnHits { get; init; } = "only your hits sent";
+    public string OnlyOwnHitsTip { get; init; } =
+        "On this boss the game sent your client only your own hits: with a crowd, other players' damage arrives as damage over time and nothing else. Their numbers and every share here are far below the real ones; a meter on this PC cannot see more.";
     public string TipRestart { get; init; } = "Restart the meter ({0}): the fight so far is saved, counting starts over";
     public string InProgress { get; init; } = "In progress";
     public string Kill { get; init; } = "Kill";
@@ -489,6 +493,8 @@ public sealed class UiText
         UnknownBoss = "Неизвестный босс",
         CountedFrom = "учтено с {0} HP",
         HpUnknown = "макс. HP неизвестен",
+        OnlyOwnHits = "видны только ваши удары",
+        OnlyOwnHitsTip = "На этом боссе игра прислала вашему клиенту только ваши собственные удары: при толпе от остальных игроков приходит лишь периодический урон. Поэтому их цифры и все доли здесь намного ниже настоящих; метр на этом компьютере больше увидеть не может.",
         TipRestart = "Перезапустить метр ({0}): бой сохранится, подсчёт начнётся заново",
         InProgress = "Идёт бой",
         Kill = "Убит",
@@ -533,6 +539,7 @@ public sealed class UiText
             Kill = "УБИТ",
             Wipe = "ВАЙП",
             BossLeft = "босс {0}",
+            OnlyOwnHits = "видны только свои удары",
             Party = "группа {0}",
             Place = "{0}-й из {1}",
             Damage = "урон {0}",

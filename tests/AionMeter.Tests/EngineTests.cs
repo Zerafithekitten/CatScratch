@@ -228,6 +228,73 @@ public class EngineTests
     }
 
     [Fact]
+    public void Open_world_boss_watched_from_full_hp_was_counted_whole()
+    {
+        // In the open world an NPC loses 4.5 HP per point of damage the hits report: damage cannot measure the boss.
+        var t = Tracker();
+        Setup(t);
+        FightRecord? saved = null;
+        t.EncounterFinished += r => saved = r;
+        t.Process(new NpcHpEvent(900, Boss, 120_000_000, 120_000_000));
+        t.Process(new DamageEvent(1_000, Me, Boss, 16040000, 10_000_000, HitFlags.None));
+        t.Process(new NpcHpEvent(1_010, Boss, 75_000_000, 120_000_000));
+        t.Process(new DamageEvent(2_000, Mate, Boss, 11020000, 16_666_667, HitFlags.None));
+        t.Process(new NpcHpEvent(2_010, Boss, 0, 120_000_000));
+
+        Assert.Equal(0, saved!.Summary.Boss!.Uncounted);
+        Assert.Null(saved.Summary.Boss.CountedFrom);
+    }
+
+    [Fact]
+    public void A_boss_joined_late_is_counted_from_its_hp_at_the_first_hit()
+    {
+        var t = Tracker();
+        Setup(t);
+        t.Process(new NpcHpEvent(900, Boss, 12_000_000, 120_000_000)); // 10 % left when we arrive
+        t.Process(new DamageEvent(1_000, Me, Boss, 16040000, 300_000, HitFlags.None));
+        t.Process(new NpcHpEvent(1_010, Boss, 6_000_000, 120_000_000)); // the crowd's hits never reach us
+
+        var boss = t.Snapshot(null, 2_000)!.Boss!;
+        Assert.Equal(108_000_000, boss.Uncounted);
+        Assert.Equal(0.1, boss.CountedFrom!.Value, 6);
+    }
+
+    [Fact]
+    public void A_stale_boss_hp_is_not_where_the_count_starts()
+    {
+        var t = Tracker();
+        Setup(t);
+        t.Process(new NpcHpEvent(1_000, Boss, 60_000_000, 120_000_000)); // seen long before this fight
+        t.Process(new DamageEvent(30_000, Me, Boss, 16040000, 1_000_000, HitFlags.None));
+        t.Process(new NpcHpEvent(30_100, Boss, 20_000_000, 120_000_000)); // others fought it meanwhile
+
+        var boss = t.Snapshot(null, 31_000)!.Boss!;
+        Assert.Equal(120_000_000 - 20_000_000 - 1_000_000, boss.Uncounted);
+    }
+
+    [Fact]
+    public void A_crowd_whose_hits_the_server_kept_back_is_flagged()
+    {
+        // A world boss: our own hits arrive, everyone else shows up with damage over time only.
+        var t = Tracker();
+        Setup(t);
+        t.Process(new DamageEvent(1_000, Me, Boss, 16040000, 300_000, HitFlags.None));
+        for (uint p = 0; p < 6; p++)
+        {
+            t.Process(new PlayerSeenEvent(1_000, 200 + p, $"Player{p}", 1304, GameClass.Templar));
+            t.Process(new DamageEvent(1_100, 200 + p, Boss, 12090000, 7_000, HitFlags.Dot));
+        }
+        Assert.True(t.Snapshot(null, 2_000)!.OnlyOwnHits);
+
+        // Everybody's hits arrive in a party fight, DoT-only players or not.
+        var party = Tracker();
+        Setup(party);
+        party.Process(new DamageEvent(1_000, Me, Boss, 16040000, 300_000, HitFlags.None));
+        party.Process(new DamageEvent(1_000, Mate, Boss, 11020000, 300_000, HitFlags.None));
+        Assert.False(party.Snapshot(null, 2_000)!.OnlyOwnHits);
+    }
+
+    [Fact]
     public void Cached_boss_is_forgotten_when_its_id_now_belongs_to_another_npc()
     {
         var t = Tracker();

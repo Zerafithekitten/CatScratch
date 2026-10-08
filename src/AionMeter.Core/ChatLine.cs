@@ -12,6 +12,9 @@ public sealed record ChatWords
     public string Wipe { get; init; } = "WIPE";
     /// <summary>"(boss 29%)" after a wipe or while the fight goes on.</summary>
     public string BossLeft { get; init; } = "boss {0}";
+    /// <summary>A world boss with a crowd: the server sent nobody's hits but the player's own (see
+    /// <see cref="Combat.EncounterSnapshot.OnlyOwnHits"/>), so the numbers are not the fight's.</summary>
+    public string OnlyOwnHits { get; init; } = "only own hits visible";
     public string Party { get; init; } = "party {0}";
     /// <summary>"#3 of 5": the player's place among the players.</summary>
     public string Place { get; init; } = "#{0} of {1}";
@@ -150,7 +153,9 @@ public static class ChatLine
         var boss = s.Boss is { MaxHpKnown: true, MaxHp: > 0, Hp: > 0 } b && s.Reason != EncounterEndReason.Kill
             ? $" ({string.Format(w.BossLeft, Pct(b.HpFraction))})"
             : "";
-        return $"{s.Title} {(int)t.TotalMinutes}:{t.Seconds:00}{result}{boss}";
+        // Whoever reads the line must not take a world boss's partial numbers for the fight's.
+        var partial = s.OnlyOwnHits ? $" ({w.OnlyOwnHits})" : "";
+        return $"{s.Title} {(int)t.TotalMinutes}:{t.Seconds:00}{result}{boss}{partial}";
     }
 
     private static string PartyDps(EncounterSnapshot s, ChatWords w) => string.Format(w.Party, Format.Compact(s.PartyDps) + "/s");

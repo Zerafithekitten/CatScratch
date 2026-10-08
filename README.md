@@ -190,7 +190,8 @@ third-party tool may be against the game's terms of service — use it at your o
 
 **Some players show as "#12345" instead of a name.**
 The game sends names on loading screens. Start the meter before entering a dungeon; players who were already around get
-their names after the next loading screen.
+their names after the next loading screen. That includes you: a meter started after you entered the zone knows your
+character (name, highlighted row) after your next teleport or loading screen.
 
 **Does it work with ExitLag or a VPN?**
 Yes with ExitLag and other ping boosters. If a VPN hides the game connection, choose the network adapter in
@@ -207,6 +208,12 @@ here: read it or build it yourself.
 **My crit rate on a crowded field boss is almost zero.**
 On busy field bosses the game reports very few critical hits for some classes; the meter shows exactly what the server
 sends. On other targets the numbers look as usual.
+
+**On a world boss with a big crowd I am first with half the damage, and most players are missing.**
+When a crowd piles onto a world boss, the game stops sending your client the other players' hits on it: you get your
+own hits and their damage over time, nothing else (on a quieter run of the same boss every hit arrives). No meter on
+your PC can count what never reaches it, so the overlay says *only your hits sent* instead of the party DPS, the
+breakdown says so under the fight, and chat lines get "(only own hits visible)".
 
 **Where are my settings and fights? How do I uninstall?**
 In `%AppData%\AionMeter`. Uninstall from *Settings → Apps*; it asks whether to delete settings and history as well.

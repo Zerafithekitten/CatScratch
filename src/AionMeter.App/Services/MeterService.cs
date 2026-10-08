@@ -1,4 +1,5 @@
 using System.IO;
+using AionMeter.Core;
 using AionMeter.Core.Capture;
 using AionMeter.Core.Combat;
 using AionMeter.Core.Demo;
@@ -45,7 +46,10 @@ public sealed class MeterService : IDisposable
             if (_replaying) return;
             var gear = roster.Members.Where(m => m.GearScore > 0).Select(m => m.GearScore).DefaultIfEmpty().ToList();
             var power = roster.Members.Where(m => m.CombatPower > 0).Select(m => m.CombatPower).DefaultIfEmpty().ToList();
-            Log.Info($"Party roster: {roster.Members.Count} members, GS {gear.Min()}-{gear.Max()}, CP {power.Min()}-{power.Max()}");
+            var line = $"Party roster: {roster.Members.Count} members, GS {gear.Min()}-{gear.Max()}, CP {power.Min()}-{power.Max()}";
+            if (line == _lastRosterLine) return; // the server repeats it every few seconds
+            _lastRosterLine = line;
+            Log.Info(line);
         };
 
         // Names and bosses learned before a restart (same zone, recent) come back immediately: no "#id" players, and a boss
@@ -259,8 +263,36 @@ public sealed class MeterService : IDisposable
 
     private bool _exiting;
 
+    private string? _lastRosterLine;
+    private CaptureHealth? _lastHealth;
+
+    /// <summary>
+    /// One line per boss fight: how many players' hits arrived, and whether the capture lost packets since the last one —
+    /// tells "the server never sent it" (only own hits, nothing dropped) from "we lost it" in a player's log.
+    /// </summary>
+    private void LogBossFight(EncounterSnapshot s)
+    {
+        if (_replaying || DemoRunning || s.Boss is null) return;
+        CaptureHealth? health;
+        lock (_captureGate) health = (_capture as LiveCapture)?.Health();
+        var withHits = s.Combatants.Count(c => !c.IsUnknownSummons && c.Hits > 0);
+        var own = s.OnlyOwnHits ? " (only own hits sent)" : "";
+        var capture = "";
+        if (health is { } now)
+        {
+            // The adapter's counters restart when it is reopened.
+            var before = _lastHealth is { } last && last.Received <= now.Received && last.Gaps <= now.Gaps ? last : default;
+            capture = $"; capture since the last boss: {now.Received - before.Received:N0} packets, {now.Dropped - before.Dropped:N0} dropped, " +
+                      $"{now.Gaps - before.Gaps:N0} stream gaps";
+        }
+        _lastHealth = health;
+        Log.Info($"Boss fight {s.Title} ({s.Reason}, {Format.Clock(s.CombatMs)}): {s.PlayerCount} players, {withHits} with hits{own}, " +
+                 $"counted {Format.Compact(s.TotalDamage)}{capture}");
+    }
+
     private void OnEncounterFinished(FightRecord record)
     {
+        LogBossFight(record.Summary);
         if (!ShouldSave(record.Summary)) return;
         if (_exiting) Save(); // the process is about to end: a worker thread would not get to it
         else ThreadPool.QueueUserWorkItem(_ => Save());

@@ -127,7 +127,9 @@ public partial class BreakdownWindow : Window
         FightTitle.Text = summary.Title;
         FightPortrait.Source = _portraits?.Of(summary);
         FightMeta.Text = $"{summary.StartedAt.ToString("dd MMM HH:mm", T.Culture)} · {Format.Clock(summary.CombatMs)} · {Format.Compact(summary.PartyDps)}/s {T.PartyDpsSuffix}"
+                         + (summary.OnlyOwnHits ? $"\n{T.OnlyOwnHits}" : "")
                          + (summary.Zone is { } z ? $"\n{z}" : "");
+        FightMeta.ToolTip = summary.OnlyOwnHits ? T.OnlyOwnHitsTip : null;
 
         _syncingList = true;
         PartyList.ItemsSource = summary.Combatants

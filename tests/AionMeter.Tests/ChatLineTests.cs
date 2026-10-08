@@ -39,6 +39,17 @@ public class ChatLineTests
     }
 
     [Fact]
+    public void A_world_boss_line_says_only_own_hits_were_visible()
+    {
+        // The server sent our hits only: the others have damage over time and no hits.
+        var crowd = new[] { Party5[2] }
+            .Concat(Enumerable.Range(10, 6).Select(i => Player((uint)i, $"Player{i}", 7_000) with { Hits = 0 }))
+            .ToList();
+        Assert.StartsWith("Balhash 2:40 KILL (only own hits visible) | 1.Talwyn", ChatLine.Party(Fight(crowd)));
+        Assert.StartsWith("Balhash 2:40 KILL | 1.Sylvaen", ChatLine.Party(Fight(Party5)));
+    }
+
+    [Fact]
     public void Player_line_gives_place_dps_damage_crit_and_top_hit_in_the_interface_language()
     {
         Assert.Equal(
