@@ -131,7 +131,11 @@ public sealed class CombatTracker
                     OnBattleState(b);
                     break;
                 case ZoneChangedEvent z:
-                    if (z.IsTeleport) break;
+                    // A reload of the map we are on keeps every id: an in-map teleport, or the revive after dying on a
+                    // boss. The parser knows the map only from the load before; after a meter restart inside a dungeon
+                    // the registry knows it from the cache — without that, the first death ended the fight and the boss
+                    // came back as "#id".
+                    if (z.IsTeleport || z.MapId == _entities.MapId) break;
                     if (_current is { IsActive: true }) Finish(EncounterEndReason.ZoneChange, _current.LastDamageMs);
                     _entities.OnZoneChanged(z.MapId, z.ZoneName);
                     break;

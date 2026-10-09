@@ -162,6 +162,34 @@ public class EngineTests
         Assert.Equal(["Sylvaen"], second.ExportCache().Players.Select(p => p.Name));
     }
 
+    [Fact]
+    public void Dying_on_a_boss_after_a_restart_in_the_dungeon_keeps_the_fight()
+    {
+        var first = Tracker();
+        first.Process(new ZoneChangedEvent(0, 600021, "Fire Temple", true));
+        first.Process(new SelfIdentifiedEvent(0, Me, "Sylvaen", 2305, GameClass.Elementalist));
+        first.Process(new NpcSeenEvent(0, Boss, 2300218, 9_860_000));
+        var cache = first.ExportCache();
+
+        // The meter restarts inside the dungeon: its parser has seen no map load yet.
+        var t = Tracker();
+        t.ImportCache(cache);
+        t.Process(new DamageEvent(1_000, Me, Boss, 16040000, 100_000, HitFlags.None));
+        // We die and revive: the game reloads the same map, ids stay — not a new zone.
+        t.Process(new ZoneChangedEvent(20_000, 600021, "Fire Temple", true, IsTeleport: false));
+        t.Process(new DamageEvent(30_000, Me, Boss, 16040000, 100_000, HitFlags.None));
+
+        var segment = Assert.Single(t.Segments());
+        Assert.True(segment.IsActive);
+        var snap = t.Snapshot(null, 31_000)!;
+        Assert.Equal(200_000, snap.TotalDamage);
+        Assert.Equal(2300218, snap.Boss!.NpcCode);
+
+        // Another map is a real zone change.
+        t.Process(new ZoneChangedEvent(40_000, 600022, "Other Temple", true));
+        Assert.Equal(EncounterEndReason.ZoneChange, t.Segments()[0].Reason);
+    }
+
     /// <summary>A meter that saw the boss come into view, then restarted mid-fight (the button, an update, a crash).</summary>
     private static SessionState CacheWithBoss(long maxHp)
     {
