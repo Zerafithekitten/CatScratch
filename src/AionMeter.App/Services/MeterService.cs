@@ -275,8 +275,7 @@ public sealed class MeterService : IDisposable
         if (_replaying || DemoRunning || s.Boss is null) return;
         CaptureHealth? health;
         lock (_captureGate) health = (_capture as LiveCapture)?.Health();
-        var withHits = s.Combatants.Count(c => !c.IsUnknownSummons && c.Hits > 0);
-        var own = s.OnlyOwnHits ? " (only own hits sent)" : "";
+        var own = s.MostDamageUnsent ? " (most damage not sent)" : "";
         var capture = "";
         if (health is { } now)
         {
@@ -286,7 +285,8 @@ public sealed class MeterService : IDisposable
                       $"{now.Gaps - before.Gaps:N0} stream gaps";
         }
         _lastHealth = health;
-        Log.Info($"Boss fight {s.Title} ({s.Reason}, {Format.Clock(s.CombatMs)}): {s.PlayerCount} players, {withHits} with hits{own}, " +
+        Log.Info($"Boss fight {s.Title} ({s.Reason}, {Format.Clock(s.CombatMs)}): {s.Fighting} attacking, {s.PlayerCount} listed, " +
+                 $"{s.DamageSenders} with hits{own}, " +
                  $"counted {Format.Compact(s.TotalDamage)}{capture}");
     }
 

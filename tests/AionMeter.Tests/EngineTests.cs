@@ -301,25 +301,38 @@ public class EngineTests
     }
 
     [Fact]
-    public void A_crowd_whose_hits_the_server_kept_back_is_flagged()
+    public void A_crowd_whose_damage_the_server_kept_back_is_flagged_and_counted()
     {
-        // A world boss: our own hits arrive, everyone else shows up with damage over time only.
+        // A world boss: our hits arrive with their damage; of the crowd only "a hit landed" notices, and a few DoT ticks.
         var t = Tracker();
         Setup(t);
         t.Process(new DamageEvent(1_000, Me, Boss, 16040000, 300_000, HitFlags.None));
-        for (uint p = 0; p < 6; p++)
+        for (uint p = 0; p < 30; p++) t.Process(new HitNoticeEvent(1_050, 300 + p, Boss, 14030120));
+        for (uint p = 0; p < 3; p++)
         {
             t.Process(new PlayerSeenEvent(1_000, 200 + p, $"Player{p}", 1304, GameClass.Templar));
             t.Process(new DamageEvent(1_100, 200 + p, Boss, 12090000, 7_000, HitFlags.Dot));
+            t.Process(new HitNoticeEvent(1_100, 200 + p, Boss, 12010000)); // listed already: counted once
         }
-        Assert.True(t.Snapshot(null, 2_000)!.OnlyOwnHits);
+        t.Process(new HitNoticeEvent(1_200, Pet, Boss, 16900000));     // our spirit: we are counted already
+        t.Process(new HitNoticeEvent(1_200, 400, Add, 14030120));      // another target
+        t.Process(new HitNoticeEvent(1_200, 401, Boss, 2_300_001));    // an NPC skill: no player
+
+        var snap = t.Snapshot(null, 2_000)!;
+        Assert.Equal(34, snap.Fighting);
+        Assert.Equal(4, snap.PlayerCount);
+        Assert.Equal(1, snap.DamageSenders);
+        Assert.True(snap.MostDamageUnsent);
 
         // Everybody's hits arrive in a party fight, DoT-only players or not.
         var party = Tracker();
         Setup(party);
         party.Process(new DamageEvent(1_000, Me, Boss, 16040000, 300_000, HitFlags.None));
         party.Process(new DamageEvent(1_000, Mate, Boss, 11020000, 300_000, HitFlags.None));
-        Assert.False(party.Snapshot(null, 2_000)!.OnlyOwnHits);
+        party.Process(new HitNoticeEvent(1_000, Mate, Boss, 11020000));
+        var p2 = party.Snapshot(null, 2_000)!;
+        Assert.False(p2.MostDamageUnsent);
+        Assert.Equal(2, p2.Fighting);
     }
 
     [Fact]

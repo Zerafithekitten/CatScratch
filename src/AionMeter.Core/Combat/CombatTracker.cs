@@ -118,6 +118,9 @@ public sealed class CombatTracker
                 case CastEvent c:
                     OnCast(c);
                     break;
+                case HitNoticeEvent h:
+                    OnHitNotice(h);
+                    break;
                 case FieldBossListEvent list:
                     _pendingLists.Add(list with { ServerId = _entities.Self?.ServerId ?? 0 });
                     break;
@@ -245,6 +248,21 @@ public sealed class CombatTracker
         enc.TotalDamage += d.Damage;
         enc.DamageByTarget[target] = enc.DamageByTarget.GetValueOrDefault(target) + d.Damage;
         if (d.TimeMs > enc.LastDamageMs) enc.LastDamageMs = d.TimeMs;
+    }
+
+    /// <summary>
+    /// Counts who is fighting the boss even when the server sends their damage to nobody but themselves: players by
+    /// class skill or announcement, pets under their owner; spirits and effects nobody owns yet are no player.
+    /// </summary>
+    private void OnHitNotice(HitNoticeEvent h)
+    {
+        if (_current is not { IsActive: true } enc) return;
+        if (h.TargetId != enc.BossId && !enc.DamageByTarget.ContainsKey(h.TargetId)) return;
+        if (_entities.IsUnowned(h.ActorId) || _data.IsNonDamageSkill(h.SkillCode)) return;
+        var actor = _entities.ResolveOwner(h.ActorId);
+        if (actor == h.ActorId && _entities.IsSummon(actor)) return;
+        if (_entities.IsKnownPlayer(actor) || (actor == h.ActorId && GameData.ClassFromSkill(h.SkillCode) != GameClass.Unknown))
+            enc.Attackers.Add(actor);
     }
 
     private void OnHeal(HealEvent h)
@@ -731,7 +749,8 @@ public sealed class CombatTracker
 
         return new EncounterSnapshot(
             enc.Id, Title(enc), enc.Zone, ToTime(enc.StartMs), enc.ClockMs(nowMs), combatMs, enc.IsActive, enc.Reason,
-            enc.TotalDamage, enc.TotalDamage / seconds, boss, rows, MainTargetCode(enc));
+            enc.TotalDamage, enc.TotalDamage / seconds, boss, rows, MainTargetCode(enc),
+            enc.Attackers.Count + rows.Count(r => !r.IsUnknownSummons && !enc.Attackers.Contains(r.ActorId)));
     }
 
     private CombatantDetail BuildDetail(Encounter enc, Combatant c, int maxCasts)

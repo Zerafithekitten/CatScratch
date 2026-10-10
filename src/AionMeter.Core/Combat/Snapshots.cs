@@ -50,19 +50,30 @@ public sealed record EncounterSnapshot(
     double PartyDps,
     BossSnapshot? Boss,
     IReadOnlyList<CombatantSnapshot> Combatants,
-    int TargetCode = 0)
+    int TargetCode = 0,
+    int Attackers = 0)
 {
     /// <summary>Players who took part (the unknown-summons row is not one).</summary>
     [System.Text.Json.Serialization.JsonIgnore]
     public int PlayerCount => Combatants.Count(c => !c.IsUnknownSummons);
 
+    /// <summary>Players whose hits — with their damage — reached this client.</summary>
+    [System.Text.Json.Serialization.JsonIgnore]
+    public int DamageSenders => Combatants.Count(c => !c.IsUnknownSummons && c.Hits > 0);
+
+    /// <summary>Everyone seen fighting: the players listed, and those whose hit notices came without any damage.
+    /// Fights saved before the meter read hit notices know only the players listed.</summary>
+    [System.Text.Json.Serialization.JsonIgnore]
+    public int Fighting => Math.Max(Attackers, PlayerCount);
+
     /// <summary>
-    /// The server sent this client only its own hits: on a world boss with a crowd every other player shows up with
-    /// nothing but damage over time, so their numbers — and every share — are far from the real ones. Read from the
-    /// rows, so fights saved earlier tell it too.
+    /// The server kept most of the fight from this client: on a world boss with a crowd it sends the damage of a few
+    /// players (you among them) and, for the rest, hit notices without numbers or damage over time — so their numbers
+    /// and every share are far from the real ones. Fights saved before the hit notices tell it by their rows: almost
+    /// everyone dealt damage over time only.
     /// </summary>
     [System.Text.Json.Serialization.JsonIgnore]
-    public bool OnlyOwnHits
+    public bool MostDamageUnsent
     {
         get
         {
@@ -74,7 +85,10 @@ public sealed record EncounterSnapshot(
                 if (c.Hits > 0) withHits++;
                 else dotOnly++;
             }
-            return withHits > 0 && dotOnly >= 5 && withHits * 4 <= dotOnly; // someone's hits came: ours
+            if (withHits == 0) return false; // no hit at all came: not a crowd, a fight seen in part
+            return Attackers > 0
+                ? Attackers >= 20 && withHits * 4 <= Attackers
+                : dotOnly >= 5 && withHits * 4 <= dotOnly;
         }
     }
 }

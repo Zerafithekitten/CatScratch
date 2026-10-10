@@ -174,6 +174,9 @@ public sealed class Encounter
     public Dictionary<uint, long> DamageByTarget { get; } = new();
     public Dictionary<uint, Combatant> Combatants { get; } = new();
 
+    /// <summary>Players seen landing hits on the fight's targets (hit notices), whether or not their damage arrived.</summary>
+    public HashSet<uint> Attackers { get; } = new();
+
     public long TotalDamage { get; set; }
 
     /// <summary>Fight length used for DPS: first hit to last hit, so idle tails never dilute the numbers.</summary>

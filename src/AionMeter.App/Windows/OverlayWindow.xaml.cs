@@ -122,7 +122,7 @@ public partial class OverlayWindow : Window
         // Names are only sent on a loading screen: players already around when the meter started show as #id.
         var unnamed = _vm.Rows.Any(r => r.Name.Contains('#')); // "Templar #10388": the server has not sent this name yet
         _vm.Status = status.State != CaptureState.Capturing ? status.Message
-            : _vm.OnlyOwnHits && _vm.HasData ? UiText.Current.OnlyOwnHitsTip // the footer says it, its tooltip says why
+            : _vm.MostDamageUnsent && _vm.HasData ? UiText.Current.DamageUnsentTip // the footer says it, its tooltip says why
             : unnamed ? "Names appear after the next loading screen"
             : status.Message;
         // Footer reads like the card's caption; capture problems take its place so they are never missed.

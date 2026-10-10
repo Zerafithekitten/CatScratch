@@ -17,6 +17,7 @@ public static class Opcodes
     public const ushort MapLoad = 0x2136;
     public const ushort Teleport = 0x2336;
     public const ushort Cast = 0x0238;           // skill use announcement (players and effect entities)
+    public const ushort HitNotice = 0x0338;      // a hit landed: actor, target, skill — no damage
     public const ushort Damage = 0x0438;
     public const ushort Dot = 0x0538;
     public const ushort RemainHp = 0x008D;
