@@ -191,22 +191,19 @@ public partial class OverlayWindow : Window
     {
         var k = Math.Clamp(percent, AppSettings.MinRowSize, AppSettings.MaxRowSize) / 100.0;
         var f = Math.Sqrt(k);
-        var height = Math.Round(42 * k);
+        var height = Math.Round(28 * k);
         Resources["RowHeight"] = height;
-        Resources["RowMargin"] = new Thickness(0, 0, 0, Math.Max(2, Math.Round(6 * k)));
-        Resources["RowGlossHeight"] = Math.Round(19 * k);
-        Resources["RowNameFont"] = Math.Round(16.5 * f, 1);
-        Resources["RowGearFont"] = Math.Round(14 * f, 1);
-        Resources["RowNumberFont"] = Math.Round(16 * f, 1);
-        Resources["RowGlyphSize"] = Math.Min(Math.Round(30 * f), height - 2);
-        Resources["RowRankSize"] = Math.Min(Math.Round(24 * f), height - 3);
-        Resources["RowRankFont"] = Math.Round(13 * f, 1);
-        Resources["ColHeaderFont"] = Math.Max(9, Math.Round(11 * f, 1));
-        Resources["ColRankWidth"] = new GridLength(Math.Round(30 * f));
-        Resources["ColGlyphWidth"] = new GridLength(Math.Round(32 * f));
+        Resources["RowMargin"] = new Thickness(0, 0, 0, Math.Max(1, Math.Round(3 * k)));
+        Resources["RowNameFont"] = Math.Round(13.5 * f, 1);
+        Resources["RowGearFont"] = Math.Round(11 * f, 1);
+        Resources["RowNumberFont"] = Math.Round(13.5 * f, 1);
+        Resources["RowSubFont"] = Math.Round(12 * f, 1);
+        Resources["RowGlyphSize"] = Math.Min(Math.Round(20 * f), height - 4);
+        Resources["RowRankFont"] = Math.Round(11 * f, 1);
+        Resources["RowAccentWidth"] = Math.Max(2, Math.Round(3 * f));
+        Resources["ColRankWidth"] = new GridLength(Math.Round(20 * f));
+        Resources["ColGlyphWidth"] = new GridLength(Math.Round(26 * f));
         Resources["ColGap"] = new Thickness(Math.Round(10 * f), 0, 0, 0);
-        Resources["ColRuleWidth"] = new GridLength(Math.Round(12 * f));
-        Resources["RuleMargin"] = new Thickness(0, Math.Round(height * 0.2), 0, Math.Round(height * 0.2));
     }
 
     private const int NameColumn = 2, GsColumn = 3, CpColumn = 4, SpacerColumn = 5; // in the row and label grids

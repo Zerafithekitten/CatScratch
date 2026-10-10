@@ -76,6 +76,8 @@ public sealed class RowViewModel : ObservableObject
             RankBackground = bg;
             RankForeground = fg;
             RankBorder = border;
+            RankColor = RankBrushes.TextFor(value);
+            Raise(nameof(RankColor));
             Raise(nameof(RankText));
             Raise(nameof(RankBackground));
             Raise(nameof(RankForeground));
@@ -89,6 +91,13 @@ public sealed class RowViewModel : ObservableObject
     public Brush RankBackground { get; private set; } = RankBrushes.For(99).Bg;
     public Brush RankForeground { get; private set; } = RankBrushes.For(99).Fg;
     public Brush RankBorder { get; private set; } = RankBrushes.For(99).Border;
+    /// <summary>The place as plain text (the overlay): gold, silver, bronze for the top three, muted for the rest.</summary>
+    public Brush RankColor { get; private set; } = RankBrushes.TextFor(99);
+
+    /// <summary>The overlay's row: the class colour fading out towards the tip of the bar.</summary>
+    public Brush SoftFillBrush { get; private set; } = Brushes.Transparent;
+    /// <summary>The overlay's row: a thin strip of the class colour at its left edge.</summary>
+    public Brush AccentBrush { get; private set; } = Brushes.Transparent;
 
     /// <summary>Thin progress bar: muted class colour on the left, full colour at the tip.</summary>
     public Brush BarBrush { get; private set; } = Brushes.Transparent;
@@ -121,6 +130,14 @@ public sealed class RowViewModel : ObservableObject
             fill.GradientStops.Add(new GradientStop(Color.FromArgb(0xC8, (byte)(v.R * 0.72), (byte)(v.G * 0.72), (byte)(v.B * 0.72)), 1));
             FillBrush = Freeze(fill);
             DpsBrush = Freeze(new SolidColorBrush(Lighten(v, 0.55)));
+            var soft = new LinearGradientBrush { StartPoint = new System.Windows.Point(0, 0), EndPoint = new System.Windows.Point(1, 0) };
+            soft.GradientStops.Add(new GradientStop(Color.FromArgb(0x80, v.R, v.G, v.B), 0));
+            soft.GradientStops.Add(new GradientStop(Color.FromArgb(0x48, v.R, v.G, v.B), 0.6));
+            soft.GradientStops.Add(new GradientStop(Color.FromArgb(0x14, v.R, v.G, v.B), 1));
+            SoftFillBrush = Freeze(soft);
+            AccentBrush = Freeze(new SolidColorBrush(Lighten(v, 0.1)));
+            Raise(nameof(SoftFillBrush));
+            Raise(nameof(AccentBrush));
             Raise(nameof(FillBrush));
             Raise(nameof(DpsBrush));
             Raise(nameof(BarBrush));
@@ -161,6 +178,12 @@ public static class RankBrushes
         (Solid(0x1A, 0x20, 0x30), Solid(0xF3, 0xE6, 0xC8), Solid(0x6B, 0x75, 0x90));
 
     public static (Brush Bg, Brush Fg, Brush Border) For(int rank) => rank is >= 1 and <= 3 ? Medals[rank - 1] : Plain;
+
+    private static readonly Brush[] MedalText = [Solid(0xF2, 0xC2, 0x5A), Solid(0xD3, 0xDB, 0xE6), Solid(0xE0, 0x9A, 0x66)];
+    private static readonly Brush PlainText = Solid(0x8A, 0x93, 0xA6);
+
+    /// <summary>A place written as plain text: medal colours for the top three.</summary>
+    public static Brush TextFor(int rank) => rank is >= 1 and <= 3 ? MedalText[rank - 1] : PlainText;
 
     private static Brush Solid(byte r, byte g, byte b, byte a = 0xFF)
     {
