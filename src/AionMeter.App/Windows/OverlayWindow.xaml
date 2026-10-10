@@ -27,7 +27,8 @@
         <sys:Double x:Key="RowHeight">28</sys:Double>
         <Thickness x:Key="RowMargin">0,0,0,3</Thickness>
         <sys:Double x:Key="RowNameFont">13.5</sys:Double>
-        <sys:Double x:Key="RowGearFont">11</sys:Double>
+        <sys:Double x:Key="RowGearFont">11.5</sys:Double>
+        <sys:Double x:Key="RowGearLabelFont">9</sys:Double>
         <sys:Double x:Key="RowNumberFont">13.5</sys:Double>
         <sys:Double x:Key="RowSubFont">12</sys:Double>
         <sys:Double x:Key="RowGlyphSize">20</sys:Double>
@@ -56,12 +57,22 @@
             <Setter Property="Foreground" Value="#C4CBD8" />
         </Style>
 
-        <!-- Gear score and combat power: the player's own numbers, quiet next to the name -->
-        <Style x:Key="RowGear" TargetType="TextBlock" BasedOn="{StaticResource RowNumber}">
+        <!-- Gear score and combat power: a small dark tag each ("GS 2822", "CP 50.5K"), so they stand out on any class
+             colour and never pass for the fight's numbers -->
+        <Style x:Key="GearTag" TargetType="Border">
+            <Setter Property="CornerRadius" Value="3" />
+            <Setter Property="Background" Value="#B30B0F17" />
+            <Setter Property="BorderBrush" Value="#33FFFFFF" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Padding" Value="4,0,5,1" />
+            <Setter Property="Margin" Value="6,0,0,0" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+        <Style x:Key="GearTagText" TargetType="TextBlock">
+            <Setter Property="FontFamily" Value="{StaticResource NumberFont}" />
             <Setter Property="FontSize" Value="{DynamicResource RowGearFont}" />
-            <Setter Property="FontWeight" Value="Normal" />
-            <Setter Property="Foreground" Value="#97A1B4" />
-            <Setter Property="Margin" Value="8,0,0,0" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="VerticalAlignment" Value="Center" />
         </Style>
 
         <!-- The hover toolbar's buttons, sized to the slim top line -->
@@ -169,7 +180,7 @@
                 <!-- track -->
                 <Border x:Name="Track" CornerRadius="4" Background="#14FFFFFF" />
                 <!-- fill -->
-                <Border CornerRadius="4" Background="{Binding SoftFillBrush}" RenderTransformOrigin="0,0.5">
+                <Border CornerRadius="4" Background="{Binding FillBrush}" RenderTransformOrigin="0,0.5">
                     <Border.RenderTransform>
                         <ScaleTransform ScaleX="{Binding Fill}" />
                     </Border.RenderTransform>
@@ -206,10 +217,14 @@
                                MaxWidth="{DynamicResource NameMaxWidth}" />
 
                     <!-- Gear score and combat power, right by the name: only players of your party have them (the party roster) -->
-                    <TextBlock Grid.Column="3" Text="{Binding GearScore}" Style="{StaticResource RowGear}" ToolTip="{Binding DataContext.T.TipGs, RelativeSource={RelativeSource AncestorType=Window}}"
-                               Visibility="{Binding HasGearScore, Converter={StaticResource VisibleIf}}" />
-                    <TextBlock Grid.Column="4" Text="{Binding CombatPower}" Style="{StaticResource RowGear}" ToolTip="{Binding DataContext.T.TipCp, RelativeSource={RelativeSource AncestorType=Window}}"
-                               Visibility="{Binding HasCombatPower, Converter={StaticResource VisibleIf}}" />
+                    <Border Grid.Column="3" Style="{StaticResource GearTag}" Visibility="{Binding HasGearScore, Converter={StaticResource VisibleIf}}"
+                            ToolTip="{Binding DataContext.T.TipGs, RelativeSource={RelativeSource AncestorType=Window}}">
+                        <TextBlock Style="{StaticResource GearTagText}"><Run Text="GS " Foreground="#9AA4B8" FontSize="{DynamicResource RowGearLabelFont}" /><Run Text="{Binding GearScore, Mode=OneWay}" Foreground="#F5CF6E" /></TextBlock>
+                    </Border>
+                    <Border Grid.Column="4" Style="{StaticResource GearTag}" Visibility="{Binding HasCombatPower, Converter={StaticResource VisibleIf}}"
+                            ToolTip="{Binding DataContext.T.TipCp, RelativeSource={RelativeSource AncestorType=Window}}">
+                        <TextBlock Style="{StaticResource GearTagText}"><Run Text="CP " Foreground="#9AA4B8" FontSize="{DynamicResource RowGearLabelFont}" /><Run Text="{Binding CombatPower, Mode=OneWay}" Foreground="#86D2FF" /></TextBlock>
+                    </Border>
 
                     <TextBlock Grid.Column="6" Text="{Binding Dps}" Style="{StaticResource RowNumber}" />
                     <TextBlock Grid.Column="7" Text="{Binding Damage}" Style="{StaticResource RowSub}" />

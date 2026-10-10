@@ -180,7 +180,7 @@ public static class RankBrushes
     public static (Brush Bg, Brush Fg, Brush Border) For(int rank) => rank is >= 1 and <= 3 ? Medals[rank - 1] : Plain;
 
     private static readonly Brush[] MedalText = [Solid(0xF2, 0xC2, 0x5A), Solid(0xD3, 0xDB, 0xE6), Solid(0xE0, 0x9A, 0x66)];
-    private static readonly Brush PlainText = Solid(0x8A, 0x93, 0xA6);
+    private static readonly Brush PlainText = Solid(0xE4, 0xE8, 0xF0);
 
     /// <summary>A place written as plain text: medal colours for the top three.</summary>
     public static Brush TextFor(int rank) => rank is >= 1 and <= 3 ? MedalText[rank - 1] : PlainText;
