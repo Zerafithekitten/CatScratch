@@ -49,6 +49,18 @@ public class ProtocolTests
         Assert.Equal(skill, c.SkillCode);
     }
 
+    // Ferocious Horn Den (map 600092), 2026-10-12: the 30 s wait after entering, then the dungeon's 60 min time limit.
+    [Theory]
+    [InlineData("1C28090001BEE0582DA1010000EE55592DA1010000", 1, 30_000L)]
+    [InlineData("1C280900022056592DA1010000A044902DA1010000", 2, 3_600_000L)]
+    public void Instance_timers_decode(string hex, int kind, long length)
+    {
+        var t = Assert.IsType<InstanceTimerEvent>(Assert.Single(Parse(Opcodes.InstanceTimer, hex)));
+        Assert.Equal(600092, t.MapId);
+        Assert.Equal(kind, t.Kind);
+        Assert.Equal(length, t.EndMs - t.StartMs);
+    }
+
     // A world boss fight (2026-10-10, boss 19505): an Elementalist's hit and a Ranger's third hit of one skill — who, on
     // what, which skill; never how much.
     [Theory]

@@ -121,6 +121,9 @@ public sealed class CombatTracker
                 case HitNoticeEvent h:
                     OnHitNotice(h);
                     break;
+                case InstanceTimerEvent it:
+                    _timers[it.Kind] = it;
+                    break;
                 case FieldBossListEvent list:
                     _pendingLists.Add(list with { ServerId = _entities.Self?.ServerId ?? 0 });
                     break;
@@ -139,6 +142,7 @@ public sealed class CombatTracker
                     // the registry knows it from the cache — without that, the first death ended the fight and the boss
                     // came back as "#id".
                     if (z.IsTeleport || z.MapId == _entities.MapId) break;
+                    _timers.Clear(); // the instance's countdowns end with it
                     if (_current is { IsActive: true }) Finish(EncounterEndReason.ZoneChange, _current.LastDamageMs);
                     _entities.OnZoneChanged(z.MapId, z.ZoneName);
                     break;
@@ -465,6 +469,20 @@ public sealed class CombatTracker
     private readonly List<BossNotice> _pendingNotices = new();
     private readonly List<FieldBossListEvent> _pendingLists = new();
     private readonly List<PartyRosterEvent> _pendingRosters = new();
+    private readonly Dictionary<int, InstanceTimerEvent> _timers = new();
+
+    /// <summary>The instance countdown that runs out first after <paramref name="nowMs"/> (the dungeon's time limit,
+    /// the wait after entering …); null when none is running.</summary>
+    public InstanceTimerEvent? NextTimer(long nowMs)
+    {
+        lock (_gate)
+        {
+            InstanceTimerEvent? next = null;
+            foreach (var t in _timers.Values)
+                if (t.EndMs > nowMs && (next is null || t.EndMs < next.EndMs)) next = t;
+            return next;
+        }
+    }
 
     /// <summary>A party roster arrived (gear score and combat power of the party). Raised outside the lock.</summary>
     public event Action<PartyRosterEvent>? RosterReceived;

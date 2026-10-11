@@ -163,6 +163,21 @@ public class EngineTests
     }
 
     [Fact]
+    public void The_instance_countdown_running_out_first_is_shown_until_the_player_leaves()
+    {
+        var t = Tracker();
+        t.Process(new ZoneChangedEvent(0, 600092, "Ferocious Horn Den", true));
+        t.Process(new InstanceTimerEvent(1_000, 600092, 1, 0, 30_000));
+        t.Process(new InstanceTimerEvent(26_000, 600092, 2, 26_000, 3_626_000));
+        Assert.Equal(1, t.NextTimer(20_000)!.Kind);        // the wait after entering
+        Assert.Equal(2, t.NextTimer(40_000)!.Kind);        // then the dungeon's limit
+        t.Process(new ZoneChangedEvent(500_000, 600092, "Ferocious Horn Den", true, IsTeleport: true));
+        Assert.NotNull(t.NextTimer(500_000));             // a revive or teleport keeps it
+        t.Process(new ZoneChangedEvent(600_000, 1110, "Open world", false));
+        Assert.Null(t.NextTimer(600_000));                // leaving ends it
+    }
+
+    [Fact]
     public void Dying_on_a_boss_after_a_restart_in_the_dungeon_keeps_the_fight()
     {
         var first = Tracker();
