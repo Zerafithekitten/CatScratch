@@ -195,8 +195,7 @@ public partial class OverlayWindow : Window
         Resources["RowHeight"] = height;
         Resources["RowMargin"] = new Thickness(0, 0, 0, Math.Max(1, Math.Round(3 * k)));
         Resources["RowNameFont"] = Math.Round(13.5 * f, 1);
-        Resources["RowGearFont"] = Math.Round(11.5 * f, 1);
-        Resources["RowGearLabelFont"] = Math.Round(9 * f, 1);
+        Resources["RowGearFont"] = Math.Round(12 * f, 1);
         Resources["RowNumberFont"] = Math.Round(13.5 * f, 1);
         Resources["RowSubFont"] = Math.Round(12 * f, 1);
         Resources["RowGlyphSize"] = Math.Min(Math.Round(20 * f), height - 4);
