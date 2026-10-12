@@ -11,6 +11,15 @@ $ErrorActionPreference = "Stop"
 $root = $PSScriptRoot
 Add-Type -AssemblyName System.IO.Compression, System.IO.Compression.FileSystem
 
+function Remove-ReleaseStage([string]$path) {
+    $resolved = [IO.Path]::GetFullPath($path)
+    $allowed = [IO.Path]::GetFullPath((Join-Path $root 'dist')).TrimEnd('\') + '\'
+    if (-not $resolved.StartsWith($allowed, [StringComparison]::OrdinalIgnoreCase)) {
+        throw "Release staging path is outside dist: $resolved"
+    }
+    if (Test-Path -LiteralPath $resolved) { Remove-Item -LiteralPath $resolved -Recurse -Force }
+}
+
 # Zip a folder with "/" in entry names (Compress-Archive in Windows PowerShell writes "\", which some unzippers mangle).
 function New-Zip([string]$folder, [string]$zipPath) {
     if (Test-Path $zipPath) { Remove-Item $zipPath -Force }
@@ -74,7 +83,7 @@ $dist = Join-Path $root "dist"
 $name = "AION2DpsMeter-v$Version-win-x64"
 $stage = Join-Path $dist $name
 New-Item -ItemType Directory -Force $dist | Out-Null
-if (Test-Path $stage) { Remove-Item $stage -Recurse -Force }
+Remove-ReleaseStage $stage
 
 # Self-contained, no symbols; .NET's own messages only in English and Russian (%3B is MSBuild's escaped ";").
 $publish = @("-c", "Release", "-r", "win-x64", "--self-contained", "true",
@@ -100,7 +109,7 @@ $outputs = @($programZip, $stableZip)
 $iscc = Find-Iscc
 if ($iscc) {
     $setupStage = Join-Path $dist ".setup-stage"
-    if (Test-Path $setupStage) { Remove-Item $setupStage -Recurse -Force }
+    Remove-ReleaseStage $setupStage
     dotnet publish $project @publish -o $setupStage -p:PublishSingleFile=false
     if ($LASTEXITCODE -ne 0) { throw "dotnet publish (installer) failed" }
     Copy-Item (Join-Path $root "LICENSE"), (Join-Path $root "INSTALL.txt") $setupStage
@@ -108,7 +117,7 @@ if ($iscc) {
 
     & $iscc /Qp "/DAppVer=$Version" "/DUpdateRepo=$UpdateRepository" "/DPayloadDir=$setupStage" "/O$dist" (Join-Path $root "installer\AION2DpsMeter.iss")
     if ($LASTEXITCODE -ne 0) { throw "Inno Setup failed" }
-    Remove-Item $setupStage -Recurse -Force
+    Remove-ReleaseStage $setupStage
     $setupExe = Join-Path $dist "AION2DpsMeter-Setup-v$Version.exe"
     Repair-VersionStrings $setupExe "Zerafi DPS Monitor"
     # Same file under a name that never changes: the download page links to
@@ -123,7 +132,7 @@ else {
 
 # Source: everything tracked by the project, without recordings, build output or local tooling.
 $sourceStage = Join-Path $dist "AION2DpsMeter-v$Version-source"
-if (Test-Path $sourceStage) { Remove-Item $sourceStage -Recurse -Force }
+Remove-ReleaseStage $sourceStage
 $skip = '\\(bin|obj|userdata|captures|dist|site-kit|\.git|\.vs|\.claude|TestResults)(\\|$)'
 Get-ChildItem $root -Recurse -File |
     Where-Object { $_.FullName.Substring($root.Length) -notmatch $skip -and $_.Extension -notin '.pcap', '.pcapng' } |
@@ -134,7 +143,7 @@ Get-ChildItem $root -Recurse -File |
     }
 $sourceZip = "$sourceStage.zip"
 New-Zip $sourceStage $sourceZip
-Remove-Item $sourceStage -Recurse -Force
+Remove-ReleaseStage $sourceStage
 $outputs += $sourceZip
 
 Get-Item $outputs | Select-Object Name, @{ n = "MB"; e = { [math]::Round($_.Length / 1MB, 1) } }

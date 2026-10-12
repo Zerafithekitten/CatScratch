@@ -19,6 +19,10 @@ Use borderless windowed mode to keep the meter visible above the game.
 - Separate observed boss timers; history limited to ten completed fights.
 - English interface and GitHub updates for installed copies.
 
+Use Settings > Updates > Check now to update from inside the meter.
+The main window's X exits the whole program, including event and boss windows.
+The show/hide shortcut only changes visibility.
+
 The meter passively captures traffic. No game-memory access, injection, game-file
 changes, outgoing game packets or simulated game input are implemented.
 This does not imply publisher approval. Incoming packets can contain other players;

@@ -21,6 +21,6 @@ Manual build example:
 dotnet publish src/AionMeter.App/AionMeter.App.csproj -c Release -r win-x64 --self-contained true -p:Version=1.0.0 -p:UpdateRepository=OWNER/REPOSITORY
 
 The GitHub workflow requires Actions enabled and permission to write releases.
-It has not been executed on GitHub until an actual repository and tag exist.
+Build results are available in the repository's GitHub Actions tab.
 
 
