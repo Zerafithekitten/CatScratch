@@ -700,7 +700,7 @@ public partial class OverlayWindow : Window, IDisplayAppearance
 
     private void Settings_Click(object sender, RoutedEventArgs e) => AppHost.Current.ShowSettings();
 
-    private void Hide_Click(object sender, RoutedEventArgs e) => AppHost.Current.SetOverlayVisible(false);
+    private void Hide_Click(object sender, RoutedEventArgs e) => Close();
     private void Events_Click(object sender, RoutedEventArgs e) => AppHost.Current.ShowTimerHub();
     private void NpcapDownload_Click(object sender, RoutedEventArgs e) => App.ShowNpcapHelp();
 

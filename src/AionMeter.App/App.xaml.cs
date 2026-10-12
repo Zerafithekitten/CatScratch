@@ -50,10 +50,30 @@ public partial class App : Application
     private TimerCards? _timerCards;
     private readonly Dictionary<object, BreakdownWindow> _breakdowns = new();
     private int _ticks;
+    private bool _shutdownStarted;
+    private string? _shutdownCheckPath;
 
     protected override void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);
+        if (ArgValue(e.Args, "--check-shutdown") is { } shutdownPath)
+        {
+            Log.Enabled = false;
+            _shutdownCheckPath = shutdownPath;
+            _meter = new MeterService(new AppSettings { Transient = true, DownloadIcons = false }, null);
+            _timerCards = new TimerCards(_meter);
+            _overlay = new OverlayWindow(_meter);
+            _timerHub = new TimerHubWindow(_timerCards);
+            _timersWindow = new BossTimersWindow(_meter);
+            foreach (var window in new Window[] { _overlay, _timerHub, _timersWindow })
+            {
+                window.Left = -30000; window.Top = -30000;
+                window.ShowInTaskbar = false; window.ShowActivated = false; window.Show();
+            }
+            Dispatcher.BeginInvoke(() => ((System.Windows.Controls.Button)_overlay.FindName("ShellHideButton"))
+                .RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Primitives.ButtonBase.ClickEvent)), DispatcherPriority.ApplicationIdle);
+            return;
+        }
         if (ArgValue(e.Args, "--check-interaction") is { } checkPath)
         {
             Log.Enabled = false;
@@ -308,6 +328,7 @@ public partial class App : Application
 
     public void ResumeHotkeys()
     {
+        if (_shutdownStarted) return;
         if (!_hotkeysSuspended) return;
         _hotkeysSuspended = false;
         RegisterHotkeys();
@@ -495,6 +516,7 @@ public partial class App : Application
     /// <summary>A check finished or a version was skipped: the tray item follows; a new version is announced once.</summary>
     private void OnUpdatesChanged()
     {
+        if (_shutdownStarted || Dispatcher.HasShutdownStarted) return;
         var updates = _meter.Updates;
         var available = updates.Available;
         _tray?.SetUpdate(available?.Version.ToString(3));
@@ -634,6 +656,7 @@ public partial class App : Application
 
     protected override void OnExit(ExitEventArgs e)
     {
+        _shutdownStarted = true;
         if (_meter is not null) Log.Info("Exiting");
         _timer?.Stop();
         _timerCards?.Dispose();
@@ -647,6 +670,8 @@ public partial class App : Application
             _meter.Dispose();
         }
         _singleInstance?.Dispose();
+        if (_shutdownCheckPath is not null)
+            File.WriteAllText(_shutdownCheckPath, $"Windows remaining: {Windows.Count}");
         base.OnExit(e);
     }
 }

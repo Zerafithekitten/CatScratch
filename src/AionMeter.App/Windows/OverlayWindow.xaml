@@ -259,7 +259,7 @@
             </StackPanel>
             <Button x:Name="ShellClickButton" Grid.Column="2" Style="{StaticResource ToolIcon}" Click="ClickMode_Click"><Grid Width="14" Height="14"><Path x:Name="ClickModeCursor" Data="M 2,1 L 12,8 L 7,8 L 5,13 Z" Fill="#79E3CF"/><Path x:Name="ClickModeSlash" Data="M 1,13 L 13,1" Stroke="#D9ADB1" StrokeThickness="2" Visibility="Collapsed"/></Grid></Button>
             <Button x:Name="ShellSettingsButton" Grid.Column="3" Style="{StaticResource ToolIcon}" Content="&#xE713;" Click="Settings_Click" ToolTip="Settings"/>
-            <Button x:Name="ShellHideButton" Grid.Column="4" Style="{StaticResource ToolIcon}" Content="&#xE711;" Click="Hide_Click" ToolTip="Hide"/>
+            <Button x:Name="ShellHideButton" Grid.Column="4" Style="{StaticResource ToolIcon}" Content="&#xE711;" Click="Hide_Click" ToolTip="Exit"/>
         </Grid>
     <Grid Margin="4,0,4,4">
         <!-- Card -->
@@ -318,7 +318,7 @@
                     <Button Style="{StaticResource ToolIcon}" Content="&#xE713;" Click="Settings_Click" ToolTip="Settings" />
                     <Slider x:Name="OpacitySlider" Style="{StaticResource GoldSlider}" Width="52" Minimum="0.15" Maximum="1" Margin="5,0,3,0"
                             ValueChanged="Opacity_Changed" VerticalAlignment="Center" ToolTip="Background opacity" />
-                    <Button Style="{StaticResource ToolIcon}" Content="&#xE711;" Click="Hide_Click" ToolTip="Hide (Ctrl+Shift+D)" />
+                    <Button Style="{StaticResource ToolIcon}" Content="&#xE711;" Click="Hide_Click" ToolTip="Exit" />
                 </StackPanel>
 
                 <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" Effect="{StaticResource TextShadow}">

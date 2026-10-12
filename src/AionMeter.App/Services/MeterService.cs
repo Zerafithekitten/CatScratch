@@ -139,7 +139,7 @@ public sealed class MeterService : IDisposable
     {
         lock (_captureGate)
         {
-            if (CaptureFactory is null || _capture is not null) return;
+            if (_exiting || CaptureFactory is null || _capture is not null) return;
             try
             {
                 _capture = CaptureFactory(Data);
@@ -161,20 +161,24 @@ public sealed class MeterService : IDisposable
 
     public void RestartCapture()
     {
+        IEventSource? previous;
         lock (_captureGate)
         {
+            if (_exiting) return;
             _restarting = true;
-            try
-            {
-                _capture?.Dispose();
-                _capture = null;
-                LiveIdentity.Reset(); Tracker.InvalidateParty();
-                StartCapture();
-            }
-            finally
-            {
-                _restarting = false;
-            }
+            previous = _capture;
+            _capture = null;
+        }
+        try
+        {
+            previous?.Dispose();
+            if (_exiting) return;
+            LiveIdentity.Reset(); Tracker.InvalidateParty();
+            StartCapture();
+        }
+        finally
+        {
+            _restarting = false;
         }
     }
 
@@ -279,7 +283,7 @@ public sealed class MeterService : IDisposable
             ? Data.MapName(id)
             : zone;
 
-    private bool _exiting;
+    private volatile bool _exiting;
 
     private string? _lastRosterLine;
     private CaptureHealth? _lastHealth;
@@ -331,8 +335,17 @@ public sealed class MeterService : IDisposable
 
     public void Dispose()
     {
+        IEventSource? capture;
+        lock (_captureGate)
+        {
+            if (_exiting) return;
+            _exiting = true;
+            capture = _capture;
+            _capture = null;
+        }
         var live = !Settings.Transient && !_replaying && !DemoRunning;
-        lock (_captureGate) _capture?.Dispose(); // no more packets: the running fight is as complete as it gets
+        // A final boss callback also reads _captureGate; never wait for it while holding that lock.
+        capture?.Dispose();
         _replay?.Dispose();
         _demo?.Dispose();
         if (live)

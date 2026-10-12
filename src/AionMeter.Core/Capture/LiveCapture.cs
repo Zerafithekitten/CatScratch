@@ -209,9 +209,10 @@ public sealed class LiveCapture : IEventSource
 
     private void EnsureDevice(LibPcapLiveDevice device, string filter)
     {
+        if (_device is not null && _device.Name != device.Name) CloseDevice();
         lock (_gate)
         {
-            if (_device is not null && _device.Name != device.Name) CloseDeviceLocked();
+            if (_cts?.IsCancellationRequested == true) return;
             if (_device is null)
             {
                 device.OnPacketArrival += OnPacketArrival;
@@ -243,27 +244,30 @@ public sealed class LiveCapture : IEventSource
 
     private void CloseDevice()
     {
-        lock (_gate) CloseDeviceLocked();
-    }
-
-    private void CloseDeviceLocked()
-    {
-        Latency.Reset();
-        if (_device is null) return;
+        LibPcapLiveDevice? device;
+        CaptureFileWriterDevice? writer;
+        lock (_gate)
+        {
+            device = _device;
+            writer = _writer;
+            _device = null;
+            _writer = null;
+            _filter = null;
+            RecordingPath = null;
+            Latency.Reset();
+        }
+        if (device is null) return;
+        device.OnPacketArrival -= OnPacketArrival;
+        // StopCapture waits for callbacks; callbacks must be able to acquire _gate.
         try
         {
-            _device.StopCapture();
+            device.StopCapture();
         }
         catch (PcapException)
         {
         }
-        _device.OnPacketArrival -= OnPacketArrival;
-        _device.Close();
-        _device = null;
-        _filter = null;
-        _writer?.Close();
-        _writer = null;
-        RecordingPath = null;
+        try { device.Close(); }
+        finally { writer?.Close(); }
     }
 
     private void OnPacketArrival(object sender, PacketCapture e)

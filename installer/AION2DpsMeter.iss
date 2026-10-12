@@ -2,7 +2,7 @@
 ; Built by build-release.ps1:
 ;   ISCC /DAppVer=<x.y.z> /DPayloadDir=<self-contained publish folder> /O<output folder> AION2DpsMeter.iss
 ; Installs for the current user only (no administrator prompt) into %LocalAppData%\Programs\Zerafi DPS Monitor.
-; Settings, fight history and boss timers stay in %AppData%\AionMeter; uninstall asks before deleting them.
+; Settings, fight history and boss timers stay in {app}\userdata; uninstall asks before deleting them.
 
 #ifndef AppVer
   #define AppVer "0.0.0"
@@ -51,7 +51,6 @@ SetupLogging=yes
 
 [Languages]
 Name: "en"; MessagesFile: "compiler:Default.isl"
-Name: "ru"; MessagesFile: "compiler:Languages\Russian.isl"
 
 [CustomMessages]
 en.NpcapTitle=Npcap is needed

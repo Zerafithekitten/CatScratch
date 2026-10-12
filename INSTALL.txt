@@ -51,8 +51,10 @@ Saved event-window positions are moved back into the visible desktop when needed
 View provides compact mode, size presets, width/height sliders and opacity.
 Drag the lower-right corner to resize; drag the display to move it.
 Opacity can be set from 40% to 100%.
-The top-right X hides the meter. Use Ctrl+Shift+D to show it again.
-Ctrl+Shift+R resets the measurement. Exit through the system tray menu.
+The top-right X exits the entire program, including all event and boss windows.
+Ctrl+Shift+D only shows/hides the meter. Ctrl+Shift+R resets the measurement.
+Settings > Updates > Check now checks for an update directly inside the meter.
+Use the Setup installation for automatic updates of the complete application.
 
 SOLO AND PARTY TRACKING
 Your freshly confirmed own actor ID is counted even without a party roster.

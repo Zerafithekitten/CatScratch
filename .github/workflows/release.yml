@@ -36,7 +36,7 @@ jobs:
           $signature = Get-AuthenticodeSignature "$env:RUNNER_TEMP/inno.exe"
           if ($signature.Status -ne 'Valid' -or $signature.SignerCertificate.Subject -notmatch 'Pyrsys') { throw 'Compiler signature invalid' }
           $compiler = "$env:RUNNER_TEMP/Inno"
-          $install = Start-Process "$env:RUNNER_TEMP/inno.exe" -ArgumentList @('/VERYSILENT','/SUPPRESSMSGBOXES','/NORESTART',("/DIR=`"$compiler`"")) -Wait -PassThru
+          $install = Start-Process "$env:RUNNER_TEMP/inno.exe" -ArgumentList @('/VERYSILENT','/SUPPRESSMSGBOXES','/NORESTART',("/DIR=`"$compiler`"")) -WindowStyle Hidden -Wait -PassThru
           if ($install.ExitCode) { throw 'Compiler installation failed' }
           "INNO_COMPILER=$compiler/ISCC.exe" >> $env:GITHUB_ENV
       - name: Build installer
