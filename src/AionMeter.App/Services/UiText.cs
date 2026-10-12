@@ -172,6 +172,7 @@ public sealed class UiText
     public string HpUnknown { get; init; } = "max HP unknown";
     /// <summary>Tooltip of the instance countdown in the overlay's top line; {0} = when it runs out (local time).</summary>
     public string TimeLimitTip { get; init; } = "Time limit (from the game): runs out at {0}";
+    public string BossLimitTip { get; init; } = "Boss time limit (from the game): kill it before {0}";
     /// <summary>A world boss with a crowd: "444 attacking · damage of 53 sent" (see EncounterSnapshot.MostDamageUnsent).</summary>
     public string FightingCount { get; init; } = "{0} attacking";
     public string DamageSentBy { get; init; } = "damage of {0} sent";
@@ -499,6 +500,7 @@ public sealed class UiText
         CountedFrom = "учтено с {0} HP",
         HpUnknown = "макс. HP неизвестен",
         TimeLimitTip = "Лимит времени (из игры): закончится в {0}",
+        BossLimitTip = "Лимит времени босса (из игры): убить до {0}",
         FightingCount = "{0} бьют босса",
         DamageSentBy = "урон виден у {0}",
         DamageUnsentTip = "На мировом боссе с толпой игра присылает вашему клиенту урон лишь нескольких игроков, в том числе ваш. Про остальных приходит только «удар попал» — без числа — или их периодический урон. Поэтому их цифры и все доли здесь намного ниже настоящих; метр на этом компьютере больше увидеть не может.",

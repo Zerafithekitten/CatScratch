@@ -280,7 +280,8 @@ public sealed class OverlayViewModel : ObservableObject
         var left = timer.EndMs - nowMs;
         LimitText = Format.ClockShort(left + 999); // 0:00 only when it is over
         LimitBrush = left < 60_000 || left < (timer.EndMs - timer.StartMs) / 10 ? LiveRed : LimitAmber;
-        LimitTip = string.Format(T.TimeLimitTip, DateTimeOffset.FromUnixTimeMilliseconds(timer.EndMs).ToLocalTime().ToString("HH:mm:ss"));
+        LimitTip = string.Format(timer.Kind == InstanceTimerEvent.BossLimit ? T.BossLimitTip : T.TimeLimitTip,
+            DateTimeOffset.FromUnixTimeMilliseconds(timer.EndMs).ToLocalTime().ToString("HH:mm:ss"));
     }
     public bool IsActive { get => _isActive; set => Set(ref _isActive, value); }
     public bool HasData { get => _hasData; set => Set(ref _hasData, value); }

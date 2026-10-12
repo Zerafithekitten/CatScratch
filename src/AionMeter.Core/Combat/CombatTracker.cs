@@ -124,6 +124,11 @@ public sealed class CombatTracker
                 case InstanceTimerEvent it:
                     _timers[it.Kind] = it;
                     break;
+                case BossTimeLimitEvent bl:
+                    _timers[InstanceTimerEvent.BossLimit] = new InstanceTimerEvent(bl.TimeMs, _entities.MapId, InstanceTimerEvent.BossLimit,
+                        bl.TimeMs, bl.EndMs);
+                    _bossLimitActor = bl.ActorId;
+                    break;
                 case FieldBossListEvent list:
                     _pendingLists.Add(list with { ServerId = _entities.Self?.ServerId ?? 0 });
                     break;
@@ -287,6 +292,7 @@ public sealed class CombatTracker
             npc = _entities.ForgetNpc(e.ActorId);
         if (e.CurrentHp <= 0 && npc.Hp > 0)
         {
+            EndBossLimit(e.ActorId);
             NoticeBoss(npc, BossNoticeKind.Killed, e.TimeMs);
             _entities.NoteDeath(npc);
         }
@@ -317,6 +323,7 @@ public sealed class CombatTracker
 
     private void OnDeath(DeathEvent e)
     {
+        EndBossLimit(e.ActorId);
         if (!_entities.TryGetNpc(e.ActorId, out var npc)) return;
         if (npc.Hp != 0)
         {
@@ -337,6 +344,7 @@ public sealed class CombatTracker
         if (_entities.IsPlayerLike(e.ActorId)) return;
         var npc = _entities.UpsertNpc(e.ActorId);
         npc.InCombat = e.InCombat;
+        if (!e.InCombat) EndBossLimit(e.ActorId); // a wipe or a reset: no clock runs any more
         if (e.InCombat || _current is not { IsActive: true } enc || enc.BossId != e.ActorId) return;
 
         var reason = npc.Hp switch
@@ -470,6 +478,13 @@ public sealed class CombatTracker
     private readonly List<FieldBossListEvent> _pendingLists = new();
     private readonly List<PartyRosterEvent> _pendingRosters = new();
     private readonly Dictionary<int, InstanceTimerEvent> _timers = new();
+    private uint _bossLimitActor;
+
+    /// <summary>The boss whose time limit runs died or left combat: its clock is gone.</summary>
+    private void EndBossLimit(uint actorId)
+    {
+        if (actorId == _bossLimitActor) _timers.Remove(InstanceTimerEvent.BossLimit);
+    }
 
     /// <summary>The instance countdown that runs out first after <paramref name="nowMs"/> (the dungeon's time limit,
     /// the wait after entering …); null when none is running.</summary>

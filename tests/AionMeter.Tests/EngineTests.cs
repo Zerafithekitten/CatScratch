@@ -178,6 +178,26 @@ public class EngineTests
     }
 
     [Fact]
+    public void A_boss_time_limit_runs_until_the_boss_dies_or_leaves_combat()
+    {
+        var t = Tracker();
+        Setup(t);
+        t.Process(new InstanceTimerEvent(0, 600092, 2, 0, 3_600_000));
+        t.Process(new BattleStateEvent(10_000, Boss, true));
+        t.Process(new BossTimeLimitEvent(10_000, Boss, 310_000));
+        var limit = t.NextTimer(20_000)!;
+        Assert.Equal(InstanceTimerEvent.BossLimit, limit.Kind); // runs out before the dungeon's hour
+        Assert.Equal(310_000, limit.EndMs);
+
+        t.Process(new BattleStateEvent(60_000, Boss, false));    // a wipe
+        Assert.Equal(2, t.NextTimer(60_000)!.Kind);
+
+        t.Process(new BossTimeLimitEvent(70_000, Boss, 370_000));
+        t.Process(new DeathEvent(200_000, Boss));                 // killed in time
+        Assert.Equal(2, t.NextTimer(200_000)!.Kind);
+    }
+
+    [Fact]
     public void Dying_on_a_boss_after_a_restart_in_the_dungeon_keeps_the_fight()
     {
         var first = Tracker();
