@@ -2,6 +2,12 @@ name: Windows release
 on:
   push:
     tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Existing version tag to build
+        required: true
+        default: v1.0.1
 permissions:
   contents: write
 jobs:
@@ -9,15 +15,20 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.tag || github.ref }}
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '10.0.x'
       - name: Validate version and test
         shell: pwsh
         run: |
-          $version = $env:GITHUB_REF_NAME.TrimStart('v')
+          $tag = '${{ inputs.tag }}'
+          if (-not $tag) { $tag = $env:GITHUB_REF_NAME }
+          $version = $tag.TrimStart('v')
           if ($version -notmatch '^\d+\.\d+\.\d+$') { throw 'Use a tag like v1.0.0' }
           "APP_VERSION=$version" >> $env:GITHUB_ENV
+          "RELEASE_TAG=$tag" >> $env:GITHUB_ENV
           dotnet test tests/AionMeter.Tests/AionMeter.Tests.csproj -c Release
           if ($LASTEXITCODE) { throw 'Tests failed' }
       - name: Build self-contained Windows app
@@ -50,5 +61,5 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release create $env:GITHUB_REF_NAME dist/AION2DpsMeter-Setup.exe dist/AION2DpsMeter-win-x64.zip dist/AION2DpsMonitor-source.zip --verify-tag --generate-notes
+          gh release create $env:RELEASE_TAG dist/AION2DpsMeter-Setup.exe dist/AION2DpsMeter-win-x64.zip dist/AION2DpsMonitor-source.zip --verify-tag --generate-notes
           if ($LASTEXITCODE) { throw 'Release publication failed' }
