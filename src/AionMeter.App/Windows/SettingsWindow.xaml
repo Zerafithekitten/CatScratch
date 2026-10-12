@@ -62,12 +62,12 @@
                     <!-- Language -->
                     <Border Style="{StaticResource Section}">
                         <StackPanel>
-                            <TextBlock Text="LANGUAGE / ЯЗЫК" Style="{StaticResource SectionLabel}" Margin="0,0,0,8" />
+                            <TextBlock Text="LANGUAGE" Style="{StaticResource SectionLabel}" Margin="0,0,0,8" />
                             <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="Language / Язык" Style="{StaticResource Label}" />
+                                <TextBlock Text="Language" Style="{StaticResource Label}" />
                                 <ComboBox x:Name="LanguageBox" MinWidth="160">
                                     <ComboBoxItem Content="English" Tag="en" />
-                                    <ComboBoxItem Content="Русский" Tag="ru" />
+
                                 </ComboBox>
                             </StackPanel>
                             <TextBlock Style="{StaticResource Hint}" Margin="0,6,0,0"
@@ -113,6 +113,16 @@
                             </StackPanel>
                             <TextBlock Style="{StaticResource Hint}" Margin="190,2,0,0"
                                        Text="{Binding RowSizeHint, Source={x:Static s:UiText.Current}}" />
+                            <CheckBox x:Name="CompactModeCheck" Content="Compact mode: narrow display with two lines per player" Style="{StaticResource DarkCheck}" Margin="0,10,0,0" />
+                            <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
+                                <TextBlock Text="Window width / height" Style="{StaticResource Label}" />
+                                <TextBox x:Name="WindowWidthText" Width="70" /><TextBlock Text=" × " VerticalAlignment="Center" /><TextBox x:Name="WindowHeightText" Width="70" />
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
+                                <TextBlock Text="Display opacity" Style="{StaticResource Label}" />
+                                <Slider x:Name="WindowOpacityValue" Width="180" Minimum="0.4" Maximum="1" Style="{StaticResource GoldSlider}" />
+                            </StackPanel>
+                            <TextBlock Text="40% = translucent · 100% = opaque. Use View for size presets and sliders." Style="{StaticResource Hint}" TextWrapping="Wrap" />
                         </StackPanel>
                     </Border>
 

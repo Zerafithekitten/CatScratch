@@ -5,7 +5,7 @@
 #   dist\AION2DpsMeter-Setup.exe, dist\AION2DpsMeter-win-x64.zip - copies under names that never change, for links
 #   that always give the newest version (releases/latest/download/<name>)
 # Packet recordings (captures\) and build output never go into any of them.
-param([string]$Version = "")
+param([string]$Version = "", [string]$UpdateRepository = "Zerafithekitten/zerafi-dps-monitor")
 
 $ErrorActionPreference = "Stop"
 $root = $PSScriptRoot
@@ -78,7 +78,7 @@ if (Test-Path $stage) { Remove-Item $stage -Recurse -Force }
 
 # Self-contained, no symbols; .NET's own messages only in English and Russian (%3B is MSBuild's escaped ";").
 $publish = @("-c", "Release", "-r", "win-x64", "--self-contained", "true",
-    "-p:DebugType=none", "-p:DebugSymbols=false", "-p:SatelliteResourceLanguages=en%3Bru")
+    "-p:Version=$Version", "-p:UpdateRepository=$UpdateRepository", "-p:DebugType=none", "-p:DebugSymbols=false", "-p:SatelliteResourceLanguages=en%3Bru")
 
 # Portable: one exe + data folder.
 dotnet publish $project @publish -o $stage `
@@ -106,11 +106,11 @@ if ($iscc) {
     Copy-Item (Join-Path $root "LICENSE"), (Join-Path $root "INSTALL.txt") $setupStage
     if (-not (Test-Path (Join-Path $setupStage "data\npcs\en.json"))) { throw "data folder missing from the installer publish" }
 
-    & $iscc /Qp "/DAppVer=$Version" "/DPayloadDir=$setupStage" "/O$dist" (Join-Path $root "installer\AION2DpsMeter.iss")
+    & $iscc /Qp "/DAppVer=$Version" "/DUpdateRepo=$UpdateRepository" "/DPayloadDir=$setupStage" "/O$dist" (Join-Path $root "installer\AION2DpsMeter.iss")
     if ($LASTEXITCODE -ne 0) { throw "Inno Setup failed" }
     Remove-Item $setupStage -Recurse -Force
     $setupExe = Join-Path $dist "AION2DpsMeter-Setup-v$Version.exe"
-    Repair-VersionStrings $setupExe "AION2 DPS Meter"
+    Repair-VersionStrings $setupExe "Zerafi DPS Monitor"
     # Same file under a name that never changes: the download page links to
     # releases/latest/download/AION2DpsMeter-Setup.exe and always gets the newest version.
     $stableSetup = Join-Path $dist "AION2DpsMeter-Setup.exe"
@@ -124,7 +124,7 @@ else {
 # Source: everything tracked by the project, without recordings, build output or local tooling.
 $sourceStage = Join-Path $dist "AION2DpsMeter-v$Version-source"
 if (Test-Path $sourceStage) { Remove-Item $sourceStage -Recurse -Force }
-$skip = '\\(bin|obj|captures|dist|site-kit|\.git|\.vs|\.claude|TestResults)(\\|$)'
+$skip = '\\(bin|obj|userdata|captures|dist|site-kit|\.git|\.vs|\.claude|TestResults)(\\|$)'
 Get-ChildItem $root -Recurse -File |
     Where-Object { $_.FullName.Substring($root.Length) -notmatch $skip -and $_.Extension -notin '.pcap', '.pcapng' } |
     ForEach-Object {

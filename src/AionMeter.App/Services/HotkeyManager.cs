@@ -10,6 +10,8 @@ public sealed class HotkeyManager : IDisposable
     private readonly HwndSource _source;
     private readonly Dictionary<int, Action> _actions = new();
     private int _nextId = 0xA100;
+    public int LastRegistrationError { get; private set; }
+    internal int LastRegisteredId { get; private set; }
 
     public HotkeyManager(nint hwnd)
     {
@@ -21,14 +23,17 @@ public sealed class HotkeyManager : IDisposable
     /// <summary>Registers e.g. "Ctrl+Shift+D". Returns false when the text is invalid or another app owns the combo.</summary>
     public bool Register(string gesture, Action action)
     {
-        if (!TryParse(gesture, out var mods, out var vk)) return false;
+        LastRegistrationError = 0;
+        if (!TryParse(gesture, out var mods, out var vk)) { LastRegistrationError = 87; return false; }
         var id = _nextId++;
         if (!NativeMethods.RegisterHotKey(_hwnd, id, mods | NativeMethods.MOD_NOREPEAT, vk))
         {
+            LastRegistrationError = System.Runtime.InteropServices.Marshal.GetLastWin32Error();
             Log.Info($"Hotkey {gesture} is already in use by another application");
             return false;
         }
         _actions[id] = action;
+        LastRegisteredId = id;
         return true;
     }
 
@@ -44,6 +49,7 @@ public sealed class HotkeyManager : IDisposable
         vk = 0;
         if (string.IsNullOrWhiteSpace(gesture)) return false;
         var parts = gesture.Split('+', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+        if (parts.Length == 0) return false;
         foreach (var part in parts[..^1])
         {
             switch (part.ToLowerInvariant())

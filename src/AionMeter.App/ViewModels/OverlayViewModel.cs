@@ -32,7 +32,7 @@ public sealed class RowViewModel : ObservableObject
         get => _gearScore;
         set
         {
-            if (Set(ref _gearScore, value)) Raise(nameof(HasGearScore));
+            if (Set(ref _gearScore, value)) { Raise(nameof(HasGearScore)); Raise(nameof(CompactMeta)); Raise(nameof(CompactGear)); }
         }
     }
 
@@ -44,11 +44,13 @@ public sealed class RowViewModel : ObservableObject
         get => _combatPower;
         set
         {
-            if (Set(ref _combatPower, value)) Raise(nameof(HasCombatPower));
+            if (Set(ref _combatPower, value)) { Raise(nameof(HasCombatPower)); Raise(nameof(CompactMeta)); Raise(nameof(CompactGear)); }
         }
     }
 
     public bool HasCombatPower => _combatPower.Length > 0;
+    public string CompactMeta => $"CP {(HasCombatPower ? CombatPower : "—")} · GS {(HasGearScore ? GearScore : "—")} · {UiText.Current.ClassName(Class)}";
+    public string CompactGear => $"CP {(HasCombatPower ? CombatPower : "—")} · GS {(HasGearScore ? GearScore : "—")}";
     public string Dps { get => _dps; set => Set(ref _dps, value); }
     public string Damage { get => _damage; set => Set(ref _damage, value); }
     public string Share { get => _share; set => Set(ref _share, value); }
@@ -117,6 +119,7 @@ public sealed class RowViewModel : ObservableObject
         set
         {
             if (!Set(ref _class, value) && BarBrush != Brushes.Transparent) return;
+            Raise(nameof(CompactMeta));
             var c = ClassVisuals.ColorOf(value);
             var dark = Mix(c, Color.FromRgb(0x10, 0x14, 0x20), 0.55);
             BarBrush = Freeze(new LinearGradientBrush(dark, Lighten(c, 0.12), 0));
@@ -249,6 +252,8 @@ public sealed class OverlayViewModel : ObservableObject
     public string TimersLabel { get => _timersLabel; set => Set(ref _timersLabel, value); }
     private string _timersLabel = UiText.Current.TimersButton;
     public string Clock { get => _clock; set => Set(ref _clock, value); }
+    private string _wallClock = "";
+    public string WallClock { get => _wallClock; set => Set(ref _wallClock, value); }
 
     private string _limitText = "";
     private string _limitTip = "";

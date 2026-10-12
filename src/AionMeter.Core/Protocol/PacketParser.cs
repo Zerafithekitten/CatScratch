@@ -514,6 +514,7 @@ public sealed class PacketParser
         var server = 0;
         var cls = GameClass.Unknown;
         var level = 0;
+        var gearScore = 0;
         if (o + 6 <= b.Length)
         {
             var s = Wire.U16(b, o);
@@ -523,6 +524,15 @@ public sealed class PacketParser
                 server = s;
                 cls = c;
                 if (o + 11 <= b.Length && Wire.U32(b, o + 7) is var lv and >= 1 and <= 99) level = (int)lv;
+                // Global own record: level, current GS, highest GS, repeated level.
+                // Confirmed against the Oct 13 capture and the player's character sheet (GS 1889).
+                if (isSelf && level > 0 && o + 23 <= b.Length && Wire.U32(b, o + 19) == (uint)level)
+                {
+                    var current = Wire.U32(b, o + 11);
+                    var highest = Wire.U32(b, o + 15);
+                    if (current is >= 1 and <= 100_000 && highest >= current && highest <= 100_000)
+                        gearScore = (int)current;
+                }
             }
             else if (!isSelf && o + 4 <= b.Length && GameData.ClassFromWire(Wire.U32(b, o)) is var other and not GameClass.Unknown)
             {
@@ -533,7 +543,7 @@ public sealed class PacketParser
         }
 
         Emit(isSelf
-            ? new SelfIdentifiedEvent(TimeMs, id, name, server, cls, level, combatPower)
+            ? new SelfIdentifiedEvent(TimeMs, id, name, server, cls, level, combatPower, gearScore)
             : new PlayerSeenEvent(TimeMs, id, name, server, cls));
         return true;
     }

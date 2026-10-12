@@ -1,86 +1,130 @@
-AION2 DPS Meter — установка / installation
-==========================================
+Zerafi DPS Monitor — EU/NA
 
-РУССКИЙ
+SETUP
+1. Extract the complete program folder to a writable location.
+2. Install Npcap from https://npcap.com/#download if it is missing.
+   The application offers to open the official page; installation is done by you.
+3. Start AION2DpsMeter.exe, then teleport once or enter a new zone in game.
+   Your character is confirmed only when fresh identity data arrives.
+4. Use borderless windowed mode if the meter should remain visible above the game.
 
-Нужно: Windows 10 или 11 (64-бит), AION 2 (Global: EU / NA).
+DISPLAY AND CONTROLS
+The meter is a separate, movable, always-on-top Windows application.
+The default compact layout is 300 × 300 with colored damage bars.
+The header shows current Europe/Berlin time in 24-hour HH:mm format, including DST.
+Fight duration is separate and marked with a stopwatch symbol.
+Rows show class icon, player name, Combat Power (CP), Gear Score (GS), DPS,
+total damage and damage share. Missing values are shown as dashes.
+The footer shows total DPS and a separate RTT latency estimate.
+RTT uses captured client TCP data and matching server acknowledgments only.
+No extra network probes are sent. Server ACK delays can affect the estimate.
+A local ping accelerator may expose only its local proxy connection.
+RTT is unavailable until outgoing data and matching ACKs are captured on a confirmed
+game flow, and returns to a dash after 15 seconds without a fresh sample.
+The display refreshes approximately five times per second and remains visible
+between fights. All built-in interface text is English.
 
-Установщик (проще всего)
-1. Запустите AION2DpsMeter-Setup-v<версия>.exe. Если Windows покажет «Система Windows защитила ваш компьютер»,
-   нажмите «Подробнее» → «Выполнить в любом случае» (программа не подписана платным сертификатом).
-2. Установщик проверит Npcap — бесплатный драйвер захвата трафика, без которого метр не видит игру. Если его нет,
-   нажмите «Открыть npcap.com», установите Npcap с настройками по умолчанию и вернитесь в установщик.
-3. Готово: ярлык «AION2 DPS Meter» на рабочем столе и в меню «Пуск». Права администратора не нужны.
-   Обновление — метр обновляется сам: скачивает новую версию и ставит её, когда вы не в игре (или после
-   10 минут без боя), затем перезапускается. Можно и вручную: запустить установщик новой версии.
-   Удаление — Параметры → Приложения → AION2 DPS Meter.
+Top-right gear: Settings, including HOTKEYS > Click-through.
+Click a hotkey field and press the desired combination, then click Save.
+Tab moves to the next field; Escape leaves the field without changing its shortcut.
+App hotkeys pause while Settings is active. No keyboard hook is used.
+Turquoise cursor symbol: clickable. Crossed-out cursor: click-through.
+Default shortcut Ctrl+Shift+L toggles clickability for all display windows.
+The cursor symbol can also enable click-through while the meter is clickable.
+Settings and the system tray menu remain available in click-through mode.
+The program starts clickable. Normal toggles do not show text or notifications.
+Click-through also removes window backgrounds, borders, shadows, title bars and controls.
+Damage rows and their contents remain visible, as do time, duration, DPS and RTT.
+Event names, categories and countdowns remain without the event window frame.
+Switch back using your hotkey or the tray menu to restore controls and backgrounds.
+Settings windows remain opaque and clickable.
+If a shortcut cannot be registered, an error explains how to change it.
 
-Без установки (архив .zip)
-1. Установите Npcap: https://npcap.com/#download (настройки по умолчанию).
-2. Распакуйте архив в любую папку, например C:\Games\AION2DpsMeter (не запускайте прямо из архива),
-   и запустите AION2DpsMeter.exe.
-   Обновление — распакуйте новую версию поверх. Удаление — удалите папку.
+Bottom controls: View, Events, and Statistics.
+Events also opens from the system tray menu under Upcoming events.
+Opening Events switches the display windows to clickable mode for positioning.
+Drag the Upcoming events header or any card to move the event board.
+Use your click-through hotkey to restore pass-through after positioning.
+Event preferences have a solid dark background and always remain clickable.
+The event window opens by default and reopens on restart unless closed with its X.
+Saved event-window positions are moved back into the visible desktop when needed.
+View provides compact mode, size presets, width/height sliders and opacity.
+Drag the lower-right corner to resize; drag the display to move it.
+Opacity can be set from 40% to 100%.
+The top-right X hides the meter. Use Ctrl+Shift+D to show it again.
+Ctrl+Shift+R resets the measurement. Exit through the system tray menu.
 
-Как пользоваться
-Играйте — оверлей появится при запуске игры и в каждом бою. Повторный запуск метра (ярлык) тоже открывает оверлей. Ники игроков игра присылает при загрузке локации,
-поэтому метр лучше запускать до входа в подземелье.
+SOLO AND PARTY TRACKING
+Your freshly confirmed own actor ID is counted even without a party roster.
+Partial identity packets no longer block solo damage or erase the current fight.
+Routine capture status updates and quiet traffic no longer discard your own actor ID.
+Exiting the game still clears identity and requires fresh identification.
+Until fresh name data arrives, your row is labeled You.
+Confirmed members of your current party are included when a fresh roster arrives.
+Other players, unknown attackers and same-name players on other servers are excluded.
+Pets count only when an explicit owner ID identifies you or a confirmed party member.
+The meter does not guess pet ownership from matching skills or damage factors.
+A party change resets the running measurement. If the roster is not refreshed for
+30 seconds, party tracking falls back to your own character; this conservative
+interval still requires verification against the actual EU/NA game stream.
+A capture restart, zone change or conflicting own actor ID requires fresh identity.
+Cached names alone do not confirm your character.
+Your own GS is decoded directly from the fresh own-character record, even solo.
+This layout was verified against the Oct 13 user recording and the in-game GS.
+Teleport once after starting the new version to receive fresh character data.
+Other party members still require roster data. Missing or invalid fields remain dashes.
+CP/GS are displayed when supplied by identity or roster data, never invented.
+The server may omit damage data in crowded encounters, making results incomplete.
 
-Значок «A» в трее (возле часов) — меню: оверлей, история боёв, таймеры боссов, настройки, язык.
-Язык интерфейса: кнопка EN/RU на оверлее (по умолчанию английский) или Настройки.
+HISTORY
+Only the ten newest completed fight statistics are retained, ordered by fight start.
+Older fight files are deleted after saving and when opening an existing larger history.
+The session list also retains ten completed fights.
+Cleanup affects only the meter's own local fight statistics.
 
-Горячие клавиши (меняются в настройках):
-  Ctrl+Shift+D — показать / скрыть оверлей      Ctrl+Shift+R — перезапустить метр
-  Ctrl+Shift+L — клики сквозь оверлей          Ctrl+Shift+T — таймеры боссов
+AUTOMATIC EVENTS
+The small event window requires no manual event entry.
+It shows only the next selected start within 60 minutes, including every selected
+event starting at that exact same time. Later starts and past events are omitted.
+Events appear as small dark cards with gold borders, arranged side by side.
+The countdown updates every second; the height adjusts to the number of events.
+Double-click a card, or right-click it, to open a separately movable event window.
+The gear opens event selection, server region, width and independent opacity.
+Europe is the default region; NA East and NA West are also available.
+Default selection: Shugo Festival, Spacetime Rift and Dimensional Invasion.
+Additional choices: Artifact Siege, Siege Bosses, Guardian Lord Nahma, Watcher Kaira.
+The event settings also provide a button to open separate observed boss timers.
+EU scheduling follows Europe/Berlin, including daylight saving time.
+Source: https://shugo.gg/timers — checked Oct 12, 2026; source updated Oct 9, 2026.
+These are community schedules, not officially confirmed Global times.
+Recurring starts are calculated automatically from the bundled schedule.
+Future schedule changes are not downloaded automatically. Verify availability in game.
+Observed boss times may require opening the in-game boss list; estimates are marked.
 
-Таймеры боссов: откройте в игре карту → Исследование → полевые монстры — таймеры придут прямо с сервера
-и дальше считаются в окне таймеров (золотая кнопка внизу оверлея).
+DATA ACCESS
+The application passively captures AION2.exe network traffic using Npcap.
+No game-memory access, injection, game-file changes, outgoing game packets or
+simulated game input are implemented. Only its own windows and files are changed.
+Shared incoming packets may contain other players; filtering limits results and
+new name caches to you and your party, rather than preventing shared packet receipt.
+NPC and boss data are read for the requested timers.
+This is not a statement of publisher approval.
+Settings and statistics are stored in userdata inside the program folder.
+Installed copies use GitHub releases from Zerafithekitten/zerafi-dps-monitor.
+Automatic checking and installation can be disabled in Settings.
+Portable copies offer release downloads; install Setup for automatic replacement.
 
-Настройки, история и таймеры хранятся в %AppData%\AionMeter и не пропадают при обновлении. При удалении
-через «Приложения» установщик спросит, удалить ли и их.
+VALIDATION
+Release build completed. 133 combat/storage/schedule/latency tests passed. Compact meter and event previews were visually checked.
+Own-window click-through, restoration and repeated toggles passed native checks.
+System-wide hotkey registration is blocked in the protected test environment
+(Windows error 5). Actual hotkey operation and clicks passing into the game still
+require verification outside that environment.
+No live AION 2 or Npcap capture test has been performed on the build machine.
+Preview images use scripted sample data.
 
-Метр только слушает сетевой трафик вашей игры. Он не читает память игры, ничего в неё не внедряет и не
-отправляет. Тем не менее сторонние программы могут нарушать правила игры — используйте на свой риск.
-Лицензия GPL-3.0 (файл LICENSE). Исходный код распространяется вместе с программой (архив «-source»).
-Новые версии и исходный код: https://github.com/cyberbadger6969/aion2-dps-meter
-
-
-ENGLISH
-
-Needs: Windows 10 or 11 (64-bit), AION 2 (Global: EU / NA).
-
-Installer (easiest)
-1. Run AION2DpsMeter-Setup-v<version>.exe. If Windows says "Windows protected your PC", click "More info" →
-   "Run anyway" (the program is not signed with a paid certificate).
-2. Setup checks for Npcap, the free capture driver the meter needs to see the game. If it is missing, click
-   "Open npcap.com", install Npcap with its default options and return to Setup.
-3. Done: an "AION2 DPS Meter" shortcut on the desktop and in the Start menu. No administrator rights needed.
-   Update: the meter updates itself: it downloads a new version and installs it when you are not playing
-   (or after 10 minutes without a fight), then restarts. Running the newer installer by hand works too.
-   Uninstall: Settings → Apps → AION2 DPS Meter.
-
-Without installation (.zip)
-1. Install Npcap: https://npcap.com/#download (default options).
-2. Unzip the archive into any folder, e.g. C:\Games\AION2DpsMeter (do not run it from inside the zip), and
-   start AION2DpsMeter.exe.
-   Update: unzip the new version over the old one. Uninstall: delete the folder.
-
-Using it
-Play: the overlay comes up when the game starts and in every fight. Starting the meter again (the shortcut) shows it too. The game sends player names on a loading screen,
-so start the meter before entering a dungeon.
-
-The gold "A" in the notification area opens the menu: overlay, fight history, boss timers, settings, language.
-
-Hotkeys (change them in Settings):
-  Ctrl+Shift+D — show / hide the overlay        Ctrl+Shift+R — restart the meter
-  Ctrl+Shift+L — click-through                  Ctrl+Shift+T — boss timers
-
-Boss timers: open the in-game map → Exploration → field monsters and the timers come in from the server;
-the timer window (gold button at the bottom of the overlay) keeps counting.
-
-Settings, history and timers live in %AppData%\AionMeter and survive updates. Uninstalling from Apps asks
-whether to delete them too.
-
-The meter only listens to your own game's network traffic. It never reads game memory, injects anything or
-sends anything to the game. Third-party tools may still be against the game's terms — use at your own risk.
-Licence GPL-3.0 (LICENSE file). The source code is handed out with the program (the "-source" archive).
-New versions and source code: https://github.com/cyberbadger6969/aion2-dps-meter
+SOURCE AND LICENSE
+Based on https://github.com/cyberbadger6969/aion2-dps-meter
+Base revision: 414de5c1d5f3d45ce35701bd25229c2dba736bb6
+GPL-3.0; LICENSE and complete customized source are included.
+Game tables and graphics: see data/NOTICE.md. AION 2 belongs to NCSOFT.

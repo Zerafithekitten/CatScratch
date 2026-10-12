@@ -9,6 +9,7 @@ public enum TargetMode
 
 public sealed class MeterOptions
 {
+    public bool PartyOnly { get; set; }
     public TargetMode TargetMode { get; set; } = TargetMode.BossOnly;
 
     /// <summary>End the segment after this long without outgoing damage (no boss alive).</summary>

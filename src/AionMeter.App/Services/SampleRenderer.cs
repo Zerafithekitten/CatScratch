@@ -40,6 +40,24 @@ public static class SampleRenderer
         Action refresh;
         switch (o.Window)
         {
+            case "events":
+            case "timer-card":
+                var cards = new TimerCards(meter, persistent: false);
+                cards.Saved.Events.Add(new("sample-event", "Example: Shugo Festival", "EVENT", DateTimeOffset.UtcNow.AddHours(2)));
+                cards.Saved.Events.Add(new("sample-pvp", "Example: PvP event", "PVP", DateTimeOffset.UtcNow.AddMinutes(45)));
+                if (o.Window == "timer-card")
+                {
+                    host = new TimerCardWindow(cards, "sample-event", new CardPlacement());
+                    WindowClickThrough.Attach(host, () => false);
+                    refresh = () => { };
+                    break;
+                }
+                cards.Saved.SelectedEvents = ["shugo", "rift"];
+                var hub = new TimerHubWindow(cards) { Width = o.Width ?? 480, Height = 80, ClockOverride = () => new DateTimeOffset(2026, 10, 13, 13, 42, 0, TimeSpan.FromHours(2)) };
+                WindowClickThrough.Attach(hub, () => false);
+                host = hub;
+                refresh = hub.Reload;
+                break;
             case "breakdown":
                 var segment = meter.Tracker.Segments()[0].Id;
                 var breakdown = new BreakdownWindow(new ViewModels.LiveFightView(meter.Tracker, segment), 2, meter.Data, meter.Icons, meter.Portraits)
@@ -72,6 +90,8 @@ public static class SampleRenderer
                 break;
             default:
                 if (o.Window == "overlay-update") meter.Updates.Preview(SampleRelease(meter.Updates.Current)); // with the footer's update banner
+                if (o.Window == "clickthrough") meter.Settings.ClickThrough = true;
+                if (o.Window == "expanded") meter.Settings.CompactMode = false;
                 var overlay = new OverlayWindow(meter) { Width = o.Width ?? 560, Height = o.Height ?? 820 };
                 host = overlay;
                 refresh = overlay.Refresh;

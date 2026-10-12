@@ -24,6 +24,8 @@ public sealed class MeterService : IDisposable
         Portraits = new BossPortraits(DataDirectory, settings.DownloadIcons);
         Options = new MeterOptions();
         settings.ApplyTo(Options);
+        Options.PartyOnly = !settings.Transient;
+        Options.MaxSegments = HistoryStore.MaxSavedFights;
         Tracker = new CombatTracker(Data, Options);
         History = new HistoryStore(Path.Combine(AppSettings.AppDataDir, "fights"));
         Timers = new BossTimers(Path.Combine(AppSettings.AppDataDir, "boss-timers.json"), Data, DataDirectory, persistent: !settings.Transient);
@@ -77,6 +79,7 @@ public sealed class MeterService : IDisposable
     public BossPortraits Portraits { get; }
     public MeterOptions Options { get; }
     public CombatTracker Tracker { get; }
+    public Core.Events.LiveIdentity LiveIdentity { get; } = new();
     public HistoryStore History { get; }
     public BossTimers Timers { get; }
     /// <summary>New versions on GitHub; checks only run once the app calls <see cref="Updater.Start"/>.</summary>
@@ -89,6 +92,8 @@ public sealed class MeterService : IDisposable
         : _capture?.Status ?? new CaptureStatus(CaptureState.Stopped, "Capture not available");
 
     public bool DemoRunning => _demo?.IsRunning == true;
+    public double? LatencyMs => !_replaying && !DemoRunning && !_restarting && _capture is LiveCapture live
+        ? live.Latency.Read(DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()) : null;
 
     /// <summary>Raised (on a worker thread) after a fight was written to disk.</summary>
     public event Action<string>? FightSaved;
@@ -99,10 +104,11 @@ public sealed class MeterService : IDisposable
     /// </summary>
     public void Replay(string path)
     {
+        LiveIdentity.Reset(); Tracker.InvalidateParty();
         _replay?.Dispose();
         Tracker.Reset();
         _replaying = true;
-        if (_capture is not null) _capture.EventDecoded -= Tracker.Process;
+        if (_capture is not null) _capture.EventDecoded -= ProcessLiveEvent;
 
         var replay = new PcapReplaySource(Data, path, realtime: false);
         replay.EventDecoded += Tracker.Process;
@@ -112,7 +118,7 @@ public sealed class MeterService : IDisposable
             Tracker.Tick(Tracker.LastEventMs + 3_600_000); // close the recording's last fight
             _savedNamesVersion = Tracker.CacheVersion; // names from a recording must not overwrite the live cache
             _replaying = false;
-            if (_capture is not null) _capture.EventDecoded += Tracker.Process;
+            if (_capture is not null) _capture.EventDecoded += ProcessLiveEvent;
         };
         _replay = replay;
         replay.Start();
@@ -123,6 +129,12 @@ public sealed class MeterService : IDisposable
     private readonly object _captureGate = new();
     private volatile bool _restarting;
 
+    private void ProcessLiveEvent(Core.Events.GameEvent value)
+    {
+        Tracker.Process(value);
+        if (!_replaying && !DemoRunning) LiveIdentity.Observe(value);
+    }
+
     public void StartCapture()
     {
         lock (_captureGate)
@@ -131,7 +143,11 @@ public sealed class MeterService : IDisposable
             try
             {
                 _capture = CaptureFactory(Data);
-                _capture.EventDecoded += Tracker.Process;
+                _capture.EventDecoded += ProcessLiveEvent;
+                _capture.StatusChanged += status =>
+                {
+                    LiveIdentity.ObserveCaptureStatus(status, Tracker.InvalidateParty);
+                };
                 _capture.Start();
             }
             catch (Exception ex)
@@ -152,6 +168,7 @@ public sealed class MeterService : IDisposable
             {
                 _capture?.Dispose();
                 _capture = null;
+                LiveIdentity.Reset(); Tracker.InvalidateParty();
                 StartCapture();
             }
             finally
@@ -177,6 +194,7 @@ public sealed class MeterService : IDisposable
 
     public void StartDemo(int seconds = 45)
     {
+        LiveIdentity.Reset(); Tracker.InvalidateParty();
         _demo?.Dispose();
         _demo = new DemoFightSource(Tracker.Process);
         _demo.Start(TimeSpan.FromSeconds(seconds));

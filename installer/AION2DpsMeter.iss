@@ -1,7 +1,7 @@
-﻿; AION2 DPS Meter — Windows installer (Inno Setup 7, https://jrsoftware.org).
+; Zerafi DPS Monitor — Windows installer (Inno Setup 7, https://jrsoftware.org).
 ; Built by build-release.ps1:
 ;   ISCC /DAppVer=<x.y.z> /DPayloadDir=<self-contained publish folder> /O<output folder> AION2DpsMeter.iss
-; Installs for the current user only (no administrator prompt) into %LocalAppData%\Programs\AION2 DPS Meter.
+; Installs for the current user only (no administrator prompt) into %LocalAppData%\Programs\Zerafi DPS Monitor.
 ; Settings, fight history and boss timers stay in %AppData%\AionMeter; uninstall asks before deleting them.
 
 #ifndef AppVer
@@ -10,19 +10,22 @@
 #ifndef PayloadDir
   #error Pass /DPayloadDir=<folder with the published program>
 #endif
-#define AppName "AION2 DPS Meter"
+#define AppName "Zerafi DPS Monitor"
 #define AppExe "AION2DpsMeter.exe"
 
+#ifndef UpdateRepo
+  #error Pass /DUpdateRepo=<owner/repo>
+#endif
 [Setup]
 ; Identifies the program for upgrades and uninstall: never change it.
-AppId={{AE1B2590-0A93-4500-9CB1-0F543771957A}
+AppId={{BCF3CB47-B2BC-4F8D-964A-A94F061C81E2}
 AppName={#AppName}
 AppVersion={#AppVer}
 AppVerName={#AppName} {#AppVer}
 AppPublisher={#AppName}
-AppPublisherURL=https://github.com/cyberbadger6969/aion2-dps-meter
-AppSupportURL=https://github.com/cyberbadger6969/aion2-dps-meter/issues
-AppUpdatesURL=https://github.com/cyberbadger6969/aion2-dps-meter/releases
+AppPublisherURL=https://github.com/{#UpdateRepo}
+AppSupportURL=https://github.com/{#UpdateRepo}/issues
+AppUpdatesURL=https://github.com/{#UpdateRepo}/releases
 VersionInfoDescription={#AppName} Setup
 DefaultDirName={autopf}\{#AppName}
 DisableProgramGroupPage=yes
@@ -59,7 +62,7 @@ en.NpcapRecheck=Check again
 en.NpcapFound=✔  Npcap found, you are all set.
 en.NpcapMissing=✖  Npcap not found yet.
 en.NpcapContinue=Npcap is still not installed. Install the meter anyway?%n%nThe meter will remind you about Npcap when it starts.
-en.CloseRunning=AION2 DPS Meter is running. Close it and continue?
+en.CloseRunning=Zerafi DPS Monitor is running. Close it and continue?
 en.RemoveUserData=Also delete your settings, fight history and boss timers?%n%n%1
 ru.NpcapTitle=Нужен Npcap
 ru.NpcapSubtitle=Бесплатный драйвер захвата трафика: через него метр видит игру.
@@ -69,7 +72,7 @@ ru.NpcapRecheck=Проверить снова
 ru.NpcapFound=✔  Npcap найден, всё готово.
 ru.NpcapMissing=✖  Npcap пока не найден.
 ru.NpcapContinue=Npcap всё ещё не установлен. Установить метр без него?%n%nМетр напомнит про Npcap при запуске.
-ru.CloseRunning=AION2 DPS Meter запущен. Закрыть его и продолжить?
+ru.CloseRunning=Zerafi DPS Monitor запущен. Закрыть его и продолжить?
 ru.RemoveUserData=Удалить также настройки, историю боёв и таймеры боссов?%n%n%1
 
 [Files]
@@ -179,7 +182,7 @@ end;
 // deleted is not put back. (The key is AppId's uninstall entry.)
 function DesktopShortcutWanted: Boolean;
 begin
-  Result := not RegValueExists(HKCU, 'Software\Microsoft\Windows\CurrentVersion\Uninstall\{AE1B2590-0A93-4500-9CB1-0F543771957A}_is1', 'UninstallString')
+  Result := not RegValueExists(HKCU, 'Software\Microsoft\Windows\CurrentVersion\Uninstall\{BCF3CB47-B2BC-4F8D-964A-A94F061C81E2}_is1', 'UninstallString')
             or FileExists(ExpandConstant('{autodesktop}\{#AppName}.lnk'));
 end;
 
@@ -262,7 +265,7 @@ var
 begin
   if (CurUninstallStep = usPostUninstall) and not UninstallSilent then
   begin
-    Data := ExpandConstant('{userappdata}\AionMeter');
+    Data := ExpandConstant('{app}\userdata');
     if DirExists(Data) and
        (MsgBox(FmtMessage(CustomMessage('RemoveUserData'), [Data]), mbConfirmation, MB_YESNO or MB_DEFBUTTON2) = IDYES) then
       DelTree(Data, True, True, True);

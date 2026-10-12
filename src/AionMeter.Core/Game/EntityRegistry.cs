@@ -107,7 +107,7 @@ public sealed class EntityRegistry
         {
             // A name belongs to one entity at a time: forget stale ids still carrying it.
             if (p.Name != name)
-                foreach (var other in _players.Values.Where(o => o.ActorId != actorId && o.Name == name).ToList())
+                foreach (var other in _players.Values.Where(o => o.ActorId != actorId && o.Name == name && (serverId == 0 || o.ServerId == 0 || o.ServerId == serverId)).ToList())
                     _players.Remove(other.ActorId);
             p.Name = name;
             ApplyGear(p);

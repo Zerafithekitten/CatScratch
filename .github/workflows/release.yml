@@ -1,0 +1,54 @@
+name: Windows release
+on:
+  push:
+    tags: ['v*']
+permissions:
+  contents: write
+jobs:
+  release:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - name: Validate version and test
+        shell: pwsh
+        run: |
+          $version = $env:GITHUB_REF_NAME.TrimStart('v')
+          if ($version -notmatch '^\d+\.\d+\.\d+$') { throw 'Use a tag like v1.0.0' }
+          "APP_VERSION=$version" >> $env:GITHUB_ENV
+          dotnet test tests/AionMeter.Tests/AionMeter.Tests.csproj -c Release
+          if ($LASTEXITCODE) { throw 'Tests failed' }
+      - name: Build self-contained Windows app
+        shell: pwsh
+        run: |
+          dotnet publish src/AionMeter.App/AionMeter.App.csproj -c Release -r win-x64 --self-contained true -p:Version=$env:APP_VERSION -p:UpdateRepository=$env:GITHUB_REPOSITORY -o dist/payload
+          if ($LASTEXITCODE) { throw 'Publish failed' }
+          Copy-Item LICENSE dist/payload
+          Copy-Item INSTALL.txt dist/payload
+          Compress-Archive -Path dist/payload/* -DestinationPath dist/AION2DpsMeter-win-x64.zip
+          git archive --format=zip --output=dist/AION2DpsMonitor-source.zip HEAD
+      - name: Install official Inno Setup compiler
+        shell: pwsh
+        run: |
+          Invoke-WebRequest https://github.com/jrsoftware/issrc/releases/download/is-7_1_0/innosetup-7.1.0-x64.exe -OutFile "$env:RUNNER_TEMP/inno.exe"
+          $signature = Get-AuthenticodeSignature "$env:RUNNER_TEMP/inno.exe"
+          if ($signature.Status -ne 'Valid' -or $signature.SignerCertificate.Subject -notmatch 'Pyrsys') { throw 'Compiler signature invalid' }
+          $compiler = "$env:RUNNER_TEMP/Inno"
+          $install = Start-Process "$env:RUNNER_TEMP/inno.exe" -ArgumentList @('/VERYSILENT','/SUPPRESSMSGBOXES','/NORESTART',("/DIR=`"$compiler`"")) -Wait -PassThru
+          if ($install.ExitCode) { throw 'Compiler installation failed' }
+          "INNO_COMPILER=$compiler/ISCC.exe" >> $env:GITHUB_ENV
+      - name: Build installer
+        shell: pwsh
+        run: |
+          & $env:INNO_COMPILER /Qp "/DAppVer=$env:APP_VERSION" "/DUpdateRepo=$env:GITHUB_REPOSITORY" "/DPayloadDir=$PWD/dist/payload" "/O$PWD/dist" installer/AION2DpsMeter.iss
+          if ($LASTEXITCODE) { throw 'Installer build failed' }
+          Copy-Item "dist/AION2DpsMeter-Setup-v$env:APP_VERSION.exe" dist/AION2DpsMeter-Setup.exe
+      - name: Publish release downloads
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create $env:GITHUB_REF_NAME dist/AION2DpsMeter-Setup.exe dist/AION2DpsMeter-win-x64.zip dist/AION2DpsMonitor-source.zip --verify-tag --generate-notes
+          if ($LASTEXITCODE) { throw 'Release publication failed' }

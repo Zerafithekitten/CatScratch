@@ -24,9 +24,11 @@ public sealed record ReleaseAsset(string Name, long Size, string Url, string? Sh
 /// </summary>
 public sealed class UpdateFeed : IDisposable
 {
-    public const string Repository = "cyberbadger6969/aion2-dps-meter";
-    public const string LatestReleaseApi = "https://api.github.com/repos/" + Repository + "/releases/latest";
-    public const string ReleasesPage = "https://github.com/" + Repository + "/releases/latest";
+    public static string Repository { get; } = typeof(UpdateFeed).Assembly.GetCustomAttributes(typeof(System.Reflection.AssemblyMetadataAttribute), false)
+        .Cast<System.Reflection.AssemblyMetadataAttribute>().FirstOrDefault(a => a.Key == "UpdateRepository")?.Value ?? "";
+    public static bool IsConfigured => System.Text.RegularExpressions.Regex.IsMatch(Repository, @"^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$");
+    public static string LatestReleaseApi => IsConfigured ? "https://api.github.com/repos/" + Repository + "/releases/latest" : "";
+    public static string ReleasesPage => IsConfigured ? "https://github.com/" + Repository + "/releases/latest" : "https://github.com";
 
     private static readonly TimeSpan ApiTimeout = TimeSpan.FromSeconds(20);
     private static readonly TimeSpan DownloadTimeout = TimeSpan.FromMinutes(30);
@@ -34,14 +36,14 @@ public sealed class UpdateFeed : IDisposable
     private readonly HttpClient _http;
     private readonly string _api;
 
-    public UpdateFeed(string userAgent, string api = LatestReleaseApi) : this(userAgent, new HttpClientHandler(), api)
+    public UpdateFeed(string userAgent, string? api = null) : this(userAgent, new HttpClientHandler(), api)
     {
     }
 
     /// <param name="handler">Where requests go (tests pass an in-memory one).</param>
-    public UpdateFeed(string userAgent, HttpMessageHandler handler, string api = LatestReleaseApi)
+    public UpdateFeed(string userAgent, HttpMessageHandler handler, string? api = null)
     {
-        _api = api;
+        _api = api ?? LatestReleaseApi;
         _http = new HttpClient(handler) { Timeout = Timeout.InfiniteTimeSpan }; // per-request timeouts below
         _http.DefaultRequestHeaders.UserAgent.ParseAdd(userAgent);
     }
@@ -49,6 +51,7 @@ public sealed class UpdateFeed : IDisposable
     /// <summary>The newest release, or null when the repository has none yet.</summary>
     public async Task<ReleaseInfo?> GetLatestAsync(CancellationToken ct = default)
     {
+        if (string.IsNullOrEmpty(_api)) throw new InvalidOperationException("No update repository configured for this build.");
         using var timeout = CancellationTokenSource.CreateLinkedTokenSource(ct);
         timeout.CancelAfter(ApiTimeout);
         using var request = new HttpRequestMessage(HttpMethod.Get, _api);

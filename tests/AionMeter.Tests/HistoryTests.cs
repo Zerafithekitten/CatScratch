@@ -21,6 +21,39 @@ public sealed class HistoryTests : IDisposable
     }
 
     [Fact]
+    public void Only_ten_newest_fights_and_index_entries_remain()
+    {
+        var store = new HistoryStore(_dir);
+        for (var i = 0; i < 14; i++) store.Save(Fight($"Fight {i}", i, false, 1));
+        Assert.Equal(Enumerable.Range(4, 10).Reverse().Select(i => $"Fight {i}"), store.List().Select(e => e.Title));
+        Assert.Equal(10, System.IO.Directory.GetFiles(_dir, "*.json").Length);
+        Assert.Equal(10, File.ReadAllLines(Path.Combine(_dir, "index.jsonl")).Length);
+        Assert.Equal(10, new HistoryStore(_dir).List().Count);
+    }
+
+    [Fact]
+    public void Existing_large_history_is_pruned_on_start_even_without_index()
+    {
+        System.IO.Directory.CreateDirectory(_dir);
+        for (var i = 0; i < 14; i++)
+            File.WriteAllText(Path.Combine(_dir, $"legacy-{i}.json"), System.Text.Json.JsonSerializer.Serialize(Fight($"Fight {i}", i, false, 1)));
+        var store = new HistoryStore(_dir);
+        Assert.Equal(10, store.List().Count);
+        Assert.Equal("Fight 13", store.List()[0].Title);
+        Assert.Equal("Fight 4", store.List()[9].Title);
+        Assert.Equal(10, System.IO.Directory.GetFiles(_dir, "*.json").Length);
+    }
+
+    [Fact]
+    public void Equal_time_and_title_do_not_overwrite_distinct_fights()
+    {
+        var store = new HistoryStore(_dir);
+        store.Save(Fight("Berk", 10, true, 1));
+        store.Save(Fight("Berk", 10, true, 1));
+        Assert.Equal(2, store.List().Count);
+    }
+
+    [Fact]
     public void Index_survives_restart_and_tracks_deletes()
     {
         var store = new HistoryStore(_dir);

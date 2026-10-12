@@ -1,0 +1,5 @@
+<Project>
+  <PropertyGroup>
+    <UpdateRepository Condition="'$(UpdateRepository)' == ''">Zerafithekitten/zerafi-dps-monitor</UpdateRepository>
+  </PropertyGroup>
+</Project>

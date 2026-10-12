@@ -34,7 +34,7 @@ public static class AppHost
 
 public partial class App : Application
 {
-    private const string ShowRequestName = "AionMeter.ShowOverlay"; // set by a second start of the app
+    private const string ShowRequestName = "AionDpsMonitor.ShowOverlay"; // set by a second start of the app
     private Mutex? _singleInstance;
     private EventWaitHandle? _showRequest;
     private RegisteredWaitHandle? _showWait;
@@ -46,12 +46,21 @@ public partial class App : Application
     private HistoryWindow? _history;
     private SettingsWindow? _settingsWindow;
     private BossTimersWindow? _timersWindow;
+    private TimerHubWindow? _timerHub;
+    private TimerCards? _timerCards;
     private readonly Dictionary<object, BreakdownWindow> _breakdowns = new();
     private int _ticks;
 
     protected override void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);
+        if (ArgValue(e.Args, "--check-interaction") is { } checkPath)
+        {
+            Log.Enabled = false;
+            InteractionChecks.Run(checkPath);
+            Shutdown();
+            return;
+        }
         if (ArgValue(e.Args, "--render-sample") is { } samplePath)
         {
             Log.Enabled = false;
@@ -75,7 +84,7 @@ public partial class App : Application
             Shutdown();
             return;
         }
-        _singleInstance = new Mutex(true, "AionMeter.SingleInstance", out var first);
+        _singleInstance = new Mutex(true, "AionDpsMonitor.SingleInstance", out var first);
         if (!first)
         {
             // Started again (the shortcut clicked twice): the running meter shows its overlay, this copy leaves quietly.
@@ -95,6 +104,16 @@ public partial class App : Application
         AppDomain.CurrentDomain.UnhandledException += (_, ex) => Log.Error("Fatal exception", ex.ExceptionObject as Exception);
 
         var settings = AppSettings.Load();
+        settings.AutoHideSeconds = 0;
+        settings.ClickThrough = false;
+        settings.ShowGear = true;
+        if (Core.Updates.UpdateFeed.IsConfigured && settings.UpdateSource != Core.Updates.UpdateFeed.Repository)
+        {
+            settings.UpdateSource = Core.Updates.UpdateFeed.Repository;
+            settings.CheckUpdates = true;
+            settings.AutoInstallUpdates = true;
+        }
+        if (!Core.Updates.UpdateFeed.IsConfigured) { settings.CheckUpdates = false; settings.AutoInstallUpdates = false; }
         settings.Save(); // persist any migration done while loading
         UiText.Use(settings.Language);
         Func<Core.Game.GameData, IEventSource> factory = data => new LiveCapture(data, new LiveCaptureOptions
@@ -104,6 +123,7 @@ public partial class App : Application
         });
 
         _meter = new MeterService(settings, factory);
+        _timerCards = new TimerCards(_meter);
         Log.Info($"Started. Data: {_meter.Data.Skills.Count} skills, {_meter.Data.Npcs.Count} npcs.");
         _meter.StartCapture();
 
@@ -125,6 +145,7 @@ public partial class App : Application
             Reset: RestartMeter,
             History: ShowHistory,
             BossTimers: ShowBossTimers,
+            Events: ShowTimerHub,
             Settings: ShowSettings,
             Demo: () => _meter.StartDemo(),
             Replay: PickReplay,
@@ -137,6 +158,7 @@ public partial class App : Application
                 Shutdown();
             }));
         SessionEnding += (_, end) => Log.Info($"Windows {end.ReasonSessionEnding}: closing");
+        if (_timerCards!.Saved.EventWindowOpen) ShowTimerHub();
 
         // A new player's first start: without Npcap nothing can be measured — say so and offer the download.
         if (!LiveCapture.IsNpcapInstalled())
@@ -178,9 +200,13 @@ public partial class App : Application
         }
     }
 
-    private static void ShowNpcapHelp()
+    public static void ShowNpcapHelp()
     {
-        var answer = MessageBox.Show(UiText.Current.NpcapNeeded, AppInfo.Name, MessageBoxButton.YesNo, MessageBoxImage.Information);
+        var answer = MessageBox.Show(
+            "Live DPS requires Npcap. The driver captures network traffic; the meter does not modify game files.\n\n" +
+            "Open the official download page now? Download and install Npcap yourself.\n\n" +
+            "Then restart the meter and teleport once or change zones in game. Your character is only confirmed after fresh identity data arrives.",
+            "Npcap missing – open download?", MessageBoxButton.YesNo, MessageBoxImage.Information);
         if (answer != MessageBoxResult.Yes) return;
         try
         {
@@ -272,15 +298,38 @@ public partial class App : Application
         ShowByItself();
     }
 
+    private bool _hotkeysSuspended;
+
+    public void SuspendHotkeys()
+    {
+        _hotkeysSuspended = true;
+        _hotkeys?.UnregisterAll();
+    }
+
+    public void ResumeHotkeys()
+    {
+        if (!_hotkeysSuspended) return;
+        _hotkeysSuspended = false;
+        RegisterHotkeys();
+    }
+
     private void RegisterHotkeys()
     {
-        if (_hotkeys is null) return;
+        if (_hotkeys is null || _hotkeysSuspended) return;
         _hotkeys.UnregisterAll();
         var s = _meter.Settings;
         _hotkeys.Register(s.HotkeyToggleOverlay, () => SetOverlayVisible(!_overlay.IsVisible));
         _hotkeys.Register(s.HotkeyReset, RestartMeter);
         _overlay.ApplyHotkeyTips();
-        _hotkeys.Register(s.HotkeyClickThrough, ToggleClickThrough);
+        if (!_hotkeys.Register(s.HotkeyClickThrough, ToggleClickThrough))
+        {
+            var reason = _hotkeys.LastRegistrationError == 5
+                ? "Windows refused to register a global hotkey."
+                : "The shortcut is invalid or already used by another application.";
+            Dispatcher.BeginInvoke(() => MessageBox.Show(
+                $"Could not register {s.HotkeyClickThrough}. {reason}\n\nChoose another shortcut in Settings > HOTKEYS. You can also toggle click-through from the system tray icon.",
+                "Hotkey registration failed", MessageBoxButton.OK, MessageBoxImage.Information));
+        }
         _hotkeys.Register(s.HotkeyTimers, ToggleBossTimers);
     }
 
@@ -315,13 +364,12 @@ public partial class App : Application
         _meter.Settings.Save();
     }
 
-    private void ToggleClickThrough()
+    public void ToggleClickThrough()
     {
         var on = !_meter.Settings.ClickThrough;
         _overlay.SetClickThrough(on);
-        _tray?.ShowBalloon(AppInfo.Name, on
-            ? string.Format(UiText.Current.ClickThroughOn, _meter.Settings.HotkeyClickThrough)
-            : UiText.Current.ClickThroughOff);
+        _overlay.Refresh();
+        _tray?.Update(_overlay.IsVisible, on, _meter.CaptureStatus.Message);
     }
 
     public void ShowBreakdown(Guid segmentId, uint actorId) =>
@@ -338,6 +386,7 @@ public partial class App : Application
             return;
         }
         var w = new BreakdownWindow(view, actorId, _meter.Data, _meter.Icons, _meter.Portraits);
+        WindowClickThrough.Attach(w, () => _meter.Settings.ClickThrough, () => _meter.Settings.WindowOpacity);
         _breakdowns[key] = w;
         w.Closed += (_, _) => _breakdowns.Remove(key);
         w.Show();
@@ -372,6 +421,7 @@ public partial class App : Application
             return;
         }
         _history = new HistoryWindow(_meter);
+        WindowClickThrough.Attach(_history, () => _meter.Settings.ClickThrough, () => _meter.Settings.WindowOpacity);
         _history.Closed += (_, _) => _history = null;
         _history.Show();
     }
@@ -391,8 +441,20 @@ public partial class App : Application
             return;
         }
         _timersWindow = new BossTimersWindow(_meter);
+        WindowClickThrough.Attach(_timersWindow, () => _meter.Settings.ClickThrough, () => _meter.Settings.WindowOpacity);
         _timersWindow.Closed += (_, _) => _timersWindow = null;
         _timersWindow.Show();
+    }
+
+    public void ShowTimerHub()
+    {
+        // Opening the event controls is an explicit request to interact with the displays.
+        if (_meter.Settings.ClickThrough) ToggleClickThrough();
+        if (_timerHub is { IsLoaded: true }) { Activate(_timerHub); return; }
+        _timerHub = new TimerHubWindow(_timerCards!);
+        WindowClickThrough.Attach(_timerHub, () => _meter.Settings.ClickThrough, () => _timerCards!.Saved.EventOpacity);
+        _timerHub.Closed += (_, _) => _timerHub = null;
+        _timerHub.Show();
     }
 
     /// <summary>Tray notification (and a chime) shortly before a tracked boss respawns.</summary>
@@ -574,6 +636,7 @@ public partial class App : Application
     {
         if (_meter is not null) Log.Info("Exiting");
         _timer?.Stop();
+        _timerCards?.Dispose();
         _showWait?.Unregister(null);
         _showRequest?.Dispose();
         _hotkeys?.Dispose();

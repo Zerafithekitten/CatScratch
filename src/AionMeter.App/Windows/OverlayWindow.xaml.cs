@@ -14,7 +14,7 @@ using AionMeter.Core.Storage;
 
 namespace AionMeter.App.Windows;
 
-public partial class OverlayWindow : Window
+public partial class OverlayWindow : Window, IDisplayAppearance
 {
     private readonly MeterService _meter;
     private readonly AppSettings _settings;
@@ -37,6 +37,9 @@ public partial class OverlayWindow : Window
         InitializeComponent();
         _settings.BackgroundOpacity = opacity;
         DataContext = _vm;
+        WindowClickThrough.Attach(this, () => _settings.ClickThrough, () => _settings.WindowOpacity);
+        MinWidth = _settings.CompactMode ? 280 : 520;
+        Closing += (_, _) => AppHost.Current.Shutdown();
 
         Left = _settings.OverlayLeft;
         Top = _settings.OverlayTop;
@@ -48,9 +51,11 @@ public partial class OverlayWindow : Window
         FrameBackground.Opacity = _settings.BackgroundOpacity;
         ApplyLock();
         ApplyRowSize(_settings.RowSize);
+        ApplyCompactLayout();
         UpdateModeLabel();
         ApplyHotkeyTips();
         LayoutUpdated += (_, _) => FitNames();
+        SizeChanged += (_, _) => { if (IsLoaded && WindowState == WindowState.Normal) SavePlacement(); };
         _meter.Updates.Changed += ShowUpdateBanner;
         ShowUpdateBanner();
 
@@ -61,6 +66,7 @@ public partial class OverlayWindow : Window
         // label (the timer stays).
         MouseEnter += (_, _) =>
         {
+            if (_settings.CompactMode) return;
             TitleText.Visibility = Visibility.Collapsed;
             LabelPanel.Visibility = Visibility.Collapsed;
             Toolbar.Visibility = Visibility.Visible;
@@ -69,14 +75,14 @@ public partial class OverlayWindow : Window
         {
             Toolbar.Visibility = Visibility.Collapsed;
             TitleText.Visibility = Visibility.Visible;
-            LabelPanel.Visibility = Visibility.Visible;
+            LabelPanel.Visibility = _settings.CompactMode ? Visibility.Collapsed : Visibility.Visible;
         };
 
         SourceInitialized += (_, _) =>
         {
             _hwnd = new WindowInteropHelper(this).Handle;
             // Clicking the overlay must never pull keyboard focus away from the game window.
-            NativeMethods.SetExStyle(_hwnd, NativeMethods.WS_EX_NOACTIVATE | NativeMethods.WS_EX_TOOLWINDOW);
+            NativeMethods.SetExStyle(_hwnd, 0, NativeMethods.WS_EX_NOACTIVATE | NativeMethods.WS_EX_TOOLWINDOW);
             ApplyClickThrough();
             FitToMonitor();
         };
@@ -84,9 +90,53 @@ public partial class OverlayWindow : Window
 
     public nint Handle => _hwnd;
 
+    private bool _displayOnly;
+    private Brush? _shellBackground, _shellBorder, _frameBorder;
+    private System.Windows.Media.Effects.Effect? _frameEffect;
+    private Visibility _toolbarVisibility;
+    public void SetDisplayOnly(bool enabled)
+    {
+        if (!enabled && !_displayOnly) return;
+        if (enabled && !_displayOnly)
+        {
+            _shellBackground=OuterShell.Background; _shellBorder=OuterShell.BorderBrush;
+            _frameBorder=Frame.BorderBrush; _frameEffect=Frame.Effect; _toolbarVisibility=Toolbar.Visibility;
+        }
+        _displayOnly=enabled;
+        OuterShell.Background=enabled ? Brushes.Transparent : _shellBackground;
+        OuterShell.BorderBrush=enabled ? Brushes.Transparent : _shellBorder;
+        Frame.Background=enabled ? Brushes.Transparent : FrameBackground;
+        Frame.BorderBrush=enabled ? Brushes.Transparent : _frameBorder;
+        Frame.Effect=enabled ? null : _frameEffect;
+        var controls=enabled ? Visibility.Hidden : Visibility.Visible;
+        ShellCaption.Visibility=controls; ShellClickButton.Visibility=controls;
+        ShellSettingsButton.Visibility=controls; ShellHideButton.Visibility=controls;
+        FooterControls.Visibility=controls; ResizeGrip.Visibility=controls;
+        PlayerScroll.VerticalScrollBarVisibility=enabled ? ScrollBarVisibility.Hidden : ScrollBarVisibility.Auto;
+        Toolbar.Visibility=enabled ? Visibility.Collapsed : _toolbarVisibility;
+    }
+
     /// <summary>Called by the app's UI timer (≈5 Hz).</summary>
     public void Refresh()
     {
+        SetDisplayOnly(_settings.ClickThrough);
+        _vm.WallClock = TimerCards.Berlin(DateTimeOffset.UtcNow).ToString("HH:mm", System.Globalization.CultureInfo.InvariantCulture);
+        var npcInstalled = LiveCapture.IsNpcapInstalled();
+        NpcapDownloadButton.Visibility = npcInstalled || _meter.Settings.Transient || _meter.DemoRunning ? Visibility.Collapsed : Visibility.Visible;
+        IdentityStatusText.Text = _meter.Settings.Transient || _meter.DemoRunning
+            ? "PREVIEW / DEMO – no confirmed live data"
+            : !npcInstalled
+            ? "Npcap is missing. Open the download page, install it yourself and restart the meter. Then teleport once in game."
+            : _meter.LiveIdentity.Current is { } identity
+            ? (_meter.Tracker.PartyConfirmed ? $"Party confirmed · {identity.Name}" : $"Solo tracking · {identity.Name}")
+            : "Character not confirmed yet. Teleport once or change zones through a loading screen. Waiting for fresh game data…";
+        IdentityStatusText.Foreground = _meter.LiveIdentity.Current is not null && !_meter.DemoRunning
+            ? (Brush)FindResource("Green") : (Brush)FindResource("Amber");
+        ClickModeSlash.Visibility = _settings.ClickThrough ? Visibility.Visible : Visibility.Collapsed;
+        ClickModeCursor.Fill = _settings.ClickThrough ? Brushes.Gray : new SolidColorBrush(Color.FromRgb(121, 227, 207));
+        SetupPanel.Visibility = _settings.CompactMode && (_settings.Transient || _meter.DemoRunning || _meter.LiveIdentity.ActorId is not null) ? Visibility.Collapsed : Visibility.Visible;
+        if (_settings.ClickThrough) SetupPanel.Visibility = Visibility.Collapsed;
+        Title = AppInfo.Name;
         _vm.ShowGear = _settings.ShowGear;
         // Looking at an old fight when a new pull starts: jump back to live so the fight is never missed.
         if ((_saved is not null || _segment is not null) &&
@@ -115,13 +165,17 @@ public partial class OverlayWindow : Window
             _vm.Apply(snap, _settings.MaxRows, _settings.BarsRelativeToTop);
             _vm.SetSegment(_segment is null ? "live" : "session", snap?.StartedAt.ToString("HH:mm"));
         }
+        if (!_settings.Transient && !_meter.DemoRunning && _saved is null && _segment is null && _meter.LiveIdentity.ActorId is null)
+            foreach (var row in _vm.Rows) row.IsSelf = false;
         if (!_settings.ShowBossPanel) _vm.HasBoss = false;
+        if (_settings.CompactMode) _vm.HasBoss = false;
         // The instance's time limit (or the wait after entering), whatever fight is shown: it is about where you are now.
         var wall = ClockOverride?.Invoke() ?? DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
         _vm.SetLimit(_meter.Tracker.NextTimer(wall), wall);
         if (Environment.TickCount64 - _timersLabelAt >= 1_000) UpdateTimersLabel();
 
         var status = _meter.DemoRunning ? new CaptureStatus(CaptureState.Capturing, "Demo fight running") : _meter.CaptureStatus;
+        LatencyText.Text = _meter.LatencyMs is { } latency ? latency<1 ? "RTT <1 ms" : $"RTT {latency:0} ms" : "RTT —";
         // Names are only sent on a loading screen: players already around when the meter started show as #id.
         var unnamed = _vm.Rows.Any(r => r.Name.Contains('#')); // "Templar #10388": the server has not sent this name yet
         _vm.Status = status.State != CaptureState.Capturing ? status.Message
@@ -180,9 +234,16 @@ public partial class OverlayWindow : Window
     /// <summary>Re-reads appearance settings changed in the Settings window.</summary>
     public void ApplyAppearance()
     {
+        var desiredWidth = _settings.OverlayWidth;
+        var desiredHeight = _settings.OverlayHeight;
+        MinWidth = _settings.CompactMode ? 280 : 520;
+        Width = Math.Max(MinWidth, desiredWidth);
+        Height = Math.Max(MinHeight, desiredHeight);
+        WindowClickThrough.SetOpacity(_settings.WindowOpacity);
         OpacitySlider.Value = _settings.BackgroundOpacity;
         FrameBackground.Opacity = _settings.BackgroundOpacity;
         ApplyRowSize(_settings.RowSize);
+        ApplyCompactLayout();
         UpdateModeLabel();
     }
 
@@ -194,8 +255,9 @@ public partial class OverlayWindow : Window
     {
         var k = Math.Clamp(percent, AppSettings.MinRowSize, AppSettings.MaxRowSize) / 100.0;
         var f = Math.Sqrt(k);
-        var height = Math.Round(28 * k);
+        var height = _settings.CompactMode ? Math.Max(28, Math.Round(28 * k)) : Math.Round(44 * k);
         Resources["RowHeight"] = height;
+        Resources["CompactRowHeight"] = height;
         Resources["RowMargin"] = new Thickness(0, 0, 0, Math.Max(1, Math.Round(3 * k)));
         Resources["RowNameFont"] = Math.Round(13.5 * f, 1);
         Resources["RowGearFont"] = Math.Round(12 * f, 1);
@@ -210,8 +272,8 @@ public partial class OverlayWindow : Window
     }
 
     private const int NameColumn = 2, GsColumn = 3, CpColumn = 4, SpacerColumn = 5; // in the row and label grids
-    private const double MinNameWidth = 60;
-    private double _gearWidth; // GS + CP columns when last shown
+
+
 
     /// <summary>
     /// The name column is as wide as the longest name, which may take all the room the other columns leave but no more,
@@ -226,18 +288,6 @@ public partial class OverlayWindow : Window
         for (var i = 0; i < columns.Count; i++)
             if (i is not (NameColumn or SpacerColumn)) others += columns[i].ActualWidth;
         var room = ColumnLabels.ActualWidth - others - 16; // 4 name margin + 12 for the scrollbar
-
-        if (_vm.GearFits && _vm.HasGear && room < MinNameWidth)
-        {
-            _gearWidth = columns[GsColumn].ActualWidth + columns[CpColumn].ActualWidth;
-            _vm.GearFits = false;
-            Refresh();
-        }
-        else if (!_vm.GearFits && room - _gearWidth >= MinNameWidth + 20) // a margin, so it does not flip back and forth
-        {
-            _vm.GearFits = true;
-            Refresh();
-        }
 
         var max = Math.Max(30, Math.Floor(room));
         if (Resources["NameMaxWidth"] is double current && Math.Abs(current - max) < 1) return;
@@ -258,16 +308,17 @@ public partial class OverlayWindow : Window
 
     public void SetClickThrough(bool on)
     {
+        var previous = _settings.ClickThrough;
         _settings.ClickThrough = on;
+        try { ApplyClickThrough(); }
+        catch { _settings.ClickThrough = previous; throw; }
         _settings.Save();
-        ApplyClickThrough();
     }
 
     private void ApplyClickThrough()
     {
         if (_hwnd == 0) return;
-        if (_settings.ClickThrough) NativeMethods.SetExStyle(_hwnd, NativeMethods.WS_EX_TRANSPARENT);
-        else NativeMethods.SetExStyle(_hwnd, 0, NativeMethods.WS_EX_TRANSPARENT);
+        WindowClickThrough.ApplyAll(_settings.ClickThrough);
         Frame.BorderBrush = _settings.ClickThrough ? (Brush)FindResource("Line") : (Brush)FindResource("CardFrame");
     }
 
@@ -645,9 +696,72 @@ public partial class OverlayWindow : Window
         ApplyLock();
     }
 
+    private void ClickMode_Click(object sender, RoutedEventArgs e) => AppHost.Current.ToggleClickThrough();
+
     private void Settings_Click(object sender, RoutedEventArgs e) => AppHost.Current.ShowSettings();
 
     private void Hide_Click(object sender, RoutedEventArgs e) => AppHost.Current.SetOverlayVisible(false);
+    private void Events_Click(object sender, RoutedEventArgs e) => AppHost.Current.ShowTimerHub();
+    private void NpcapDownload_Click(object sender, RoutedEventArgs e) => App.ShowNpcapHelp();
+
+    private void ApplyCompactLayout()
+    {
+        TitleText.FontSize = _settings.CompactMode ? 11 : 13.5;
+        HeaderClock.Visibility = _settings.CompactMode ? Visibility.Collapsed : Visibility.Visible;
+        CompactTotal.Visibility = _settings.CompactMode ? Visibility.Visible : Visibility.Collapsed;
+        CompactHistory.Visibility = CompactTotal.Visibility;
+        ViewMenuButton.Content = _settings.CompactMode ? "◫" : "View";
+        EventsButton.Content = _settings.CompactMode ? "Events" : "Events & Timers";
+        if (_settings.CompactMode)
+        {
+            Toolbar.Visibility = Visibility.Collapsed;
+            TitleText.Visibility = Visibility.Visible;
+            LabelPanel.Visibility = _settings.CompactMode ? Visibility.Collapsed : Visibility.Visible;
+        }
+        PlayerRows.ItemTemplate = (DataTemplate)FindResource(_settings.CompactMode ? "CompactRowTemplate" : "RowTemplate");
+        var visible = _settings.CompactMode ? Visibility.Collapsed : Visibility.Visible;
+        BossTimersLink.Visibility = visible;
+        DetailsLink.Visibility = visible;
+        HistoryLink.Visibility = visible;
+        FooterText.Visibility = visible;
+    }
+
+    private void Appearance_Click(object sender, RoutedEventArgs e)
+    {
+        var menu = new ContextMenu { PlacementTarget = (UIElement)sender, Placement = PlacementMode.Top, MinWidth = 250 };
+        void Item(string label, Action action)
+        {
+            var item = new MenuItem { Header = label }; item.Click += (_, _) => action(); menu.Items.Add(item);
+        }
+        void Preset(bool compact, double width, double height)
+        {
+            _settings.CompactMode = compact;
+            _settings.OverlayWidth = width; _settings.OverlayHeight = height;
+            ApplyAppearance(); _settings.Save(); Refresh();
+        }
+        var toggle = new MenuItem { Header = "Compact mode", IsCheckable = true, IsChecked = _settings.CompactMode };
+        toggle.Click += (_, _) => Preset(toggle.IsChecked, toggle.IsChecked ? 380 : 760, toggle.IsChecked ? 340 : 540);
+        menu.Items.Add(toggle);
+        Item("Mini · 300 × 240", () => Preset(true, 300, 240));
+        Item("Compact · 380 × 340", () => Preset(true, 380, 340));
+        Item("Medium · 480 × 420", () => Preset(true, 480, 420));
+        Item("Large · 760 × 540", () => Preset(false, 760, 540));
+        menu.Items.Add(new Separator());
+        void SliderItem(string label, double min, double max, double value, Action<double> change)
+        {
+            var panel = new StackPanel { Margin = new Thickness(8), Width = 220 };
+            var caption = new TextBlock { Text = label };
+            var slider = new Slider { Minimum = min, Maximum = max, Value = value, Margin = new Thickness(0, 8, 0, 0) };
+            slider.ValueChanged += (_, args) => { change(args.NewValue); caption.Text = $"{label}: {args.NewValue:0}"; };
+            panel.Children.Add(caption); panel.Children.Add(slider);
+            menu.Items.Add(new MenuItem { Header = panel, StaysOpenOnClick = true });
+        }
+        SliderItem("Width", MinWidth, 1600, Width, value => { Width = Math.Round(value); SavePlacement(); });
+        SliderItem("Height", MinHeight, 1200, Height, value => { Height = Math.Round(value); SavePlacement(); });
+        SliderItem("Opacity (%)", 40, 100, _settings.WindowOpacity * 100, value => { _settings.WindowOpacity = value / 100; WindowClickThrough.SetOpacity(_settings.WindowOpacity); _settings.Save(); });
+        Item("More settings", () => AppHost.Current.ShowSettings());
+        menu.IsOpen = true;
+    }
 
     private void Opacity_Changed(object sender, RoutedPropertyChangedEventArgs<double> e)
     {

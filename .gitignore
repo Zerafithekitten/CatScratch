@@ -8,6 +8,7 @@ TestResults/
 captures/
 *.pcap
 *.pcapng
+userdata/
 dist/
 
 # Local tool settings

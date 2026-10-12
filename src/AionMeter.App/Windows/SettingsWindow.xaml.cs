@@ -2,6 +2,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using AionMeter.App.Services;
 using AionMeter.Core.Capture;
 using AionMeter.Core.Combat;
@@ -19,6 +20,16 @@ public partial class SettingsWindow : Window
         InitializeComponent();
         Controls.DragAnywhere.Attach(this);
         Load();
+        foreach (var field in new[] { HkToggle, HkReset, HkClick, HkTimers })
+        {
+            field.IsReadOnly = true;
+            field.ToolTip = "Click here and press your shortcut. Applied after saving.";
+            field.PreviewKeyDown += RecordHotkey;
+            field.GotKeyboardFocus += (_, _) => field.SelectAll();
+        }
+        Activated += (_, _) => AppHost.Current.SuspendHotkeys();
+        Deactivated += (_, _) => AppHost.Current.ResumeHotkeys();
+        Closed += (_, _) => AppHost.Current.ResumeHotkeys();
         // The row size slider previews on the overlay; closing without saving puts the saved size back.
         Closed += (_, _) => AppHost.Current.PreviewRowSize(_meter.Settings.RowSize);
     }
@@ -26,6 +37,10 @@ public partial class SettingsWindow : Window
     private void Load()
     {
         var s = _meter.Settings;
+        CompactModeCheck.IsChecked = s.CompactMode;
+        WindowWidthText.Text = s.OverlayWidth.ToString("0");
+        WindowHeightText.Text = s.OverlayHeight.ToString("0");
+        WindowOpacityValue.Value = s.WindowOpacity;
         BarsRelative.IsChecked = s.BarsRelativeToTop;
         ShowBoss.IsChecked = s.ShowBossPanel;
         ShowGear.IsChecked = s.ShowGear;
@@ -77,9 +92,39 @@ public partial class SettingsWindow : Window
 
     private static UiText T => UiText.Current;
 
+    private void RecordHotkey(object sender, KeyEventArgs e)
+    {
+        var key = e.Key == Key.System ? e.SystemKey : e.Key;
+        var modifiers = Keyboard.Modifiers;
+        if (key == Key.Tab && modifiers == ModifierKeys.None) return;
+        e.Handled = true;
+        if (e.IsRepeat || key is Key.LeftCtrl or Key.RightCtrl or Key.LeftShift or Key.RightShift
+            or Key.LeftAlt or Key.RightAlt or Key.LWin or Key.RWin or Key.None) return;
+        if (key == Key.Escape && modifiers == ModifierKeys.None)
+        {
+            Keyboard.ClearFocus();
+            return;
+        }
+        var parts = new List<string>();
+        if (modifiers.HasFlag(ModifierKeys.Control)) parts.Add("Ctrl");
+        if (modifiers.HasFlag(ModifierKeys.Shift)) parts.Add("Shift");
+        if (modifiers.HasFlag(ModifierKeys.Alt)) parts.Add("Alt");
+        if (modifiers.HasFlag(ModifierKeys.Windows)) parts.Add("Win");
+        parts.Add(key >= Key.D0 && key <= Key.D9 ? ((int)key - (int)Key.D0).ToString() : key.ToString());
+        var gesture = string.Join("+", parts);
+        if (!HotkeyManager.TryParse(gesture, out _, out _)) return;
+        var field = (TextBox)sender;
+        field.Text = gesture;
+        field.SelectAll();
+    }
+
     private void Save_Click(object sender, RoutedEventArgs e)
     {
         var s = _meter.Settings;
+        s.CompactMode = CompactModeCheck.IsChecked == true;
+        if (int.TryParse(WindowWidthText.Text, out var width)) s.OverlayWidth = Math.Clamp(width, s.CompactMode ? 280 : 520, 1600);
+        if (int.TryParse(WindowHeightText.Text, out var height)) s.OverlayHeight = Math.Clamp(height, 180, 1200);
+        s.WindowOpacity = WindowOpacityValue.Value;
         var captureChanged = false;
 
         s.BarsRelativeToTop = BarsRelative.IsChecked == true;

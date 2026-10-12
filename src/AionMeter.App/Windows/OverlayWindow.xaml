@@ -5,9 +5,9 @@
         xmlns:vm="clr-namespace:AionMeter.App.ViewModels"
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
         x:Name="Root"
-        Title="AION2 DPS Meter" Width="470" Height="540" MinWidth="300" MinHeight="160"
-        WindowStyle="None" AllowsTransparency="True" Background="Transparent"
-        Topmost="True" ShowInTaskbar="False" ShowActivated="False" ResizeMode="NoResize"
+        Title="AION 2 • DPS Monitor — EU/NA" Width="380" Height="340" MinWidth="280" MinHeight="180"
+        WindowStyle="None" AllowsTransparency="False" Background="#101420"
+        Topmost="True" ShowInTaskbar="True" ShowActivated="True" ResizeMode="CanResize"
         UseLayoutRounding="True" TextOptions.TextFormattingMode="Display"
         FontFamily="{StaticResource UiFont}">
     <Window.Resources>
@@ -203,9 +203,9 @@
                                   Height="{DynamicResource RowGlyphSize}" HorizontalAlignment="Left" />
 
                     <!-- As wide as the longest name, up to what the other columns leave (OverlayWindow.FitNames) -->
-                    <TextBlock x:Name="NameText" Grid.Column="2" Text="{Binding Name}" FontSize="{DynamicResource RowNameFont}" FontWeight="SemiBold"
+                    <TextBlock x:Name="NameText" Grid.Column="2" FontSize="{DynamicResource RowNameFont}" FontWeight="SemiBold"
                                Foreground="White" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" Margin="2,0,0,1"
-                               MaxWidth="{DynamicResource NameMaxWidth}" />
+                               MaxWidth="{DynamicResource NameMaxWidth}"><Run Text="{Binding Name, Mode=OneWay}" /><LineBreak /><Run Text="{Binding Class, Mode=OneWay}" FontSize="11" Foreground="#C4CBD8" /></TextBlock>
 
                     <!-- Gear score and combat power, right by the name: only players of your party have them (the party roster) -->
                     <TextBlock Grid.Column="3" Style="{StaticResource GearText}" Visibility="{Binding HasGearScore, Converter={StaticResource VisibleIf}}"
@@ -227,11 +227,43 @@
                 </DataTrigger>
             </DataTemplate.Triggers>
         </DataTemplate>
+        <DataTemplate x:Key="CompactRowTemplate" DataType="{x:Type vm:RowViewModel}">
+            <Grid Height="{DynamicResource CompactRowHeight}" Margin="0,0,0,2" Background="Transparent" Cursor="Hand" ToolTip="{Binding Tooltip}" MouseLeftButtonUp="Row_Click" MouseRightButtonUp="Row_RightClick">
+                <Border Background="#60202A32" CornerRadius="3"/>
+                <Border Background="{Binding FillBrush}" Opacity="0.76" CornerRadius="3" RenderTransformOrigin="0,0.5"><Border.RenderTransform><ScaleTransform ScaleX="{Binding Fill}"/></Border.RenderTransform></Border>
+                <Grid Margin="4,1,5,1">
+                    <Grid.ColumnDefinitions><ColumnDefinition Width="23"/><ColumnDefinition Width="*"/><ColumnDefinition Width="61"/><ColumnDefinition Width="48"/></Grid.ColumnDefinitions>
+                    <c:ClassGlyph Class="{Binding Class}" Width="20" Height="20" OnBar="True"/>
+                    <StackPanel Grid.Column="1" Margin="2,0,3,0" VerticalAlignment="Center">
+                        <TextBlock Text="{Binding Name}" Foreground="White" FontWeight="SemiBold" FontSize="11" TextTrimming="CharacterEllipsis"/>
+                        <TextBlock Text="{Binding CompactGear}" FontSize="8.5" Foreground="#D8E2DA" TextTrimming="CharacterEllipsis"/>
+                    </StackPanel>
+                    <StackPanel Grid.Column="2" VerticalAlignment="Center">
+                        <TextBlock Text="{Binding Dps}" FontSize="11" FontWeight="Bold" Foreground="White" TextAlignment="Right"/>
+                        <TextBlock Text="{Binding Damage}" FontSize="9" Foreground="#DFE7E5" TextAlignment="Right"/>
+                    </StackPanel>
+                    <TextBlock Grid.Column="3" Text="{Binding Share}" FontSize="10" FontWeight="Bold" Foreground="#72EDD0" TextAlignment="Right" VerticalAlignment="Top" Margin="3,2,0,0"/>
+                </Grid>
+            </Grid>
+        </DataTemplate>
     </Window.Resources>
 
-    <Grid Margin="8">
+    <Border x:Name="OuterShell" CornerRadius="10" Background="#DF1B2027" BorderBrush="#607B827F" BorderThickness="1">
+    <DockPanel>
+        <Grid DockPanel.Dock="Top" Height="24" Margin="5,1,4,0">
+            <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+            <TextBlock x:Name="ShellCaption" Text="Zerafi DPS" Foreground="#79E3CF" FontSize="11" FontWeight="Bold" VerticalAlignment="Center"/>
+            <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                <TextBlock Text="{Binding Clock, StringFormat=⏱ {0}}" Foreground="#91A5A0" FontSize="9" Margin="4,0" ToolTip="Fight duration" VerticalAlignment="Center"/>
+                <TextBlock Text="{Binding WallClock}" Foreground="#D4DAD9" FontSize="10" Margin="4,0" ToolTip="Current time · Europe/Berlin · 24-hour clock" VerticalAlignment="Center"/>
+            </StackPanel>
+            <Button x:Name="ShellClickButton" Grid.Column="2" Style="{StaticResource ToolIcon}" Click="ClickMode_Click"><Grid Width="14" Height="14"><Path x:Name="ClickModeCursor" Data="M 2,1 L 12,8 L 7,8 L 5,13 Z" Fill="#79E3CF"/><Path x:Name="ClickModeSlash" Data="M 1,13 L 13,1" Stroke="#D9ADB1" StrokeThickness="2" Visibility="Collapsed"/></Grid></Button>
+            <Button x:Name="ShellSettingsButton" Grid.Column="3" Style="{StaticResource ToolIcon}" Content="&#xE713;" Click="Settings_Click" ToolTip="Settings"/>
+            <Button x:Name="ShellHideButton" Grid.Column="4" Style="{StaticResource ToolIcon}" Content="&#xE711;" Click="Hide_Click" ToolTip="Hide"/>
+        </Grid>
+    <Grid Margin="4,0,4,4">
         <!-- Card -->
-        <Border x:Name="Frame" CornerRadius="10" BorderThickness="1" BorderBrush="{StaticResource CardFrame}">
+        <Border x:Name="Frame" CornerRadius="14" BorderThickness="1" BorderBrush="#304C637F">
             <Border.Background>
                 <SolidColorBrush x:Name="FrameBackground" Color="#0B0F17" Opacity="0.92" />
             </Border.Background>
@@ -240,17 +272,28 @@
             </Border.Effect>
         </Border>
 
-        <Grid x:Name="CardBody" Margin="12,8,12,8">
+        <Grid x:Name="CardBody" Margin="5,4,5,4">
             <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
 
+            <Border x:Name="SetupPanel" Background="#172333" BorderBrush="#405571" BorderThickness="1" CornerRadius="6" Padding="10,8" Margin="0,0,0,8">
+                <StackPanel>
+                <DockPanel>
+                    <Button x:Name="NpcapDownloadButton" DockPanel.Dock="Right" Style="{StaticResource Chip}" Content="Download Npcap" Click="NpcapDownload_Click" Margin="10,0,0,0" VerticalAlignment="Center" />
+                    <TextBlock x:Name="IdentityStatusText" Foreground="#EED99A" TextWrapping="Wrap" FontSize="12" VerticalAlignment="Center" />
+                </DockPanel>
+
+                </StackPanel>
+            </Border>
+
             <!-- The one top line: the fight's title on the left (the toolbar while the mouse is over the overlay), the state
                  and the timer on the right -->
-            <Grid x:Name="Header" Background="Transparent" Height="22">
+            <Grid x:Name="Header" Grid.Row="1" Background="Transparent" Height="22">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
@@ -264,7 +307,7 @@
                 <StackPanel x:Name="Toolbar" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Left" Visibility="Collapsed">
                     <Button Style="{StaticResource Chip}" Content="{Binding ModeLabel}" Click="Mode_Click" Margin="0,0,5,0"
                             ToolTip="Boss only / everything you hit" />
-                    <Button Style="{StaticResource Chip}" Content="{Binding LanguageCode}" Click="Language_Click" Margin="0,0,5,0"
+                    <Button Visibility="Collapsed" Style="{StaticResource Chip}" Content="{Binding LanguageCode}" Click="Language_Click" Margin="0,0,5,0"
                             ToolTip="{Binding T.SwitchLanguage}" />
                     <Button Style="{StaticResource ToolIcon}" Content="&#xE8BD;" Click="Chat_Click" ToolTip="{Binding T.TipChat}" />
                     <Button Style="{StaticResource ToolIcon}" Content="&#xE121;" Click="Timers_Click" ToolTip="{Binding T.TipTimers}" />
@@ -307,13 +350,14 @@
                         <TextBlock Text="{Binding HeaderLabel}" Foreground="{Binding HeaderBrush}" FontSize="9.5" FontWeight="SemiBold"
                                    VerticalAlignment="Center" />
                     </StackPanel>
-                    <TextBlock Text="{Binding Clock}" FontFamily="{StaticResource NumberFont}" FontWeight="SemiBold" FontSize="13.5"
+                    <TextBlock x:Name="HeaderClock" Text="{Binding WallClock}" ToolTip="Current time · Europe/Berlin · 24-hour clock" FontFamily="{StaticResource NumberFont}" FontWeight="SemiBold" FontSize="13.5"
                                Foreground="#EEF0F5" VerticalAlignment="Center" />
+                    <TextBlock Text="{Binding Clock, StringFormat=⏱ {0}}" Visibility="{Binding Visibility, ElementName=HeaderClock}" ToolTip="Fight duration" Foreground="#91A5A0" Margin="6,0,0,0" VerticalAlignment="Center"/>
                 </StackPanel>
             </Grid>
 
             <!-- Boss HP: a slim bar -->
-            <Grid Grid.Row="1" Height="16" Margin="0,5,0,0" Visibility="{Binding HasBoss, Converter={StaticResource VisibleIf}}">
+            <Grid Grid.Row="2" Height="16" Margin="0,5,0,0" Visibility="{Binding HasBoss, Converter={StaticResource VisibleIf}}">
                 <Border CornerRadius="4" Background="#2A1418" />
                 <Border CornerRadius="4" Background="{StaticResource HpFill}" RenderTransformOrigin="0,0.5">
                     <Border.RenderTransform>
@@ -332,7 +376,7 @@
             </Grid>
 
             <!-- Party: the rows share their value column widths -->
-            <Grid Grid.Row="2" Margin="0,7,0,0" Grid.IsSharedSizeScope="True">
+            <Grid Grid.Row="3" Margin="0,7,0,0" Grid.IsSharedSizeScope="True">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
@@ -354,9 +398,9 @@
                     </Grid.ColumnDefinitions>
                 </Grid>
 
-                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Focusable="False"
+                <ScrollViewer x:Name="PlayerScroll" Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Focusable="False"
                               Padding="8,0,7,0" Margin="-8,0,-7,0" PreviewMouseWheel="Rows_PreviewMouseWheel">
-                    <ItemsControl ItemsSource="{Binding Rows}" ItemTemplate="{StaticResource RowTemplate}" Focusable="False" />
+                    <ItemsControl x:Name="PlayerRows" ItemsSource="{Binding Rows}" ItemTemplate="{StaticResource RowTemplate}" Focusable="False" />
                 </ScrollViewer>
                 <TextBlock Grid.RowSpan="2" Text="{Binding T.EmptyParty}" FontSize="12"
                            Foreground="#6B7590" HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap" TextAlignment="Center"
@@ -364,7 +408,7 @@
             </Grid>
 
             <!-- Footer -->
-            <StackPanel Grid.Row="3" Margin="0,6,0,0">
+            <StackPanel Grid.Row="4" Margin="0,6,0,0">
                 <!-- New version on GitHub: a slim banner until it is installed, skipped or closed for this session -->
                 <Grid x:Name="UpdateBanner" Margin="0,0,0,6" Visibility="Collapsed">
                     <Grid.ColumnDefinitions>
@@ -387,19 +431,24 @@
                     </Grid.ColumnDefinitions>
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center" ToolTip="{Binding Status}">
                         <Ellipse Width="5" Height="5" Fill="{Binding StatusBrush}" Margin="0,0,6,0" />
+                        <TextBlock x:Name="CompactTotal" Text="{Binding PartyDps}" FontSize="10" Foreground="#DCE4DC" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                        <TextBlock x:Name="LatencyText" Text="RTT —" FontSize="10" Foreground="#A9B1C0" VerticalAlignment="Center" Margin="0,0,5,0" ToolTip="Estimated network RTT from captured game TCP acknowledgments. Includes server ACK delay; a local accelerator measures only its local connection. No probe packets are sent. A dash means no fresh sample."/>
                         <TextBlock x:Name="FooterText" FontSize="11" Foreground="#A9B1C0" TextTrimming="CharacterEllipsis"
                                    Effect="{StaticResource TextShadow}" />
                     </StackPanel>
-                    <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="0,0,10,0">
+                    <StackPanel x:Name="FooterControls" Grid.Column="1" Orientation="Horizontal" Margin="0,0,10,0">
+                        <Button x:Name="ViewMenuButton" Style="{StaticResource FooterLink}" Content="View" Click="Appearance_Click" ToolTip="View"/>
+                        <Button x:Name="EventsButton" Style="{StaticResource FooterLink}" Content="Events &amp; Timers" Click="Events_Click" ToolTip="Events &amp; Timers"/>
+                        <Button x:Name="CompactHistory" Style="{StaticResource ToolIcon}" Content="&#xE8A5;" Click="Segments_Click" ToolTip="Statistics"/>
                         <!-- Boss timers: always visible, shows the next respawn -->
-                        <Button Style="{StaticResource TimersPill}" Click="Timers_Click" ToolTip="{Binding T.TipTimers}" Margin="10,0,0,0">
+                        <Button x:Name="BossTimersLink" Style="{StaticResource TimersPill}" Click="Timers_Click" ToolTip="{Binding T.TipTimers}" Margin="10,0,0,0">
                             <StackPanel Orientation="Horizontal">
                                 <TextBlock Text="&#xE121;" FontFamily="{StaticResource IconFont}" FontSize="11" Margin="0,1,5,0" VerticalAlignment="Center" />
                                 <TextBlock Text="{Binding TimersLabel}" VerticalAlignment="Center" />
                             </StackPanel>
                         </Button>
-                        <Button Style="{StaticResource FooterLink}" Content="{Binding T.OpenFight}" Click="Details_Click" Effect="{StaticResource TextShadow}" />
-                        <Button Style="{StaticResource FooterLink}" Click="Segments_Click" Effect="{StaticResource TextShadow}">
+                        <Button x:Name="DetailsLink" Style="{StaticResource FooterLink}" Content="{Binding T.OpenFight}" Click="Details_Click" Effect="{StaticResource TextShadow}" />
+                        <Button x:Name="HistoryLink" Style="{StaticResource FooterLink}" Click="Segments_Click" Effect="{StaticResource TextShadow}">
                             <TextBlock><Run Text="{Binding T.Fights, Mode=OneWay}" /><Run Text=" " /><Run Text="&#xE70D;" FontFamily="{StaticResource IconFont}" FontSize="8" /></TextBlock>
                         </Button>
                     </StackPanel>
@@ -419,4 +468,6 @@
             </Thumb.Template>
         </Thumb>
     </Grid>
+    </DockPanel>
+    </Border>
 </Window>

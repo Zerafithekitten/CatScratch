@@ -58,6 +58,7 @@ public sealed class DemoFightSource : IDisposable
         {
             await Task.Delay(_rng.Next(30, 90), ct).ConfigureAwait(false);
             now = Now();
+            _sink(new PartyRosterEvent(now, party.Select(m => new PartyMemberInfo(m.Name, 2001, 50, 0, 0, m.Class)).ToArray()));
             var m = party[_rng.Next(party.Length)];
             var skill = m.Skills[Math.Min(m.Skills.Length - 1, (int)Math.Floor(Math.Pow(_rng.NextDouble(), 1.6) * m.Skills.Length))];
 

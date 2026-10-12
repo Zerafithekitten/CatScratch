@@ -39,6 +39,7 @@ public sealed class LiveCapture : IEventSource
     {
         _options = options;
         _pipeline = new PacketPipeline(data, OnEvent) { LockThreshold = 3 };
+        _pipeline.FlowLocked += Latency.TrackServerFlow;
     }
 
     public event Action<GameEvent>? EventDecoded;
@@ -46,6 +47,7 @@ public sealed class LiveCapture : IEventSource
 
     public CaptureStatus Status => _status;
     public PacketPipeline Pipeline => _pipeline;
+    public PassiveLatency Latency { get; } = new();
     public string? RecordingPath { get; private set; }
 
     /// <summary>Npcap's capture library is on this PC (its own folder, or System32 in WinPcap-compatible mode).</summary>
@@ -246,6 +248,7 @@ public sealed class LiveCapture : IEventSource
 
     private void CloseDeviceLocked()
     {
+        Latency.Reset();
         if (_device is null) return;
         try
         {
@@ -271,7 +274,11 @@ public sealed class LiveCapture : IEventSource
         {
             _writer?.Write(raw);
             if (SegmentReader.TryRead(raw, out var seg))
+            {
+                if (_pipeline.LockedFlows.Contains(seg.Key)) Latency.TrackServerFlow(seg.Key);
+                Latency.Observe(seg);
                 _pipeline.OnSegment(seg.TimeMs, seg.Key, seg.Seq, seg.Syn, seg.FinOrRst, seg.Payload);
+            }
         }
         catch (Exception ex) when (ex is not OutOfMemoryException)
         {
@@ -306,7 +313,7 @@ public readonly record struct CaptureHealth(long Received, long Dropped, long Ga
 /// <summary>Link layer → TCP segment, shared by live capture and pcap replay.</summary>
 public static class SegmentReader
 {
-    public readonly record struct Segment(long TimeMs, FlowKey Key, uint Seq, bool Syn, bool FinOrRst, byte[] Payload);
+    public readonly record struct Segment(long TimeMs, FlowKey Key, uint Seq, bool Syn, bool FinOrRst, byte[] Payload, bool Ack = false, uint AckNumber = 0);
 
     public static bool TryRead(RawCapture raw, out Segment segment)
     {
@@ -327,7 +334,7 @@ public static class SegmentReader
         var t = raw.Timeval;
         var ms = (long)t.Seconds * 1000 + (long)t.MicroSeconds / 1000;
         var key = new FlowKey(ip.SourceAddress, tcp.SourcePort, ip.DestinationAddress, tcp.DestinationPort);
-        segment = new Segment(ms, key, tcp.SequenceNumber, tcp.Synchronize, tcp.Finished || tcp.Reset, tcp.PayloadData ?? []);
+        segment = new Segment(ms, key, tcp.SequenceNumber, tcp.Synchronize, tcp.Finished || tcp.Reset, tcp.PayloadData ?? [], tcp.Acknowledgment, tcp.AcknowledgmentNumber);
         return true;
     }
 }

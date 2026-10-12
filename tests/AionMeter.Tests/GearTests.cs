@@ -10,6 +10,29 @@ namespace AionMeter.Tests;
 /// <summary>Gear score ("GS") and combat power ("CP"): the party roster, the own record, and where they show.</summary>
 public class GearTests
 {
+    [Theory]
+    [InlineData(1889,1889,45,1889)]
+    [InlineData(1889,2000,45,1889)]
+    [InlineData(1889,1889,44,0)]
+    [InlineData(1889,0,45,0)]
+    public void Own_gear_reaches_solo_damage_without_a_party(uint current,uint highest,uint repeatedLevel,int expected)
+    {
+        var b = new List<byte> { 1,0,0,0,0,1,4 };
+        b.AddRange("Self"u8.ToArray());
+        b.AddRange(BitConverter.GetBytes((ushort)2305));
+        b.AddRange(BitConverter.GetBytes(31u)); b.Add(2);
+        b.AddRange(BitConverter.GetBytes(45u));
+        b.AddRange(BitConverter.GetBytes(current)); b.AddRange(BitConverter.GetBytes(highest));
+        b.AddRange(BitConverter.GetBytes(repeatedLevel));
+        b.AddRange(new byte[32]); b.AddRange(BitConverter.GetBytes(85428UL));
+        b.AddRange(BitConverter.GetBytes(85428UL)); b.AddRange(new byte[32]);
+        var self=Assert.IsType<SelfIdentifiedEvent>(Assert.Single(Parse(Opcodes.SelfInfo,b.ToArray())));
+        Assert.Equal(expected,self.GearScore);
+        var tracker=new CombatTracker(GameData.Empty,new MeterOptions { PartyOnly=true,TargetMode=TargetMode.All });
+        tracker.Process(self); tracker.Process(new DamageEvent(100,1,500,17010000,100,HitFlags.None));
+        var row=Assert.Single(tracker.Snapshot(null,200)!.Combatants);
+        Assert.Equal(expected,row.GearScore); Assert.Equal(85428,row.CombatPower);
+    }
     private sealed record Member(string Name, ushort Server, uint Class, uint Level, uint Gear, ulong Power, byte[] Flags, byte[] Tail);
 
     /// <summary>A <c>02 97</c> body laid out as documented (see PacketParser.ParsePartyRoster), vacant slots at the end.</summary>

@@ -29,10 +29,11 @@ public sealed record HistoryEntry(
 
 /// <summary>
 /// Every finished fight is one JSON file, so closing the app never loses a kill. A small <c>index.jsonl</c> beside
-/// them keeps the summaries, so listing hundreds of fights never parses the (large) fight files themselves.
+/// them keeps the summaries. Only the ten newest fights are retained, including after upgrades from older versions.
 /// </summary>
 public sealed class HistoryStore
 {
+    public const int MaxSavedFights = 10;
     private const string IndexName = "index.jsonl";
 
     private static readonly JsonSerializerOptions Json = new()
@@ -49,6 +50,7 @@ public sealed class HistoryStore
         Directory = directory;
         System.IO.Directory.CreateDirectory(directory);
         LoadIndex();
+        lock (_gate) Prune();
     }
 
     public string Directory { get; }
@@ -59,18 +61,18 @@ public sealed class HistoryStore
     public string Save(FightRecord record)
     {
         var s = record.Summary;
-        var name = $"{s.StartedAt:yyyyMMdd_HHmmss}_{Sanitize(s.Title)}.json";
+        var name = $"{s.StartedAt:yyyyMMdd_HHmmss}_{Sanitize(s.Title)}_{s.Id:N}.json";
         var path = System.IO.Path.Combine(Directory, name);
         var tmp = path + ".tmp";
-        File.WriteAllText(tmp, JsonSerializer.Serialize(record, Json));
-        File.Move(tmp, path, overwrite: true);
-
         var entry = EntryFor(name, record) with { Path = path };
         lock (_gate)
         {
+            File.WriteAllText(tmp, JsonSerializer.Serialize(record, Json));
+            File.Move(tmp, path, overwrite: true);
             _entries.RemoveAll(e => e.FileName == name);
             _entries.Add(entry);
-            File.AppendAllText(IndexPath, JsonSerializer.Serialize(entry, Json) + Environment.NewLine);
+            Prune();
+            WriteIndex();
         }
         Changed?.Invoke();
         return path;
@@ -111,6 +113,20 @@ public sealed class HistoryStore
     // ------------------------------------------------------------------ index
 
     private string IndexPath => System.IO.Path.Combine(Directory, IndexName);
+
+    private void Prune()
+    {
+        var old = _entries.OrderByDescending(e => e.StartedAt)
+            .ThenByDescending(e => e.FileName, StringComparer.Ordinal).Skip(MaxSavedFights).ToArray();
+        foreach (var entry in old)
+        {
+            // Only this store's reconciled fight files are eligible for retention cleanup.
+            var path = System.IO.Path.Combine(Directory, System.IO.Path.GetFileName(entry.FileName));
+            File.Delete(path);
+            _entries.Remove(entry);
+        }
+        if (old.Length > 0) WriteIndex();
+    }
 
     private void LoadIndex()
     {

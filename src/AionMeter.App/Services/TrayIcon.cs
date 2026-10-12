@@ -47,7 +47,7 @@ public sealed class TrayIcon : IDisposable
         menu.Items.AddRange([
             _update, _updateSeparator,
             _toggle, _clickThrough, _reset, new ToolStripSeparator(),
-            _history, _timers, _settings, _language, _demo, _replay, _checkUpdates, new ToolStripSeparator(),
+            _history, new ToolStripMenuItem("Upcoming events", null, (_, _) => actions.Events()), _timers, _settings, _language, _demo, _replay, _checkUpdates, new ToolStripSeparator(),
             _exit,
         ]);
         ApplyTexts();
@@ -77,12 +77,13 @@ public sealed class TrayIcon : IDisposable
     {
         var t = UiText.Current;
         _toggle.Text = _overlayVisible ? t.TrayHide : t.TrayShow;
-        _clickThrough.Text = t.HkClick;
+        _clickThrough.Text = "Toggle click-through";
         _reset.Text = t.HkReset;
         _history.Text = t.TrayHistory;
         _timers.Text = t.TrayTimers;
         _settings.Text = t.TraySettings;
         _language.Text = t.SwitchLanguage;
+        _language.Visible = false;
         _demo.Text = t.TrayDemo;
         _replay.Text = t.TrayReplay;
         _exit.Text = t.TrayExit;
@@ -148,6 +149,7 @@ public sealed record TrayActions(
     Action Reset,
     Action History,
     Action BossTimers,
+    Action Events,
     Action Settings,
     Action Demo,
     Action Replay,

@@ -7,11 +7,11 @@ namespace AionMeter.App.Services;
 /// </summary>
 public sealed class UiText
 {
-    public static readonly string[] Languages = ["en", "ru"];
+    public static readonly string[] Languages = ["en"];
 
     public static UiText Current { get; private set; } = new();
 
-    public static string Normalize(string? language) => language == "ru" ? "ru" : "en";
+    public static string Normalize(string? language) => "en";
 
     public static void Use(string? language) => Current = Normalize(language) == "ru" ? Ru : new UiText();
 
@@ -339,7 +339,7 @@ public sealed class UiText
     public string HkToggle { get; init; } = "Show / hide overlay";
     public string HkReset { get; init; } = "Restart meter";
     public string HkClick { get; init; } = "Click-through";
-    public string HotkeysHint { get; init; } = "Format: Ctrl+Shift+D, Alt+F9 … Applied after saving.";
+    public string HotkeysHint { get; init; } = "Click a field and press your shortcut. Applied after saving.";
     public string SecData { get; init; } = "DATA";
     public string DownloadIcons { get; init; } = "Download skill icons and boss portraits";
     public string IconsHint { get; init; } = "Skill icons: official AION 2 CDN (assets.playnccdn.com). Boss portraits: MetaBot.GG (metabot.gg). Each picture is fetched once, then cached.";

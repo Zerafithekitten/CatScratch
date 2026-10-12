@@ -15,7 +15,7 @@ public enum HistoryMode
 public sealed class AppSettings
 {
     public static string AppDataDir { get; } =
-        Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "AionMeter");
+        Path.Combine(AppContext.BaseDirectory, "userdata");
 
     private static string FilePath => Path.Combine(AppDataDir, "settings.json");
 
@@ -28,8 +28,10 @@ public sealed class AppSettings
     // Overlay window
     public double OverlayLeft { get; set; } = 80;
     public double OverlayTop { get; set; } = 160;
-    public double OverlayWidth { get; set; } = 460;
-    public double OverlayHeight { get; set; } = 330;
+    public double OverlayWidth { get; set; } = 300;
+    public double OverlayHeight { get; set; } = 300;
+    public bool CompactMode { get; set; } = true;
+    public double WindowOpacity { get; set; } = 0.88;
     public double BackgroundOpacity { get; set; } = 0.9;
     public bool Locked { get; set; }
     public bool ClickThrough { get; set; }
@@ -37,7 +39,7 @@ public sealed class AppSettings
     /// <summary>Bring the overlay up by itself when a boss is fought nearby or you hit anything.</summary>
     public bool AutoShow { get; set; } = true;
     /// <summary>An overlay that came up by itself hides again after this long out of combat; 0 = stays up.</summary>
-    public int AutoHideSeconds { get; set; } = 60;
+    public int AutoHideSeconds { get; set; } = 0;
     /// <summary>Bring the overlay up when the meter starts and when it finds the game, so a player sees it is running.</summary>
     public bool ShowOnStart { get; set; } = true;
 
@@ -67,9 +69,10 @@ public sealed class AppSettings
 
     // Updates
     /// <summary>Ask GitHub for a newer version shortly after start and every few hours.</summary>
-    public bool CheckUpdates { get; set; } = true;
+    public bool CheckUpdates { get; set; } = false;
     /// <summary>Installed copies download a new version by themselves and install it at a quiet moment.</summary>
-    public bool AutoInstallUpdates { get; set; } = true;
+    public bool AutoInstallUpdates { get; set; } = false;
+    public string UpdateSource { get; set; } = "";
     /// <summary>A version the user chose to skip ("0.2.0"): not announced again, a newer one is.</summary>
     public string? SkippedUpdate { get; set; }
 
@@ -89,7 +92,7 @@ public sealed class AppSettings
 
     /// <summary>Bumped when the overlay layout changes enough that saved sizes no longer fit.</summary>
     public int LayoutVersion { get; set; } // 0 when missing from an older settings file; new installs get it in Load()
-    private const int CurrentLayout = 4;
+    private const int CurrentLayout = 6;
 
     public static AppSettings Load()
     {
@@ -109,6 +112,19 @@ public sealed class AppSettings
                     // v4 = English / Russian switch. Earlier builds picked the language from Windows on their own;
                     // the default is now English until the user chooses.
                     s.Language = "en";
+                }
+                if (s.LayoutVersion < 5)
+                {
+                    s.CompactMode = true;
+                    s.OverlayWidth = 380;
+                    s.OverlayHeight = 340;
+                    s.WindowOpacity = 0.88;
+                }
+                if (s.LayoutVersion < 6)
+                {
+                    s.CompactMode = true;
+                    s.OverlayWidth = 300;
+                    s.OverlayHeight = 300;
                 }
                 s.Language = UiText.Normalize(s.Language);
                 s.LayoutVersion = CurrentLayout;

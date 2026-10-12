@@ -20,8 +20,19 @@ internal static partial class NativeMethods
     [LibraryImport("user32.dll", EntryPoint = "GetWindowLongPtrW")]
     public static partial nint GetWindowLongPtr(nint hWnd, int nIndex);
 
-    [LibraryImport("user32.dll", EntryPoint = "SetWindowLongPtrW")]
+    [LibraryImport("user32.dll", EntryPoint = "SetWindowLongPtrW", SetLastError = true)]
     public static partial nint SetWindowLongPtr(nint hWnd, int nIndex, nint dwNewLong);
+
+    [LibraryImport("user32.dll", SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    public static partial bool SetLayeredWindowAttributes(nint hwnd, uint colorKey, byte alpha, uint flags);
+
+    [LibraryImport("user32.dll", SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    public static partial bool SetWindowPos(nint hwnd, nint insertAfter, int x, int y, int width, int height, uint flags);
+
+    [LibraryImport("user32.dll", EntryPoint = "SendMessageW")]
+    public static partial nint SendMessage(nint hwnd, uint message, nint wParam, nint lParam);
 
     [LibraryImport("user32.dll", SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
