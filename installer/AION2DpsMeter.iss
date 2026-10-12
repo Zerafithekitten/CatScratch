@@ -63,16 +63,6 @@ en.NpcapMissing=✖  Npcap not found yet.
 en.NpcapContinue=Npcap is still not installed. Install the meter anyway?%n%nThe meter will remind you about Npcap when it starts.
 en.CloseRunning=Zerafi DPS Monitor is running. Close it and continue?
 en.RemoveUserData=Also delete your settings, fight history and boss timers?%n%n%1
-ru.NpcapTitle=Нужен Npcap
-ru.NpcapSubtitle=Бесплатный драйвер захвата трафика: через него метр видит игру.
-ru.NpcapText=Npcap на этом компьютере пока не установлен. Без него метр запустится, но не увидит игру.%n%n1. Нажмите «Открыть npcap.com» и скачайте установщик Npcap.%n2. Запустите его и ничего не меняйте в настройках.%n3. Вернитесь сюда и нажмите «Далее».%n%nВстроить Npcap в этот установщик нельзя: это запрещает его лицензия.
-ru.NpcapOpen=Открыть npcap.com
-ru.NpcapRecheck=Проверить снова
-ru.NpcapFound=✔  Npcap найден, всё готово.
-ru.NpcapMissing=✖  Npcap пока не найден.
-ru.NpcapContinue=Npcap всё ещё не установлен. Установить метр без него?%n%nМетр напомнит про Npcap при запуске.
-ru.CloseRunning=Zerafi DPS Monitor запущен. Закрыть его и продолжить?
-ru.RemoveUserData=Удалить также настройки, историю боёв и таймеры боссов?%n%n%1
 
 [Files]
 Source: "{#PayloadDir}\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs

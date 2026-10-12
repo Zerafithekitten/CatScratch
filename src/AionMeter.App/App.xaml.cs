@@ -51,6 +51,7 @@ public partial class App : Application
     private readonly Dictionary<object, BreakdownWindow> _breakdowns = new();
     private int _ticks;
     private bool _shutdownStarted;
+    private System.Threading.Timer? _exitDeadline;
     private string? _shutdownCheckPath;
 
     protected override void OnStartup(StartupEventArgs e)
@@ -657,6 +658,10 @@ public partial class App : Application
     protected override void OnExit(ExitEventArgs e)
     {
         _shutdownStarted = true;
+        // Only this process: a stuck capture driver must not leave the meter in Task Manager.
+        // This background timer does not keep a normally closed process alive.
+        _exitDeadline ??= new System.Threading.Timer(_ => Environment.Exit(e.ApplicationExitCode), null,
+            TimeSpan.FromSeconds(10), Timeout.InfiniteTimeSpan);
         if (_meter is not null) Log.Info("Exiting");
         _timer?.Stop();
         _timerCards?.Dispose();
@@ -666,8 +671,8 @@ public partial class App : Application
         _tray?.Dispose();
         if (_meter is not null)
         {
-            _meter.Settings.Save();
-            _meter.Dispose();
+            try { _meter.Settings.Save(); }
+            finally { _meter.Dispose(); }
         }
         _singleInstance?.Dispose();
         if (_shutdownCheckPath is not null)
