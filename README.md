@@ -2,6 +2,24 @@
 
 A separate always-on-top Windows damage meter for AION 2 by Zerafithekitten.
 
+## Preview
+
+Actual CatScratch 2.0 UI, rendered with sample data. These images show the app's appearance; names and numbers are examples.
+
+### DPS meter and Personal combat
+
+<img src="docs/screenshots/meter.png" alt="CatScratch 2.0 DPS meter with integrated personal damage taken and healing" width="420" />
+
+### Click-through mode
+
+Window backgrounds, borders and controls disappear; DPS bars, personal values, clock and ping remain visible. The green backdrop below represents the game behind the transparent window.
+
+<img src="docs/screenshots/meter-click-through.png" alt="Transparent click-through DPS meter and personal statistics" width="420" />
+
+### Fight details
+
+<img src="docs/screenshots/fight-details.png" alt="Fight statistics with DPS timeline and skill damage breakdown" width="900" />
+
 ## Downloads
 
 Get Setup or the portable ZIP from [Releases](https://github.com/Zerafithekitten/CatScratch/releases/latest).
@@ -14,10 +32,11 @@ Use borderless windowed mode to keep the meter visible above the game.
 
 - Own damage while solo and confirmed current party members while grouped.
 - Class, name, DPS, damage, share, Combat Power and Gear Score.
-- Compact colored rows, resizing, opacity and shortcuts recorded by pressing keys.
+- Dark player rows with separate class-colored DPS bars, resizing, opacity and shortcuts recorded by pressing keys.
+- Integrated, collapsible Personal combat showing your damage taken, self healing and healing of others.
 - Click-through removes window frames while preserving damage, time and RTT.
 - Movable event cards for the next selected start within an hour.
-- Separate observed boss timers; history limited to ten completed fights.
+- Separate observed boss timers; optional fight saving, retaining the last ten saved fights.
 - Colored EVENT / PVP / BOSS badges and readable boss panels when locked.
 - Optional per-event sounds with preview, volume, reminder timing and custom WAV files.
 - Patch notes available in the meter, including offline notes for the installed version.
