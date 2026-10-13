@@ -35,6 +35,15 @@ internal static class InteractionChecks
         }
         try
         {
+            var partyView = new AionMeter.App.ViewModels.OverlayViewModel();
+            partyView.ApplyParty([
+                new("Sample self", 2305, 45, 1894, 85471, AionMeter.Core.Events.GameClass.Cleric),
+                new("Sample teammate", 2305, 45, 1132, 52644, AionMeter.Core.Events.GameClass.Elementalist)
+            ], "Sample self");
+            Check(partyView.Rows.Count == 2 && partyView.Rows[0].IsSelf && partyView.Rows[1].GearScore == "1132",
+                "Party preview displays names, classes and received GS before damage");
+            Check(partyView.SegmentId is null && partyView.Rows.All(r => r.Dps == "—") && partyView.Rows[1].HasCombatPower,
+                "Party preview carries CP without inventing damage or an encounter");
             var first = Create(); var second = Create();
             var originals = windows.Select(Style).ToArray();
             var frame = (System.Windows.Controls.Border)first.Content;

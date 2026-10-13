@@ -18,6 +18,7 @@ return args.FirstOrDefault() switch
     "conns" => Connections(),
     "live" => Live(args.Skip(1).ToArray()),
     "replay" when args.Length > 1 => Replay(args[1]),
+    "party" when args.Length > 1 => Party(args[1]),
     "dump" when args.Length > 1 => Dump(args[1], args.Length > 2 ? args[2] : null),
     "find" when args.Length > 2 => Find(args[1], args[2]),
     "crits" when args.Length > 1 => Crits(args[1]),
@@ -38,6 +39,7 @@ int Usage()
         aionmeter-cli conns                         show the AION 2 process and its TCP connections
         aionmeter-cli live [seconds] [--record]     capture live, print what was decoded
         aionmeter-cli replay <file.pcap>            run a capture through the meter, print fights
+        aionmeter-cli party <file.pcap>             inspect transient party stats and loading-screen clears
         aionmeter-cli dump <file.pcap> [opcode]     print decoded packets (opcode as hex, e.g. 0438)
         aionmeter-cli replay <file.pcap> --boss --brief   player counts per fight only
         aionmeter-cli crits <file.pcap>             damage-type / modifier statistics per class (crit check)
@@ -144,6 +146,26 @@ int Replay(string path)
     return 0;
 }
 
+int Party(string path)
+{
+    using var replay = new PcapReplaySource(data, path, realtime: false);
+    var preview = new PartyPreview();
+    replay.EventDecoded += e =>
+    {
+        var before = preview.Snapshot();
+        preview.Observe(e);
+        var after = preview.Snapshot();
+        if (before.Revision == after.Revision) return;
+        if (after.Members.Count == 0 && before.Members.Count > 0)
+            Console.WriteLine($"Party preview cleared: {e.GetType().Name}");
+        foreach (var m in after.Members)
+            Console.WriteLine($"Party preview: {m.Name}, {m.Class}, GS {m.GearScore}, CP {m.CombatPower}");
+    };
+    replay.RunToEnd();
+    Console.WriteLine($"Remaining preview members: {preview.Snapshot().Members.Count}");
+    return 0;
+}
+
 int Dump(string path, string? opcodeHex)
 {
     ushort? filter = opcodeHex is null ? null : Convert.ToUInt16(opcodeHex, 16);
@@ -154,7 +176,13 @@ int Dump(string path, string? opcodeHex)
         if (filter is null && op == Opcodes.Heartbeat) return;
         Console.WriteLine($"{DateTimeOffset.FromUnixTimeMilliseconds(t).ToLocalTime():HH:mm:ss.fff} {Opcodes.Name(op),-12} [{body.Length,5}] {Wire.Hex(body, 96)}");
     };
-    replay.EventDecoded += e => Console.WriteLine($"    -> {e}");
+    replay.EventDecoded += e =>
+    {
+        if (e is PartyRosterEvent roster)
+            foreach (var m in roster.Members)
+                Console.WriteLine($"    -> Party member: {m.Name}, {m.Class}, GS {m.GearScore}, CP {m.CombatPower}");
+        else Console.WriteLine($"    -> {e}");
+    };
     replay.RunToEnd();
     return 0;
 }

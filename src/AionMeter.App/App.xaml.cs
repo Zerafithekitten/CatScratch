@@ -321,6 +321,7 @@ public partial class App : Application
 
     private bool _autoShown;           // the overlay is up because a fight brought it up, not the user
     private Guid? _suppressedFight;    // hidden by hand during this fight: do not pop it back until the next one
+    private long _suppressedPartyRevision = -1;
     private long _lastEngagedTick;
 
     /// <summary>
@@ -331,12 +332,16 @@ public partial class App : Application
     {
         var s = _meter.Settings;
         var fight = _meter.Tracker.LiveFight();
-        var engaged = fight is { } f && (f.Boss || f.Self);
+        var party = _meter.PartyPreview.Snapshot();
+        var fighting = fight is { } f && (f.Boss || f.Self);
+        var engaged = fighting || party.Members.Count > 0;
         var now = Environment.TickCount64;
         if (engaged) _lastEngagedTick = now;
         if (!s.AutoShow) return;
 
-        if (engaged && !_overlay.IsVisible && fight!.Value.Id != _suppressedFight)
+        var canShow = fighting ? fight!.Value.Id != _suppressedFight
+            : party.Members.Count > 0 && party.Revision != _suppressedPartyRevision;
+        if (engaged && !_overlay.IsVisible && canShow)
         {
             _overlay.Show();
             _autoShown = true;
@@ -439,6 +444,7 @@ public partial class App : Application
         {
             _overlay.Hide();
             _suppressedFight = _meter.Tracker.LiveFight()?.Id;
+            _suppressedPartyRevision = _meter.PartyPreview.Snapshot().Revision;
         }
         _meter.Settings.OverlayVisible = visible;
         _meter.Settings.Save();

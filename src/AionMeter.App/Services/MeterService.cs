@@ -78,6 +78,7 @@ public sealed class MeterService : IDisposable
     public SkillIcons Icons { get; }
     public BossPortraits Portraits { get; }
     public MeterOptions Options { get; }
+    public PartyPreview PartyPreview { get; } = new();
     public CombatTracker Tracker { get; }
     public Core.Events.LiveIdentity LiveIdentity { get; } = new();
     public HistoryStore History { get; }
@@ -104,7 +105,7 @@ public sealed class MeterService : IDisposable
     /// </summary>
     public void Replay(string path)
     {
-        LiveIdentity.Reset(); Tracker.InvalidateParty();
+        LiveIdentity.Reset(); PartyPreview.Reset(); Tracker.InvalidateParty();
         _replay?.Dispose();
         Tracker.Reset();
         _replaying = true;
@@ -132,6 +133,7 @@ public sealed class MeterService : IDisposable
 
     private void ProcessLiveEvent(Core.Events.GameEvent value)
     {
+        if (!_replaying && !DemoRunning) PartyPreview.Observe(value);
         Tracker.Process(value);
         if (!_replaying && !DemoRunning) LiveIdentity.Observe(value);
     }
@@ -147,7 +149,7 @@ public sealed class MeterService : IDisposable
                 _capture.EventDecoded += ProcessLiveEvent;
                 _capture.StatusChanged += status =>
                 {
-                    LiveIdentity.ObserveCaptureStatus(status, Tracker.InvalidateParty);
+                    LiveIdentity.ObserveCaptureStatus(status, () => { PartyPreview.Reset(); Tracker.InvalidateParty(); });
                 };
                 _capture.Start();
             }
@@ -179,7 +181,7 @@ public sealed class MeterService : IDisposable
         {
             previous?.Dispose();
             if (_exiting) return;
-            LiveIdentity.Reset(); Tracker.InvalidateParty();
+            LiveIdentity.Reset(); PartyPreview.Reset(); Tracker.InvalidateParty();
             StartCapture();
         }
         finally
@@ -204,7 +206,7 @@ public sealed class MeterService : IDisposable
 
     public void StartDemo(int seconds = 45)
     {
-        LiveIdentity.Reset(); Tracker.InvalidateParty();
+        LiveIdentity.Reset(); PartyPreview.Reset(); Tracker.InvalidateParty();
         _demo?.Dispose();
         _demo = new DemoFightSource(Tracker.Process);
         _demo.Start(TimeSpan.FromSeconds(seconds));

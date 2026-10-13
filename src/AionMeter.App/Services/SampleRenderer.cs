@@ -54,7 +54,18 @@ public static class SampleRenderer
         using var meter = CreateMeter(language, o.RowSize);
         var start = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() - 20_500; // a fight that is still going
         var fight = new SampleFight(start, 20);
-        fight.FeedUntil(meter.Tracker, start + 20_000);
+        if (o.Window != "party") fight.FeedUntil(meter.Tracker, start + 20_000);
+        else
+        {
+            meter.PartyPreview.Observe(new SelfIdentifiedEvent(start, 1, "Sample self", 2305, Core.Events.GameClass.Cleric));
+            meter.PartyPreview.Observe(new PartyRosterEvent(start, [
+                new("Sample self", 2305, 45, 1894, 85471, Core.Events.GameClass.Cleric),
+                new("Sample mage", 2305, 45, 945, 53718, Core.Events.GameClass.Sorcerer),
+                new("Sample fighter", 2305, 45, 864, 42520, Core.Events.GameClass.Gladiator),
+                new("Sample spirit", 2305, 45, 1132, 52644, Core.Events.GameClass.Elementalist),
+                new("Sample ranger", 2305, 45, 894, 37373, Core.Events.GameClass.Ranger)
+            ]));
+        }
         // A dungeon's time limit, 12:48 of its hour gone: the countdown in the overlay's top line.
         meter.Tracker.Process(new InstanceTimerEvent(start, 600092, 2, start - 768_000, start + 2_832_000));
         if (o.Window == "overlay-crowd") fight.FeedCrowd(meter.Tracker, start + 20_000, 124);

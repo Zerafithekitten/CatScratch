@@ -103,6 +103,8 @@ public partial class OverlayWindow : Window, IDisplayAppearance
     private Brush? _shellBackground, _shellBorder, _frameBorder;
     private System.Windows.Media.Effects.Effect? _frameEffect;
     private Visibility _toolbarVisibility;
+    private long _partyPreviewRevision = -1;
+    private bool _showingPartyPreview;
     public void SetDisplayOnly(bool enabled)
     {
         if (!enabled && !_displayOnly) return;
@@ -163,6 +165,7 @@ public partial class OverlayWindow : Window, IDisplayAppearance
 
         if (_saved is { } saved)
         {
+            _showingPartyPreview = false;
             _vm.Apply(saved.Record.Summary with { Title = saved.Title, Zone = _meter.DisplayZone(saved.Record.Summary.Zone) },
                 _settings.MaxRows, _settings.BarsRelativeToTop);
             _vm.SetSegment("saved", saved.Entry.StartedAt.ToString("dd.MM HH:mm"));
@@ -177,8 +180,21 @@ public partial class OverlayWindow : Window, IDisplayAppearance
                 _segment = null;
                 snap = _meter.Tracker.Snapshot(null, now);
             }
-            _vm.Apply(snap, _settings.MaxRows, _settings.BarsRelativeToTop);
-            _vm.SetSegment(_segment is null ? "live" : "session", snap?.StartedAt.ToString("HH:mm"));
+            var party = _meter.PartyPreview.Snapshot();
+            if (_segment is null && snap?.IsActive != true && party.Members.Count > 0)
+            {
+                if (!_showingPartyPreview || _partyPreviewRevision != party.Revision)
+                    _vm.ApplyParty(party.Members, _meter.LiveIdentity.Current?.Name ?? "");
+                _partyPreviewRevision = party.Revision;
+                _showingPartyPreview = true;
+                _vm.SetSegment("live");
+            }
+            else
+            {
+                _showingPartyPreview = false;
+                _vm.Apply(snap, _settings.MaxRows, _settings.BarsRelativeToTop);
+                _vm.SetSegment(_segment is null ? "live" : "session", snap?.StartedAt.ToString("HH:mm"));
+            }
         }
         if (!_settings.Transient && !_meter.DemoRunning && _saved is null && _segment is null && _meter.LiveIdentity.ActorId is null)
             foreach (var row in _vm.Rows) row.IsSelf = false;

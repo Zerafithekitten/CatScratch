@@ -1,3 +1,11 @@
+## CatScratch v1.0.9
+
+- Show received party members, classes, GS and CP before combat, including the recorded group-finder party format.
+- Clear the temporary party stats at the next loading screen. Repeated packets cannot restore that old preview.
+- Keep party previews separate from damage statistics and saved fight history; combat still uses the DPS view.
+- Show only rosters containing the freshly identified character on the correct server.
+- Reuse unchanged party rows to keep the preview lightweight.
+
 ## CatScratch v1.0.8
 
 - Normal startup now requests administrator rights before opening the meter or starting capture.
