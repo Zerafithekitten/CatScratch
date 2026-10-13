@@ -33,6 +33,24 @@ public class PartyOnlyTests
     { var t=Setup(); Hit(t,2); Roster(t,"NewMate"); Hit(t,2); Assert.Null(t.Snapshot(null,300)); Hit(t,1); Assert.Equal(100,t.Snapshot(null,300)!.TotalDamage); }
     [Fact] public void RosterWithoutSelfRevokesConfirmation()
     { var t=Setup(); Hit(t,1); t.Process(new PartyRosterEvent(250,[])); Hit(t,1,260); Assert.False(t.PartyConfirmed); Assert.Equal(100,t.Snapshot(null,300)!.TotalDamage); }
-    [Fact] public void StaleRosterAndRestartFailClosed()
-    { var t=Setup(); Hit(t,1); t.Tick(30111); Assert.False(t.PartyConfirmed); Hit(t,1,30112); Hit(t,2,30112); Assert.Equal(100,t.Snapshot(null,30113)!.TotalDamage); Roster(t,"Mate"); t.InvalidateParty(); Assert.False(t.PartyConfirmed); }
+    [Fact] public void ConfirmedGroupSurvivesThirtySecondsAndIdleTicks()
+    {
+        var t=Setup(); Hit(t,1); Hit(t,2);
+        t.Tick(30111); Assert.True(t.PartyConfirmed);
+        Hit(t,1,30112); Hit(t,2,30112); Hit(t,3,30112);
+        var snapshot=t.Snapshot(null,30113)!;
+        Assert.Equal(200,snapshot.TotalDamage);
+        Assert.Equal(2,snapshot.Combatants.Count);
+        t.Tick(600000); Assert.True(t.PartyConfirmed);
+        Hit(t,2,600001); Assert.Equal(100,t.Snapshot(null,600002)!.TotalDamage);
+    }
+    [Fact] public void ExplicitLeaveAndRestartRevokeGroup()
+    {
+        var t=Setup(); t.Process(new PartyLeftEvent(200));
+        Assert.False(t.PartyConfirmed); Hit(t,2,201); Hit(t,1,202);
+        Assert.Equal(100,t.Snapshot(null,203)!.TotalDamage);
+        Roster(t,"Mate"); Assert.True(t.PartyConfirmed);
+        t.InvalidateParty(); Assert.False(t.PartyConfirmed);
+        Hit(t,1,301); Hit(t,2,301); Assert.Null(t.Snapshot(null,302));
+    }
 }

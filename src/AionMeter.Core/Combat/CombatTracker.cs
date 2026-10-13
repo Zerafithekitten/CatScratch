@@ -19,8 +19,6 @@ public sealed class CombatTracker
     private readonly HashSet<(string Name, int Server)> _party = new();
     private bool _freshSelf;
     private (string Name, int Server) _selfKey;
-    private long _rosterAt;
-    private const long RosterLifetimeMs = 30_000;
     public bool PartyConfirmed { get { lock (_gate) return !Options.PartyOnly || (_freshSelf && _party.Count > 0); } }
     public void InvalidateParty()
     {
@@ -47,7 +45,6 @@ public sealed class CombatTracker
         if (!_freshSelf || _selfKey.Server <= 0 || self is null || !members.Contains(_selfKey)) { ClearParty(); return; }
         if (!_party.SetEquals(members)) ClearParty();
         _party.UnionWith(members);
-        _rosterAt = roster.TimeMs;
     }
 
     public CombatTracker(GameData data, MeterOptions options)
@@ -113,7 +110,6 @@ public sealed class CombatTracker
         lock (_gate)
         {
             if (e.TimeMs > LastEventMs) LastEventMs = e.TimeMs;
-            if (Options.PartyOnly && _party.Count > 0 && e.TimeMs - _rosterAt > RosterLifetimeMs) ClearParty();
             CheckIdle(e.TimeMs);
 
             switch (e)
@@ -220,7 +216,6 @@ public sealed class CombatTracker
     {
         lock (_gate)
         {
-            if (Options.PartyOnly && _party.Count > 0 && nowMs - _rosterAt > RosterLifetimeMs) ClearParty();
             if (_current is { IsActive: true } enc) AttributeOrphans(enc, nowMs);
             CheckIdle(nowMs);
         }

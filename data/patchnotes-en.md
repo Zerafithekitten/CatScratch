@@ -1,3 +1,9 @@
+## CatScratch v1.0.15
+
+- Fix confirmed party damage silently reverting to self-only tracking after 30 seconds without a roster update.
+- Keep live confirmed membership until an explicit leave, membership change, identity invalidation, zone change or capture restart.
+- Continue excluding unknown actors, other servers and unconfirmed summon owners.
+
 ## CatScratch v1.0.14
 
 - Improve compact names, combat power and gear-score readability with automatic black or white text chosen for each class color.
