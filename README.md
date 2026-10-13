@@ -4,7 +4,7 @@ A separate always-on-top Windows damage meter for AION 2 by Zerafithekitten.
 
 [Download the latest release](https://github.com/Zerafithekitten/CatScratch/releases/latest) · [Patch notes](data/patchnotes-en.md) · [Report an issue](https://github.com/Zerafithekitten/CatScratch/issues)
 
-Latest published version: **2.3.0**. English is the default; German, Russian and French are available in Settings.
+Latest published version: **2.3.1**. English is the default; German, Russian and French are available in Settings.
 
 ## Preview
 
@@ -77,10 +77,10 @@ Select the language in **Settings > General > Language**. English remains the de
 
 | Language | Interface | Availability |
 | --- | --- | --- |
-| English | English | Current release (2.3.0) · default |
-| German | Deutsch | Current release (2.3.0) |
-| Russian | Русский | Current release (2.3.0) |
-| French | Français | Current release (2.3.0) |
+| English | English | Current release (2.3.1) · default |
+| German | Deutsch | Current release (2.3.1) |
+| Russian | Русский | Current release (2.3.1) |
+| French | Français | Current release (2.3.1) |
 
 Skill and monster names use the bundled language tables, with English as the fallback for missing names. Player names are preserved.
 

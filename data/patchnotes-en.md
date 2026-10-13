@@ -1,3 +1,7 @@
+## CatScratch v2.3.1
+
+- Display Upcoming events in compact single-line cards: event type and name on the left, countdown on the right. Remove scheduled clock times while retaining the two-minute started-event pulse.
+
 ## CatScratch v2.3.0
 
 - Make Upcoming events cards more compact without shrinking the text. Show today's start times without the Today label; retain Tomorrow/date labels across midnight.

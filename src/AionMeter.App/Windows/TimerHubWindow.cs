@@ -20,7 +20,7 @@ public sealed class TimerHubWindow : Window, IDisplayAppearance
         if (_header is not null) _header.Visibility=enabled ? Visibility.Collapsed : Visibility.Visible;
         foreach(var tile in _list.Children.OfType<Border>()) {
             tile.Background=EventPanelBrushes.Background;
-            if (tile.Child is StackPanel { Tag: EventStart item }) EventPulse.Apply(tile,EventPanelBrushes.ForKind(EventKinds.For(item.Id)),item.StartsAt <= (ClockOverride?.Invoke() ?? DateTimeOffset.UtcNow));
+            if (tile.Child is Grid { Tag: EventStart item }) EventPulse.Apply(tile,EventPanelBrushes.ForKind(EventKinds.For(item.Id)),item.StartsAt <= (ClockOverride?.Invoke() ?? DateTimeOffset.UtcNow));
         }
         foreach (var placeholder in _list.Children.OfType<TextBlock>())
             placeholder.Visibility = enabled ? Visibility.Collapsed : Visibility.Visible;
@@ -74,17 +74,17 @@ public sealed class TimerHubWindow : Window, IDisplayAppearance
             _list.Children.Clear(); _list.Tag=key;
             foreach(var item in events)
             {
-                var row=new StackPanel { Tag=item };
-                var heading=new DockPanel { LastChildFill=true };
+                var row=new Grid { Tag=item }; row.ColumnDefinitions.Add(new(){Width=GridLength.Auto}); row.ColumnDefinitions.Add(new(){Width=new GridLength(1,GridUnitType.Star)}); row.ColumnDefinitions.Add(new(){Width=GridLength.Auto});
+
                 var kind=EventKinds.For(item.Id);
                 var accent=EventPanelBrushes.ForKind(kind);
                 var badge=new Border { CornerRadius=new(6), BorderBrush=accent, BorderThickness=new(1), Padding=new(4,1,4,1), Margin=new(0,0,5,0),
                     Child=new TextBlock { Text=UiText.Current.Localize(kind), FontSize=8, Foreground=accent } };
-                DockPanel.SetDock(badge,Dock.Left); heading.Children.Add(badge);
-                heading.Children.Add(new TextBlock { Text=UiText.Current.Localize(item.Name), FontSize=10, FontWeight=FontWeights.SemiBold, VerticalAlignment=VerticalAlignment.Center, TextTrimming=TextTrimming.CharacterEllipsis });
-                row.Children.Add(heading);
-                row.Children.Add(new TextBlock { FontSize=10, FontWeight=FontWeights.SemiBold, Foreground=ColorBrush("#D8C789"), Margin=new(0,2,0,0) });
-                var tile=new Border { Child=row, CornerRadius=new(5), Padding=new(7,4,7,4), Height=42,
+                badge.VerticalAlignment=VerticalAlignment.Center; row.Children.Add(badge);
+                var name=new TextBlock { Text=UiText.Current.Localize(item.Name), FontSize=10, FontWeight=FontWeights.SemiBold, VerticalAlignment=VerticalAlignment.Center, TextTrimming=TextTrimming.CharacterEllipsis }; Grid.SetColumn(name,1); row.Children.Add(name);
+
+                var countdown=new TextBlock { FontSize=10, FontWeight=FontWeights.SemiBold, Foreground=ColorBrush("#D8C789"), Margin=new(8,0,0,0), VerticalAlignment=VerticalAlignment.Center, TextAlignment=TextAlignment.Right }; Grid.SetColumn(countdown,2); row.Children.Add(countdown);
+                var tile=new Border { Child=row, CornerRadius=new(5), Padding=new(7,4,7,4), Height=28,
                     Background=EventPanelBrushes.Background, BorderBrush=accent, BorderThickness=new(1), Margin=new(2),
                     ToolTip=$"{UiText.Current.Localize(item.Name)} · {UiText.Current.Localize(item.Id.StartsWith("boss:") ? "Time from in-game boss list" : "Community schedule · Shugo.GG")} ({UiText.Current.Localize(_cards.Saved.EventRegion)}). {UiText.Current.Localize("Double-click to open a separate window.")}" };
                 tile.MouseLeftButtonDown+=(_,e)=> {
@@ -99,9 +99,9 @@ public sealed class TimerHubWindow : Window, IDisplayAppearance
         }
         foreach(var border in _list.Children.OfType<Border>())
         {
-            var row=(StackPanel)border.Child; var item=(EventStart)row.Tag; var remaining=item.StartsAt-now;
+            var row=(Grid)border.Child; var item=(EventStart)row.Tag; var remaining=item.StartsAt-now;
             border.Width = Math.Max(220, (Width-16) / (Width>=460 ? 2 : 1));
-            ((TextBlock)row.Children[1]).Text=remaining <= TimeSpan.Zero ? string.Format(UiText.Current.Localize("Started · {0} ago"),$"{(int)(-remaining).TotalMinutes:00}:{(-remaining).Seconds:00}") : $"{TimerCards.StartLabel(item.StartsAt, now)} · {UiText.Current.Localize("in")} {(int)remaining.TotalMinutes:00}:{remaining.Seconds:00}";
+            ((TextBlock)row.Children[2]).Text=remaining <= TimeSpan.Zero ? $"{UiText.Current.Localize("Started")} · {(int)(-remaining).TotalMinutes:00}:{(-remaining).Seconds:00}" : $"{UiText.Current.Localize("in")} {(int)remaining.TotalMinutes:00}:{remaining.Seconds:00}";
         }
         SetDisplayOnly(_displayOnly);
     }
