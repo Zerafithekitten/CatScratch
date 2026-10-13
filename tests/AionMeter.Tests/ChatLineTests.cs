@@ -6,6 +6,47 @@ namespace AionMeter.Tests;
 
 public class ChatLineTests
 {
+    [Fact] public void Full_damage_report_includes_every_player_with_exact_integer_and_percentage()
+    {
+        var report = ChatLine.DamageReport(Fight(Party5));
+        Assert.Contains("Damage: 4,000,000", report);
+        Assert.Contains("1. Sylvaen: 1,600,000 dmg (40.0%)", report);
+        Assert.Contains("5. Nyxara: 160,000 dmg (4.0%)", report);
+        Assert.Equal(7, report.Split(Environment.NewLine).Length);
+    }
+    [Fact] public void Chat_damage_lines_fit_and_never_omit_players()
+    {
+        var lines = ChatLine.DamageLines(Fight(Party5));
+        Assert.True(lines.Count > 1);
+        Assert.All(lines, line => Assert.True(line.Length <= ChatLine.MaxLength));
+        var full = string.Join("\n", lines);
+        foreach (var p in Party5)
+        {
+            Assert.Equal(1, full.Split(p.Name + ":").Length - 1);
+            Assert.Contains(Format.Grouped(p.Damage) + " dmg (" + Format.Share(p.Share) + ")", full);
+        }
+        Assert.DoesNotContain("more", full);
+    }
+    [Fact] public void Long_unicode_names_and_large_damage_keep_numbers_and_valid_text()
+    {
+        var p = Player(1, string.Concat(Enumerable.Repeat("🐈", 80)), long.MaxValue);
+        var lines = ChatLine.DamageLines(Fight([p]) with { Title = new string('X', 500) });
+        Assert.All(lines, line => Assert.True(line.Length <= ChatLine.MaxLength));
+        Assert.Contains(Format.Grouped(long.MaxValue), lines[0]);
+        Assert.DoesNotContain(lines[0].EnumerateRunes(), rune => rune.Value == 0xFFFD);
+    }
+    [Fact] public void Partial_world_boss_messages_identify_received_damage()
+    {
+        var fight = Fight([Party5[0]]) with { Attackers = 100 };
+        Assert.All(ChatLine.DamageLines(fight), line => Assert.Contains("[received damage]", line));
+        Assert.Contains("damage of 1 sent", ChatLine.DamageReport(fight));
+    }
+    [Fact] public void Unknown_summons_are_not_reported_as_a_teammate()
+    {
+        var fight = Fight([Party5[0], Player(Combatant.UnknownSummonsId, "Unowned summons", 100)]);
+        Assert.DoesNotContain("Unowned summons", ChatLine.DamageReport(fight));
+        Assert.DoesNotContain("Unowned summons", string.Join("\n", ChatLine.DamageLines(fight)));
+    }
     private static CombatantSnapshot Player(uint id, string name, long damage, double crit = 0.1, long maxHit = 20_000) =>
         new(id, name, GameClass.Elementalist, id == 3, damage, damage / 160.0, damage / 4_000_000.0, 300, crit, maxHit, 0);
 

@@ -1,3 +1,11 @@
+## CatScratch v1.0.11
+
+- Copy full fight damage for every recorded player, with full integer values and percentage shares.
+- Choose individual game-chat lines from the copy menu. Long rankings are split into short messages without omitting players.
+- Add a chat-copy button to the meter footer. The same options are available in player menus and breakdowns, including saved fights.
+- Export stays clipboard-only: paste and send yourself. No automatic game inputs or outgoing game messages are generated.
+- Unknown-owner summons are not listed as teammates, and partial world-boss data remains identified as received damage.
+
 ## CatScratch v1.0.10
 
 - New purple paw icon for the meter, executable, shortcuts, installer and system tray.

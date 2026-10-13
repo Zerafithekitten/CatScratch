@@ -443,6 +443,7 @@
                         <Button x:Name="ViewMenuButton" Style="{StaticResource FooterLink}" Content="View" Click="Appearance_Click" ToolTip="View"/>
                         <Button x:Name="EventsButton" Style="{StaticResource FooterLink}" Content="Events &amp; Timers" Click="Events_Click" ToolTip="Events &amp; Timers"/>
                         <Button x:Name="CompactHistory" Style="{StaticResource ToolIcon}" Content="&#xE8A5;" Click="Segments_Click" ToolTip="Statistics"/>
+                        <Button Style="{StaticResource ToolIcon}" Content="&#xE8BD;" Click="Chat_Click" ToolTip="Copy fight damage (numbers + %)"/>
                         <Button Style="{StaticResource ToolIcon}" Content="&#xE8A1;" Click="PatchNotes_Click" ToolTip="Patch notes"/>
                         <!-- Boss timers: always visible, shows the next respawn -->
                         <Button x:Name="BossTimersLink" Style="{StaticResource TimersPill}" Click="Timers_Click" ToolTip="{Binding T.TipTimers}" Margin="10,0,0,0">

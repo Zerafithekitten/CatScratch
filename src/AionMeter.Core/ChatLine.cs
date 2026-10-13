@@ -41,6 +41,40 @@ public static class ChatLine
 {
     public const int MaxLength = 180;
 
+    /// <summary>All received player results with full integer damage, for clipboard/chat/Discord.</summary>
+    public static string DamageReport(EncounterSnapshot s, ChatWords? words = null, Func<CombatantSnapshot, string>? name = null)
+    {
+        var w = words ?? ChatWords.English;
+        name ??= c => c.Name;
+        var lines = new List<string> { $"CatScratch | {OneLine(Header(s, w))}", $"{w.ColDamage}: {Format.Grouped(s.TotalDamage)}" };
+        lines.AddRange(Players(s).Select((c, i) => DamageEntry(c, i, OneLine(name(c)), w)));
+        return string.Join(Environment.NewLine, lines);
+    }
+
+    /// <summary>Chat-sized messages containing every player once; never replace omitted players with "+more".</summary>
+    public static IReadOnlyList<string> DamageLines(EncounterSnapshot s, ChatWords? words = null, Func<CombatantSnapshot, string>? name = null)
+    {
+        var w = words ?? ChatWords.English;
+        name ??= c => c.Name;
+        var head = $"CatScratch | {(s.MostDamageUnsent ? "[received damage] " : "")}{Cut(OneLine(Header(s, w)), 42)}";
+        var lines = new List<string>();
+        var current = head;
+        foreach (var (c, i) in Players(s).Select((c, i) => (c, i)))
+        {
+            var entry = DamageEntry(c, i, Cut(OneLine(name(c)), 40), w);
+            if (current.Length + 3 + entry.Length > MaxLength && current != head)
+            { lines.Add(current); current = head; }
+            current += " | " + entry;
+        }
+        if (current != head) lines.Add(current);
+        return lines;
+    }
+
+    private static string DamageEntry(CombatantSnapshot c, int i, string name, ChatWords w) =>
+        $"{i + 1}. {name}: {string.Format(w.Damage, Format.Grouped(c.Damage))} ({Format.Share(c.Share)})";
+
+    private static string OneLine(string text) => string.Concat(text.Select(c => char.IsControl(c) || char.IsWhiteSpace(c) ? ' ' : c));
+
     /// <summary>
     /// <c>Balhash 2:41 KILL | Talwyn (GS 2859 / CP 59.07K) #3 of 5: 5.05K/s, 813.2K dmg (20%), crit 15%, top hit 34.52K |
     /// party 24.79K/s</c> — gear score and combat power when the party roster gave them.
@@ -169,7 +203,13 @@ public static class ChatLine
     /// <summary>Whole percents read best in chat ("41%"); a token share is "&lt;1%", not a misleading "0%".</summary>
     private static string Pct(double fraction) => fraction is > 0 and < 0.005 ? "<1%" : Format.Percent(fraction, 0);
 
-    private static string Cut(string s, int max) => s.Length <= max ? s : s[..(max - 1)] + "…";
+    private static string Cut(string s, int max)
+    {
+        if (s.Length <= max) return s;
+        var length = max - 1;
+        if (length > 0 && char.IsHighSurrogate(s[length - 1])) length--;
+        return s[..length] + "…";
+    }
 
     private static string Trim(string s) => s.Length <= MaxLength ? s : s[..MaxLength];
 }

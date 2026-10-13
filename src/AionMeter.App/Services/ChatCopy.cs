@@ -19,6 +19,23 @@ public static class ChatCopy
     /// <summary>The menu entries; <paramref name="fight"/> is read when one is clicked, so a live fight copies its latest numbers.</summary>
     public static IEnumerable<MenuItem> Items(FrameworkElement noteAnchor, Func<EncounterSnapshot?> fight, uint? player, string? playerName)
     {
+        yield return Item("Copy full fight damage (numbers + %)", s => ChatLine.DamageReport(s, T.Chat, Name));
+        var chat = new MenuItem { Header = "Copy game-chat lines (numbers + %)", IsEnabled = fight() is not null };
+        chat.Items.Add(new MenuItem { Header = "Open to choose a line", IsEnabled = false });
+        chat.SubmenuOpened += (_, _) =>
+        {
+            chat.Items.Clear();
+            if (fight() is not { } snapshot) return;
+            var lines = ChatLine.DamageLines(snapshot with { Title = T.FightTitle(snapshot) }, T.Chat, Name);
+            for (var i = 0; i < lines.Count; i++)
+            {
+                var text = lines[i];
+                var line = new MenuItem { Header = $"Copy line {i + 1} of {lines.Count}", ToolTip = text };
+                line.Click += (_, _) => Copy(noteAnchor, text);
+                chat.Items.Add(line);
+            }
+        };
+        yield return chat;
         if (player is { } id && playerName is not null)
             yield return Item(string.Format(T.CopyPlayer, playerName), s => ChatLine.Player(s, id, T.Chat, Name));
         yield return Item(T.CopyParty, s => ChatLine.Party(s, T.Chat, Name));
@@ -26,7 +43,7 @@ public static class ChatCopy
 
         MenuItem Item(string header, Func<EncounterSnapshot, string> text)
         {
-            var item = new MenuItem { Header = header };
+            var item = new MenuItem { Header = header, IsEnabled = fight() is not null };
             item.Click += (_, _) =>
             {
                 if (fight() is { } s) Copy(noteAnchor, text(s with { Title = T.FightTitle(s) }));

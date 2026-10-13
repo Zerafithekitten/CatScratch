@@ -91,6 +91,16 @@ internal static class InteractionChecks
             Check(elevation.UseShellExecute && elevation.Verb == "runas" && elevation.ArgumentList.SequenceEqual(new[] { "--updated", "argument with spaces" }),
                 "Normal startup requests administrator elevation and preserves arguments");
             using var meter = new MeterService(new AppSettings { Transient = true, DownloadIcons = false }, null);
+            var exportAnchor = new System.Windows.Controls.Button();
+            var disabledExport = ChatCopy.Items(exportAnchor, () => null, null, null).ToArray();
+            Check(disabledExport.All(item => !item.IsEnabled), "Chat export is disabled when no real fight is selected");
+            meter.Tracker.Process(new AionMeter.Core.Events.SelfIdentifiedEvent(1, 1, "Sample", 2305, AionMeter.Core.Events.GameClass.Cleric));
+            meter.Tracker.Process(new AionMeter.Core.Events.DamageEvent(2, 1, 500, 17010000, 1600000, AionMeter.Core.Events.HitFlags.None));
+            var export = ChatCopy.Items(exportAnchor, () => meter.Tracker.Snapshot(null, 3), null, null).ToArray();
+            Check(export[0].IsEnabled && export[0].Header.ToString()!.Contains("numbers + %"), "Full integer damage export is available for a selected fight");
+            export[1].RaiseEvent(new RoutedEventArgs(System.Windows.Controls.MenuItem.SubmenuOpenedEvent, export[1]));
+            Check(export[1].Items.Count == 1 && ((System.Windows.Controls.MenuItem)export[1].Items[0]).ToolTip.ToString()!.Contains("1,600,000 dmg (100.0%)"),
+                "Chat submenu previews exact damage and share without posting or changing the clipboard");
             var cards = new TimerCards(meter, persistent: false);
             cards.Saved.SelectedEvents = ["shugo", "rift"];
             var hub = new AionMeter.App.Windows.TimerHubWindow(cards)
