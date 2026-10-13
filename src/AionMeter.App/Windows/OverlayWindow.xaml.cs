@@ -717,6 +717,7 @@ public partial class OverlayWindow : Window, IDisplayAppearance
 
     private void Hide_Click(object sender, RoutedEventArgs e) => Close();
     private void Events_Click(object sender, RoutedEventArgs e) => AppHost.Current.ShowTimerHub();
+    private void PatchNotes_Click(object sender, RoutedEventArgs e) => AppHost.Current.ShowPatchNotes();
     private void NpcapDownload_Click(object sender, RoutedEventArgs e) => App.ShowNpcapHelp();
 
     private void ApplyCompactLayout()

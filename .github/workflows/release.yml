@@ -38,6 +38,9 @@ jobs:
           if ($LASTEXITCODE) { throw 'Publish failed' }
           Copy-Item LICENSE dist/payload
           Copy-Item INSTALL.txt dist/payload
+          foreach ($file in @('sounds/Chime.wav', 'sounds/Bell.wav', 'sounds/Ping.wav', 'data/patchnotes-en.md')) {
+            if (-not (Test-Path -LiteralPath "dist/payload/$file")) { throw "Required app resource missing: $file" }
+          }
           Compress-Archive -Path dist/payload/* -DestinationPath dist/CatScratch-win-x64.zip
           git archive --format=zip --output=dist/CatScratch-source.zip HEAD
       - name: Verify event panels and complete shutdown

@@ -117,7 +117,7 @@ Automatic checking and installation can be disabled in Settings.
 Updates download a verified package, close all windows, replace program files and restart without Setup. Userdata is preserved. Existing Zerafi DPS Monitor installations use one final migration installer.
 
 VALIDATION
-Release build completed. 141 combat/storage/schedule/latency/update tests passed. Compact meter and event previews were visually checked.
+Release build completed. 148 combat/storage/schedule/latency/update/reminder tests passed. Compact meter and event previews were visually checked.
 Own-window click-through, restoration and repeated toggles passed native checks.
 System-wide hotkey registration is blocked in the protected test environment
 (Windows error 5). Actual hotkey operation and clicks passing into the game still

@@ -17,6 +17,9 @@ Use borderless windowed mode to keep the meter visible above the game.
 - Click-through removes window frames while preserving damage, time and RTT.
 - Movable event cards for the next selected start within an hour.
 - Separate observed boss timers; history limited to ten completed fights.
+- Colored EVENT / PVP / BOSS badges and readable boss panels when locked.
+- Optional per-event sounds with preview, volume, reminder timing and custom WAV files.
+- Patch notes available in the meter, including offline notes for the installed version.
 - English interface and verified GitHub updates for installed and portable copies.
 
 Use Settings > Updates > Check now to update from inside the meter.

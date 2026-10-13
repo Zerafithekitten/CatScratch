@@ -11,6 +11,8 @@ namespace AionMeter.App.Windows;
 
 public partial class SettingsWindow : Window
 {
+    private void PatchNotes_Click(object sender, RoutedEventArgs e) => AppHost.Current.ShowPatchNotes();
+    private void EventSounds_Click(object sender, RoutedEventArgs e) => AppHost.Current.ShowEventSounds();
     private readonly MeterService _meter;
     private readonly List<(string? Name, string Label)> _devices = new();
 

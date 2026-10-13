@@ -20,7 +20,7 @@ public sealed class TimerHubWindow : Window, IDisplayAppearance
         if (_header is not null) _header.Visibility=enabled ? Visibility.Collapsed : Visibility.Visible;
         foreach(var tile in _list.Children.OfType<Border>()) {
             tile.Background=EventPanelBrushes.Background;
-            tile.BorderBrush=EventPanelBrushes.Border;
+            tile.BorderBrush=tile.Child is StackPanel { Tag: EventStart item } ? EventPanelBrushes.ForKind(EventKinds.For(item.Id)) : EventPanelBrushes.Border;
         }
         foreach (var placeholder in _list.Children.OfType<TextBlock>())
             placeholder.Visibility = enabled ? Visibility.Collapsed : Visibility.Visible;
@@ -74,15 +74,16 @@ public sealed class TimerHubWindow : Window, IDisplayAppearance
             {
                 var row=new StackPanel { Tag=item };
                 var heading=new DockPanel { LastChildFill=true };
-                var kind=item.Id is "rift" or "siege" ? "PVP" : item.Id is "nahma" or "kaira" or "siege-bosses" ? "BOSS" : "EVENT";
-                var badge=new Border { CornerRadius=new(6), BorderBrush=ColorBrush("#716754"), BorderThickness=new(1), Padding=new(4,1,4,1), Margin=new(0,0,5,0),
-                    Child=new TextBlock { Text=kind, FontSize=8, Foreground=ColorBrush("#D8CDB7") } };
+                var kind=EventKinds.For(item.Id);
+                var accent=EventPanelBrushes.ForKind(kind);
+                var badge=new Border { CornerRadius=new(6), BorderBrush=accent, BorderThickness=new(1), Padding=new(4,1,4,1), Margin=new(0,0,5,0),
+                    Child=new TextBlock { Text=kind, FontSize=8, Foreground=accent } };
                 DockPanel.SetDock(badge,Dock.Left); heading.Children.Add(badge);
                 heading.Children.Add(new TextBlock { Text=item.Name, FontSize=10, FontWeight=FontWeights.SemiBold, VerticalAlignment=VerticalAlignment.Center, TextTrimming=TextTrimming.CharacterEllipsis });
                 row.Children.Add(heading);
                 row.Children.Add(new TextBlock { FontSize=10, FontWeight=FontWeights.SemiBold, Foreground=ColorBrush("#D8C789"), Margin=new(0,4,0,0) });
                 var tile=new Border { Child=row, CornerRadius=new(5), Padding=new(8,5,8,5), Height=48,
-                    Background=EventPanelBrushes.Background, BorderBrush=EventPanelBrushes.Border, BorderThickness=new(1), Margin=new(2),
+                    Background=EventPanelBrushes.Background, BorderBrush=accent, BorderThickness=new(1), Margin=new(2),
                     ToolTip=$"{item.Name} · Community schedule ({_cards.Saved.EventRegion}). Double-click to open a separate window." };
                 tile.MouseLeftButtonDown+=(_,e)=> {
                     if(e.ClickCount==2) _cards.Pin("auto:"+item.Id);
@@ -127,6 +128,7 @@ public sealed class TimerHubWindow : Window, IDisplayAppearance
         var width=new Slider { Minimum=240,Maximum=1000,Value=Width };
         width.ValueChanged+=(_,e)=> { Width=e.NewValue; Reload(); }; panel.Children.Add(width);
         var bosses=new Button { Content="Open separate boss timers", Margin=new(0,15,0,10) }; bosses.Click+=(_,_)=>AppHost.Current.ShowBossTimers(); panel.Children.Add(bosses);
+        var sounds=new Button { Content="Event sounds…", Margin=new(0,0,0,10) }; sounds.Click+=(_,_)=>AppHost.Current.ShowEventSounds(); panel.Children.Add(sounds);
         panel.Children.Add(new TextBlock { Text="Schedule: Shugo.GG · checked Oct 12, 2026\nCommunity information, not officially confirmed.\nTimes may change with game updates.", FontSize=11, TextWrapping=TextWrapping.Wrap });
         var source=new Button { Content="Open schedule source", Margin=new(0,8,0,0) }; source.Click+=(_,_)=>System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(AutomaticEventSchedule.Source){UseShellExecute=true}); panel.Children.Add(source);
         _preferences=new Window { Title="Event preferences", Content=new ScrollViewer { Content=panel, Background=ColorBrush("#161C27") },

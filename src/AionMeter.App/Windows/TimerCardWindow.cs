@@ -13,9 +13,10 @@ public sealed class TimerCardWindow : Window, IDisplayAppearance
     {
         if (_card is null) return;
         _card.Background=EventPanelBrushes.Background;
-        _card.BorderBrush=EventPanelBrushes.Border;
+        _card.BorderBrush=EventPanelBrushes.ForKind(_kind.Text);
     }
     private readonly TextBlock _name = new() { FontSize = 15, FontWeight = FontWeights.SemiBold, TextWrapping = TextWrapping.Wrap };
+    private readonly TextBlock _kind = new() { FontSize = 9, FontWeight = FontWeights.Bold, Margin = new(0,0,6,0), VerticalAlignment = VerticalAlignment.Center };
     private readonly TextBlock _time = new() { FontSize = 14, Foreground = Brushes.PaleGoldenrod, Margin = new(0, 6, 0, 0) };
     private readonly TextBlock _source = new() { FontSize = 10, Foreground = Brushes.LightGray, TextWrapping = TextWrapping.Wrap, Margin = new(0, 5, 0, 0) };
     public TimerCardWindow(TimerCards cards, string id, CardPlacement placement)
@@ -34,7 +35,8 @@ public sealed class TimerCardWindow : Window, IDisplayAppearance
         Left = Math.Clamp(placement.Left, SystemParameters.VirtualScreenLeft, Math.Max(SystemParameters.VirtualScreenLeft, SystemParameters.VirtualScreenLeft + SystemParameters.VirtualScreenWidth - Width));
         Top = Math.Clamp(placement.Top, SystemParameters.VirtualScreenTop, Math.Max(SystemParameters.VirtualScreenTop, SystemParameters.VirtualScreenTop + SystemParameters.VirtualScreenHeight - Height));
         var body = new StackPanel { Margin = new(12) };
-        body.Children.Add(_name); body.Children.Add(_time); body.Children.Add(_source);
+        var heading = new DockPanel(); DockPanel.SetDock(_kind, Dock.Left); heading.Children.Add(_kind); heading.Children.Add(_name);
+        body.Children.Add(heading); body.Children.Add(_time); body.Children.Add(_source);
         Content = body;
         if (compact)
         {
@@ -44,13 +46,21 @@ public sealed class TimerCardWindow : Window, IDisplayAppearance
             MouseLeftButtonDown += (_, e) => { if (e.LeftButton == System.Windows.Input.MouseButtonState.Pressed) DragMove(); };
             MouseRightButtonUp += (_, _) => { var menu = new ContextMenu(); var close = new MenuItem { Header = "Close card" }; close.Click += (_, _) => Close(); menu.Items.Add(close); menu.IsOpen = true; };
         }
+        else
+        {
+            Content = null;
+            Content = _card = new Border { Child = body, CornerRadius = new CornerRadius(5), Background = EventPanelBrushes.Background,
+                BorderBrush = EventPanelBrushes.Border, BorderThickness = new Thickness(1) };
+        }
         void Refresh()
         {
             var card = cards.Get(id);
             if (card is null) { _name.Text = "No upcoming event"; _time.Text = ""; if (compact && IsLoaded) Hide(); return; }
             if (compact && IsLoaded && !IsVisible) Show();
             Title = $"{card.Kind} · {card.Name}";
-            _name.Text = $"{card.Kind}  {card.Name}";
+            _kind.Text = card.Kind; _kind.Foreground = EventPanelBrushes.ForKind(card.Kind);
+            if (_card is not null) _card.BorderBrush = EventPanelBrushes.ForKind(card.Kind);
+            _name.Text = card.Name;
             var now = DateTimeOffset.UtcNow;
             _time.Text = (card.Next is { } next && !card.Alive ? (compact ? TimerCards.StartLabel(next, now) : TimerCards.Berlin(next).ToString("dd.MM. HH:mm")) + " · " : "") + TimerCards.Countdown(card, now);
             _time.TextWrapping = TextWrapping.Wrap;

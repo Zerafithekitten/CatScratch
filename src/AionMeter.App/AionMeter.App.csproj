@@ -30,6 +30,7 @@
 
   <ItemGroup>
     <Resource Include="Assets\**\*.png" />
+    <None Update="Assets\Sounds\*.wav" Link="sounds\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
   <ItemGroup>

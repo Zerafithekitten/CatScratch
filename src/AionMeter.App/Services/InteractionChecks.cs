@@ -96,6 +96,9 @@ internal static class InteractionChecks
                     b.Background is System.Windows.Media.SolidColorBrush bg && bg.Color.A > 0 &&
                     b.BorderBrush is System.Windows.Media.SolidColorBrush border && border.Color.A > 0),
                 "Locked simultaneous events retain separate visible cards");
+            var colors = list.Children.OfType<System.Windows.Controls.Border>().Select(tile =>
+                ((System.Windows.Controls.Border)((System.Windows.Controls.DockPanel)((System.Windows.Controls.StackPanel)tile.Child).Children[0]).Children[0]).BorderBrush).Distinct().Count();
+            Check(colors == 2, "Simultaneous EVENT and PVP cards use different type colors");
             hub.Reload();
             Check(list.Children.OfType<System.Windows.Controls.Border>().All(b =>
                 b.Background is System.Windows.Media.SolidColorBrush bg && bg.Color.A > 0),
@@ -111,6 +114,19 @@ internal static class InteractionChecks
             var beforeMidnight = new DateTimeOffset(2026, 10, 13, 23, 40, 0, TimeSpan.FromHours(2));
             Check(TimerCards.StartLabel(beforeMidnight.AddMinutes(30), beforeMidnight) == "Tomorrow 00:10",
                 "Event start label handles midnight correctly");
+            Check(!cards.Saved.Sounds.Values.Any(s => s.Enabled), "Event sounds are opt-in");
+            var bossWindow = new AionMeter.App.Windows.BossTimersWindow(meter);
+            windows.Add(bossWindow);
+            WindowClickThrough.Attach(bossWindow, () => true);
+            var bossShell = (System.Windows.Controls.Border)bossWindow.FindName("BossShell");
+            Check(bossShell.Background is System.Windows.Media.SolidColorBrush bossBg && bossBg.Color.A == 255,
+                "Boss timers retain a solid background after click-through registration");
+            var soundWindow = new AionMeter.App.Windows.EventSoundsWindow(cards, (_, _) => { }); windows.Add(soundWindow);
+            Check(soundWindow.Background is System.Windows.Media.SolidColorBrush soundsBg && soundsBg.Color.A == 255,
+                "Sound preferences remain opaque and interactive");
+            Check(cards.Saved.Sounds.Count == 8 && !cards.Saved.Sounds.Values.Any(s => s.Enabled), "All automatic events and tracked bosses have disabled sound preferences");
+            var notes = new AionMeter.App.Windows.PatchNotesWindow(meter.Updates); windows.Add(notes);
+            Check(notes.Content is not null, "Patch notes can open without a network request");
             File.WriteAllText(output, JsonSerializer.Serialize(passed, new JsonSerializerOptions { WriteIndented = true }));
         }
         finally { foreach (var window in windows) window.Close(); }

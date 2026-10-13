@@ -35,6 +35,9 @@ public sealed class TimerCards : IDisposable
         public bool EventWindowOpen { get; set; } = true;
         public List<ScheduledTimer> Events { get; set; } = [];
         public Dictionary<string, CardPlacement> Positions { get; set; } = [];
+        public Dictionary<string, EventSoundPreference> Sounds { get; set; } = [];
+        public int SoundLeadMinutes { get; set; } = 2;
+        public double SoundVolume { get; set; } = .6;
     }
     private readonly MeterService _meter;
     private readonly bool _persistent;
@@ -89,7 +92,7 @@ public sealed class TimerCards : IDisposable
         {
             var key = id[5..];
             var next = NextEvents(DateTimeOffset.UtcNow).FirstOrDefault(e => e.Id == key);
-            return next is null ? null : new(id, next.Name, "EVENT", next.StartsAt, "Community schedule · Shugo.GG");
+            return next is null ? null : new(id, next.Name, EventKinds.For(key), next.StartsAt, "Community schedule · Shugo.GG");
         }
         if (id.StartsWith("boss:"))
         {

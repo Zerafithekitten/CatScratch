@@ -99,11 +99,21 @@ public static class SampleRenderer
                 refresh = history.Reload;
                 break;
             case "timers":
+            case "timers-locked":
                 FeedTimers(meter);
                 WaitForPortraits(meter);
                 var timers = new BossTimersWindow(meter) { Width = o.Width ?? 780, Height = o.Height ?? 640 };
+                WindowClickThrough.Attach(timers, () => o.Window == "timers-locked");
                 host = timers;
                 refresh = timers.ReloadNow;
+                break;
+            case "event-sounds":
+                host = new EventSoundsWindow(new TimerCards(meter, persistent: false), (_, _) => { }) { Height = o.Height ?? 650 };
+                refresh = () => { };
+                break;
+            case "patchnotes":
+                host = new PatchNotesWindow(meter.Updates);
+                refresh = () => { };
                 break;
             case "settings":
                 host = new SettingsWindow(meter) { Width = o.Width ?? 640, Height = o.Height ?? 900 };

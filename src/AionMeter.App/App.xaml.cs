@@ -48,6 +48,10 @@ public partial class App : Application
     private BossTimersWindow? _timersWindow;
     private TimerHubWindow? _timerHub;
     private TimerCards? _timerCards;
+    private readonly Core.Events.EventAlerts _eventAlerts = new();
+    private EventSoundPlayer? _eventSoundPlayer;
+    private EventSoundsWindow? _soundWindow;
+    private PatchNotesWindow? _patchNotes;
     private readonly Dictionary<object, BreakdownWindow> _breakdowns = new();
     private int _ticks;
     private bool _shutdownStarted;
@@ -112,7 +116,9 @@ public partial class App : Application
             _overlay = new OverlayWindow(_meter);
             _timerHub = new TimerHubWindow(_timerCards);
             _timersWindow = new BossTimersWindow(_meter);
-            foreach (var window in new Window[] { _overlay, _timerHub, _timersWindow })
+            _soundWindow = new EventSoundsWindow(_timerCards, (_, _) => { });
+            _patchNotes = new PatchNotesWindow(_meter.Updates);
+            foreach (var window in new Window[] { _overlay, _timerHub, _timersWindow, _soundWindow, _patchNotes })
             {
                 window.Left = -30000; window.Top = -30000;
                 window.ShowInTaskbar = false; window.ShowActivated = false; window.Show();
@@ -304,6 +310,7 @@ public partial class App : Application
         {
             _tray?.Update(_overlay.IsVisible, _meter.Settings.ClickThrough, _meter.DemoRunning ? "demo" : _meter.CaptureStatus.Message);
             CheckBossAlerts();
+            CheckEventSounds();
             CheckGameStart();
             CheckPendingUpdate();
         }
@@ -542,8 +549,33 @@ public partial class App : Application
                 ? string.Format(t.AlertSoon, name, minutes, next.ToString("HH:mm"))
                 : string.Format(t.AlertNow, name, next.ToString("HH:mm"));
             _tray?.ShowBalloon(t.TimersTitle, text);
-            System.Media.SystemSounds.Asterisk.Play();
+            if (_timerCards?.Saved.Sounds.TryGetValue("tracked-boss", out var sound) == true && sound.Enabled)
+                (_eventSoundPlayer ??= new()).Play(sound, _timerCards.Saved.SoundVolume);
         }
+    }
+
+    private void CheckEventSounds()
+    {
+        if (_timerCards is not { } cards || cards.Saved.Sounds.Count == 0) return;
+        var enabled = cards.Saved.Sounds.Where(p => p.Value.Enabled && cards.Saved.SelectedEvents.Contains(p.Key)).Select(p => p.Key);
+        foreach (var due in _eventAlerts.TakeDue(DateTimeOffset.UtcNow, cards.Saved.EventRegion, enabled, cards.Saved.SoundLeadMinutes))
+            (_eventSoundPlayer ??= new()).Play(cards.Saved.Sounds[due.Id], cards.Saved.SoundVolume);
+    }
+
+    public void ShowEventSounds()
+    {
+        if (_soundWindow is { IsLoaded: true }) { Activate(_soundWindow); return; }
+        _soundWindow = new EventSoundsWindow(_timerCards!, (sound, volume) => (_eventSoundPlayer ??= new()).Play(sound, volume, preview: true));
+        _soundWindow.Closed += (_, _) => _soundWindow = null;
+        _soundWindow.Show();
+    }
+
+    public void ShowPatchNotes()
+    {
+        if (_patchNotes is { IsLoaded: true }) { Activate(_patchNotes); return; }
+        _patchNotes = new PatchNotesWindow(_meter.Updates);
+        _patchNotes.Closed += (_, _) => _patchNotes = null;
+        _patchNotes.Show();
     }
 
     public void ShowSettings()
@@ -719,6 +751,7 @@ public partial class App : Application
         _showRequest?.Dispose();
         _hotkeys?.Dispose();
         _tray?.Dispose();
+        _eventSoundPlayer?.Dispose();
         if (_meter is not null)
         {
             try { _meter.Settings.Save(); }
