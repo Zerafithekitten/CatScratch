@@ -1,0 +1,16 @@
+name: Feature request
+description: Suggest an improvement (English / Deutsch / Русский / Français).
+title: "[Feature]: "
+body:
+  - type: textarea
+    id: suggestion
+    attributes:
+      label: Your suggestion / Dein Wunsch / Ваше предложение / Votre suggestion
+      description: Describe what you want and how it would help. All four interface languages are welcome.
+    validations:
+      required: true
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context / Ergänzungen / Дополнения / Informations complémentaires
+      description: Examples or screenshots are optional. Hide private information before uploading.

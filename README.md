@@ -71,6 +71,27 @@ Available since 2.1.2. Saving fights is optional: press the save button after co
 
 Available in version 2.2.0.
 
+## Languages
+
+Select the language in **Settings > General > Language**. English remains the default; patch notes remain English.
+
+| Language | Interface | Availability |
+| --- | --- | --- |
+| English | English | Current release (2.2.0) · default |
+| German | Deutsch | Current release (2.2.0) |
+| Russian | Русский | Implemented and tested for the next update |
+| French | Français | Implemented and tested for the next update |
+
+Skill and monster names use the bundled language tables, with English as the fallback for missing names. Player names are preserved.
+
+## Bugs and feature requests
+
+[Report a bug or request a feature](https://github.com/Zerafithekitten/CatScratch/issues/new/choose). Choose the appropriate form; reports in English, German, Russian or French are welcome. A GitHub account is required.
+
+The next update adds a **Report a bug / request a feature** button in **Settings > General** which opens this page in your browser. No separate server is needed. CatScratch does not submit anything or attach logs or packet captures automatically.
+
+Also prepared for the next update: a shared limit of four simultaneous optional image downloads, five-minute retry backoff after temporary failures, cancellation on exit and coalesced statistics redraws when images arrive. The meter's layout stays the same.
+
 ## Downloads
 
 Get Setup or the portable ZIP from [Releases](https://github.com/Zerafithekitten/CatScratch/releases/latest).
