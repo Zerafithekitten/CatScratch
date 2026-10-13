@@ -16,7 +16,7 @@ public static class SampleRenderer
 {
     public static void CheckPerformance(string path)
     {
-        using var meter = new MeterService(new AppSettings { Transient = true, DownloadIcons = false, CompactMode = true }, null);
+        using var meter = new MeterService(new AppSettings { Transient = true, DownloadIcons = false, CompactMode = true, ShowPersonalCombatModule = true }, null);
         var start = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() - 20_500;
         new SampleFight(start, 20).FeedUntil(meter.Tracker, start + 20_000);
         var overlay = new OverlayWindow(meter);
@@ -85,12 +85,15 @@ public static class SampleRenderer
                 var sampleOther = sample.Combatants.First(c=>!c.IsSelf && !c.IsUnknownSummons).ActorId;
                 meter.Tracker.Process(new HealEvent(start+20001,sampleSelf,sampleSelf,17010000,78500,HitFlags.None));
                 meter.Tracker.Process(new HealEvent(start+20002,sampleSelf,sampleOther,17010000,231400,HitFlags.None));
+                meter.Tracker.Process(new DamageEvent(start+20003,999999,sampleSelf,17010000,42850,HitFlags.None));
                 meter.Settings.ClickThrough = o.Window == "personal-locked";
-                var personal = new PersonalCombatWindow(meter) { Width=o.Width??320, Height=o.Height??182 };
+                meter.Settings.ShowPersonalCombatModule = true;
+                var personal = new OverlayWindow(meter) { Width=o.Width??420, Height=o.Height??610 };
                 host=personal; refresh=personal.Refresh;
                 break;
             case "personal-waiting":
-                var waiting = new PersonalCombatWindow(meter) { Width=o.Width??320, Height=o.Height??182 };
+                meter.Settings.ShowPersonalCombatModule = true;
+                var waiting = new OverlayWindow(meter) { Width=o.Width??420, Height=o.Height??610 };
                 host=waiting; refresh=waiting.Refresh;
                 break;
             case "events":

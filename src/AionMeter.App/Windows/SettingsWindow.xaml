@@ -152,7 +152,7 @@
                     <Border Style="{StaticResource Section}">
                         <StackPanel>
                             <TextBlock Text="PERSONAL COMBAT MODULE" Style="{StaticResource SectionLabel}" Margin="0,0,0,8" />
-                            <CheckBox x:Name="ShowPersonalCombatModule" Style="{StaticResource DarkCheck}" Content="Show personal combat module" />
+                            <CheckBox x:Name="ShowPersonalCombatModule" Style="{StaticResource DarkCheck}" Content="Show personal combat in the DPS meter" />
                             <CheckBox x:Name="ShowDamageTaken" Style="{StaticResource DarkCheck}" Content="Show damage taken" Margin="0,6,0,0" />
                             <CheckBox x:Name="ShowHealingDone" Style="{StaticResource DarkCheck}" Content="Show healing done (self and others)" Margin="0,6,0,0" />
                             <TextBlock Style="{StaticResource Hint}" Text="A separate window for your current or latest fight. Values include only combat events received from the game." />

@@ -28,8 +28,8 @@ public sealed class AppSettings
     // Overlay window
     public double OverlayLeft { get; set; } = 80;
     public double OverlayTop { get; set; } = 160;
-    public double OverlayWidth { get; set; } = 300;
-    public double OverlayHeight { get; set; } = 300;
+    public double OverlayWidth { get; set; } = 420;
+    public double OverlayHeight { get; set; } = 540;
     public bool CompactMode { get; set; } = true;
     public double WindowOpacity { get; set; } = 0.88;
     public double BackgroundOpacity { get; set; } = 0.9;
@@ -59,6 +59,7 @@ public sealed class AppSettings
     public bool ShowGear { get; set; } = true;
     public bool? ShowCombatPower { get; set; }
     public bool ShowPersonalCombatModule { get; set; }
+    public bool PersonalCombatCollapsed { get; set; }
     public bool ShowDamageTaken { get; set; } = true;
     public bool ShowHealingDone { get; set; } = true;
     public double PersonalModuleLeft { get; set; } = 100;
@@ -100,7 +101,7 @@ public sealed class AppSettings
 
     /// <summary>Bumped when the overlay layout changes enough that saved sizes no longer fit.</summary>
     public int LayoutVersion { get; set; } // 0 when missing from an older settings file; new installs get it in Load()
-    private const int CurrentLayout = 6;
+    private const int CurrentLayout = 7;
 
     public static AppSettings Load()
     {
@@ -135,6 +136,11 @@ public sealed class AppSettings
                     s.OverlayHeight = 300;
                 }
                 s.Language = UiText.Normalize(s.Language);
+                if (s.LayoutVersion < 7)
+                {
+                    s.OverlayWidth = Math.Max(s.OverlayWidth, 380);
+                    s.OverlayHeight = Math.Max(s.OverlayHeight, 540);
+                }
                 s.LayoutVersion = CurrentLayout;
                 return s;
             }

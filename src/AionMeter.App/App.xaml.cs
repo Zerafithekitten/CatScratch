@@ -302,21 +302,11 @@ public partial class App : Application
         return i >= 0 && i + 1 < args.Length ? args[i + 1] : null;
     }
 
-    private PersonalCombatWindow? _personalCombat;
     private void OnTick()
     {
         _meter.Tick();
         UpdateAutoVisibility();
         if (_overlay.IsVisible) _overlay.Refresh();
-        if (_meter.Settings.ShowPersonalCombatModule && _personalCombat is null)
-        {
-            _personalCombat = new PersonalCombatWindow(_meter);
-            WindowClickThrough.Attach(_personalCombat, () => _meter.Settings.ClickThrough, () => _meter.Settings.WindowOpacity);
-            _personalCombat.Closed += (_,_) => _personalCombat = null;
-            _personalCombat.Show();
-        }
-        if (!_meter.Settings.ShowPersonalCombatModule) _personalCombat?.Close();
-        if (_personalCombat?.IsVisible == true && _ticks % 5 == 0) _personalCombat.Refresh();
         if (++_ticks % 5 == 0)
         {
             _tray?.Update(_overlay.IsVisible, _meter.Settings.ClickThrough, _meter.DemoRunning ? "demo" : _meter.CaptureStatus.Message);

@@ -1,3 +1,12 @@
+## CatScratch v2.0.0
+
+- Redesign the DPS meter with dark rounded player rows, larger class emblems and separate class-colored damage bars.
+- Integrate Personal combat below the DPS list with subtle gold, mint and blue accents. No separate personal window is opened.
+- Collapse or expand personal totals; keep damage taken and healing independently optional.
+- Show personal totals for the same live, selected or saved fight as the DPS list.
+- In click-through mode hide window backgrounds, row surfaces, borders and controls while keeping DPS bars, personal values, clock and ping visible.
+- Update window presets and initial sizing for the new layout. Keep existing preferences and update behavior.
+
 ## CatScratch v1.0.27
 
 - Match Personal combat to the DPS meter with its purple paw, teal title, font and compact icon buttons.

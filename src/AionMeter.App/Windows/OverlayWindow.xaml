@@ -5,7 +5,7 @@
         xmlns:vm="clr-namespace:AionMeter.App.ViewModels"
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
         x:Name="Root"
-        Title="AION 2 • DPS Monitor — EU/NA" Width="380" Height="340" MinWidth="280" MinHeight="180"
+        Title="CatScratch" Width="420" Height="540" MinWidth="320" MinHeight="320"
         WindowStyle="None" AllowsTransparency="False" Background="#101420"
         Topmost="True" ShowInTaskbar="True" ShowActivated="True" ResizeMode="CanResize"
         UseLayoutRounding="True" TextOptions.TextFormattingMode="Display"
@@ -166,112 +166,51 @@
             </Setter>
         </Style>
 
-        <!-- One player: a slim bar in the class colour fading out towards its tip, a strip of that colour at the left edge,
-             the place, emblem, name with gear score and combat power, then DPS, total damage and share -->
-        <DataTemplate x:Key="RowTemplate" DataType="{x:Type vm:RowViewModel}">
-            <Grid Height="{DynamicResource RowHeight}" Margin="{DynamicResource RowMargin}" Cursor="Hand" ToolTip="{Binding Tooltip}"
-                  Background="Transparent" MouseLeftButtonUp="Row_Click" MouseRightButtonUp="Row_RightClick">
-                <!-- track -->
-                <Border x:Name="Track" CornerRadius="4" Background="#14FFFFFF" />
-                <!-- fill -->
-                <Border CornerRadius="4" Background="{Binding FillBrush}" RenderTransformOrigin="0,0.5">
-                    <Border.RenderTransform>
-                        <ScaleTransform ScaleX="{Binding Fill}" />
-                    </Border.RenderTransform>
-                </Border>
-                <!-- class strip -->
-                <Border Width="{DynamicResource RowAccentWidth}" HorizontalAlignment="Left" CornerRadius="4,0,0,4" Background="{Binding AccentBrush}" />
-                <!-- your own row -->
-                <Border CornerRadius="4" BorderThickness="1" BorderBrush="#B3F2C25A"
-                        Visibility="{Binding IsSelf, Converter={StaticResource VisibleIf}}" />
-
-                <Grid Margin="8,0,10,0" Effect="{StaticResource TextShadow}">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="{DynamicResource ColRankWidth}" />
-                        <ColumnDefinition Width="{DynamicResource ColGlyphWidth}" />
-                        <ColumnDefinition Width="Auto" SharedSizeGroup="Name" />
-                        <ColumnDefinition Width="Auto" SharedSizeGroup="Gs" />
-                        <ColumnDefinition Width="Auto" SharedSizeGroup="Cp" />
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="Auto" SharedSizeGroup="Dps" />
-                        <ColumnDefinition Width="Auto" SharedSizeGroup="Damage" />
-                        <ColumnDefinition Width="Auto" SharedSizeGroup="Share" />
-                    </Grid.ColumnDefinitions>
-
-                    <!-- Place: plain digits, the top three in medal colours -->
-                    <TextBlock Text="{Binding RankText}" FontFamily="{StaticResource NumberFont}" FontSize="{DynamicResource RowRankFont}"
-                               FontWeight="Bold" Foreground="{Binding RankColor}" HorizontalAlignment="Center" VerticalAlignment="Center" />
-
-                    <c:ClassGlyph Grid.Column="1" Class="{Binding Class}" OnBar="True" Width="{DynamicResource RowGlyphSize}"
-                                  Height="{DynamicResource RowGlyphSize}" HorizontalAlignment="Left" />
-
-                    <!-- As wide as the longest name, up to what the other columns leave (OverlayWindow.FitNames) -->
-                    <TextBlock x:Name="NameText" Grid.Column="2" FontSize="{DynamicResource RowNameFont}" FontWeight="SemiBold"
-                               Foreground="White" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" Margin="2,0,0,1"
-                               MaxWidth="{DynamicResource NameMaxWidth}"><Run Text="{Binding Name, Mode=OneWay}" /><LineBreak /><Run Text="{Binding Class, Mode=OneWay}" FontSize="11" Foreground="#C4CBD8" /></TextBlock>
-
-                    <!-- Gear score and combat power, right by the name: only players of your party have them (the party roster) -->
-                    <TextBlock Grid.Column="3" Style="{StaticResource GearText}" Visibility="{Binding HasGearScore, Converter={StaticResource VisibleIf}}"
-                               ToolTip="{Binding DataContext.T.TipGs, RelativeSource={RelativeSource AncestorType=Window}}"><Run Text="GS " FontWeight="SemiBold" Foreground="#D5DAE4" /><Run Text="{Binding GearScore, Mode=OneWay}" Foreground="#FFD873" /></TextBlock>
-                    <TextBlock Grid.Column="4" Style="{StaticResource GearText}" Visibility="{Binding HasCombatPower, Converter={StaticResource VisibleIf}}"
-                               ToolTip="{Binding DataContext.T.TipCp, RelativeSource={RelativeSource AncestorType=Window}}"><Run Text="CP " FontWeight="SemiBold" Foreground="#D5DAE4" /><Run Text="{Binding CombatPower, Mode=OneWay}" Foreground="#8FDBFF" /></TextBlock>
-
-                    <TextBlock Grid.Column="6" Text="{Binding Dps}" Style="{StaticResource RowNumber}" />
-                    <TextBlock Grid.Column="7" Text="{Binding Damage}" Style="{StaticResource RowSub}" />
-                    <TextBlock Grid.Column="8" Text="{Binding Share}" Style="{StaticResource RowSub}" />
+        <DataTemplate x:Key="CompactRowTemplate" DataType="{x:Type vm:RowViewModel}">
+            <Grid x:Name="ModernRow" Height="{DynamicResource CompactRowHeight}" Margin="0,0,0,6" Cursor="Hand" Background="Transparent" ToolTip="{Binding Tooltip}" MouseLeftButtonUp="Row_Click" MouseRightButtonUp="Row_RightClick">
+                <Border x:Name="RowSurface" Background="#D0171E27" BorderBrush="#302E4252" BorderThickness="1" CornerRadius="6" />
+                <Grid Margin="8,5,8,5">
+                    <Grid.ColumnDefinitions><ColumnDefinition Width="{DynamicResource ColGlyphWidth}"/><ColumnDefinition Width="*"/><ColumnDefinition Width="76"/><ColumnDefinition Width="57"/></Grid.ColumnDefinitions>
+                    <c:ClassGlyph Class="{Binding Class}" Width="{DynamicResource RowGlyphSize}" Height="{DynamicResource RowGlyphSize}" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                    <Grid Grid.Column="1" Grid.ColumnSpan="3" Margin="4,0,0,0">
+                        <Grid.RowDefinitions><RowDefinition Height="*"/><RowDefinition Height="7"/></Grid.RowDefinitions>
+                        <Grid Margin="0,0,0,5">
+                            <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="76"/><ColumnDefinition Width="57"/></Grid.ColumnDefinitions>
+                            <StackPanel VerticalAlignment="Center" Margin="0,0,6,0">
+                                <TextBlock Text="{Binding Name}" FontSize="{DynamicResource CompactNameFont}" FontWeight="SemiBold" Foreground="#EDF2F7" TextTrimming="CharacterEllipsis"/>
+                                <TextBlock Text="{Binding CompactGear}" FontSize="{DynamicResource CompactSubFont}" Foreground="#ADBCCD" TextTrimming="CharacterEllipsis"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                <TextBlock Text="{Binding Dps}" FontSize="{DynamicResource CompactNumberFont}" FontWeight="SemiBold" Foreground="#EDF2F7" TextAlignment="Right"/>
+                                <TextBlock Text="{Binding Damage}" FontSize="{DynamicResource CompactSubFont}" Foreground="#ADBCCD" TextAlignment="Right"/>
+                            </StackPanel>
+                            <TextBlock Grid.Column="2" Text="{Binding Share}" Foreground="#79E3DF" FontSize="{DynamicResource CompactNumberFont}" FontWeight="SemiBold" TextAlignment="Right" VerticalAlignment="Top" Margin="4,1,0,0"/>
+                        </Grid>
+                        <Grid Grid.Row="1">
+                            <Border CornerRadius="3" Background="#FF283540"/>
+                            <Border CornerRadius="3" Background="{Binding AccentBrush}" RenderTransformOrigin="0,0.5"><Border.RenderTransform><ScaleTransform ScaleX="{Binding Fill}"/></Border.RenderTransform></Border>
+                        </Grid>
+                    </Grid>
                 </Grid>
             </Grid>
             <DataTemplate.Triggers>
-                <Trigger Property="IsMouseOver" Value="True">
-                    <Setter TargetName="Track" Property="Background" Value="#26FFFFFF" />
-                </Trigger>
-                <DataTrigger Binding="{Binding IsSelf}" Value="True">
-                    <Setter TargetName="NameText" Property="Foreground" Value="{StaticResource SelfGold}" />
+                <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="RowSurface" Property="BorderBrush" Value="#6079E3CF"/></Trigger>
+                <DataTrigger Binding="{Binding DataContext.IsDisplayOnly, RelativeSource={RelativeSource AncestorType=Window}}" Value="True">
+                    <Setter TargetName="RowSurface" Property="Background" Value="Transparent"/>
+                    <Setter TargetName="RowSurface" Property="BorderBrush" Value="Transparent"/>
                 </DataTrigger>
             </DataTemplate.Triggers>
-        </DataTemplate>
-        <c:CompactFillClip x:Key="CompactFillClip"/>
-        <DataTemplate x:Key="CompactRowTemplate" DataType="{x:Type vm:RowViewModel}">
-            <Grid x:Name="CompactRow" Height="{DynamicResource CompactRowHeight}" Margin="0,0,0,2" Background="Transparent" Cursor="Hand" ToolTip="{Binding Tooltip}" MouseLeftButtonUp="Row_Click" MouseRightButtonUp="Row_RightClick">
-                <Border Background="#60202A32" CornerRadius="3"/>
-                <Border Background="{Binding FillBrush}" Opacity="0.76" CornerRadius="3" RenderTransformOrigin="0,0.5"><Border.RenderTransform><ScaleTransform ScaleX="{Binding Fill}"/></Border.RenderTransform></Border>
-                <Grid Margin="4,1,5,1">
-                    <Grid.ColumnDefinitions><ColumnDefinition Width="23"/><ColumnDefinition Width="*"/><ColumnDefinition Width="61"/><ColumnDefinition Width="48"/></Grid.ColumnDefinitions>
-                    <c:ClassGlyph Class="{Binding Class}" Width="20" Height="20" OnBar="True"/>
-                    <StackPanel x:Name="CompactIdentity" Grid.Column="1" Margin="2,0,3,0" VerticalAlignment="Center">
-                        <TextBlock Text="{Binding Name}" Foreground="White" FontWeight="SemiBold" FontSize="{DynamicResource CompactNameFont}" TextTrimming="CharacterEllipsis"/>
-                        <TextBlock Text="{Binding CompactGear}" FontSize="{DynamicResource CompactSubFont}" FontWeight="SemiBold" Foreground="White" TextTrimming="CharacterEllipsis"/>
-                    </StackPanel>
-                    <StackPanel Grid.Column="1" Margin="2,0,3,0" VerticalAlignment="Center" IsHitTestVisible="False">
-                        <StackPanel.Clip>
-                            <MultiBinding Converter="{StaticResource CompactFillClip}">
-                                <Binding ElementName="CompactIdentity" Path="ActualWidth"/>
-                                <Binding ElementName="CompactIdentity" Path="ActualHeight"/>
-                                <Binding ElementName="CompactRow" Path="ActualWidth"/>
-                                <Binding Path="Fill"/>
-                            </MultiBinding>
-                        </StackPanel.Clip>
-                        <TextBlock Text="{Binding Name}" Foreground="{Binding CompactTextBrush}" FontWeight="SemiBold" FontSize="{DynamicResource CompactNameFont}" TextTrimming="CharacterEllipsis"/>
-                        <TextBlock Text="{Binding CompactGear}" FontSize="{DynamicResource CompactSubFont}" FontWeight="SemiBold" Foreground="{Binding CompactTextBrush}" TextTrimming="CharacterEllipsis"/>
-                    </StackPanel>
-                    <StackPanel Grid.Column="2" VerticalAlignment="Center" Effect="{StaticResource TextShadow}">
-                        <TextBlock Text="{Binding Dps}" FontSize="{DynamicResource CompactNumberFont}" FontWeight="Bold" Foreground="White" TextAlignment="Right"/>
-                        <TextBlock Text="{Binding Damage}" FontSize="{DynamicResource CompactSubFont}" FontWeight="SemiBold" Foreground="White" TextAlignment="Right"/>
-                    </StackPanel>
-                    <TextBlock Grid.Column="3" Effect="{StaticResource TextShadow}" Text="{Binding Share}" FontSize="{DynamicResource CompactSubFont}" FontWeight="Bold" Foreground="#72EDD0" TextAlignment="Right" VerticalAlignment="Top" Margin="3,2,0,0"/>
-                </Grid>
-            </Grid>
         </DataTemplate>
     </Window.Resources>
 
     <Border x:Name="OuterShell" CornerRadius="10" Background="#DF1B2027" BorderBrush="#607B827F" BorderThickness="1">
     <DockPanel>
-        <Grid DockPanel.Dock="Top" Height="24" Margin="5,1,4,0">
+        <Grid DockPanel.Dock="Top" Height="38" Margin="8,2,6,0">
             <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
             <StackPanel x:Name="ShellCaption" Orientation="Horizontal" VerticalAlignment="Center">
-                <Image Source="/Assets/app.ico" Width="14" Height="14" Margin="0,0,5,0"/>
-                <TextBlock Text="CatScratch" Foreground="#79E3CF" FontSize="11" FontWeight="Bold" VerticalAlignment="Center"/>
-                            <Button x:Name="PersonalCombatButton" Style="{StaticResource ToolIcon}" Content="&#xE95E;" Click="PersonalCombat_Click" ToolTip="Show / hide personal combat module" AutomationProperties.Name="Toggle personal combat module" Margin="4,0,0,0" />
+                <Image Source="/Assets/app.ico" Width="22" Height="22" Margin="0,0,7,0"/>
+                <TextBlock Text="CatScratch" Foreground="#79E3CF" FontSize="16" FontWeight="Bold" VerticalAlignment="Center"/>
+                            <Button x:Name="PersonalCombatButton" Style="{StaticResource ToolIcon}" Content="&#xE95E;" Click="PersonalCombat_Click" ToolTip="Show / hide personal combat" AutomationProperties.Name="Toggle personal combat module" Margin="4,0,0,0" />
 </StackPanel>
             <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
                 <TextBlock Text="{Binding Clock, StringFormat=⏱ {0}}" Foreground="#91A5A0" FontSize="9" Margin="4,0" ToolTip="Fight duration" VerticalAlignment="Center"/>
@@ -283,21 +222,22 @@
         </Grid>
     <Grid Margin="4,0,4,4">
         <!-- Card -->
-        <Border x:Name="Frame" CornerRadius="14" BorderThickness="1" BorderBrush="#304C637F">
+        <Border x:Name="Frame" CornerRadius="8" BorderThickness="1" BorderBrush="Transparent">
             <Border.Background>
-                <SolidColorBrush x:Name="FrameBackground" Color="#0B0F17" Opacity="0.92" />
+                <SolidColorBrush x:Name="FrameBackground" Color="#171E27" Opacity="0.92" />
             </Border.Background>
             <Border.Effect>
                 <DropShadowEffect BlurRadius="14" ShadowDepth="0" Opacity="0.5" Color="Black" />
             </Border.Effect>
         </Border>
 
-        <Grid x:Name="CardBody" Margin="5,4,5,4">
+        <Grid x:Name="CardBody" Margin="7,6,7,5">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
 
@@ -420,15 +360,25 @@
 
                 <ScrollViewer x:Name="PlayerScroll" Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Focusable="False"
                               Padding="8,0,7,0" Margin="-8,0,-7,0" PreviewMouseWheel="Rows_PreviewMouseWheel">
-                    <ItemsControl x:Name="PlayerRows" ItemsSource="{Binding Rows}" ItemTemplate="{StaticResource RowTemplate}" Focusable="False" />
+                    <ItemsControl x:Name="PlayerRows" ItemsSource="{Binding Rows}" ItemTemplate="{StaticResource CompactRowTemplate}" Focusable="False" />
                 </ScrollViewer>
                 <TextBlock Grid.RowSpan="2" Text="{Binding T.EmptyParty}" FontSize="12"
                            Foreground="#6B7590" HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap" TextAlignment="Center"
                            Visibility="{Binding HasData, Converter={StaticResource VisibleIf}, ConverterParameter=!}" />
             </Grid>
 
+            <StackPanel x:Name="PersonalSection" Grid.Row="4" Margin="0,8,0,0" Visibility="Collapsed">
+                <Border x:Name="PersonalDivider" Height="1" Background="#403D5261" Margin="0,0,0,6"/>
+                <Grid Height="26" Margin="0,0,0,5">
+                    <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                    <TextBlock Text="Personal combat" FontSize="13" FontWeight="SemiBold" Foreground="#EDF2F7" VerticalAlignment="Center"/>
+                    <TextBlock x:Name="PersonalName" Grid.Column="1" FontSize="12" FontWeight="SemiBold" Foreground="#F2C25A" VerticalAlignment="Center" MaxWidth="120" TextTrimming="CharacterEllipsis"/>
+                    <Button x:Name="PersonalCollapseButton" Grid.Column="2" Style="{StaticResource ToolIcon}" Content="&#xE70E;" Click="PersonalCollapse_Click" ToolTip="Collapse personal combat" Margin="5,0,0,0"/>
+                </Grid>
+                <StackPanel x:Name="PersonalMetrics"/>
+            </StackPanel>
             <!-- Footer -->
-            <StackPanel Grid.Row="4" Margin="0,6,0,0">
+            <StackPanel Grid.Row="5" Margin="0,6,0,0">
                 <!-- New version on GitHub: a slim banner until it is installed, skipped or closed for this session -->
                 <Grid x:Name="UpdateBanner" Margin="0,0,0,6" Visibility="Collapsed">
                     <Grid.ColumnDefinitions>

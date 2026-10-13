@@ -48,8 +48,9 @@ public partial class OverlayWindow : Window, IDisplayAppearance
         AppIcon.Apply(this);
         _settings.BackgroundOpacity = opacity;
         DataContext = _vm;
+        CreatePersonalRows();
         WindowClickThrough.Attach(this, () => _settings.ClickThrough, () => _settings.WindowOpacity);
-        MinWidth = _settings.CompactMode ? 280 : 520;
+        MinWidth = _settings.CompactMode ? 320 : 520;
         Closing += (_, _) => AppHost.Current.ExitProgram();
 
         Left = _settings.OverlayLeft;
@@ -116,6 +117,10 @@ public partial class OverlayWindow : Window, IDisplayAppearance
             _frameBorder=Frame.BorderBrush; _frameEffect=Frame.Effect; _toolbarVisibility=Toolbar.Visibility;
         }
         _displayOnly=enabled;
+        _vm.IsDisplayOnly = enabled;
+        PersonalDivider.Visibility = enabled ? Visibility.Hidden : Visibility.Visible;
+        PersonalCollapseButton.Visibility = enabled ? Visibility.Hidden : Visibility.Visible;
+        foreach (var row in _personalRows) row.Surface.Background = enabled ? Brushes.Transparent : PersonalSurface;
         OuterShell.Background=enabled ? Brushes.Transparent : _shellBackground;
         OuterShell.BorderBrush=enabled ? Brushes.Transparent : _shellBorder;
         Frame.Background=enabled ? Brushes.Transparent : FrameBackground;
@@ -134,6 +139,58 @@ public partial class OverlayWindow : Window, IDisplayAppearance
     {
         _settings.ShowPersonalCombatModule = !_settings.ShowPersonalCombatModule;
         _settings.Save();
+        Refresh();
+    }
+
+    private static readonly Brush PersonalSurface = FrozenBrush("#D0171E27");
+    private readonly List<(Border Surface, TextBlock Value)> _personalRows = [];
+    private static Brush FrozenBrush(string color)
+    {
+        var brush = new SolidColorBrush((Color)ColorConverter.ConvertFromString(color));
+        brush.Freeze(); return brush;
+    }
+    private void CreatePersonalRows()
+    {
+        void Add(string label, string color, string shape)
+        {
+            var accent = FrozenBrush(color);
+            var surface = new Border { Background = PersonalSurface, CornerRadius = new(5), Margin = new(0,0,0,5) };
+            var grid = new Grid { Height = 30 };
+            grid.ColumnDefinitions.Add(new() { Width = new(3) });
+            grid.ColumnDefinitions.Add(new() { Width = new(34) });
+            grid.ColumnDefinitions.Add(new() { Width = new(1,GridUnitType.Star) });
+            grid.ColumnDefinitions.Add(new() { Width = GridLength.Auto });
+            grid.Children.Add(new Border { Background = accent, CornerRadius = new(3,0,0,3) });
+            var icon = new System.Windows.Shapes.Path { Data = Geometry.Parse(shape), Stroke = accent, StrokeThickness = 1.7, Width = 16, Height = 16, Stretch = Stretch.Uniform, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Center };
+            Grid.SetColumn(icon,1); grid.Children.Add(icon);
+            var text = new TextBlock { Text = label, Foreground = Brushes.White, FontSize = 12, VerticalAlignment = VerticalAlignment.Center, TextTrimming = TextTrimming.CharacterEllipsis };
+            Grid.SetColumn(text,2); grid.Children.Add(text);
+            var value = new TextBlock { Foreground = Brushes.White, FontSize = 12, VerticalAlignment = VerticalAlignment.Center, Margin = new(8,0,9,0) };
+            Grid.SetColumn(value,3); grid.Children.Add(value);
+            surface.Child = grid; PersonalMetrics.Children.Add(surface); _personalRows.Add((surface,value));
+        }
+        Add("Damage taken", "#F2C25A", "M8,1 L14,4 L14,9 C14,13 8,16 8,16 C8,16 2,13 2,9 L2,4 Z");
+        Add("Self healing", "#65DFA5", "M8,15 C8,15 1,10 1,5 C1,0 6,0 8,4 C10,0 15,0 15,5 C15,10 8,15 8,15 Z");
+        Add("Healing others", "#75C8ED", "M8,15 C8,15 1,10 1,5 C1,0 6,0 8,4 C10,0 15,0 15,5 C15,10 8,15 8,15 Z M8,5 L8,11 M5,8 L11,8");
+    }
+    private void PersonalCollapse_Click(object sender, RoutedEventArgs e)
+    {
+        _settings.PersonalCombatCollapsed = !_settings.PersonalCombatCollapsed;
+        _settings.Save(); Refresh();
+    }
+    private void RefreshPersonal(EncounterSnapshot? snapshot)
+    {
+        PersonalSection.Visibility = _settings.ShowPersonalCombatModule ? Visibility.Visible : Visibility.Collapsed;
+        PersonalMetrics.Visibility = _settings.PersonalCombatCollapsed ? Visibility.Collapsed : Visibility.Visible;
+        PersonalCollapseButton.Content = _settings.PersonalCombatCollapsed ? "\uE70D" : "\uE70E";
+        PersonalCollapseButton.ToolTip = _settings.PersonalCombatCollapsed ? "Expand personal combat" : "Collapse personal combat";
+        var own = snapshot?.Combatants.FirstOrDefault(c => c.IsSelf);
+        PersonalName.Text = own?.Name ?? _meter.LiveIdentity.Current?.Name ?? "";
+        _personalRows[0].Surface.Visibility = _settings.ShowDamageTaken ? Visibility.Visible : Visibility.Collapsed;
+        _personalRows[1].Surface.Visibility = _personalRows[2].Surface.Visibility = _settings.ShowHealingDone ? Visibility.Visible : Visibility.Collapsed;
+        _personalRows[0].Value.Text = own is null ? "—" : Format.Grouped(own.DamageTaken);
+        _personalRows[1].Value.Text = own is null ? "—" : Format.Grouped(own.SelfHealing);
+        _personalRows[2].Value.Text = own is null ? "—" : Format.Grouped(Math.Max(0,own.Healing-own.SelfHealing));
     }
 
     private async void SaveLastFight_Click(object sender, RoutedEventArgs e)
@@ -190,8 +247,10 @@ public partial class OverlayWindow : Window, IDisplayAppearance
             _segment = null;
         }
 
+        EncounterSnapshot? personalSnapshot;
         if (_saved is { } saved)
         {
+            personalSnapshot = saved.Record.Summary;
             _showingPartyPreview = false;
             _vm.Apply(saved.Record.Summary with { Title = saved.Title, Zone = _meter.DisplayZone(saved.Record.Summary.Zone) },
                 _settings.MaxRows, _settings.BarsRelativeToTop);
@@ -208,6 +267,7 @@ public partial class OverlayWindow : Window, IDisplayAppearance
                 snap = _meter.Tracker.Snapshot(null, now);
             }
             var party = _meter.PartyPreview.Snapshot();
+            personalSnapshot = snap;
             if (_segment is null && (snap?.IsActive != true) && party.Members.Count > 0)
             {
                 if (!_showingPartyPreview || _partyPreviewRevision != party.Revision || _partyGearVisibility != (_vm.ShowGear, _vm.ShowCombatPower))
@@ -227,6 +287,7 @@ public partial class OverlayWindow : Window, IDisplayAppearance
         if (!_settings.Transient && !_meter.DemoRunning && _saved is null && _segment is null && _meter.LiveIdentity.ActorId is null)
             foreach (var row in _vm.Rows) row.IsSelf = false;
         if (!_settings.ShowBossPanel) _vm.HasBoss = false;
+        RefreshPersonal(_showingPartyPreview ? null : personalSnapshot);
         if (_settings.CompactMode) _vm.HasBoss = false;
         // The instance's time limit (or the wait after entering), whatever fight is shown: it is about where you are now.
         var wall = ClockOverride?.Invoke() ?? DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
@@ -295,7 +356,7 @@ public partial class OverlayWindow : Window, IDisplayAppearance
     {
         var desiredWidth = _settings.OverlayWidth;
         var desiredHeight = _settings.OverlayHeight;
-        MinWidth = _settings.CompactMode ? 280 : 520;
+        MinWidth = _settings.CompactMode ? 320 : 520;
         Width = Math.Max(MinWidth, desiredWidth);
         Height = Math.Max(MinHeight, desiredHeight);
         WindowClickThrough.SetOpacity(_settings.WindowOpacity);
@@ -314,22 +375,22 @@ public partial class OverlayWindow : Window, IDisplayAppearance
     {
         var k = Math.Clamp(percent, AppSettings.MinRowSize, AppSettings.MaxRowSize) / 100.0;
         var f = Math.Sqrt(k);
-        var height = _settings.CompactMode ? Math.Max(34, Math.Round(34 * k)) : Math.Round(44 * k);
+        var height = Math.Max(54, Math.Round((_settings.CompactMode ? 62 : 70) * k));
         Resources["RowHeight"] = height;
         Resources["CompactRowHeight"] = height;
-        Resources["CompactNameFont"] = Math.Max(12, Math.Round(12 * f, 1));
+        Resources["CompactNameFont"] = Math.Max(12, Math.Round(14 * f, 1));
         Resources["CompactSubFont"] = Math.Max(11, Math.Round(11 * f, 1));
-        Resources["CompactNumberFont"] = Math.Max(11.5, Math.Round(11.5 * f, 1));
+        Resources["CompactNumberFont"] = Math.Max(12, Math.Round(13 * f, 1));
         Resources["RowMargin"] = new Thickness(0, 0, 0, Math.Max(1, Math.Round(3 * k)));
         Resources["RowNameFont"] = Math.Round(13.5 * f, 1);
         Resources["RowGearFont"] = Math.Round(12 * f, 1);
         Resources["RowNumberFont"] = Math.Round(13.5 * f, 1);
         Resources["RowSubFont"] = Math.Round(12 * f, 1);
-        Resources["RowGlyphSize"] = Math.Min(Math.Round(20 * f), height - 4);
+        Resources["RowGlyphSize"] = Math.Min(Math.Round(30 * f), height - 12);
         Resources["RowRankFont"] = Math.Round(11 * f, 1);
         Resources["RowAccentWidth"] = Math.Max(2, Math.Round(3 * f));
         Resources["ColRankWidth"] = new GridLength(Math.Round(20 * f));
-        Resources["ColGlyphWidth"] = new GridLength(Math.Round(26 * f));
+        Resources["ColGlyphWidth"] = new GridLength(Math.Round(36 * f));
         Resources["ColGap"] = new Thickness(Math.Round(10 * f), 0, 0, 0);
     }
 
@@ -780,7 +841,7 @@ public partial class OverlayWindow : Window, IDisplayAppearance
 
     private void ApplyCompactLayout()
     {
-        TitleText.FontSize = _settings.CompactMode ? 11 : 13.5;
+        TitleText.FontSize = _settings.CompactMode ? 15 : 17;
         HeaderClock.Visibility = _settings.CompactMode ? Visibility.Collapsed : Visibility.Visible;
         CompactTotal.Visibility = _settings.CompactMode ? Visibility.Visible : Visibility.Collapsed;
         CompactHistory.Visibility = CompactTotal.Visibility;
@@ -791,7 +852,7 @@ public partial class OverlayWindow : Window, IDisplayAppearance
             TitleText.Visibility = Visibility.Visible;
             LabelPanel.Visibility = _settings.CompactMode ? Visibility.Collapsed : Visibility.Visible;
         }
-        PlayerRows.ItemTemplate = (DataTemplate)FindResource(_settings.CompactMode ? "CompactRowTemplate" : "RowTemplate");
+        PlayerRows.ItemTemplate = (DataTemplate)FindResource("CompactRowTemplate");
         var visible = _settings.CompactMode ? Visibility.Collapsed : Visibility.Visible;
         BossTimersLink.Visibility = visible;
         DetailsLink.Visibility = visible;
@@ -813,12 +874,12 @@ public partial class OverlayWindow : Window, IDisplayAppearance
             ApplyAppearance(); _settings.Save(); Refresh();
         }
         var toggle = new MenuItem { Header = "Compact mode", IsCheckable = true, IsChecked = _settings.CompactMode };
-        toggle.Click += (_, _) => Preset(toggle.IsChecked, toggle.IsChecked ? 380 : 760, toggle.IsChecked ? 340 : 540);
+        toggle.Click += (_, _) => Preset(toggle.IsChecked, toggle.IsChecked ? 420 : 760, toggle.IsChecked ? 540 : 610);
         menu.Items.Add(toggle);
-        Item("Mini · 300 × 240", () => Preset(true, 300, 240));
-        Item("Compact · 380 × 340", () => Preset(true, 380, 340));
-        Item("Medium · 480 × 420", () => Preset(true, 480, 420));
-        Item("Large · 760 × 540", () => Preset(false, 760, 540));
+        Item("Mini · 320 × 360", () => Preset(true, 320, 360));
+        Item("Compact · 420 × 540", () => Preset(true, 420, 540));
+        Item("Medium · 480 × 610", () => Preset(true, 480, 610));
+        Item("Large · 760 × 680", () => Preset(false, 760, 680));
         menu.Items.Add(new Separator());
         void SliderItem(string label, double min, double max, double value, Action<double> change)
         {

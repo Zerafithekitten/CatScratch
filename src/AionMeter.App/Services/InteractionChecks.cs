@@ -270,24 +270,37 @@ internal static class InteractionChecks
                 "All world bosses enables scheduled bosses while preserving the one-hour upcoming limit");
             Check(AionMeter.Core.Events.EventKinds.For("boss:2305:123") == "BOSS", "Live world-boss cards retain the boss color category");
             Check(activeOverlay.FindName("EventsButton") is null, "Unused meter Events button is removed");
-            var personal = new AionMeter.App.Windows.PersonalCombatWindow(meter) { Left=-30000, Top=-30000, ShowInTaskbar=false };
-            windows.Add(personal);
+            meter.Settings.ShowPersonalCombatModule = true;
+            meter.Tracker.Process(new AionMeter.Core.Events.HealEvent(3,1,1,17010000,78500,AionMeter.Core.Events.HitFlags.None));
+            activeOverlay.Refresh();
+            var personalMetrics=(System.Windows.Controls.StackPanel)activeOverlay.FindName("PersonalMetrics");
+            var healingGrid=(System.Windows.Controls.Grid)((System.Windows.Controls.Border)personalMetrics.Children[1]).Child;
+            Check(healingGrid.Children.OfType<System.Windows.Controls.TextBlock>().Last().Text == "78,500",
+                "Integrated personal totals display received self healing for the shown fight");
             foreach (var showTaken in new[] { true, false })
             foreach (var showHealing in new[] { true, false })
             {
                 meter.Settings.ShowDamageTaken=showTaken; meter.Settings.ShowHealingDone=showHealing;
-                personal.Refresh();
-                var rootPanel=(System.Windows.Controls.StackPanel)((System.Windows.Controls.Border)personal.Content).Child;
-                Check(((System.Windows.Controls.Border)rootPanel.Children[2]).Visibility == (showTaken ? Visibility.Visible : Visibility.Collapsed) &&
-                    ((System.Windows.Controls.Border)rootPanel.Children[3]).Visibility == (showHealing ? Visibility.Visible : Visibility.Collapsed),
-                    "Personal damage and healing sections can be shown together or independently");
+                activeOverlay.Refresh();
+                var metrics=(System.Windows.Controls.StackPanel)activeOverlay.FindName("PersonalMetrics");
+                Check(((System.Windows.Controls.Border)metrics.Children[0]).Visibility == (showTaken ? Visibility.Visible : Visibility.Collapsed) &&
+                    ((System.Windows.Controls.Border)metrics.Children[1]).Visibility == (showHealing ? Visibility.Visible : Visibility.Collapsed),
+                    "Integrated personal damage and healing sections can be shown independently");
             }
-            personal.SetDisplayOnly(true);
-            Check(((System.Windows.Controls.Border)personal.Content).Background == System.Windows.Media.Brushes.Transparent && personal.Background == System.Windows.Media.Brushes.Transparent,
-                "Locked personal combat hides its window background and frame");
-            personal.SetDisplayOnly(false);
-            Check(((System.Windows.Controls.Border)personal.Content).Background is System.Windows.Media.SolidColorBrush personalBackground && personalBackground.Color.A>0,
-                "Unlocking personal combat restores its window background");
+            var collapse=(System.Windows.Controls.Button)activeOverlay.FindName("PersonalCollapseButton");
+            collapse.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Button.ClickEvent));
+            Check(((System.Windows.Controls.StackPanel)activeOverlay.FindName("PersonalMetrics")).Visibility==Visibility.Collapsed,
+                "Personal combat collapses within the DPS window");
+            collapse.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Button.ClickEvent));
+            Check(((System.Windows.Controls.StackPanel)activeOverlay.FindName("PersonalMetrics")).Visibility==Visibility.Visible,
+                "Personal combat expands without creating another window");
+            activeOverlay.SetDisplayOnly(true);
+            var firstPersonal=(System.Windows.Controls.Border)((System.Windows.Controls.StackPanel)activeOverlay.FindName("PersonalMetrics")).Children[0];
+            Check(firstPersonal.Background==System.Windows.Media.Brushes.Transparent && collapse.Visibility==Visibility.Hidden,
+                "Locked integrated personal stats hide row surfaces and controls");
+            activeOverlay.SetDisplayOnly(false);
+            Check(firstPersonal.Background is System.Windows.Media.SolidColorBrush personalBackground && personalBackground.Color.A>0,
+                "Unlocking restores integrated personal row surfaces");
             Check(activeOverlay.FindName("PersonalCombatButton") is System.Windows.Controls.Button,
                 "Personal module toggle is available beside the CatScratch title");
             meter.Settings.ShowDamageTaken=meter.Settings.ShowHealingDone=true;
