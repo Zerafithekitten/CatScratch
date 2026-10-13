@@ -20,6 +20,7 @@ public partial class SettingsWindow : Window
     {
         _meter = meter;
         InitializeComponent();
+        AppIcon.Apply(this);
         Controls.DragAnywhere.Attach(this);
         Load();
         foreach (var field in new[] { HkToggle, HkReset, HkClick, HkTimers })

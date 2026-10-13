@@ -11,6 +11,7 @@ public sealed class EventSoundsWindow : Window
 {
     public EventSoundsWindow(TimerCards cards, Action<EventSoundPreference, double> preview)
     {
+        AppIcon.Apply(this);
         Title = "CatScratch · Event sounds"; Width = 560; Height = 650; MinWidth = 500; MinHeight = 350;
         Topmost = true; Background = new SolidColorBrush(Color.FromRgb(22, 28, 39)); Foreground = Brushes.White;
         Resources[typeof(Button)] = (Style)FindResource("GhostButton");

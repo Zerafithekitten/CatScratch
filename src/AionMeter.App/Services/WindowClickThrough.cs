@@ -21,6 +21,7 @@ internal static class WindowClickThrough
     public static void Attach(Window window, Func<bool> enabled, Func<double>? opacity = null)
     {
         if (Windows.ContainsKey(window)) return;
+        AppIcon.Apply(window);
         // WPF owns the layered style. Opt in before creating the handle so it keeps that style during repaint/resize.
         if (new WindowInteropHelper(window).Handle != 0) throw new InvalidOperationException("Display registration must happen before creating the window handle.");
         var needsTitle = window.WindowStyle != WindowStyle.None;
@@ -53,6 +54,8 @@ internal static class WindowClickThrough
         Button("×", window.Close);
         Button("□", () => window.WindowState = window.WindowState == WindowState.Maximized ? WindowState.Normal : WindowState.Maximized);
         Button("—", () => window.WindowState = WindowState.Minimized);
+        var paw = new Image { Source = AppIcon.Image, Width = 16, Height = 16, Margin = new Thickness(10, 0, 0, 0), VerticalAlignment = VerticalAlignment.Center };
+        DockPanel.SetDock(paw, Dock.Left); title.Children.Add(paw);
         var caption = new TextBlock { Margin = new Thickness(10, 0, 6, 0), VerticalAlignment = VerticalAlignment.Center, Foreground = Brushes.White, FontSize = 12, TextTrimming = TextTrimming.CharacterEllipsis };
         caption.SetBinding(TextBlock.TextProperty, new Binding(nameof(Window.Title)) { Source = window }); title.Children.Add(caption);
         title.MouseLeftButtonDown += (_, e) =>

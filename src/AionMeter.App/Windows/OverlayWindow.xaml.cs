@@ -44,6 +44,7 @@ public partial class OverlayWindow : Window, IDisplayAppearance
         _settings = meter.Settings;
         var opacity = _settings.BackgroundOpacity; // the slider's coercion during InitializeComponent would overwrite it
         InitializeComponent();
+        AppIcon.Apply(this);
         _settings.BackgroundOpacity = opacity;
         DataContext = _vm;
         WindowClickThrough.Attach(this, () => _settings.ClickThrough, () => _settings.WindowOpacity);

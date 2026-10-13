@@ -15,6 +15,7 @@ public sealed class PatchNotesWindow : Window
     private readonly CancellationTokenSource _lifetime = new();
     public PatchNotesWindow(Updater updater)
     {
+        AppIcon.Apply(this);
         Title = "CatScratch · Patch notes"; Width = 640; Height = 550; MinWidth = 380; MinHeight = 300; Topmost = true;
         Background = new SolidColorBrush(Color.FromRgb(22,28,39)); Foreground = Brushes.White;
         Resources[typeof(Button)] = (Style)FindResource("GhostButton");

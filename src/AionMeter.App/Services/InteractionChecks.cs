@@ -55,6 +55,25 @@ internal static class InteractionChecks
             partyView.Apply(null, 10, false);
             Check(!partyView.HasData && partyView.Rows.Count == 0, "Leaving room preview restores the normal waiting view");
             var first = Create(); var second = Create();
+                        foreach (var window in new[] { first, second })
+            {
+                Check(ReferenceEquals(window.Icon, AppIcon.Image), "Window uses the packaged purple paw directly");
+                foreach (var size in new[] { 0, 1 })
+                {
+                    var handle = NativeMethods.SendMessage(new WindowInteropHelper(window).Handle, 0x007F, size, 0);
+                    Check(handle != 0, "Native window provides its own small and large taskbar icons");
+                    using var nativeIcon = System.Drawing.Icon.FromHandle(handle);
+                    using var bitmap = nativeIcon.ToBitmap();
+                    var pixel = bitmap.GetPixel(bitmap.Width / 2, bitmap.Height * 2 / 3);
+                    Check(pixel.B > pixel.R && pixel.R > pixel.G, "Native taskbar icon contains the purple paw");
+                }
+            }
+            using (var trayIcon = AppIcon.CreateTrayIcon())
+            using (var bitmap = trayIcon.ToBitmap())
+            {
+                var pixel = bitmap.GetPixel(bitmap.Width / 2, bitmap.Height * 2 / 3);
+                Check(pixel.B > pixel.R && pixel.R > pixel.G, "Tray icon uses the packaged purple paw directly");
+            }
             var originals = windows.Select(Style).ToArray();
             var frame = (System.Windows.Controls.Border)first.Content;
             var originalBackground = frame.Background;

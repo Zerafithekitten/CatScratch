@@ -116,7 +116,7 @@ public sealed class TrayIcon : IDisposable
 
     /// <summary>Use the same embedded purple paw as the executable and shortcuts.</summary>
     private static Icon CreateIcon() =>
-        Icon.ExtractAssociatedIcon(Environment.ProcessPath!) ?? (Icon)SystemIcons.Application.Clone();
+        AppIcon.CreateTrayIcon();
     public void Dispose()
     {
         _icon.Visible = false;

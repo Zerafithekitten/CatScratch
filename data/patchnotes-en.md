@@ -1,3 +1,9 @@
+## CatScratch v1.0.12
+
+- Assign the purple paw explicitly to all application windows and their native small and large Windows icons.
+- Load the system-tray icon directly from the packaged resource instead of the Windows executable-icon cache.
+- Show the paw in the custom title bars of secondary windows.
+
 ## CatScratch v1.0.11
 
 - Copy full fight damage for every recorded player, with full integer values and percentage shares.

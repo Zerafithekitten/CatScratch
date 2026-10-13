@@ -21,6 +21,7 @@ public sealed class TimerCardWindow : Window, IDisplayAppearance
     private readonly TextBlock _source = new() { FontSize = 10, Foreground = Brushes.LightGray, TextWrapping = TextWrapping.Wrap, Margin = new(0, 5, 0, 0) };
     public TimerCardWindow(TimerCards cards, string id, CardPlacement placement)
     {
+        AppIcon.Apply(this);
         var compact = id.StartsWith("auto:");
         Title = "Timer"; Topmost = true; ShowInTaskbar = true;
         Background = new SolidColorBrush(Color.FromRgb(15, 18, 24)); Foreground = Brushes.White;

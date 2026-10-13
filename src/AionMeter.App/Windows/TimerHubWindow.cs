@@ -29,6 +29,7 @@ public sealed class TimerHubWindow : Window, IDisplayAppearance
     private static SolidColorBrush ColorBrush(string hex) => new((Color)ColorConverter.ConvertFromString(hex));
     public TimerHubWindow(TimerCards cards)
     {
+        AppIcon.Apply(this);
         _cards=cards; Title="Upcoming events"; Width=480; MinWidth=240; MinHeight=70;
         SizeToContent=SizeToContent.Height; WindowStyle=WindowStyle.None; Background=Brushes.Transparent;
         Topmost=true; Foreground=Brushes.White; Opacity=cards.Saved.EventOpacity;
