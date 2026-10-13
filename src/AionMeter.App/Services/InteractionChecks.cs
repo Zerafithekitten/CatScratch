@@ -247,6 +247,17 @@ internal static class InteractionChecks
             Check(cards.Saved.Sounds.Count == 8 && !cards.Saved.Sounds.Values.Any(s => s.Enabled), "All automatic events and tracked bosses have disabled sound preferences");
             var notes = new AionMeter.App.Windows.PatchNotesWindow(meter.Updates); windows.Add(notes);
             Check(notes.Content is not null, "Patch notes can open without a network request");
+            Check(notes.WindowStyle == WindowStyle.None && notes.Background is System.Windows.Media.SolidColorBrush notesBg && notesBg.Color.A == 255,
+                "Patch notes use the custom CatScratch header and remain opaque");
+            var fightMenu = activeOverlay.CreateFightMenu(activeOverlay);
+            var picks = fightMenu.Items.OfType<System.Windows.Controls.MenuItem>().Where(item => item.IsCheckable).ToArray();
+            Check(picks.Length > 1 && picks.Any(item => item.IsChecked), "Compact fight menu retains live and encounter selections");
+            picks[1].RaiseEvent(new RoutedEventArgs(System.Windows.Controls.MenuItem.ClickEvent));
+            Check(activeModel.SegmentId == segment, "Compact fight menu selects the requested encounter");
+            picks[0].RaiseEvent(new RoutedEventArgs(System.Windows.Controls.MenuItem.ClickEvent));
+            Check(activeOverlay.CreateFightMenu(activeOverlay).Items.OfType<System.Windows.Controls.MenuItem>().First().IsChecked,
+                "Compact fight menu returns to live tracking");
+            Check(!UiText.Current.NoFights.Contains("automatically", StringComparison.OrdinalIgnoreCase), "Empty fight menu describes manual saving");
             Check(DirectUpdate.Root == Path.Combine(AppContext.BaseDirectory, "userdata", "temp", "updates"),
                 "Temporary update downloads and staging stay inside the installation");
             Check(!new AppSettings().SaveHistory, "Automatic fight saving is disabled by default");

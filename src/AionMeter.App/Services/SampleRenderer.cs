@@ -54,7 +54,7 @@ public static class SampleRenderer
         using var meter = CreateMeter(language, o.RowSize);
         var start = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() - 20_500; // a fight that is still going
         var fight = new SampleFight(start, 20);
-        if (o.Window is not ("party" or "room" or "personal-waiting")) fight.FeedUntil(meter.Tracker, start + 20_000);
+        if (o.Window is not ("party" or "room" or "personal-waiting" or "fight-menu-empty")) fight.FeedUntil(meter.Tracker, start + 20_000);
         else
         {
             meter.PartyPreview.Observe(new SelfIdentifiedEvent(start, 1, "Sample self", 2305, Core.Events.GameClass.Cleric));
@@ -78,6 +78,14 @@ public static class SampleRenderer
         Action refresh;
         switch (o.Window)
         {
+            case "fight-menu":
+            case "fight-menu-empty":
+                var menuOverlay = new OverlayWindow(meter);
+                var fightMenu = menuOverlay.CreateFightMenu(menuOverlay);
+                host = new Window { Width = 340, Height = o.Window == "fight-menu-empty" ? 116 : 210, Background = Brushes.Transparent };
+                Capture(host, () => { }, path, o, fightMenu);
+                menuOverlay.Close();
+                return;
             case "personal":
             case "personal-locked":
                 var sample = meter.Tracker.Snapshot(null,start+20000)!;
@@ -235,10 +243,11 @@ public static class SampleRenderer
         for (var i = 0; i < 80 && meter.Portraits.Busy; i++) Thread.Sleep(100);
     }
 
-    private static void Capture(Window host, Action refresh, string path, Options o)
+    private static void Capture(Window host, Action refresh, string path, Options o, FrameworkElement? rootOverride = null)
     {
         refresh();
-        if (host.Content is not FrameworkElement root) return;
+        var root = rootOverride ?? host.Content as FrameworkElement;
+        if (root is null) return;
         root.Measure(new Size(host.Width, host.Height));
         root.Arrange(new Rect(0, 0, host.Width, host.Height));
         root.UpdateLayout();

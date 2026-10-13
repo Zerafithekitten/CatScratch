@@ -153,7 +153,10 @@ public partial class App : Application
                     System.Globalization.CultureInfo.InvariantCulture, out var seconds))
                 SampleRenderer.Animate(samplePath, language, options, seconds, int.TryParse(ArgValue(e.Args, "--fps"), out var fps) ? fps : 10);
             else
-                SampleRenderer.Render(samplePath, language, options);
+            {
+                try { SampleRenderer.Render(samplePath, language, options); }
+                catch (Exception error) { File.WriteAllText(samplePath + ".error.txt", error.ToString()); Shutdown(1); return; }
+            }
             Shutdown();
             return;
         }

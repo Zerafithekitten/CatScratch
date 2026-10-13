@@ -213,7 +213,7 @@ public sealed partial class UiText
     public string SavedYesterday { get; init; } = "SAVED · YESTERDAY";
     public string SavedOn { get; init; } = "SAVED · {0}";
     public string AllSaved { get; init; } = "All saved fights ({0})…";
-    public string NoFights { get; init; } = "No fights yet — they are saved automatically";
+    public string NoFights { get; init; } = "No fights yet · save with the save button";
     public string OpenBreakdown { get; init; } = "Open breakdown";
     public string CopyPlayer { get; init; } = "Copy {0}'s result to chat";
     public string CopyParty { get; init; } = "Copy party ranking to chat";

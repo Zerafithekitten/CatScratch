@@ -1,3 +1,9 @@
+## CatScratch v2.1.2
+
+- Make the fight picker narrower with shorter rows, smaller portraits and CatScratch's dark surfaces and teal accents.
+- Correct the empty fight hint: saving fight statistics is optional and available through the save button.
+- Restyle Patch notes with a custom paw header, compact controls and readable dark cards. Remove the native light title bar; preserve scrolling, GitHub refresh and embedded previews.
+
 ## CatScratch v2.1.1
 
 - Keep event sound preferences exclusively in Event settings; remove their shortcut from the meter settings.

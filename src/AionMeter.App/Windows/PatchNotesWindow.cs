@@ -21,15 +21,26 @@ public sealed class PatchNotesWindow : Window
     public PatchNotesWindow(Updater updater)
     {
         AppIcon.Apply(this);
-        Title = "CatScratch · Patch notes"; Width = 640; Height = 550; MinWidth = 380; MinHeight = 300; Topmost = true;
-        Background = new SolidColorBrush(Color.FromRgb(22,28,39)); Foreground = Brushes.White;
+        Title = "CatScratch · Patch notes"; Width = 580; Height = 540; MinWidth = 380; MinHeight = 300; Topmost = true;
+        WindowStyle = WindowStyle.None; ResizeMode = ResizeMode.CanResize;
+        System.Windows.Shell.WindowChrome.SetWindowChrome(this, new System.Windows.Shell.WindowChrome { CaptionHeight = 0, ResizeBorderThickness = new Thickness(6), GlassFrameThickness = new Thickness(0) });
+        Background = new SolidColorBrush(Color.FromRgb(27,32,39)); Foreground = new SolidColorBrush(Color.FromRgb(237,242,247));
+        FontFamily = (FontFamily)FindResource("UiFont"); FontSize = 12;
+        Resources.MergedDictionaries.Add(new ResourceDictionary { Source = new Uri("/CatScratch;component/Theme/MeterPreferences.xaml", UriKind.Relative) });
         Resources[typeof(Button)] = (Style)FindResource("GhostButton");
-        var root = new DockPanel { Margin = new Thickness(20) };
+        var root = new DockPanel { Margin = new Thickness(14) };
         var header = new StackPanel(); DockPanel.SetDock(header, Dock.Top); root.Children.Add(header);
-        header.Children.Add(new TextBlock { Text = "Patch notes", FontSize = 22, FontWeight = FontWeights.SemiBold });
+        var titleBar = new DockPanel { Margin = new Thickness(0,0,0,10) };
+        var close = new Button { Content = "\uE711", Style = (Style)FindResource("IconButton"), Width = 22, Height = 22 };
+        close.Click += (_, _) => Close(); DockPanel.SetDock(close,Dock.Right); titleBar.Children.Add(close);
+        var title = new StackPanel { Orientation = Orientation.Horizontal };
+        title.Children.Add(new Image { Source = Icon, Width = 18, Height = 18, Margin = new Thickness(0,0,7,0) });
+        title.Children.Add(new TextBlock { Text = "Patch notes", FontSize = 16, FontWeight = FontWeights.SemiBold, Foreground = new SolidColorBrush(Color.FromRgb(121,227,207)) });
+        titleBar.Children.Add(title); header.Children.Add(titleBar);
+        title.MouseLeftButtonDown += (_, e) => { if (e.LeftButton == System.Windows.Input.MouseButtonState.Pressed) DragMove(); };
         var refresh = new Button { Content = "Refresh from GitHub", HorizontalAlignment = HorizontalAlignment.Left, Padding = new Thickness(10,5,10,5), Margin = new Thickness(0,12,0,0) };
         header.Children.Add(refresh); header.Children.Add(_state);
-        root.Children.Add(new ScrollViewer { Content = _notes, VerticalScrollBarVisibility = ScrollBarVisibility.Auto }); Content = root;
+        root.Children.Add(new Border { Background = new SolidColorBrush(Color.FromRgb(23,30,39)), BorderBrush = new SolidColorBrush(Color.FromRgb(54,73,87)), BorderThickness = new Thickness(1), CornerRadius = new CornerRadius(7), Padding = new Thickness(12), Child = new ScrollViewer { Content = _notes, VerticalScrollBarVisibility = ScrollBarVisibility.Auto } }); Content = root;
         if (updater.Latest is { } release) ShowNotes(release.Notes, "Latest release · " + release.Tag);
         else
         {
@@ -75,9 +86,9 @@ public sealed class PatchNotesWindow : Window
                 continue;
             }
             foreach (var (text, heading) in ReleaseNotes.Lines(line, "en"))
-                _notes.Children.Add(new TextBlock { Text = text, TextWrapping = TextWrapping.Wrap, FontSize = 13, LineHeight = 21,
-                    Margin = new(0,0,0,4), FontWeight = heading ? FontWeights.SemiBold : FontWeights.Normal,
-                    Foreground = heading ? Brushes.PaleGoldenrod : Brushes.White });
+                _notes.Children.Add(new TextBlock { Text = text, TextWrapping = TextWrapping.Wrap, FontSize = heading ? 14 : 12, LineHeight = 19,
+                    Margin = heading ? new(0,8,0,8) : new(0,0,8,6), FontWeight = heading ? FontWeights.SemiBold : FontWeights.Normal,
+                    Foreground = heading ? new SolidColorBrush(Color.FromRgb(121,227,207)) : Foreground });
         }
         foreach (var preview in pending)
         {

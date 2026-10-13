@@ -630,7 +630,13 @@ public partial class OverlayWindow : Window, IDisplayAppearance
 
     private void Segments_Click(object sender, RoutedEventArgs e)
     {
-        var menu = new ContextMenu { PlacementTarget = (UIElement)sender, Placement = PlacementMode.Bottom, MinWidth = 380 };
+        CreateFightMenu((UIElement)sender).IsOpen = true;
+    }
+
+    internal ContextMenu CreateFightMenu(UIElement anchor)
+    {
+        var menu = new ContextMenu { PlacementTarget = anchor, Placement = PlacementMode.Bottom, MinWidth = 260, MaxWidth = 340 };
+        menu.Resources.MergedDictionaries.Add(new ResourceDictionary { Source = new Uri("/CatScratch;component/Theme/FightMenu.xaml", UriKind.Relative) });
         var live = new MenuItem
         {
             Header = PickHeader(UiText.Current.Live, UiText.Current.LiveHint, null, 0, EncounterEndReason.None, active: true, partyDps: 0, portrait: null),
@@ -651,7 +657,7 @@ public partial class OverlayWindow : Window, IDisplayAppearance
                 menu.Items.Add(new Separator());
                 menu.Items.Add(new MenuItem
                 {
-                    Header = new TextBlock { Text = group, Style = (Style)FindResource("SectionLabel") },
+                    Header = new TextBlock { Text = group, Style = (Style)menu.FindResource("SectionLabel") },
                     IsEnabled = false,
                 });
             }
@@ -667,14 +673,14 @@ public partial class OverlayWindow : Window, IDisplayAppearance
             menu.Items.Add(row);
         }
         if (items.Count == 0)
-            menu.Items.Add(new MenuItem { Header = UiText.Current.NoFights, IsEnabled = false });
+            menu.Items.Add(new MenuItem { Header = new TextBlock { Text = UiText.Current.NoFights, TextWrapping = TextWrapping.Wrap, MaxWidth = 245, FontSize = 11 }, IsEnabled = false });
 
         menu.Items.Add(new Separator());
         var total = _meter.History.List().Count;
         var history = new MenuItem { Header = string.Format(UiText.Current.AllSaved, total) };
         history.Click += (_, _) => AppHost.Current.ShowHistory();
         menu.Items.Add(history);
-        menu.IsOpen = true;
+        return menu;
     }
 
     private static string DayLabel(DateTimeOffset t)
@@ -689,13 +695,13 @@ public partial class OverlayWindow : Window, IDisplayAppearance
     private FrameworkElement PickHeader(string title, string meta, double? selfDps, int place, EncounterEndReason reason, bool active, double partyDps,
         ImageSource? portrait)
     {
-        var grid = new Grid { MinWidth = 360 };
-        grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(38) });
-        grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(18) });
+        var grid = new Grid { MinWidth = 230 };
+        grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(27) });
+        grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(13) });
         grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
         grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
 
-        grid.Children.Add(new BossPortrait { Source = portrait, Width = 28, Height = 28, HorizontalAlignment = HorizontalAlignment.Left });
+        grid.Children.Add(new BossPortrait { Source = portrait, Width = 21, Height = 21, Accent = new SolidColorBrush(Color.FromRgb(121,227,207)), HorizontalAlignment = HorizontalAlignment.Left });
 
         var (mark, markBrush) = active ? ("●", "Red") : reason switch
         {
@@ -707,15 +713,15 @@ public partial class OverlayWindow : Window, IDisplayAppearance
         Grid.SetColumn(markText, 1);
         grid.Children.Add(markText);
 
-        var text = new StackPanel { Margin = new Thickness(0, 0, 14, 0) };
+        var text = new StackPanel { Margin = new Thickness(0, 0, 8, 0), HorizontalAlignment = HorizontalAlignment.Left };
         text.Children.Add(new TextBlock
         {
-            Text = title, FontWeight = FontWeights.SemiBold, FontSize = 12.5, MaxWidth = 230,
-            TextTrimming = TextTrimming.CharacterEllipsis, Foreground = (Brush)FindResource("Text"),
+            Text = title, FontWeight = FontWeights.SemiBold, FontSize = 12, MaxWidth = 160,
+            TextTrimming = TextTrimming.CharacterEllipsis, Foreground = new SolidColorBrush(Color.FromRgb(237,242,247)),
         });
         text.Children.Add(new TextBlock
         {
-            Text = meta, FontSize = 10.5, FontFamily = (FontFamily)FindResource("NumberFont"), Foreground = (Brush)FindResource("TextMute"),
+            Text = meta, FontSize = 10.5, FontFamily = (FontFamily)FindResource("NumberFont"), Foreground = new SolidColorBrush(Color.FromRgb(169,184,199)),
         });
         Grid.SetColumn(text, 2);
         grid.Children.Add(text);
