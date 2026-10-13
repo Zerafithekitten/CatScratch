@@ -1,3 +1,9 @@
+## CatScratch v1.0.18
+
+- Remove fixed class-color blocks behind compact names and stats so only the actual damage bar defines the colored length.
+- Keep contrasting text inside the fill and light shadowed text outside, including short bars.
+- Preserve damage shares and the existing relative-to-top bar setting.
+
 ## CatScratch v1.0.17
 
 - Fix intermittent room-stat previews when the group roster arrives before complete character identity.

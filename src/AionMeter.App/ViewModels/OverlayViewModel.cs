@@ -108,7 +108,7 @@ public sealed class RowViewModel : ObservableObject
     /// <summary>DPS figure: a light tint of the class colour, readable on top of the fill.</summary>
     public Brush DpsBrush { get; private set; } = Brushes.White;
     public Brush CompactTextBrush { get; private set; } = Brushes.White;
-    public Brush CompactLabelBrush { get; private set; } = Brushes.Transparent;
+    public Brush CompactContrastBackground { get; private set; } = Brushes.Transparent;
     /// <summary>Class-coloured name (yours is white and underlined).</summary>
     public Brush NameBrush { get; private set; } = Brushes.White;
     /// <summary>Icon tile frame and its glow.</summary>
@@ -129,11 +129,12 @@ public sealed class RowViewModel : ObservableObject
             GlowColor = c;
 
             var v = ClassVisuals.BarColorOf(value);
-            CompactLabelBrush = Freeze(new SolidColorBrush(v));
+            var textBackground = Mix(v, Color.FromRgb(0x20, 0x2A, 0x32), 0.30);
+            CompactContrastBackground = Freeze(new SolidColorBrush(textBackground));
             static double Linear(byte channel) { var s = channel / 255.0; return s <= 0.04045 ? s / 12.92 : Math.Pow((s + 0.055) / 1.055, 2.4); }
-            var luminance = 0.2126 * Linear(v.R) + 0.7152 * Linear(v.G) + 0.0722 * Linear(v.B);
+            var luminance = 0.2126 * Linear(textBackground.R) + 0.7152 * Linear(textBackground.G) + 0.0722 * Linear(textBackground.B);
             CompactTextBrush = luminance > 0.179 ? Brushes.Black : Brushes.White;
-            Raise(nameof(CompactTextBrush)); Raise(nameof(CompactLabelBrush));
+            Raise(nameof(CompactTextBrush)); Raise(nameof(CompactContrastBackground));
             var fill = new LinearGradientBrush { StartPoint = new System.Windows.Point(0, 0), EndPoint = new System.Windows.Point(1, 0) };
             fill.GradientStops.Add(new GradientStop(Lighten(v, 0.08), 0));
             fill.GradientStops.Add(new GradientStop(v, 0.55));

@@ -44,14 +44,20 @@ internal static class InteractionChecks
                         foreach (var gameClass in Enum.GetValues<AionMeter.Core.Events.GameClass>())
             {
                 var row = new AionMeter.App.ViewModels.RowViewModel { Class = gameClass };
-                var background = (System.Windows.Media.SolidColorBrush)row.CompactLabelBrush;
+                var background = (System.Windows.Media.SolidColorBrush)row.CompactContrastBackground;
                 static double Linear(byte c) { var s = c / 255.0; return s <= 0.04045 ? s / 12.92 : Math.Pow((s + 0.055) / 1.055, 2.4); }
                 var color = background.Color;
                 var luminance = 0.2126 * Linear(color.R) + 0.7152 * Linear(color.G) + 0.0722 * Linear(color.B);
                 var contrast = row.CompactTextBrush == System.Windows.Media.Brushes.Black ? (luminance + 0.05) / 0.05 : 1.05 / (luminance + 0.05);
                 Check(background.Color.A == 255 && background.IsFrozen && contrast >= 4.5,
-                    "Compact identity labels have opaque cached class color and readable text contrast: " + gameClass);
+                    "Compact text contrast accounts for darkened class fill: " + gameClass);
             }
+            var clipping=new AionMeter.App.Controls.CompactFillClip();
+            var zero=(System.Windows.Media.RectangleGeometry)clipping.Convert([120d,24d,260d,0d],typeof(System.Windows.Media.Geometry),null!,System.Globalization.CultureInfo.InvariantCulture);
+            var partial=(System.Windows.Media.RectangleGeometry)clipping.Convert([120d,24d,260d,0.25d],typeof(System.Windows.Media.Geometry),null!,System.Globalization.CultureInfo.InvariantCulture);
+            var full=(System.Windows.Media.RectangleGeometry)clipping.Convert([120d,24d,260d,1d],typeof(System.Windows.Media.Geometry),null!,System.Globalization.CultureInfo.InvariantCulture);
+            Check(zero.Rect.Width==0 && partial.Rect.Width==36 && full.Rect.Width==120 && partial.IsFrozen,
+                "Contrasting text is clipped to zero, partial and full damage bars without painting fixed color blocks");
             var partyView = new AionMeter.App.ViewModels.OverlayViewModel();
             partyView.ApplyParty([
                 new("Sample self", 2305, 45, 1894, 85471, AionMeter.Core.Events.GameClass.Cleric),

@@ -227,14 +227,27 @@
                 </DataTrigger>
             </DataTemplate.Triggers>
         </DataTemplate>
+        <c:CompactFillClip x:Key="CompactFillClip"/>
         <DataTemplate x:Key="CompactRowTemplate" DataType="{x:Type vm:RowViewModel}">
-            <Grid Height="{DynamicResource CompactRowHeight}" Margin="0,0,0,2" Background="Transparent" Cursor="Hand" ToolTip="{Binding Tooltip}" MouseLeftButtonUp="Row_Click" MouseRightButtonUp="Row_RightClick">
+            <Grid x:Name="CompactRow" Height="{DynamicResource CompactRowHeight}" Margin="0,0,0,2" Background="Transparent" Cursor="Hand" ToolTip="{Binding Tooltip}" MouseLeftButtonUp="Row_Click" MouseRightButtonUp="Row_RightClick">
                 <Border Background="#60202A32" CornerRadius="3"/>
                 <Border Background="{Binding FillBrush}" Opacity="0.76" CornerRadius="3" RenderTransformOrigin="0,0.5"><Border.RenderTransform><ScaleTransform ScaleX="{Binding Fill}"/></Border.RenderTransform></Border>
                 <Grid Margin="4,1,5,1">
                     <Grid.ColumnDefinitions><ColumnDefinition Width="23"/><ColumnDefinition Width="*"/><ColumnDefinition Width="61"/><ColumnDefinition Width="48"/></Grid.ColumnDefinitions>
                     <c:ClassGlyph Class="{Binding Class}" Width="20" Height="20" OnBar="True"/>
-                    <StackPanel Grid.Column="1" Margin="2,0,3,0" VerticalAlignment="Center" Background="{Binding CompactLabelBrush}">
+                    <StackPanel x:Name="CompactIdentity" Grid.Column="1" Margin="2,0,3,0" VerticalAlignment="Center" Effect="{StaticResource TextShadow}">
+                        <TextBlock Text="{Binding Name}" Foreground="White" FontWeight="SemiBold" FontSize="11" TextTrimming="CharacterEllipsis"/>
+                        <TextBlock Text="{Binding CompactGear}" FontSize="9.5" Foreground="White" TextTrimming="CharacterEllipsis"/>
+                    </StackPanel>
+                    <StackPanel Grid.Column="1" Margin="2,0,3,0" VerticalAlignment="Center" IsHitTestVisible="False">
+                        <StackPanel.Clip>
+                            <MultiBinding Converter="{StaticResource CompactFillClip}">
+                                <Binding ElementName="CompactIdentity" Path="ActualWidth"/>
+                                <Binding ElementName="CompactIdentity" Path="ActualHeight"/>
+                                <Binding ElementName="CompactRow" Path="ActualWidth"/>
+                                <Binding Path="Fill"/>
+                            </MultiBinding>
+                        </StackPanel.Clip>
                         <TextBlock Text="{Binding Name}" Foreground="{Binding CompactTextBrush}" FontWeight="SemiBold" FontSize="11" TextTrimming="CharacterEllipsis"/>
                         <TextBlock Text="{Binding CompactGear}" FontSize="9.5" Foreground="{Binding CompactTextBrush}" TextTrimming="CharacterEllipsis"/>
                     </StackPanel>
