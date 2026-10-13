@@ -4,11 +4,11 @@ A separate always-on-top Windows damage meter for AION 2 by Zerafithekitten.
 
 [Download the latest release](https://github.com/Zerafithekitten/CatScratch/releases/latest) · [Patch notes](data/patchnotes-en.md) · [Report an issue](https://github.com/Zerafithekitten/CatScratch/issues)
 
-Latest published version: **2.1.2**. English is the default; German is available in Settings.
+Latest published version: **2.2.0**. English is the default; German is available in Settings.
 
 ## Preview
 
-CatScratch UI rendered with sample data. Names and numbers are examples. Previews of changes that are not released yet are explicitly marked below.
+CatScratch UI rendered with sample data. Names and numbers are examples. The screenshots show the current interface.
 
 ### DPS meter and Personal combat
 
@@ -26,15 +26,15 @@ The meter can be resized down to 260 px wide. Long names and CP/GS labels shorte
 
 <img src="docs/screenshots/meter-narrow.png" alt="CatScratch at its 260 px minimum width" width="260" />
 
-### Upcoming fight-details redesign
+### Detailed fight statistics
 
-Preview of the next update, not yet included in the 2.1.2 download. Dark player cards, a separate summary row, teal tabs, clearer skill tables and a class-colored timeline replace the older gold layout. Player selection, sorting, rotation, defense and chat/image export remain available.
+Dark player cards, a separate summary row, teal tabs, clearer skill tables and a class-colored timeline replace the older gold layout. Player selection, sorting, rotation, defense and chat/image export remain available.
 
-<img src="docs/screenshots/fight-details-next.png" alt="Upcoming CatScratch fight details redesign with player cards and DPS timeline" width="1040" />
+<img src="docs/screenshots/fight-details-next.png" alt="CatScratch fight details with player cards and DPS timeline" width="1040" />
 
 <details><summary>Accuracy and German interface previews</summary>
 
-<img src="docs/screenshots/fight-accuracy-next.png" alt="Upcoming accuracy dashboard with separate hit-quality cards" width="1040" />
+<img src="docs/screenshots/fight-accuracy-next.png" alt="Accuracy dashboard with separate hit-quality cards" width="1040" />
 
 <img src="docs/screenshots/fight-details-de-next.png" alt="German fight details at the minimum supported window width" width="900" />
 
@@ -54,7 +54,7 @@ Available since 2.1.2. Saving fights is optional: press the save button after co
 
 <img src="docs/screenshots/event-settings.png" alt="Event preferences" width="470" />
 
-<img src="docs/screenshots/upcoming-events.png" alt="Events just started with colored borders" width="520" />
+<img src="docs/screenshots/upcoming-events.png" alt="All selected events within the next hour" width="520" />
 
 <details><summary>Boss timers and optional event sounds</summary>
 
@@ -64,12 +64,12 @@ Available since 2.1.2. Saving fights is optional: press the save button after co
 
 </details>
 
-### Also prepared for the next update
+### Update improvements
 
 - Subtle dark backgrounds behind Personal combat rows in click-through mode for readability.
 - Remove the update's old staging copy, rollback backup and downloaded ZIP after the updated app starts successfully. Failed-update recovery files are retained.
 
-These changes are not part of the current public download yet.
+Available in version 2.2.0.
 
 ## Downloads
 
@@ -86,7 +86,7 @@ Use borderless windowed mode to keep the meter visible above the game.
 - Dark player rows with separate class-colored DPS bars, resizing, opacity and shortcuts recorded by pressing keys.
 - Integrated, collapsible Personal combat showing your damage taken, self healing and healing of others.
 - Click-through removes window frames while preserving damage, time and RTT.
-- Movable event cards for the next selected start within an hour, with a pulsing border for two minutes after the start.
+- Movable cards for all selected events and enabled world-boss timers within the next hour, with a pulsing border for two minutes after the start.
 - Separate observed boss timers; optional fight saving, retaining the last ten saved fights.
 - Colored EVENT / PVP / BOSS badges and readable boss panels when locked.
 - Optional per-event sounds with preview, volume, reminder timing and custom PCM/float WAV files up to ten seconds.

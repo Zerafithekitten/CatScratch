@@ -62,9 +62,8 @@ public sealed class TimerCards : IDisposable
                 .Select(b => new EventStart($"boss:{b.ServerId}:{b.NpcCode}", _meter.Data.NpcName(b.NpcCode), b.NextSpawn!.Value))
             : Enumerable.Empty<EventStart>();
         var candidates = scheduled.Concat(liveBosses).ToArray();
-        var first = candidates.Length == 0 ? (DateTimeOffset?)null : candidates.Min(c => c.StartsAt);
-        _nextEvents = candidates.Where(e => e.StartsAt == first)
-            .OrderBy(e => e.Id).ToArray();
+        _nextEvents = candidates.OrderBy(e => e.StartsAt).ThenBy(e => e.Id)
+            .DistinctBy(e => (e.Id,e.StartsAt)).ToArray();
         _scheduleKey = key;
         _scheduleAt = now;
         _scheduleUntil = now.AddSeconds(1);

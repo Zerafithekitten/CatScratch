@@ -1,3 +1,10 @@
+## CatScratch v2.2.0
+
+- Show all selected events and enabled world-boss timers within the next hour, ordered by start time. Keep recently started events visible for two minutes with pulsing borders while later cards remain visible.
+- Redesign detailed fight statistics with dark player cards, separate summary tiles, teal tabs and clearer DPS/accuracy tables. Preserve player selection, sorting, rotation, defense and chat/image export.
+- Keep a subtle dark background behind Personal combat rows in click-through mode; the surrounding window remains transparent.
+- Clean up the direct update's staging copy, backup and downloaded package after successful application startup. Wait for the staging helper to exit, preserve failed-update recovery files and validate cleanup paths.
+
 ## CatScratch v2.1.2
 
 - Make the fight picker narrower with shorter rows, smaller portraits and CatScratch's dark surfaces and teal accents.

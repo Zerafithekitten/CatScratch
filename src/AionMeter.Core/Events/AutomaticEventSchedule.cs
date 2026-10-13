@@ -40,8 +40,7 @@ public static class AutomaticEventSchedule
                 }
             }
         }
-        if(candidates.Count==0) return [];
-        var first = candidates.Min(e=>e.StartsAt);
-        return candidates.Where(e=>e.StartsAt==first).OrderBy(e=>e.Id).DistinctBy(e=>e.Id).ToArray();
+        return candidates.OrderBy(e=>e.StartsAt).ThenBy(e=>e.Id)
+            .DistinctBy(e=>(e.Id,e.StartsAt)).ToArray();
     }
 }

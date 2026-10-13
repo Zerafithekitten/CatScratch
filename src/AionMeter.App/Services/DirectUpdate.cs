@@ -70,6 +70,7 @@ internal static class DirectUpdate
         }
         var restart = new ProcessStartInfo(targetExe) { UseShellExecute = false, WorkingDirectory = target };
         restart.ArgumentList.Add("--updated");
+        restart.ArgumentList.Add("--update-ready"); restart.ArgumentList.Add(stage);
         if (checkResult is not null)
         {
             restart.ArgumentList.Add("--check-shutdown");
@@ -78,5 +79,67 @@ internal static class DirectUpdate
         using var restarted = Process.Start(restart) ?? throw new IOException("Could not restart CatScratch.");
         if (checkResult is not null && (!restarted.WaitForExit(20000) || restarted.ExitCode != 0))
             throw new IOException("Updated program verification failed.");
+        if (checkResult is null)
+        {
+            var deadline = Stopwatch.StartNew();
+            while (!File.Exists(Path.Combine(stage,"started.txt")) && !restarted.HasExited && deadline.Elapsed < TimeSpan.FromSeconds(30)) Thread.Sleep(100);
+        }
+        if (!File.Exists(Path.Combine(stage,"failure.txt")) && (checkResult is not null || File.Exists(Path.Combine(stage,"started.txt"))))
+        {
+            // Run from the installed copy: the staging helper's own executable is locked until it exits.
+            var cleanup = new ProcessStartInfo(targetExe) { UseShellExecute = false, WorkingDirectory = target, CreateNoWindow = true };
+            foreach (var arg in new[] { "--clean-update", stage, "--parent", Environment.ProcessId.ToString() }) cleanup.ArgumentList.Add(arg);
+            using var cleaner = Process.Start(cleanup);
+            if (checkResult is not null && cleaner is not null) File.WriteAllText(checkResult + ".cleanerpid", cleaner.Id.ToString());
+        }
+    }
+
+    internal static void MarkReady(string stage)
+    {
+        if (UpdateCleanup.IsStage(Root,stage)) File.WriteAllText(Path.Combine(stage,"started.txt"),"Startup completed");
+    }
+
+    internal static void Clean(string stage, int parentId)
+    {
+        if (!UpdateCleanup.IsStage(Root,stage)) throw new InvalidDataException("Invalid update cleanup path.");
+        try
+        {
+            if (parentId > 0)
+            {
+            using var helper = Process.GetProcessById(parentId);
+            if (!string.Equals(helper.MainModule?.FileName,Path.Combine(stage,"payload","CatScratch.exe"),StringComparison.OrdinalIgnoreCase))
+                throw new InvalidDataException("Cleanup requester does not match this update.");
+            if (!helper.WaitForExit(30000)) return;
+            }
+        }
+        catch (ArgumentException) { }
+        if (File.Exists(Path.Combine(stage,"failure.txt"))) return;
+        var stageCreated = Directory.GetCreationTimeUtc(stage);
+        for (var attempt = 0; ; attempt++)
+        {
+            try { UpdateCleanup.RemoveStage(Root,stage); break; }
+            catch (IOException) when (attempt < 50) { Thread.Sleep(200); }
+        }
+        UpdateCleanup.PruneOlderStages(Root,stageCreated);
+        // Only the recognized package created by our downloader, never arbitrary files in the install folder.
+        UpdateCleanup.RemoveDownload(Root,"CatScratch-win-x64.zip",stageCreated);
+    }
+
+    internal static void CleanLegacyAfterStartup()
+    {
+        // Older update helpers only pass --updated. Once this app has initialized, locate the matching
+        // staging package and let the installed copy remove it after the old helper unlocks its files.
+        if (!Directory.Exists(Root)) return;
+        foreach (var stage in Directory.EnumerateDirectories(Root,"stage-*"))
+        {
+            if (!UpdateCleanup.IsStage(Root,stage) || File.Exists(Path.Combine(stage,"failure.txt"))) continue;
+            var stagedExe = Path.Combine(stage,"payload","CatScratch.exe");
+            if (!File.Exists(stagedExe) || UpdateFeed.ParseVersion(FileVersionInfo.GetVersionInfo(stagedExe).ProductVersion) !=
+                UpdateFeed.Normalize(typeof(App).Assembly.GetName().Version!)) continue;
+            var start = new ProcessStartInfo(Path.Combine(AppContext.BaseDirectory,"CatScratch.exe")) { UseShellExecute=false,CreateNoWindow=true,WorkingDirectory=AppContext.BaseDirectory };
+            foreach (var arg in new[] { "--clean-update", stage, "--parent", "0" }) start.ArgumentList.Add(arg);
+            using var cleaner = Process.Start(start);
+            break;
+        }
     }
 }

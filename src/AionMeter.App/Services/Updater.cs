@@ -153,7 +153,7 @@ public sealed class Updater : IDisposable
                 if (DateTime.UtcNow - Directory.GetLastWriteTimeUtc(stage) > TimeSpan.FromDays(1) &&
                     !File.Exists(Path.Combine(stage, "failure.txt")) &&
                     (File.GetAttributes(stage) & FileAttributes.ReparsePoint) == 0)
-                    Directory.Delete(stage, recursive: true);
+                    UpdateCleanup.RemoveStage(DownloadFolder,stage);
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
         {

@@ -28,7 +28,7 @@ public partial class BreakdownWindow : Window
         public string PlaceText => Place > 0 ? Place.ToString() : "·";
         public Brush NameBrush => IsSelf ? SelfBrush : Brushes.WhiteSmoke;
         public FontWeight NameWeight => IsSelf ? FontWeights.Bold : FontWeights.Normal;
-        private static readonly Brush SelfBrush = new SolidColorBrush(Color.FromRgb(0xEC, 0xCB, 0x82));
+        private static readonly Brush SelfBrush = new SolidColorBrush(Color.FromRgb(0x79, 0xE3, 0xCF));
     }
 
     public sealed record SkillItem(
@@ -160,11 +160,10 @@ public partial class BreakdownWindow : Window
         PlayerMeta.Text = $"{T.ClassName(d.Class)}{server}{gear} · {summary.Title}" + (d.IsSelf ? $" · {T.You}" : "");
         var place = d.ActorId == Combatant.UnknownSummonsId ? 0 : summary.Combatants.ToList().FindIndex(c => c.ActorId == d.ActorId) + 1;
         StatPlace.Text = place > 0 ? $"{place} / {summary.PlayerCount}" : "—";
-        var (placeBg, placeFg, placeBorder) = RankBrushes.For(place);
-        PlaceTile.Background = place is >= 1 and <= 3 ? placeBg : (Brush)FindResource("Bg1");
-        PlaceTile.BorderBrush = placeBorder;
-        StatPlace.Foreground = place is >= 1 and <= 3 ? placeFg : (Brush)FindResource("Text");
-        PlaceLabel.Foreground = place is >= 1 and <= 3 ? placeFg : (Brush)FindResource("Gold");
+        PlaceTile.Background = (Brush)FindResource("Bg1");
+        PlaceTile.BorderBrush = (Brush)FindResource("Gold");
+        StatPlace.Foreground = (Brush)FindResource("Text");
+        PlaceLabel.Foreground = (Brush)FindResource("Gold");
         StatDamage.Text = Format.Compact(d.Damage);
         StatDps.Text = Format.Compact(d.Dps);
         StatShare.Text = Format.Share(d.Share);
@@ -211,7 +210,7 @@ public partial class BreakdownWindow : Window
         return new SkillItem(
             s.Name, swatch, _icons.Get(s.SkillCode), hits, Format.Compact(s.Damage), Format.Compact(s.Dps), Format.Compact(s.Average),
             Format.Compact(s.Max), Format.Percent(s.CritRate), Format.Percent(s.Share),
-            maxShare > 0 ? 96 * s.Share / maxShare : 0, s.Hits == 0 && s.DotTicks > 0 ? "DoT" : "", tooltip,
+            maxShare > 0 ? 86 * s.Share / maxShare : 0, s.Hits == 0 && s.DotTicks > 0 ? "DoT" : "", tooltip,
             Format.Percent(s.BackRate), Format.Percent(s.FrontRate), Format.Percent(s.PerfectRate),
             Format.Percent(s.HeavyRate), Format.Percent(s.MultiRate));
     }
@@ -225,9 +224,9 @@ public partial class BreakdownWindow : Window
             stack.Children.Add(new TextBlock
             {
                 Text = caption, FontSize = 10.5, Foreground = (Brush)FindResource("TextMute"),
-                TextTrimming = TextTrimming.CharacterEllipsis,
+                TextWrapping = TextWrapping.Wrap,
             });
-        panel.Children.Add(new Border { Style = (Style)FindResource("StatTile"), Child = stack, Padding = new Thickness(14, 10, 14, 10), MinWidth = 96 });
+        panel.Children.Add(new Border { Style = (Style)FindResource("StatTile"), Child = stack, Padding = new Thickness(12, 9, 12, 9), Margin = new Thickness(0,0,7,7) });
     }
 
     /// <summary>A column header was clicked: sort its table by that column, or turn the order around.</summary>
@@ -251,6 +250,12 @@ public partial class BreakdownWindow : Window
             {
                 if (button.Tag is not string tag || !Enum.TryParse<SkillColumn>(tag, out var column)) continue;
                 var label = HeadLabel(column);
+                button.ToolTip = label;
+                if (T.Culture.TwoLetterISOLanguageName == "de") label = column switch
+                {
+                    SkillColumn.Hits => "TR.", SkillColumn.Perfect => "PERF.", SkillColumn.Heavy => "SCHM.",
+                    SkillColumn.Multi => "MEHRF.", SkillColumn.Damage => "SCHAD.", _ => label,
+                };
                 var arrow = order.Descending ? "▾" : "▴";
                 // The arrow goes on the outer side, so a caption stays lined up with its column's numbers.
                 button.Content = column != order.Column ? label : column == SkillColumn.Name ? $"{label} {arrow}" : $"{arrow} {label}";

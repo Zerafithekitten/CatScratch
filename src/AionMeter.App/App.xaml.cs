@@ -68,6 +68,17 @@ public partial class App : Application
     protected override void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);
+        if (ArgValue(e.Args,"--clean-update") is { } cleanupStage)
+        {
+            try
+            {
+                if (!int.TryParse(ArgValue(e.Args,"--parent"),out var parent)) throw new InvalidDataException("Missing cleanup requester.");
+                DirectUpdate.Clean(cleanupStage,parent);
+                Shutdown();
+            }
+            catch (Exception error) { Log.Error("Update cleanup deferred",error); Shutdown(1); }
+            return;
+        }
         if (ArgValue(e.Args, "--check-update-start") is { } packagePath)
         {
             try
@@ -279,6 +290,10 @@ public partial class App : Application
             };
             once.Start();
         }
+        if (ArgValue(e.Args,"--update-ready") is { } readyStage) DirectUpdate.MarkReady(readyStage);
+        else if (e.Args.Contains("--updated"))
+            try { DirectUpdate.CleanLegacyAfterStartup(); }
+            catch (Exception error) when (error is IOException or UnauthorizedAccessException or System.ComponentModel.Win32Exception) { Log.Error("Legacy update cleanup deferred",error); }
     }
 
     public static void ShowNpcapHelp()

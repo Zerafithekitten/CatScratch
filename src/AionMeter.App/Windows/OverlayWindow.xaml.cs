@@ -121,7 +121,7 @@ public partial class OverlayWindow : Window, IDisplayAppearance
         _vm.IsDisplayOnly = enabled;
         PersonalDivider.Visibility = enabled ? Visibility.Hidden : Visibility.Visible;
         PersonalCollapseButton.Visibility = enabled ? Visibility.Hidden : Visibility.Visible;
-        foreach (var row in _personalRows) row.Surface.Background = enabled ? Brushes.Transparent : PersonalSurface;
+        foreach (var row in _personalRows) row.Surface.Background = enabled ? PersonalLockedSurface : PersonalSurface;
         OuterShell.Background=enabled ? Brushes.Transparent : _shellBackground;
         OuterShell.BorderBrush=enabled ? Brushes.Transparent : _shellBorder;
         Frame.Background=enabled ? Brushes.Transparent : FrameBackground;
@@ -144,6 +144,7 @@ public partial class OverlayWindow : Window, IDisplayAppearance
     }
 
     private static readonly Brush PersonalSurface = FrozenBrush("#D0171E27");
+    private static readonly Brush PersonalLockedSurface = FrozenBrush("#B8101822");
     private readonly List<(Border Surface, TextBlock Value, TextBlock Label, string English)> _personalRows = [];
     private static Brush FrozenBrush(string color)
     {

@@ -165,6 +165,15 @@ internal static class InteractionChecks
                 Check(tab.IsChecked == true && tab.IsEnabled && tab.IsHitTestVisible,
                     "Detailed-statistics tabs remain interactive with the display locked");
             }
+            foreach (var name in new[] { "dps", "accuracy", "rotation", "defense" })
+            {
+                breakdown.ShowTab(name);
+                foreach (var page in new[] { "Dps", "Accuracy", "Rotation", "Defense" })
+                    Check(((FrameworkElement)breakdown.FindName("Page" + page)).Visibility ==
+                        (page.Equals(name,StringComparison.OrdinalIgnoreCase) ? Visibility.Visible : Visibility.Collapsed),
+                        "Redesigned fight details navigate to " + name + " without overlapping pages: " + page);
+            }
+            breakdown.ShowTab("dps");
                         meter.PartyPreview.Observe(new AionMeter.Core.Events.SelfIdentifiedEvent(1,1,"Sample",2305,AionMeter.Core.Events.GameClass.Cleric));
             meter.PartyPreview.Observe(new AionMeter.Core.Events.PartyRosterEvent(2,
                 [new("Sample",2305,45,1894,85471,AionMeter.Core.Events.GameClass.Cleric)],42,600001,"Sample room"));
@@ -210,14 +219,19 @@ internal static class InteractionChecks
             hub.SetDisplayOnly(false);
             Check(header.Visibility == Visibility.Visible, "Unlock restores the event header");
             hub.ClockOverride=()=>new DateTimeOffset(2026,10,13,14,0,30,TimeSpan.FromHours(2)); hub.Reload();
-            Check(list.Children.OfType<System.Windows.Controls.Border>().Count()==2 && list.Children.OfType<System.Windows.Controls.Border>().All(b=>b.BorderBrush is System.Windows.Media.SolidColorBrush brush && brush.HasAnimatedProperties),
-                "Started simultaneous events remain visible with pulsing borders");
+            Check(list.Children.OfType<System.Windows.Controls.Border>().Count()==3 && list.Children.OfType<System.Windows.Controls.Border>().Count(b=>b.BorderBrush.HasAnimatedProperties)==2,
+                "Started events pulse while later events within the hour remain visible without pulsing");
             hub.SetDisplayOnly(true);
-            Check(list.Children.OfType<System.Windows.Controls.Border>().All(b=>b.BorderBrush.HasAnimatedProperties),
-                "Locking preserves active event border animation");
+            Check(list.Children.OfType<System.Windows.Controls.Border>().Count(b=>b.BorderBrush.HasAnimatedProperties)==2,
+                "Locking preserves only active event border animation");
             hub.ClockOverride=()=>new DateTimeOffset(2026,10,13,14,2,0,TimeSpan.FromHours(2)); hub.Reload();
             Check(cards.NextEvents(hub.ClockOverride()).All(e=>e.StartsAt>hub.ClockOverride()) && list.Children.OfType<System.Windows.Controls.Border>().All(b=>!b.BorderBrush.HasAnimatedProperties),
                 "Started events expire at two minutes and upcoming borders stop pulsing");
+            cards.Saved.SelectedEvents=["shugo","rift","invasion"];
+            hub.ClockOverride=()=>new DateTimeOffset(2026,10,13,13,10,0,TimeSpan.FromHours(2)); hub.Reload();
+            Check(list.Children.OfType<System.Windows.Controls.Border>().Count()==3 && cards.NextEvents(hub.ClockOverride()).Select(e=>e.StartsAt).Distinct().Count()==2,
+                "Upcoming events display all selected start times within the hour, not just the earliest");
+            cards.Saved.SelectedEvents=["shugo","rift"];
             var eventPreferences=new AionMeter.App.Windows.EventPreferencesWindow(cards,()=>480,_=>{},_=>{},()=>{}); windows.Add(eventPreferences);
             Check(eventPreferences.Background is System.Windows.Media.SolidColorBrush eventBg && eventBg.Color.A==255 && eventPreferences.Opacity==1,
                 "Event settings use a solid interactive meter-style surface");
@@ -329,8 +343,8 @@ internal static class InteractionChecks
                 "Personal combat expands without creating another window");
             activeOverlay.SetDisplayOnly(true);
             var firstPersonal=(System.Windows.Controls.Border)((System.Windows.Controls.StackPanel)activeOverlay.FindName("PersonalMetrics")).Children[0];
-            Check(firstPersonal.Background==System.Windows.Media.Brushes.Transparent && collapse.Visibility==Visibility.Hidden,
-                "Locked integrated personal stats hide row surfaces and controls");
+            Check(firstPersonal.Background is System.Windows.Media.SolidColorBrush lockedPersonal && lockedPersonal.Color.A is > 0 and < 255 && collapse.Visibility==Visibility.Hidden,
+                "Locked personal stats retain translucent row backgrounds while controls remain hidden");
             activeOverlay.SetDisplayOnly(false);
             Check(firstPersonal.Background is System.Windows.Media.SolidColorBrush personalBackground && personalBackground.Color.A>0,
                 "Unlocking restores integrated personal row surfaces");

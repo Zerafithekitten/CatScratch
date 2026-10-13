@@ -119,13 +119,13 @@ public static class SampleRenderer
                     refresh = () => { };
                     break;
                 }
-                cards.Saved.SelectedEvents = ["shugo", "rift"];
+                cards.Saved.SelectedEvents = ["shugo", "rift", "invasion"];
                 if (o.Window == "event-settings")
                 {
                     host = new EventPreferencesWindow(cards, () => 480, _ => { }, _ => { }, () => { }) { Height=o.Height??680 };
                     refresh=()=>{}; break;
                 }
-                var hub = new TimerHubWindow(cards) { Width = o.Width ?? 480, Height = o.Height??90, ClockOverride = () => o.Window == "events-live" ? new DateTimeOffset(2026,10,13,14,0,30,TimeSpan.FromHours(2)) : new DateTimeOffset(2026, 10, 13, 13, 42, 0, TimeSpan.FromHours(2)) };
+                var hub = new TimerHubWindow(cards) { Width = o.Width ?? 480, Height = o.Height??144, ClockOverride = () => o.Window == "events-live" ? new DateTimeOffset(2026,10,13,14,0,30,TimeSpan.FromHours(2)) : new DateTimeOffset(2026, 10, 13, 13, 10, 0, TimeSpan.FromHours(2)) };
                 WindowClickThrough.Attach(hub, () => o.Window == "events-locked");
                 host = hub;
                 refresh = hub.Reload;
@@ -133,7 +133,7 @@ public static class SampleRenderer
             case "breakdown":
                 var segment = meter.Tracker.Segments()[0].Id;
                 var breakdown = new BreakdownWindow(new ViewModels.LiveFightView(meter.Tracker, segment), 2, meter.Data, meter.Icons, meter.Portraits)
-                    { Width = o.Width ?? 900, Height = o.Height ?? 680 };
+                    { Width = o.Width ?? 1040, Height = o.Height ?? 720 };
                 if (o.Tab is { } tab) breakdown.ShowTab(tab);
                 host = breakdown;
                 refresh = breakdown.ReloadNow;
