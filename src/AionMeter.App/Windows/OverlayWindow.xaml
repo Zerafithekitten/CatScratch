@@ -167,14 +167,14 @@
         </Style>
 
         <DataTemplate x:Key="CompactRowTemplate" DataType="{x:Type vm:RowViewModel}">
-            <Grid x:Name="ModernRow" Height="{DynamicResource CompactRowHeight}" Margin="0,0,0,4" Cursor="Hand" Background="Transparent" ToolTip="{Binding Tooltip}" MouseLeftButtonUp="Row_Click" MouseRightButtonUp="Row_RightClick">
+            <Grid x:Name="ModernRow" Height="{DynamicResource CompactRowHeight}" Margin="0,0,0,2" Cursor="Hand" Background="Transparent" ToolTip="{Binding Tooltip}" MouseLeftButtonUp="Row_Click" MouseRightButtonUp="Row_RightClick">
                 <Border x:Name="RowSurface" Background="#D0171E27" BorderBrush="#302E4252" BorderThickness="1" CornerRadius="6" />
-                <Grid Margin="8,4,8,4">
+                <Grid Margin="8,3,8,3">
                     <Grid.ColumnDefinitions><ColumnDefinition Width="{DynamicResource ColGlyphWidth}"/><ColumnDefinition Width="*"/><ColumnDefinition Width="76"/><ColumnDefinition Width="57"/></Grid.ColumnDefinitions>
                     <c:ClassGlyph Class="{Binding Class}" Width="{DynamicResource RowGlyphSize}" Height="{DynamicResource RowGlyphSize}" VerticalAlignment="Center" HorizontalAlignment="Left"/>
                     <Grid Grid.Column="1" Grid.ColumnSpan="3" Margin="4,0,0,0">
-                        <Grid.RowDefinitions><RowDefinition Height="*"/><RowDefinition Height="7"/></Grid.RowDefinitions>
-                        <Grid Margin="0,0,0,5">
+                        <Grid.RowDefinitions><RowDefinition Height="*"/><RowDefinition Height="5"/></Grid.RowDefinitions>
+                        <Grid Margin="0,0,0,2">
                             <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="76"/><ColumnDefinition Width="57"/></Grid.ColumnDefinitions>
                             <StackPanel VerticalAlignment="Center" Margin="0,0,6,0">
                                 <TextBlock Text="{Binding Name}" FontSize="{DynamicResource CompactNameFont}" FontWeight="SemiBold" Foreground="#EDF2F7" TextTrimming="CharacterEllipsis"/>

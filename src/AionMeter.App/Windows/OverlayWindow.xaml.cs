@@ -375,22 +375,22 @@ public partial class OverlayWindow : Window, IDisplayAppearance
     {
         var k = Math.Clamp(percent, AppSettings.MinRowSize, AppSettings.MaxRowSize) / 100.0;
         var f = Math.Sqrt(k);
-        var height = Math.Max(52, Math.Round((_settings.CompactMode ? 56 : 64) * k));
+        var height = Math.Max(42, Math.Round((_settings.CompactMode ? 44 : 52) * k));
         Resources["RowHeight"] = height;
         Resources["CompactRowHeight"] = height;
-        Resources["CompactNameFont"] = Math.Max(12, Math.Round(14 * f, 1));
+        Resources["CompactNameFont"] = Math.Max(12, Math.Round(13 * f, 1));
         Resources["CompactSubFont"] = Math.Max(11, Math.Round(11 * f, 1));
-        Resources["CompactNumberFont"] = Math.Max(12, Math.Round(13 * f, 1));
+        Resources["CompactNumberFont"] = Math.Max(12, Math.Round(12.5 * f, 1));
         Resources["RowMargin"] = new Thickness(0, 0, 0, Math.Max(1, Math.Round(3 * k)));
         Resources["RowNameFont"] = Math.Round(13.5 * f, 1);
         Resources["RowGearFont"] = Math.Round(12 * f, 1);
         Resources["RowNumberFont"] = Math.Round(13.5 * f, 1);
         Resources["RowSubFont"] = Math.Round(12 * f, 1);
-        Resources["RowGlyphSize"] = Math.Min(Math.Round(30 * f), height - 12);
+        Resources["RowGlyphSize"] = Math.Min(Math.Round(24 * f), height - 10);
         Resources["RowRankFont"] = Math.Round(11 * f, 1);
         Resources["RowAccentWidth"] = Math.Max(2, Math.Round(3 * f));
         Resources["ColRankWidth"] = new GridLength(Math.Round(20 * f));
-        Resources["ColGlyphWidth"] = new GridLength(Math.Round(36 * f));
+        Resources["ColGlyphWidth"] = new GridLength(Math.Round(30 * f));
         Resources["ColGap"] = new Thickness(Math.Round(10 * f), 0, 0, 0);
     }
 

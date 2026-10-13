@@ -1,3 +1,9 @@
+## CatScratch v2.0.2
+
+- Make individual player rows noticeably more compact: shorter cards, tighter gaps, smaller class emblems and thinner DPS bars.
+- Keep names, CP/GS, DPS, total damage and percentages readable in the same two-line design.
+- Preserve Personal combat and transparent click-through behavior.
+
 ## CatScratch v2.0.1
 
 - Make DPS rows slightly more compact by reducing row height, vertical padding and spacing.
