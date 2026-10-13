@@ -12,18 +12,21 @@ public sealed class PartyPreview
     private int _selfServer;
     private long _revision;
     private bool _inRoom;
+    private bool _inDungeon;
 
     private PartyRosterEvent? _pendingRoster;
     public (long Revision, IReadOnlyList<PartyMemberInfo> Members, bool InRoom) Snapshot()
     {
         lock (_gate) return (_revision, _members, _inRoom);
     }
+    public bool InDungeon { get { lock (_gate) return _inDungeon; } }
     public void Reset()
     {
         lock (_gate)
         {
             _selfName = ""; _selfServer = 0;
             _pendingRoster = null;
+            _inDungeon = false;
             Clear();
         }
     }
@@ -35,8 +38,10 @@ public sealed class PartyPreview
         {
             switch (value)
             {
-                case ZoneChangedEvent:
+                case ZoneChangedEvent zone:
                     // Group membership survives a dungeon/server load; actor IDs are verified separately.
+                    _inDungeon = zone.IsDungeon;
+                    if (_inDungeon && _inRoom) { _inRoom=false; _revision++; }
                     break;
                 case PartyLeftEvent:
                     _pendingRoster = null;
@@ -69,7 +74,7 @@ public sealed class PartyPreview
                     if (members.Length < (roster.DungeonId > 0 ? 1 : 2) || _selfName.Length == 0 ||
                         !members.Any(m => m.Name == _selfName && m.ServerId == _selfServer))
                     { Clear(); return; }
-                    var room = roster.DungeonId > 0;
+                    var room = roster.DungeonId > 0 && !_inDungeon;
                     if (!_members.SequenceEqual(members) || _inRoom != room) { _members = members; _inRoom = room; _revision++; }
                     break;
             }

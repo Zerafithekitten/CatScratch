@@ -144,7 +144,7 @@ public partial class OverlayWindow : Window, IDisplayAppearance
     }
 
     private static readonly Brush PersonalSurface = FrozenBrush("#D0171E27");
-    private readonly List<(Border Surface, TextBlock Value)> _personalRows = [];
+    private readonly List<(Border Surface, TextBlock Value, TextBlock Label, string English)> _personalRows = [];
     private static Brush FrozenBrush(string color)
     {
         var brush = new SolidColorBrush((Color)ColorConverter.ConvertFromString(color));
@@ -164,11 +164,11 @@ public partial class OverlayWindow : Window, IDisplayAppearance
             grid.Children.Add(new Border { Background = accent, CornerRadius = new(3,0,0,3) });
             var icon = new System.Windows.Shapes.Path { Data = Geometry.Parse(shape), Stroke = accent, StrokeThickness = 1.7, Width = 16, Height = 16, Stretch = Stretch.Uniform, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Center };
             Grid.SetColumn(icon,1); grid.Children.Add(icon);
-            var text = new TextBlock { Text = label, Foreground = Brushes.White, FontSize = 12, VerticalAlignment = VerticalAlignment.Center, TextTrimming = TextTrimming.CharacterEllipsis };
+            var text = new TextBlock { Text = UiText.Current.Localize(label), Foreground = Brushes.White, FontSize = 12, VerticalAlignment = VerticalAlignment.Center, TextTrimming = TextTrimming.CharacterEllipsis };
             Grid.SetColumn(text,2); grid.Children.Add(text);
             var value = new TextBlock { Foreground = Brushes.White, FontSize = 12, VerticalAlignment = VerticalAlignment.Center, Margin = new(8,0,9,0) };
             Grid.SetColumn(value,3); grid.Children.Add(value);
-            surface.Child = grid; PersonalMetrics.Children.Add(surface); _personalRows.Add((surface,value));
+            surface.Child = grid; PersonalMetrics.Children.Add(surface); _personalRows.Add((surface,value,text,label));
         }
         Add("Damage taken", "#F2C25A", "M8,1 L14,4 L14,9 C14,13 8,16 8,16 C8,16 2,13 2,9 L2,4 Z");
         Add("Self healing", "#65DFA5", "M8,15 C8,15 1,10 1,5 C1,0 6,0 8,4 C10,0 15,0 15,5 C15,10 8,15 8,15 Z");
@@ -184,7 +184,7 @@ public partial class OverlayWindow : Window, IDisplayAppearance
         PersonalSection.Visibility = _settings.ShowPersonalCombatModule ? Visibility.Visible : Visibility.Collapsed;
         PersonalMetrics.Visibility = _settings.PersonalCombatCollapsed ? Visibility.Collapsed : Visibility.Visible;
         PersonalCollapseButton.Content = _settings.PersonalCombatCollapsed ? "\uE70D" : "\uE70E";
-        PersonalCollapseButton.ToolTip = _settings.PersonalCombatCollapsed ? "Expand personal combat" : "Collapse personal combat";
+        PersonalCollapseButton.ToolTip = UiText.Current.Localize(_settings.PersonalCombatCollapsed ? "Expand personal combat" : "Collapse personal combat");
         var own = snapshot?.Combatants.FirstOrDefault(c => c.IsSelf);
         PersonalName.Text = own?.Name ?? _meter.LiveIdentity.Current?.Name ?? "";
         _personalRows[0].Surface.Visibility = _settings.ShowDamageTaken ? Visibility.Visible : Visibility.Collapsed;
@@ -203,7 +203,7 @@ public partial class OverlayWindow : Window, IDisplayAppearance
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
         {
-            MessageBox.Show(this, "Could not save the fight: " + ex.Message, "CatScratch", MessageBoxButton.OK, MessageBoxImage.Error);
+            MessageBox.Show(this, string.Format(UiText.Current.Localize("Could not save fight: {0}"),ex.Message), "CatScratch", MessageBoxButton.OK, MessageBoxImage.Error);
         }
         finally { Refresh(); }
     }
@@ -224,14 +224,14 @@ public partial class OverlayWindow : Window, IDisplayAppearance
         var npcInstalled = _npcapInstalled;
         NpcapDownloadButton.Visibility = npcInstalled || _meter.Settings.Transient || _meter.DemoRunning ? Visibility.Collapsed : Visibility.Visible;
         IdentityStatusText.Text = _meter.Settings.Transient || _meter.DemoRunning
-            ? "PREVIEW / DEMO – no confirmed live data"
+            ? UiText.Current.Localize("PREVIEW / DEMO – no confirmed live data")
             : !npcInstalled
-            ? "Npcap is missing. Open the download page, install it yourself and restart the meter. Then teleport once in game."
+            ? UiText.Current.Localize("Npcap is missing. Open the download page, install it yourself and restart the meter. Then teleport once in game.")
             : _meter.LiveIdentity.Current is { } identity
-            ? (_meter.Tracker.PartyConfirmed ? $"Party confirmed · {identity.Name}" : $"Solo tracking · {identity.Name}")
+            ? string.Format(UiText.Current.Localize(_meter.Tracker.PartyConfirmed ? "Party confirmed · {0}" : "Solo tracking · {0}"),identity.Name)
             : _meter.LiveIdentity.KnownCharacter is { } known
-            ? $"Character recognized · {known.Name}. Waiting for fresh actor data from the game…"
-            : "Character not confirmed yet. Teleport once or change zones through a loading screen. Waiting for fresh game data…";
+            ? string.Format(UiText.Current.Localize("Character recognized · {0}. Waiting for fresh actor data from the game…"),known.Name)
+            : UiText.Current.Localize("Character not confirmed yet. Teleport once or change zones through a loading screen. Waiting for fresh game data…");
         IdentityStatusText.Foreground = _meter.LiveIdentity.Current is not null && !_meter.DemoRunning
             ? (Brush)FindResource("Green") : (Brush)FindResource("Amber");
         ClickModeSlash.Visibility = _settings.ClickThrough ? Visibility.Visible : Visibility.Collapsed;
@@ -270,7 +270,7 @@ public partial class OverlayWindow : Window, IDisplayAppearance
             }
             var party = _meter.PartyPreview.Snapshot();
             personalSnapshot = snap;
-            if (_segment is null && (snap?.IsActive != true) && party.Members.Count > 0)
+            if (_segment is null && snap is null && !_meter.PartyPreview.InDungeon && party.Members.Count > 0)
             {
                 if (!_showingPartyPreview || _partyPreviewRevision != party.Revision || _partyGearVisibility != (_vm.ShowGear, _vm.ShowCombatPower))
                     _vm.ApplyParty(party.Members, _meter.LiveIdentity.Current?.Name ?? "", party.InRoom);
@@ -300,10 +300,10 @@ public partial class OverlayWindow : Window, IDisplayAppearance
         LatencyText.Text = _meter.LatencyMs is { } latency ? latency<1 ? "RTT <1 ms" : $"RTT {latency:0} ms" : "RTT —";
         // Names are only sent on a loading screen: players already around when the meter started show as #id.
         var unnamed = _vm.Rows.Any(r => r.Name.Contains('#')); // "Templar #10388": the server has not sent this name yet
-        _vm.Status = status.State != CaptureState.Capturing ? status.Message
+        _vm.Status = status.State != CaptureState.Capturing ? UiText.Current.CaptureMessage(status.Message)
             : _vm.MostDamageUnsent && _vm.HasData ? UiText.Current.DamageUnsentTip // the footer says it, its tooltip says why
-            : unnamed ? "Names appear after the next loading screen"
-            : status.Message;
+            : unnamed ? UiText.Current.Localize("Names appear after the next loading screen")
+            : UiText.Current.CaptureMessage(status.Message);
         // Footer reads like the card's caption; capture problems take its place so they are never missed.
         FooterText.Text = status.State is CaptureState.Capturing && _vm.HasData
             ? (unnamed ? _vm.Footer + " · " + UiText.Current.NamesLater : _vm.Footer)
@@ -320,6 +320,8 @@ public partial class OverlayWindow : Window, IDisplayAppearance
     public void OnLanguageChanged()
     {
         _vm.LanguageChanged();
+        _partyPreviewRevision=-1;
+        foreach(var row in _personalRows) row.Label.Text=UiText.Current.Localize(row.English);
         ShowUpdateBanner();
         ApplyHotkeyTips();
         Refresh();
@@ -831,12 +833,12 @@ public partial class OverlayWindow : Window, IDisplayAppearance
     private async void CheckUpdates_Click(object sender, RoutedEventArgs e)
     {
         CheckUpdatesButton.IsEnabled = false;
-        CheckUpdatesButton.ToolTip = "Checking for updates…";
+        CheckUpdatesButton.ToolTip = UiText.Current.Localize("Checking for updates…");
         try { await AppHost.Current.CheckUpdatesFromTrayAsync(); }
         finally
         {
             CheckUpdatesButton.IsEnabled = true;
-            CheckUpdatesButton.ToolTip = "Check for updates";
+            CheckUpdatesButton.ToolTip = UiText.Current.Localize("Check for updates");
         }
     }
     private void NpcapDownload_Click(object sender, RoutedEventArgs e) => App.ShowNpcapHelp();
@@ -910,7 +912,7 @@ public partial class OverlayWindow : Window, IDisplayAppearance
             _settings.OverlayWidth = width; _settings.OverlayHeight = height;
             ApplyAppearance(); _settings.Save(); Refresh();
         }
-        var toggle = new MenuItem { Header = "Compact mode", IsCheckable = true, IsChecked = _settings.CompactMode };
+        var toggle = new MenuItem { Header = UiText.Current.Localize("Compact mode"), IsCheckable = true, IsChecked = _settings.CompactMode };
         toggle.Click += (_, _) => Preset(toggle.IsChecked, toggle.IsChecked ? 420 : 760, toggle.IsChecked ? 540 : 610);
         menu.Items.Add(toggle);
         Item("Mini · 320 × 360", () => Preset(true, 320, 360));

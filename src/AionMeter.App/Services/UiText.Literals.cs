@@ -1,0 +1,47 @@
+namespace AionMeter.App.Services;
+
+public sealed partial class UiText
+{
+    public string SettingLanguageLabel => Localize("Language");
+    public string Literal0 => Localize("Show / hide personal combat");
+    public string Literal1 => Localize("Toggle personal combat module");
+    public string Literal2 => Localize("Fight duration");
+    public string Literal3 => Localize("Current time · Europe/Berlin · 24-hour clock");
+    public string Literal4 => Localize("Settings");
+    public string Literal5 => Localize("Exit");
+    public string Literal6 => Localize("Download Npcap");
+    public string Literal7 => Localize("Boss only / everything you hit");
+    public string Literal8 => Localize("Lock position");
+    public string Literal9 => Localize("Background opacity");
+    public string Literal10 => Localize("Personal combat");
+    public string Literal11 => Localize("Collapse personal combat");
+    public string Literal12 => Localize("Estimated network RTT from captured game TCP acknowledgments. Includes server ACK delay; a local accelerator measures only its local connection. No probe packets are sent. A dash means no fresh sample.");
+    public string Literal13 => Localize("Statistics");
+    public string Literal14 => Localize("Copy fight damage (numbers + %)");
+    public string Literal15 => Localize("Save last fight");
+    public string Literal16 => Localize("Check for updates");
+    public string Literal17 => Localize("Appearance");
+    public string Literal18 => Localize("WINDOW");
+    public string Literal19 => Localize("Window width / height");
+    public string Literal20 => Localize("Display opacity");
+    public string Literal21 => Localize("40% = translucent · 100% = opaque. Adjust size and transparency here.");
+    public string Literal22 => Localize("PLAYER DISPLAY");
+    public string Literal23 => Localize("Compact mode: narrow display with two lines per player");
+    public string Literal24 => Localize("Show gear score (GS)");
+    public string Literal25 => Localize("Show combat power (CP)");
+    public string Literal26 => Localize("Received party CP/GS appears below player names. Long labels shorten when the meter is narrow.");
+    public string Literal27 => Localize("VISIBILITY");
+    public string Literal28 => Localize("Combat");
+    public string Literal29 => Localize("Show personal combat in the DPS meter");
+    public string Literal30 => Localize("Show damage taken");
+    public string Literal31 => Localize("Show healing done (self and others)");
+    public string Literal32 => Localize("Integrated below the DPS list. Values follow the selected fight and include only received combat events.");
+    public string Literal33 => Localize("Hotkeys");
+    public string Literal34 => Localize("History");
+    public string Literal35 => Localize("Fights are saved only when you press Save last fight, unless automatic saving is enabled below. Only the last 10 saved fights are kept.");
+    public string Literal36 => Localize("Delete saved fights");
+    public string Literal37 => Localize("Capture & data");
+    public string Literal38 => Localize("General");
+    public string Literal39 => Localize("LANGUAGE");
+    public string Literal40 => Localize("Updates are installed only after you press Update now.");
+}

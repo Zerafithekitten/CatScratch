@@ -44,7 +44,7 @@ public sealed class TimerCardWindow : Window, IDisplayAppearance
             body.Margin = new Thickness(8, 5, 8, 5);
             Content = _card = new Border { Child = body, CornerRadius = new CornerRadius(5), Background = new SolidColorBrush(Color.FromArgb(223,16,18,15)), BorderBrush = Brushes.DarkKhaki, BorderThickness = new Thickness(1) };
             MouseLeftButtonDown += (_, e) => { if (e.LeftButton == System.Windows.Input.MouseButtonState.Pressed) DragMove(); };
-            MouseRightButtonUp += (_, _) => { var menu = new ContextMenu(); var close = new MenuItem { Header = "Close card" }; close.Click += (_, _) => Close(); menu.Items.Add(close); menu.IsOpen = true; };
+            MouseRightButtonUp += (_, _) => { var menu = new ContextMenu(); var close = new MenuItem { Header = UiText.Current.Localize("Close card") }; close.Click += (_, _) => Close(); menu.Items.Add(close); menu.IsOpen = true; };
         }
         else
         {
@@ -55,19 +55,19 @@ public sealed class TimerCardWindow : Window, IDisplayAppearance
         void Refresh()
         {
             var card = cards.Get(id);
-            if (card is null) { if (_card is not null) EventPulse.Apply(_card,EventPanelBrushes.Border,false); _name.Text = "No upcoming event"; _time.Text = ""; if (compact && IsLoaded) Hide(); return; }
+            if (card is null) { if (_card is not null) EventPulse.Apply(_card,EventPanelBrushes.Border,false); _name.Text = UiText.Current.Localize("No upcoming event"); _time.Text = ""; if (compact && IsLoaded) Hide(); return; }
             if (compact && IsLoaded && !IsVisible) Show();
-            Title = $"{card.Kind} · {card.Name}";
+            Title = $"{card.Kind} · {UiText.Current.Localize(card.Name)}";
             _kind.Text = card.Kind; _kind.Foreground = EventPanelBrushes.ForKind(card.Kind);
-            _name.Text = card.Name;
+            _name.Text = UiText.Current.Localize(card.Name);
             var now = DateTimeOffset.UtcNow;
             var started = compact && card.Next is { } at && at <= now && at > now.AddMinutes(-2);
             if (_card is not null) EventPulse.Apply(_card,EventPanelBrushes.ForKind(card.Kind),started);
             _time.Text = (card.Next is { } next && !card.Alive ? (compact ? TimerCards.StartLabel(next, now) : TimerCards.Berlin(next).ToString("dd.MM. HH:mm")) + " · " : "") + TimerCards.Countdown(card, now);
-            if (started) _time.Text = "Started · " + TimerCards.StartLabel(card.Next!.Value,now);
+            if (started) _time.Text = UiText.Current.Localize("Started · ") + TimerCards.StartLabel(card.Next!.Value,now);
             _time.TextWrapping = TextWrapping.Wrap;
-            _source.Text = card.Source;
-            _time.ToolTip = card.Source;
+            _source.Text = UiText.Current.Localize(card.Source);
+            _time.ToolTip = UiText.Current.Localize(card.Source);
             _source.Visibility = compact || Height < 170 ? Visibility.Collapsed : Visibility.Visible;
         }
         var clock = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };

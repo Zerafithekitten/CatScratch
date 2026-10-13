@@ -38,8 +38,8 @@ public sealed class TimerHubWindow : Window, IDisplayAppearance
         _header=header;
         void Button(string text, Action action) { var b=new Button { Content=text, Style=(Style)FindResource("IconButton"), Width=22, Height=22, FontSize=12 }; b.Click+=(_,_)=>action(); DockPanel.SetDock(b,Dock.Right); header.Children.Add(b); }
         Button("\uE711",()=> { cards.Saved.EventWindowOpen=false; Close(); }); Button("\uE713",Preferences);
-        header.Children.Add(new TextBlock { Text="Upcoming events", FontSize=10, FontWeight=FontWeights.SemiBold, Foreground=ColorBrush("#79E3CF"), VerticalAlignment=VerticalAlignment.Center,
-            ToolTip="Community schedule · Shugo.GG · checked Oct 12, 2026 · not officially confirmed" });
+        header.Children.Add(new TextBlock { Text=UiText.Current.Localize("Upcoming events"), FontSize=10, FontWeight=FontWeights.SemiBold, Foreground=ColorBrush("#79E3CF"), VerticalAlignment=VerticalAlignment.Center,
+            ToolTip=UiText.Current.Localize("Community schedule · Shugo.GG · checked Oct 12, 2026 · not officially confirmed") });
         header.MouseLeftButtonDown+=(_,e)=> {
             var source=e.OriginalSource as DependencyObject;
             while(source is not null && source!=header) {
@@ -81,7 +81,7 @@ public sealed class TimerHubWindow : Window, IDisplayAppearance
                 var badge=new Border { CornerRadius=new(6), BorderBrush=accent, BorderThickness=new(1), Padding=new(4,1,4,1), Margin=new(0,0,5,0),
                     Child=new TextBlock { Text=kind, FontSize=8, Foreground=accent } };
                 DockPanel.SetDock(badge,Dock.Left); heading.Children.Add(badge);
-                heading.Children.Add(new TextBlock { Text=item.Name, FontSize=10, FontWeight=FontWeights.SemiBold, VerticalAlignment=VerticalAlignment.Center, TextTrimming=TextTrimming.CharacterEllipsis });
+                heading.Children.Add(new TextBlock { Text=UiText.Current.Localize(item.Name), FontSize=10, FontWeight=FontWeights.SemiBold, VerticalAlignment=VerticalAlignment.Center, TextTrimming=TextTrimming.CharacterEllipsis });
                 row.Children.Add(heading);
                 row.Children.Add(new TextBlock { FontSize=10, FontWeight=FontWeights.SemiBold, Foreground=ColorBrush("#D8C789"), Margin=new(0,4,0,0) });
                 var tile=new Border { Child=row, CornerRadius=new(5), Padding=new(8,5,8,5), Height=48,
@@ -92,16 +92,16 @@ public sealed class TimerHubWindow : Window, IDisplayAppearance
                     else if(e.LeftButton==System.Windows.Input.MouseButtonState.Pressed) { DragMove(); SavePlacement(); }
                     e.Handled=true;
                 };
-                tile.MouseRightButtonUp+=(_,_)=> { var menu=new ContextMenu(); var detach=new MenuItem { Header="Open separate window" }; detach.Click+=(_,_)=>_cards.Pin(item.Id.StartsWith("boss:") ? item.Id : "auto:"+item.Id); menu.Items.Add(detach); menu.IsOpen=true; };
+                tile.MouseRightButtonUp+=(_,_)=> { var menu=new ContextMenu(); var detach=new MenuItem { Header=UiText.Current.Localize("Open separate window") }; detach.Click+=(_,_)=>_cards.Pin(item.Id.StartsWith("boss:") ? item.Id : "auto:"+item.Id); menu.Items.Add(detach); menu.IsOpen=true; };
                 _list.Children.Add(tile);
             }
-            if(events.Count==0) _list.Children.Add(new TextBlock { Text="No events in the next hour", FontSize=11, Foreground=ColorBrush("#91A5C3"), Margin=new(0,4,0,2) });
+            if(events.Count==0) _list.Children.Add(new TextBlock { Text=UiText.Current.Localize("No events in the next hour"), FontSize=11, Foreground=ColorBrush("#91A5C3"), Margin=new(0,4,0,2) });
         }
         foreach(var border in _list.Children.OfType<Border>())
         {
             var row=(StackPanel)border.Child; var item=(EventStart)row.Tag; var remaining=item.StartsAt-now;
             border.Width = Math.Max(220, (Width-16) / (Width>=460 ? 2 : 1));
-            ((TextBlock)row.Children[1]).Text=remaining <= TimeSpan.Zero ? $"Started · {(int)(-remaining).TotalMinutes:00}:{(-remaining).Seconds:00} ago" : $"{TimerCards.StartLabel(item.StartsAt, now)} · in {(int)remaining.TotalMinutes:00}:{remaining.Seconds:00}";
+            ((TextBlock)row.Children[1]).Text=remaining <= TimeSpan.Zero ? UiText.Current.Code=="de" ? $"Gestartet · vor {(int)(-remaining).TotalMinutes:00}:{(-remaining).Seconds:00}" : $"Started · {(int)(-remaining).TotalMinutes:00}:{(-remaining).Seconds:00} ago" : $"{TimerCards.StartLabel(item.StartsAt, now)} · {UiText.Current.Localize("in")} {(int)remaining.TotalMinutes:00}:{remaining.Seconds:00}";
         }
         SetDisplayOnly(_displayOnly);
     }

@@ -211,15 +211,15 @@
             <StackPanel x:Name="ShellCaption" Orientation="Horizontal" VerticalAlignment="Center">
                 <Image x:Name="ShellPaw" Source="/Assets/app.ico" Width="22" Height="22" Margin="0,0,7,0"/>
                 <TextBlock x:Name="ShellTitle" Text="CatScratch" Foreground="#79E3CF" FontSize="16" FontWeight="Bold" VerticalAlignment="Center"/>
-                            <Button x:Name="PersonalCombatButton" Style="{StaticResource ToolIcon}" Content="&#xE95E;" Click="PersonalCombat_Click" ToolTip="Show / hide personal combat" AutomationProperties.Name="Toggle personal combat module" Margin="4,0,0,0" />
+                            <Button x:Name="PersonalCombatButton" Style="{StaticResource ToolIcon}" Content="&#xE95E;" Click="PersonalCombat_Click" ToolTip="{Binding T.Literal0}" AutomationProperties.Name="{Binding T.Literal1}" Margin="4,0,0,0" />
 </StackPanel>
             <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
-                <TextBlock Text="{Binding Clock, StringFormat=⏱ {0}}" Foreground="#91A5A0" FontSize="9" Margin="4,0" ToolTip="Fight duration" VerticalAlignment="Center"/>
-                <TextBlock Text="{Binding WallClock}" Foreground="#D4DAD9" FontSize="10" Margin="4,0" ToolTip="Current time · Europe/Berlin · 24-hour clock" VerticalAlignment="Center"/>
+                <TextBlock Text="{Binding Clock, StringFormat=⏱ {0}}" Foreground="#91A5A0" FontSize="9" Margin="4,0" ToolTip="{Binding T.Literal2}" VerticalAlignment="Center"/>
+                <TextBlock Text="{Binding WallClock}" Foreground="#D4DAD9" FontSize="10" Margin="4,0" ToolTip="{Binding T.Literal3}" VerticalAlignment="Center"/>
             </StackPanel>
             <Button x:Name="ShellClickButton" Grid.Column="2" Style="{StaticResource ToolIcon}" Click="ClickMode_Click"><Grid Width="14" Height="14"><Path x:Name="ClickModeCursor" Data="M 2,1 L 12,8 L 7,8 L 5,13 Z" Fill="#79E3CF"/><Path x:Name="ClickModeSlash" Data="M 1,13 L 13,1" Stroke="#D9ADB1" StrokeThickness="2" Visibility="Collapsed"/></Grid></Button>
-            <Button x:Name="ShellSettingsButton" Grid.Column="3" Style="{StaticResource ToolIcon}" Content="&#xE713;" Click="Settings_Click" ToolTip="Settings"/>
-            <Button x:Name="ShellHideButton" Grid.Column="4" Style="{StaticResource ToolIcon}" Content="&#xE711;" Click="Hide_Click" ToolTip="Exit"/>
+            <Button x:Name="ShellSettingsButton" Grid.Column="3" Style="{StaticResource ToolIcon}" Content="&#xE713;" Click="Settings_Click" ToolTip="{Binding T.Literal4}"/>
+            <Button x:Name="ShellHideButton" Grid.Column="4" Style="{StaticResource ToolIcon}" Content="&#xE711;" Click="Hide_Click" ToolTip="{Binding T.Literal5}"/>
         </Grid>
     <Grid Margin="4,0,4,4">
         <!-- Card -->
@@ -245,7 +245,7 @@
             <Border x:Name="SetupPanel" Background="#172333" BorderBrush="#405571" BorderThickness="1" CornerRadius="6" Padding="10,8" Margin="0,0,0,8">
                 <StackPanel>
                 <DockPanel>
-                    <Button x:Name="NpcapDownloadButton" DockPanel.Dock="Right" Style="{StaticResource Chip}" Content="Download Npcap" Click="NpcapDownload_Click" Margin="10,0,0,0" VerticalAlignment="Center" />
+                    <Button x:Name="NpcapDownloadButton" DockPanel.Dock="Right" Style="{StaticResource Chip}" Content="{Binding T.Literal6}" Click="NpcapDownload_Click" Margin="10,0,0,0" VerticalAlignment="Center" />
                     <TextBlock x:Name="IdentityStatusText" Foreground="#EED99A" TextWrapping="Wrap" FontSize="12" VerticalAlignment="Center" />
                 </DockPanel>
 
@@ -267,19 +267,19 @@
 
                 <StackPanel x:Name="Toolbar" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Left" Visibility="Collapsed">
                     <Button Style="{StaticResource Chip}" Content="{Binding ModeLabel}" Click="Mode_Click" Margin="0,0,5,0"
-                            ToolTip="Boss only / everything you hit" />
+                            ToolTip="{Binding T.Literal7}" />
                     <Button Visibility="Collapsed" Style="{StaticResource Chip}" Content="{Binding LanguageCode}" Click="Language_Click" Margin="0,0,5,0"
                             ToolTip="{Binding T.SwitchLanguage}" />
                     <Button Style="{StaticResource ToolIcon}" Content="&#xE8BD;" Click="Chat_Click" ToolTip="{Binding T.TipChat}" />
                     <Button Style="{StaticResource ToolIcon}" Content="&#xE121;" Click="Timers_Click" ToolTip="{Binding T.TipTimers}" />
                     <Button x:Name="RestartButton" Style="{StaticResource ToolIcon}" Content="&#xE72C;" Click="Restart_Click" />
-                    <ToggleButton x:Name="LockButton" Style="{StaticResource ToolToggle}" Click="Lock_Click" ToolTip="Lock position">
+                    <ToggleButton x:Name="LockButton" Style="{StaticResource ToolToggle}" Click="Lock_Click" ToolTip="{Binding T.Literal8}">
                         <TextBlock x:Name="LockGlyph" Text="&#xE785;" />
                     </ToggleButton>
-                    <Button Style="{StaticResource ToolIcon}" Content="&#xE713;" Click="Settings_Click" ToolTip="Settings" />
+                    <Button Style="{StaticResource ToolIcon}" Content="&#xE713;" Click="Settings_Click" ToolTip="{Binding T.Literal4}" />
                     <Slider x:Name="OpacitySlider" Style="{StaticResource GoldSlider}" Width="52" Minimum="0.15" Maximum="1" Margin="5,0,3,0"
-                            ValueChanged="Opacity_Changed" VerticalAlignment="Center" ToolTip="Background opacity" />
-                    <Button Style="{StaticResource ToolIcon}" Content="&#xE711;" Click="Hide_Click" ToolTip="Exit" />
+                            ValueChanged="Opacity_Changed" VerticalAlignment="Center" ToolTip="{Binding T.Literal9}" />
+                    <Button Style="{StaticResource ToolIcon}" Content="&#xE711;" Click="Hide_Click" ToolTip="{Binding T.Literal5}" />
                 </StackPanel>
 
                 <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" Effect="{StaticResource TextShadow}">
@@ -311,9 +311,9 @@
                         <TextBlock Text="{Binding HeaderLabel}" Foreground="{Binding HeaderBrush}" FontSize="9.5" FontWeight="SemiBold"
                                    VerticalAlignment="Center" />
                     </StackPanel>
-                    <TextBlock x:Name="HeaderClock" Text="{Binding WallClock}" ToolTip="Current time · Europe/Berlin · 24-hour clock" FontFamily="{StaticResource NumberFont}" FontWeight="SemiBold" FontSize="13.5"
+                    <TextBlock x:Name="HeaderClock" Text="{Binding WallClock}" ToolTip="{Binding T.Literal3}" FontFamily="{StaticResource NumberFont}" FontWeight="SemiBold" FontSize="13.5"
                                Foreground="#EEF0F5" VerticalAlignment="Center" />
-                    <TextBlock Text="{Binding Clock, StringFormat=⏱ {0}}" Visibility="{Binding Visibility, ElementName=HeaderClock}" ToolTip="Fight duration" Foreground="#91A5A0" Margin="6,0,0,0" VerticalAlignment="Center"/>
+                    <TextBlock Text="{Binding Clock, StringFormat=⏱ {0}}" Visibility="{Binding Visibility, ElementName=HeaderClock}" ToolTip="{Binding T.Literal2}" Foreground="#91A5A0" Margin="6,0,0,0" VerticalAlignment="Center"/>
                 </StackPanel>
             </Grid>
 
@@ -372,9 +372,9 @@
                 <Border x:Name="PersonalDivider" Height="1" Background="#403D5261" Margin="0,0,0,6"/>
                 <Grid Height="22" Margin="0,0,0,2">
                     <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
-                    <TextBlock Text="Personal combat" FontSize="13" FontWeight="SemiBold" Foreground="#EDF2F7" VerticalAlignment="Center"/>
+                    <TextBlock Text="{Binding T.Literal10}" FontSize="13" FontWeight="SemiBold" Foreground="#EDF2F7" VerticalAlignment="Center"/>
                     <TextBlock x:Name="PersonalName" Grid.Column="1" FontSize="12" FontWeight="SemiBold" Foreground="#F2C25A" VerticalAlignment="Center" MaxWidth="120" TextTrimming="CharacterEllipsis"/>
-                    <Button x:Name="PersonalCollapseButton" Grid.Column="2" Style="{StaticResource ToolIcon}" Content="&#xE70E;" Click="PersonalCollapse_Click" ToolTip="Collapse personal combat" Margin="5,0,0,0"/>
+                    <Button x:Name="PersonalCollapseButton" Grid.Column="2" Style="{StaticResource ToolIcon}" Content="&#xE70E;" Click="PersonalCollapse_Click" ToolTip="{Binding T.Literal11}" Margin="5,0,0,0"/>
                 </Grid>
                 <StackPanel x:Name="PersonalMetrics"/>
             </StackPanel>
@@ -404,16 +404,16 @@
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center" ToolTip="{Binding Status}">
                         <Ellipse Width="5" Height="5" Fill="{Binding StatusBrush}" Margin="0,0,6,0" />
                         <TextBlock x:Name="CompactTotal" Text="{Binding PartyDps}" FontSize="11" FontWeight="SemiBold" Effect="{StaticResource TextShadow}" Foreground="White" VerticalAlignment="Center" Margin="0,0,5,0"/>
-                        <TextBlock x:Name="LatencyText" Text="RTT —" FontSize="11" FontWeight="SemiBold" Effect="{StaticResource TextShadow}" Foreground="#EDF2F7" VerticalAlignment="Center" Margin="0,0,5,0" ToolTip="Estimated network RTT from captured game TCP acknowledgments. Includes server ACK delay; a local accelerator measures only its local connection. No probe packets are sent. A dash means no fresh sample."/>
+                        <TextBlock x:Name="LatencyText" Text="RTT —" FontSize="11" FontWeight="SemiBold" Effect="{StaticResource TextShadow}" Foreground="#EDF2F7" VerticalAlignment="Center" Margin="0,0,5,0" ToolTip="{Binding T.Literal12}"/>
                         <TextBlock x:Name="FooterText" FontSize="11" Foreground="#A9B1C0" TextTrimming="CharacterEllipsis"
                                    Effect="{StaticResource TextShadow}" />
                     </StackPanel>
                     <StackPanel x:Name="FooterControls" Grid.Column="1" Orientation="Horizontal" Margin="0,0,10,0">
-                        <Button x:Name="CompactHistory" Style="{StaticResource ToolIcon}" Content="&#xE8A5;" Click="Segments_Click" ToolTip="Statistics"/>
-                        <Button Style="{StaticResource ToolIcon}" Content="&#xE8BD;" Click="Chat_Click" ToolTip="Copy fight damage (numbers + %)"/>
+                        <Button x:Name="CompactHistory" Style="{StaticResource ToolIcon}" Content="&#xE8A5;" Click="Segments_Click" ToolTip="{Binding T.Literal13}"/>
+                        <Button Style="{StaticResource ToolIcon}" Content="&#xE8BD;" Click="Chat_Click" ToolTip="{Binding T.Literal14}"/>
                         <Button Style="{StaticResource ToolIcon}" Content="&#xE8A1;" Click="PatchNotes_Click" ToolTip="Patch notes"/>
-                        <Button x:Name="SaveLastFightButton" Style="{StaticResource ToolIcon}" Content="&#xE74E;" Click="SaveLastFight_Click" ToolTip="Save last fight" AutomationProperties.Name="Save last fight" />
-                        <Button x:Name="CheckUpdatesButton" Style="{StaticResource ToolIcon}" Content="&#xE895;" Click="CheckUpdates_Click" ToolTip="Check for updates" AutomationProperties.Name="Check for updates"/>
+                        <Button x:Name="SaveLastFightButton" Style="{StaticResource ToolIcon}" Content="&#xE74E;" Click="SaveLastFight_Click" ToolTip="{Binding T.Literal15}" AutomationProperties.Name="{Binding T.Literal15}" />
+                        <Button x:Name="CheckUpdatesButton" Style="{StaticResource ToolIcon}" Content="&#xE895;" Click="CheckUpdates_Click" ToolTip="{Binding T.Literal16}" AutomationProperties.Name="{Binding T.Literal16}"/>
                         <!-- Boss timers: always visible, shows the next respawn -->
                         <Button x:Name="BossTimersLink" Style="{StaticResource TimersPill}" Click="Timers_Click" ToolTip="{Binding T.TipTimers}" Margin="10,0,0,0">
                             <StackPanel Orientation="Horizontal">

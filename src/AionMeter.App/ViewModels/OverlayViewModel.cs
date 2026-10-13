@@ -355,9 +355,9 @@ public sealed class OverlayViewModel : ObservableObject
     {
         Apply(null, 0, false);
         HasData = true;
-        Title = room ? "Room stats" : "Party stats";
-        Detail = room ? "Until you leave the room or enter the dungeon" : "Until the next loading screen";
-        Footer = $"{members.Count} {(room ? "room" : "party")} members";
+        Title = UiText.Current.Localize(room ? "Room stats" : "Party stats");
+        Detail = UiText.Current.Localize("Damage starts with the next hit.");
+        Footer = UiText.Current.Players(members.Count);
         foreach (var m in members)
             Rows.Add(new RowViewModel
             {

@@ -19,9 +19,9 @@ public static class ChatCopy
     /// <summary>The menu entries; <paramref name="fight"/> is read when one is clicked, so a live fight copies its latest numbers.</summary>
     public static IEnumerable<MenuItem> Items(FrameworkElement noteAnchor, Func<EncounterSnapshot?> fight, uint? player, string? playerName)
     {
-        yield return Item("Copy full fight damage (numbers + %)", s => ChatLine.DamageReport(s, T.Chat, Name));
-        var chat = new MenuItem { Header = "Copy game-chat lines (numbers + %)", IsEnabled = fight() is not null };
-        chat.Items.Add(new MenuItem { Header = "Open to choose a line", IsEnabled = false });
+        yield return Item(T.Localize("Copy full fight damage (numbers + %)"), s => ChatLine.DamageReport(s, T.Chat, Name));
+        var chat = new MenuItem { Header = T.Localize("Copy game-chat lines (numbers + %)"), IsEnabled = fight() is not null };
+        chat.Items.Add(new MenuItem { Header = T.Localize("Open to choose a line"), IsEnabled = false });
         chat.SubmenuOpened += (_, _) =>
         {
             chat.Items.Clear();
@@ -30,7 +30,7 @@ public static class ChatCopy
             for (var i = 0; i < lines.Count; i++)
             {
                 var text = lines[i];
-                var line = new MenuItem { Header = $"Copy line {i + 1} of {lines.Count}", ToolTip = text };
+                var line = new MenuItem { Header = T.Code=="de" ? $"Zeile {i + 1} von {lines.Count} kopieren" : $"Copy line {i + 1} of {lines.Count}", ToolTip = text };
                 line.Click += (_, _) => Copy(noteAnchor, text);
                 chat.Items.Add(line);
             }

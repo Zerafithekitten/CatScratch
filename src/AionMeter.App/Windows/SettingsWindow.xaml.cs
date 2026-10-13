@@ -14,22 +14,21 @@ public partial class SettingsWindow : Window
     private void DeleteSavedFights_Click(object sender, RoutedEventArgs e)
     {
         var count = _meter.History.List().Count;
-        if (count == 0) { MessageBox.Show(this, "No saved fights to delete.", "CatScratch"); return; }
-        if (MessageBox.Show(this, $"Delete all {count} saved fights? This cannot be undone.", "CatScratch",
+        if (count == 0) { MessageBox.Show(this, T.Localize("No saved fights to delete."), "CatScratch"); return; }
+        if (MessageBox.Show(this, string.Format(T.Localize("Delete all {0} saved fights? This cannot be undone."),count), "CatScratch",
             MessageBoxButton.YesNo, MessageBoxImage.Warning, MessageBoxResult.No) != MessageBoxResult.Yes) return;
         try
         {
             _meter.DeleteSavedFights();
-            HistoryInfo.Text = "No saved fights.";
+            HistoryInfo.Text = UiText.Current.Localize("No saved fights.");
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
         {
-            MessageBox.Show(this, "Could not delete saved fights: " + ex.Message, "CatScratch", MessageBoxButton.OK, MessageBoxImage.Error);
+            MessageBox.Show(this, string.Format(T.Localize("Could not delete saved fights: {0}"),ex.Message), "CatScratch", MessageBoxButton.OK, MessageBoxImage.Error);
         }
     }
 
     private void PatchNotes_Click(object sender, RoutedEventArgs e) => AppHost.Current.ShowPatchNotes();
-    private void EventSounds_Click(object sender, RoutedEventArgs e) => AppHost.Current.ShowEventSounds();
     private readonly MeterService _meter;
     private readonly List<(string? Name, string Label)> _devices = new();
 
@@ -43,7 +42,7 @@ public partial class SettingsWindow : Window
         foreach (var field in new[] { HkToggle, HkReset, HkClick, HkTimers })
         {
             field.IsReadOnly = true;
-            field.ToolTip = "Click here and press your shortcut. Applied after saving.";
+            field.ToolTip = UiText.Current.Localize("Click here and press your shortcut. Applied after saving.");
             field.PreviewKeyDown += RecordHotkey;
             field.GotKeyboardFocus += (_, _) => field.SelectAll();
         }
@@ -101,14 +100,14 @@ public partial class SettingsWindow : Window
         var idx = _devices.FindIndex(d => d.Name == s.CaptureDevice);
         Device.SelectedIndex = Math.Max(0, idx);
 
-        LanguageBox.SelectedIndex = UiText.Normalize(s.Language) == "ru" ? 1 : 0;
+        LanguageBox.SelectedIndex = UiText.Normalize(s.Language) == "de" ? 1 : 0;
         Icons.IsChecked = s.DownloadIcons;
         CheckUpdates.IsChecked = s.CheckUpdates;
 
 
         VersionText.Text = string.Format(Updater.IsInstalled ? T.VersionInstalled : T.VersionPortable, _meter.Updates.Current.ToString(3));
 
-        CaptureState.Text = T.StatusPrefix + _meter.CaptureStatus.Message;
+        CaptureState.Text = T.StatusPrefix + T.CaptureMessage(_meter.CaptureStatus.Message);
         var data = _meter.Data;
         DataInfo.Text = string.Format(T.DataInfo, data.Skills.Count, data.Npcs.Count, data.Npcs.Values.Count(n => n.IsBoss),
             data.DotSkills.Count, data.Maps.Count);

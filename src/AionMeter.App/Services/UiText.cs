@@ -1,25 +1,25 @@
 namespace AionMeter.App.Services;
 
 /// <summary>
-/// All interface wording, in English (default) or Russian. Plain properties so XAML binds to them:
+/// Interface wording in English (default) or German. Plain properties so XAML binds to them:
 /// <c>{Binding TabDps, Source={x:Static s:UiText.Current}}</c> in windows, <c>{Binding T.ColDps}</c> in the overlay.
 /// Switching language swaps <see cref="Current"/>; the overlay re-binds, other windows are reopened.
 /// </summary>
-public sealed class UiText
+public sealed partial class UiText
 {
-    public static readonly string[] Languages = ["en"];
+    public static readonly string[] Languages = ["en", "de"];
 
     public static UiText Current { get; private set; } = new();
 
-    public static string Normalize(string? language) => "en";
+    public static string Normalize(string? language) => language?.StartsWith("de", StringComparison.OrdinalIgnoreCase) == true ? "de" : "en";
 
-    public static void Use(string? language) => Current = Normalize(language) == "ru" ? Ru : new UiText();
+    public static void Use(string? language) => Current = Normalize(language) == "de" ? German : new UiText();
 
     public string Code { get; init; } = "en";
     public string LanguageName { get; init; } = "English";
 
     /// <summary>Dates in the interface language ("06 Oct"), not in the Windows one.</summary>
-    public System.Globalization.CultureInfo Culture => System.Globalization.CultureInfo.GetCultureInfo(Code == "ru" ? "ru-RU" : "en-US");
+    public System.Globalization.CultureInfo Culture => System.Globalization.CultureInfo.GetCultureInfo(Code == "de" ? "de-DE" : "en-US");
 
     public IReadOnlyDictionary<Core.Events.GameClass, string> ClassNames { get; init; } = new Dictionary<Core.Events.GameClass, string>
     {
@@ -192,7 +192,7 @@ public sealed class UiText
     public string YourPlace { get; init; } = "Your place in this fight";
     public string Party { get; init; } = "party";
     public string Seconds { get; init; } = "s";
-    public string SwitchLanguage { get; init; } = "Language: English → Русский";
+    public string SwitchLanguage { get; init; } = "Language: English → Deutsch";
 
     // ---------------------------------------------------------------- tray
     public string TrayHide { get; init; } = "Hide overlay";
@@ -295,7 +295,7 @@ public sealed class UiText
     // ---------------------------------------------------------------- settings window
     public string SettingsTitle { get; init; } = "Settings";
     public string SecLanguage { get; init; } = "LANGUAGE";
-    public string LanguageHint { get; init; } = "Interface, skill and monster names. Applied immediately.";
+    public string LanguageHint { get; init; } = "Interface, skill and monster names. Applied immediately. Patch notes remain English.";
     public string SecOverlay { get; init; } = "OVERLAY";
     public string BarsRelative { get; init; } = "Bars relative to the top player";
     public string BarsRelativeHint { get; init; } = "The leader's bar is full and everyone else is sized against it. Off: bars show share of party damage.";

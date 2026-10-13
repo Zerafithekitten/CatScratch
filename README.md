@@ -52,9 +52,10 @@ Use borderless windowed mode to keep the meter visible above the game.
 - Movable event cards for the next selected start within an hour, with a pulsing border for two minutes after the start.
 - Separate observed boss timers; optional fight saving, retaining the last ten saved fights.
 - Colored EVENT / PVP / BOSS badges and readable boss panels when locked.
-- Optional per-event sounds with preview, volume, reminder timing and custom WAV files.
+- Optional per-event sounds with preview, volume, reminder timing and custom PCM/float WAV files up to ten seconds.
 - Patch notes available in the meter, including offline notes for the installed version.
-- English interface and verified GitHub updates for installed and portable copies.
+- English by default, selectable German in Settings > General > Language; patch notes remain English.
+- Verified GitHub updates for installed and portable copies.
 
 Use Settings > General > Updates > Check now to update from inside the meter.
 CatScratch replaces its program files and restarts without running Setup. Its own userdata is preserved; failed file replacement restores backups. Updates need a writable program folder.

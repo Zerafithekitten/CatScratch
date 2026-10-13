@@ -1,0 +1,75 @@
+namespace AionMeter.App.Services;
+
+public sealed partial class UiText
+{
+    // Exact UI literals only. Never translate player names, paths, sound IDs, protocol values or patch notes.
+    private static readonly Lazy<IReadOnlyDictionary<string,string>> GermanLiterals = new(CreateGermanLiterals);
+    private static IReadOnlyDictionary<string,string> CreateGermanLiterals()
+    {
+        var map = new Dictionary<string,string>(ExtraGerman,StringComparer.Ordinal);
+        var english = new UiText();
+        foreach (var property in typeof(UiText).GetProperties().Where(p=>p.PropertyType==typeof(string) && p.SetMethod is not null))
+        {
+            var source=(string?)property.GetValue(english); var target=(string?)property.GetValue(German);
+            if(source is not null && target is not null && source!=target) map.TryAdd(source,target);
+        }
+        return map;
+    }
+    public string Localize(string english) => Code == "de" && GermanLiterals.Value.TryGetValue(english, out var german) ? german : english;
+    private static readonly (string Prefix,string Translation)[] CapturePrefixes = [("Capturing · ","Erfassung · "),("Listening on ","Lausche auf "),("Capture error: ","Erfassungsfehler: ")];
+    public string CaptureMessage(string english)
+    {
+        if(Code!="de") return english;
+        foreach(var (prefix,translated) in CapturePrefixes)
+            if(english.StartsWith(prefix,StringComparison.Ordinal)) return translated+english[prefix.Length..];
+        return Localize(english);
+    }
+    private static readonly Dictionary<string,string> ExtraGerman = new(StringComparer.Ordinal)
+    {
+        ["Appearance"]="Darstellung", ["Combat"]="Kampf", ["Hotkeys"]="Tastenkürzel", ["History"]="Verlauf", ["Capture & data"]="Erfassung & Daten", ["General"]="Allgemein",
+        ["Starting capture…"]="Erfassung wird gestartet…", ["Capture stopped"]="Erfassung beendet", ["Npcap is not installed — get it from npcap.com"]="Npcap ist nicht installiert – erhältlich auf npcap.com", ["Selected network adapter not found"]="Gewählter Netzwerkadapter nicht gefunden", ["AION 2 is not running"]="AION 2 läuft nicht", ["Waiting for the game to connect…"]="Warte auf die Spielverbindung…", ["No Npcap adapter carries the game connection (VPN? pick one in Settings)"]="Kein Npcap-Adapter mit Spielverbindung gefunden (VPN? Adapter in Einstellungen wählen)", ["Connected · no game traffic for a while"]="Verbunden · seit einiger Zeit kein Spielverkehr", ["Demo fight running"]="Demo-Kampf läuft", ["Names appear after the next loading screen"]="Namen erscheinen nach dem nächsten Ladebildschirm",
+        ["PREVIEW / DEMO – no confirmed live data"]="VORSCHAU / DEMO – keine bestätigten Live-Daten", ["Npcap is missing. Open the download page, install it yourself and restart the meter. Then teleport once in game."]="Npcap fehlt. Öffne die Downloadseite, installiere es und starte das Meter neu. Teleportiere danach einmal im Spiel.", ["Party confirmed · {0}"]="Gruppe bestätigt · {0}", ["Solo tracking · {0}"]="Solo-Messung · {0}",
+        ["Manual schedule · Europe/Berlin"]="Manueller Zeitplan · Europa/Berlin", ["Time from in-game boss list"]="Zeit aus der Boss-Liste im Spiel", ["Observation/interval · estimate"]="Beobachtung/Intervall · Schätzung", ["Community schedule · Shugo.GG"]="Community-Zeitplan · Shugo.GG", ["Custom WAV: PCM or float, maximum 10 seconds and 10 MB."]="Eigene WAV: PCM oder Float, höchstens 10 Sekunden und 10 MB.",
+        ["Toggle personal combat module"]="Persönliche Kampfwerte umschalten", ["Started · "]="Gestartet · ", ["Boss is active"]="Boss ist aktiv", ["Time not known yet"]="Zeit noch unbekannt", ["Spawn time reached · awaiting confirmation"]="Wiederkehrzeit erreicht · warte auf Bestätigung", ["Scheduled time reached"]="Geplante Startzeit erreicht",
+        ["Copy full fight damage (numbers + %)"]="Gesamten Kampfschaden kopieren (Werte + %)", ["Copy game-chat lines (numbers + %)"]="Zeilen für den Spielchat kopieren (Werte + %)", ["Open to choose a line"]="Öffnen und Zeile auswählen",
+        ["WINDOW"]="FENSTER", ["PLAYER DISPLAY"]="SPIELERANZEIGE", ["VISIBILITY"]="SICHTBARKEIT", ["LANGUAGE"]="SPRACHE", ["Language"]="Sprache",
+        ["Window width / height"]="Fensterbreite / -höhe", ["Display opacity"]="Deckkraft", ["Background opacity"]="Hintergrund-Deckkraft",
+        ["40% = translucent · 100% = opaque. Adjust size and transparency here."]="40 % = durchscheinend · 100 % = deckend. Größe und Transparenz hier anpassen.",
+        ["Compact mode: narrow display with two lines per player"]="Kompaktmodus: zwei Zeilen pro Spieler", ["Received party CP/GS appears below player names. Long labels shorten when the meter is narrow."]="Empfangene CP/GS stehen unter den Spielernamen. Lange Angaben werden bei wenig Platz gekürzt.",
+        ["Show gear score (GS)"]="Gear Score (GS) anzeigen", ["Show combat power (CP)"]="Kampfkraft (CP) anzeigen", ["PERSONAL COMBAT"]="PERSÖNLICHER KAMPF", ["Personal combat"]="Persönlicher Kampf",
+        ["Show personal combat in the DPS meter"]="Persönliche Kampfwerte im Meter anzeigen", ["Show damage taken"]="Erlittenen Schaden anzeigen", ["Show healing done (self and others)"]="Heilung anzeigen (selbst und andere)",
+        ["Integrated below the DPS list. Values follow the selected fight and include only received combat events."]="Unter der DPS-Liste integriert. Werte beziehen sich auf den gewählten Kampf und ausschließlich auf empfangene Kampfdaten.",
+        ["Damage taken"]="Erlittener Schaden", ["Self healing"]="Selbstheilung", ["Healing others"]="Heilung anderer", ["Collapse personal combat"]="Persönliche Werte einklappen", ["Expand personal combat"]="Persönliche Werte ausklappen",
+        ["Show / hide personal combat"]="Persönliche Werte anzeigen / ausblenden", ["Fight duration"]="Kampfdauer", ["Current time · Europe/Berlin · 24-hour clock"]="Uhrzeit · Europa/Berlin · 24-Stunden-Format",
+        ["Estimated network RTT from captured game TCP acknowledgments. Includes server ACK delay; a local accelerator measures only its local connection. No probe packets are sent. A dash means no fresh sample."]="Geschätzte Netzwerk-RTT aus empfangenen TCP-Bestätigungen einschließlich Serververzögerung. Bei lokalen Beschleunigern nur die lokale Verbindung. Keine Messpakete werden gesendet. Ein Strich bedeutet: kein aktueller Messwert.",
+        ["Statistics"]="Statistiken", ["Copy fight damage (numbers + %)"]="Kampfschaden kopieren (Werte + %)", ["Save last fight"]="Letzten Kampf speichern", ["Check for updates"]="Nach Updates suchen", ["Checking for updates…"]="Suche nach Updates…",
+        ["Delete saved fights"]="Gespeicherte Kämpfe löschen", ["No saved fights."]="Keine gespeicherten Kämpfe.", ["No saved fights to delete."]="Keine gespeicherten Kämpfe zum Löschen.",
+        ["Fights are saved only when you press Save last fight, unless automatic saving is enabled below. Only the last 10 saved fights are kept."]="Kämpfe werden mit dem Speicherknopf gesichert, sofern unten kein automatisches Speichern aktiviert ist. Nur die letzten zehn gespeicherten Kämpfe bleiben erhalten.",
+        ["Updates are installed only after you press Update now."]="Updates werden erst nach einem Klick auf Jetzt aktualisieren installiert.", ["Boss only / everything you hit"]="Nur Boss / alle getroffenen Gegner", ["Download Npcap"]="Npcap herunterladen", ["Exit"]="Beenden", ["Lock position"]="Position sperren",
+        ["Click here and press your shortcut. Applied after saving."]="Hier klicken und Tastenkürzel drücken. Wird nach dem Speichern angewendet.", ["Compact mode"]="Kompaktmodus",
+        ["Event settings"]="Event-Einstellungen", ["Event sounds"]="Event-Sounds", ["Upcoming events"]="Anstehende Events", ["SCHEDULE"]="ZEITPLAN", ["EVENTS TO SHOW"]="ANGEZEIGTE EVENTS", ["APPEARANCE"]="DARSTELLUNG", ["SOUNDS & BOSS TIMERS"]="SOUNDS & BOSS-TIMER",
+        ["Only the next selected start within one hour. Events stay visible for two minutes after starting, with a pulsing border."]="Nur der nächste gewählte Start innerhalb einer Stunde. Events bleiben nach Beginn zwei Minuten mit pulsierendem Rahmen sichtbar.",
+        ["Show all world bosses"]="Alle Weltbosse anzeigen", ["Includes scheduled bosses and known respawns received from the game."]="Enthält geplante Bosse und bekannte Wiederkehrzeiten aus dem Spiel.",
+        ["Opacity"]="Deckkraft", ["Window width"]="Fensterbreite", ["Open boss timers"]="Boss-Timer öffnen", ["Open schedule source"]="Zeitplan-Quelle öffnen",
+        ["Changes are saved automatically. Community schedule from Shugo.GG, checked Oct 12, 2026; availability is not officially confirmed."]="Änderungen werden automatisch gespeichert. Community-Zeitplan von Shugo.GG, geprüft am 12.10.2026; Verfügbarkeit nicht offiziell bestätigt.",
+        ["Community schedule · Shugo.GG · checked Oct 12, 2026 · not officially confirmed"]="Community-Zeitplan · Shugo.GG · geprüft am 12.10.2026 · nicht offiziell bestätigt",
+        ["No events in the next hour"]="Keine Events in der nächsten Stunde", ["No upcoming event"]="Kein anstehendes Event", ["Open separate window"]="Eigenes Fenster öffnen", ["Close card"]="Karte schließen",
+        ["Started"]="Gestartet", ["Today"]="Heute", ["Tomorrow"]="Morgen", ["ago"]="vorher", ["in"]="in", ["EVENT"]="EVENT", ["BOSS"]="BOSS", ["PVP"]="PVP",
+        ["Europe"]="Europa", ["NA East"]="NA Ost", ["NA West"]="NA West", ["Shugo Festival"]="Shugo-Festival", ["Dimensional Rift"]="Dimensionsriss", ["Abyss Invasion"]="Abyss-Invasion", ["Tracked world bosses"]="Beobachtete Weltbosse",
+        ["Dimensional Invasion"]="Dimensionsinvasion", ["Spacetime Rift"]="Raumzeit-Riss", ["Artifact Siege"]="Artefakt-Belagerung", ["Siege Bosses"]="Belagerungsbosse", ["Guardian Lord Nahma"]="Wächterfürst Nahma", ["Watcher Kaira"]="Wächter Kaira",
+        ["SOUND PREFERENCES"]="SOUND-EINSTELLUNGEN", ["Volume"]="Lautstärke", ["Automatic event reminder"]="Automatische Event-Erinnerung", ["At start"]="Bei Beginn", ["1 minute before"]="1 Minute vorher", ["2 minutes before"]="2 Minuten vorher", ["5 minutes before"]="5 Minuten vorher", ["10 minutes before"]="10 Minuten vorher",
+        ["Chime"]="Klang", ["Bell"]="Glocke", ["Ping"]="Ping", ["Custom WAV"]="Eigene WAV", ["Choose WAV…"]="WAV wählen…", ["Preview"]="Anhören",
+        ["Enable a sound for each event you want to hear. Automatic reminders follow your selected events.\nSimultaneous reminders play one after another."]="Aktiviere Sounds für gewünschte Events. Automatische Erinnerungen folgen deiner Event-Auswahl.\nGleichzeitige Erinnerungen werden nacheinander abgespielt.",
+        ["Choose a local WAV file (up to 10 seconds and 10 MB)"]="Lokale WAV-Datei wählen (maximal 10 Sekunden und 10 MB)",
+        ["Choose a valid PCM or float WAV file, up to 10 seconds and 10 MB."]="Wähle eine gültige PCM- oder Float-WAV-Datei mit höchstens 10 Sekunden und 10 MB.", ["Choose an existing WAV file first."]="Wähle zuerst eine vorhandene WAV-Datei.",
+        ["Tracked world bosses use the watched-boss and ‘Notify before respawn’ settings in Boss timers. Custom WAV files must stay at their selected location."]="Beobachtete Weltbosse verwenden die Auswahl und Vorwarnzeit aus den Boss-Timern. Eigene WAV-Dateien müssen am gewählten Speicherort bleiben.",
+        ["Choose WAV audio (*.wav)"]="WAV-Audio auswählen (*.wav)", ["Close"]="Schließen", ["Settings"]="Einstellungen", ["Boss timers"]="Boss-Timer",
+        ["Waiting for fresh game data…"]="Warte auf aktuelle Spieldaten…",
+        ["Character not confirmed yet. Teleport once or change zones through a loading screen. Waiting for fresh game data…"]="Charakter noch nicht bestätigt. Teleportiere einmal oder wechsle das Gebiet über einen Ladebildschirm. Warte auf aktuelle Spieldaten…",
+        ["Character recognized · {0}. Waiting for fresh actor data from the game…"]="Charakter erkannt · {0}. Warte auf aktuelle Charakterdaten aus dem Spiel…",
+        ["Delete all {0} saved fights? This cannot be undone."]="Alle {0} gespeicherten Kämpfe löschen? Dies kann nicht rückgängig gemacht werden.", ["Could not delete saved fights: {0}"]="Gespeicherte Kämpfe konnten nicht gelöscht werden: {0}",
+        ["Room stats"]="Raumwerte", ["Party stats"]="Gruppenwerte", ["Confirmed party"]="Bestätigte Gruppe", ["Group finder"]="Gruppensuche", ["Damage starts with the next hit."]="Schadensmessung beginnt mit dem nächsten Treffer.",
+        ["Last fight saved."]="Letzter Kampf gespeichert.", ["Fight already saved."]="Kampf bereits gespeichert.", ["Could not save fight: {0}"]="Kampf konnte nicht gespeichert werden: {0}",
+        ["No completed fight to copy yet."]="Noch kein abgeschlossener Kampf zum Kopieren.", ["Copy fight results"]="Kampfergebnisse kopieren", ["Copy damage ranking (numbers + %)"]="Schadensrangliste kopieren (Werte + %)", ["Copy damage table for Discord"]="Schadenstabelle für Discord kopieren"
+    };
+}

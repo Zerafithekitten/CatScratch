@@ -4,17 +4,31 @@
         xmlns:c="clr-namespace:AionMeter.App.Controls"
         xmlns:s="clr-namespace:AionMeter.App.Services"
         Title="{Binding TimersTitle, Source={x:Static s:UiText.Current}}" Width="780" Height="640" MinWidth="600" MinHeight="300"
-        WindowStyle="None" WindowStartupLocation="CenterScreen" ResizeMode="CanResize" Background="{StaticResource Bg0}"
+        WindowStyle="None" WindowStartupLocation="CenterScreen" ResizeMode="CanResize" Background="#1B2027"
         Topmost="True" UseLayoutRounding="True" TextOptions.TextFormattingMode="Display"
         FontFamily="{StaticResource UiFont}" Foreground="{StaticResource Text}" FontSize="12.5">
     <WindowChrome.WindowChrome>
-        <WindowChrome CaptionHeight="52" ResizeBorderThickness="6" GlassFrameThickness="0" CornerRadius="0" />
+        <WindowChrome CaptionHeight="0" ResizeBorderThickness="6" GlassFrameThickness="0" CornerRadius="0" />
     </WindowChrome.WindowChrome>
     <Window.Resources>
-        <c:VisibleIf x:Key="VisibleIf" />
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries><ResourceDictionary Source="/Theme/MeterPreferences.xaml" /></ResourceDictionary.MergedDictionaries>
+            <c:VisibleIf x:Key="VisibleIf" />
+            <SolidColorBrush x:Key="Gold" Color="#79E3CF" />
+            <SolidColorBrush x:Key="GoldDim" Color="#364957" />
+            <SolidColorBrush x:Key="TextMute" Color="#A9B8C7" />
+            <Style x:Key="Chip" TargetType="Button" BasedOn="{StaticResource GhostButton}"><Setter Property="Padding" Value="8,4" /><Setter Property="Foreground" Value="#EDF2F7" /></Style>
+            <Style x:Key="TabToggle" TargetType="RadioButton">
+                <Setter Property="Foreground" Value="#A9B8C7" /><Setter Property="Padding" Value="10,6" /><Setter Property="Cursor" Value="Hand" />
+                <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="RadioButton">
+                    <Border x:Name="Tab" Padding="{TemplateBinding Padding}" CornerRadius="6" Background="Transparent"><ContentPresenter /></Border>
+                    <ControlTemplate.Triggers><Trigger Property="IsChecked" Value="True"><Setter Property="Foreground" Value="#79E3CF" /><Setter TargetName="Tab" Property="Background" Value="#263C3D" /></Trigger><Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Tab" Property="Background" Value="#202A35" /></Trigger></ControlTemplate.Triggers>
+                </ControlTemplate></Setter.Value></Setter>
+            </Style>
+        </ResourceDictionary>
     </Window.Resources>
 
-    <Border x:Name="BossShell" Background="#111722" BorderBrush="{StaticResource GoldDim}" BorderThickness="1">
+    <Border x:Name="BossShell" Background="#1B2027" BorderBrush="#607B827F" BorderThickness="1" CornerRadius="10">
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="52" />
@@ -24,10 +38,9 @@
 
             <Grid Margin="18,0,8,0">
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                    <TextBlock Text="&#xE121;" FontFamily="{StaticResource IconFont}" FontSize="17" Foreground="{StaticResource Gold}"
-                               VerticalAlignment="Center" Margin="0,2,10,0" />
-                    <TextBlock Text="{Binding TimersTitle, Source={x:Static s:UiText.Current}}" FontFamily="{StaticResource TitleFont}"
-                               FontSize="19" FontWeight="SemiBold" VerticalAlignment="Center" />
+                    <Image Source="{x:Static s:AppIcon.Image}" Width="20" Height="20" VerticalAlignment="Center" Margin="0,0,7,0" />
+                    <TextBlock Text="{Binding TimersTitle, Source={x:Static s:UiText.Current}}" Foreground="#79E3CF"
+                               FontSize="17" FontWeight="SemiBold" VerticalAlignment="Center" />
                     <!-- Every server runs its own bosses: whose timers these are -->
                     <Button x:Name="ServerButton" Style="{StaticResource Chip}" Height="26" FontSize="12" Margin="14,0,0,0"
                             VerticalAlignment="Center" Click="Server_Click" WindowChrome.IsHitTestVisibleInChrome="True"
@@ -62,7 +75,7 @@
                     <ItemsControl x:Name="List">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <Border Background="#0DFFFFFF" BorderBrush="{Binding FrameBrush}" BorderThickness="1" CornerRadius="9"
+                                <Border Background="#171E27" BorderBrush="{Binding FrameBrush}" BorderThickness="1" CornerRadius="7"
                                         Padding="10,8" Margin="0,0,0,7">
                                     <Grid>
                                         <Grid.ColumnDefinitions>
@@ -74,7 +87,7 @@
                                             <ColumnDefinition Width="Auto" />
                                             <ColumnDefinition Width="Auto" />
                                         </Grid.ColumnDefinitions>
-                                        <c:BossPortrait Width="46" Height="46" Source="{Binding Portrait}" VerticalAlignment="Center" />
+                                        <c:BossPortrait Width="40" Height="40" Source="{Binding Portrait}" Accent="{StaticResource Gold}" VerticalAlignment="Center" />
                                         <StackPanel Grid.Column="1" Margin="12,0,10,0" VerticalAlignment="Center">
                                             <TextBlock Text="{Binding Name}" FontSize="14" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" />
                                             <TextBlock Text="{Binding Meta}" FontSize="11.5" Foreground="{StaticResource TextMute}" Margin="0,2,0,0"

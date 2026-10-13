@@ -1,3 +1,13 @@
+## CatScratch v2.1.1
+
+- Keep event sound preferences exclusively in Event settings; remove their shortcut from the meter settings.
+- Restyle Boss timers and Event sounds with CatScratch's dark cards, teal controls and paw headers.
+- Remove the native white strip from Event settings and Event sounds windows.
+- Add selectable German interface, class labels, menus, reminders, skill and monster names. English remains the default; patch notes remain English.
+- Reject custom WAV files longer than 10 seconds. Validate actual PCM/float sample duration when selecting, previewing and playing sounds, including previously configured files.
+- Retain completed dungeon fight results until the next fight, so they remain readable and can be saved. Group membership survives loading without switching back to CP/GS preview inside the dungeon.
+- Log CatScratch window visibility changes to help diagnose intermittent popups. This adds diagnostics; the reported popup cause is not yet confirmed.
+
 ## CatScratch v2.1.0
 
 - Remove the unused View button from the DPS footer; display options remain available in Settings.

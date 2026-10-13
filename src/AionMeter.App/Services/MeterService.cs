@@ -249,7 +249,7 @@ public sealed class MeterService : IDisposable
         _names.Save(Tracker.ExportCache());
     }
 
-    /// <summary>English / Russian for the interface and for skill / NPC names, applied without a restart.</summary>
+    /// <summary>English / German for the interface and skill / NPC names, applied without a restart.</summary>
     public void SetLanguage(string language)
     {
         language = UiText.Normalize(language);

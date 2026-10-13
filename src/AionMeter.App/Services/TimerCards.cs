@@ -24,7 +24,7 @@ public sealed class TimerCards : IDisposable
         var local = Berlin(start);
         var today = Berlin(now).Date;
         var day = local.Date == today ? "Today" : local.Date == today.AddDays(1) ? "Tomorrow" : local.ToString("dd.MM.");
-        return $"{day} {local:HH:mm}";
+        return $"{UiText.Current.Localize(day)} {local:HH:mm}";
     }
     public sealed class State
     {
@@ -101,7 +101,7 @@ public sealed class TimerCards : IDisposable
     {
         var boss = _meter.Timers.ForServer(server).FirstOrDefault(b => b.NpcCode == code);
         return new($"boss:{server}:{code}", _meter.Data.NpcName(code), "BOSS", boss?.NextSpawn,
-            $"Server {server} · " + (boss?.FromGame == true ? "Time from in-game boss list" : "Observation/interval · estimate"), boss?.AliveNow == true);
+            $"Server {server} · " + UiText.Current.Localize(boss?.FromGame == true ? "Time from in-game boss list" : "Observation/interval · estimate"), boss?.AliveNow == true);
     }
     public TimerCardData? Get(string id)
     {
@@ -167,10 +167,10 @@ public sealed class TimerCards : IDisposable
     }
     public static string Countdown(TimerCardData card, DateTimeOffset now)
     {
-        if (card.Alive) return "Boss is active";
-        if (card.Next is not { } next) return "Time not known yet";
+        if (card.Alive) return UiText.Current.Localize("Boss is active");
+        if (card.Next is not { } next) return UiText.Current.Localize("Time not known yet");
         var remaining = next - now;
-        if (remaining <= TimeSpan.Zero) return card.Kind == "BOSS" ? "Spawn time reached · awaiting confirmation" : "Scheduled time reached";
-        return $"in {(int)remaining.TotalHours:00}:{remaining.Minutes:00}:{remaining.Seconds:00}";
+        if (remaining <= TimeSpan.Zero) return UiText.Current.Localize(card.Kind == "BOSS" ? "Spawn time reached · awaiting confirmation" : "Scheduled time reached");
+        return $"{UiText.Current.Localize("in")} {(int)remaining.TotalHours:00}:{remaining.Minutes:00}:{remaining.Seconds:00}";
     }
 }

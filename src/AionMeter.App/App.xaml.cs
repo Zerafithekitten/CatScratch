@@ -478,7 +478,7 @@ public partial class App : Application
         w.Show();
     }
 
-    /// <summary>English ⇄ Russian, live: names reload, the overlay re-binds, other windows reopen in the new language.</summary>
+    /// <summary>English ⇄ German, live: names reload and the meter re-binds.</summary>
     public void SetLanguage(string language)
     {
         _meter.SetLanguage(language);
@@ -486,11 +486,15 @@ public partial class App : Application
         _history?.Close();
         _timersWindow?.Close();
         _updateWindow?.Close();
+        _soundWindow?.Close();
+        var reopenEvents = _timerHub?.IsVisible == true;
+        _timerHub?.Close();
+        if (reopenEvents) ShowTimerHub();
         _tray?.ApplyTexts();
         _overlay.OnLanguageChanged();
     }
 
-    public void ToggleLanguage() => SetLanguage(UiText.Current.Code == "ru" ? "en" : "ru");
+    public void ToggleLanguage() => SetLanguage(UiText.Current.Code == "de" ? "en" : "de");
 
     public void ShowSavedInOverlay(Core.Storage.HistoryEntry entry)
     {

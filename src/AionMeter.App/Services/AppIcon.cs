@@ -18,7 +18,15 @@ internal static class AppIcon
         return image;
     }
 
-    public static void Apply(Window window) => window.Icon = Image;
+    public static void Apply(Window window)
+    {
+        window.Icon = Image;
+        // Record visibility transitions only, without window titles or character information.
+        // This helps identify intermittent windows without polling or a background worker.
+        window.IsVisibleChanged += (_, _) => Log.Info(
+            $"Window {window.GetType().Name}: {(window.IsVisible ? "shown" : "hidden")}; " +
+            $"activate={window.ShowActivated}; taskbar={window.ShowInTaskbar}");
+    }
 
     public static System.Drawing.Icon CreateTrayIcon()
     {

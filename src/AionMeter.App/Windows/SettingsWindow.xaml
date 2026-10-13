@@ -53,23 +53,23 @@
         <Button Style="{StaticResource IconButton}" Content="" Click="Cancel_Click" HorizontalAlignment="Right" VerticalAlignment="Center" WindowChrome.IsHitTestVisibleInChrome="True" />
       </Grid>
       <TabControl Grid.Row="1" TabStripPlacement="Left" Margin="14,0,14,0" Background="Transparent" BorderThickness="0" Name="SettingsTabs">
-        <TabItem Header="Appearance" Padding="12,10">
+        <TabItem Header="{Binding Literal17, Source={x:Static s:UiText.Current}}" Padding="12,10">
           <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="14,0,0,0">
             <StackPanel>
               <Border Style="{StaticResource Section}">
                 <StackPanel>
-                  <TextBlock Text="WINDOW" Style="{StaticResource SectionLabel}" Margin="0,0,0,8" />
+                  <TextBlock Text="{Binding Literal18, Source={x:Static s:UiText.Current}}" Style="{StaticResource SectionLabel}" Margin="0,0,0,8" />
                   <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
-                    <TextBlock Text="Window width / height" Style="{StaticResource Label}" />
+                    <TextBlock Text="{Binding Literal19, Source={x:Static s:UiText.Current}}" Style="{StaticResource Label}" />
                     <TextBox x:Name="WindowWidthText" Width="70" />
                     <TextBlock Text=" × " VerticalAlignment="Center" />
                     <TextBox x:Name="WindowHeightText" Width="70" />
                   </StackPanel>
                   <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
-                    <TextBlock Text="Display opacity" Style="{StaticResource Label}" />
+                    <TextBlock Text="{Binding Literal20, Source={x:Static s:UiText.Current}}" Style="{StaticResource Label}" />
                     <Slider x:Name="WindowOpacityValue" Width="180" Minimum="0.4" Maximum="1" Style="{StaticResource GoldSlider}" />
                   </StackPanel>
-                  <TextBlock Text="40% = translucent · 100% = opaque. Adjust size and transparency here." Style="{StaticResource Hint}" TextWrapping="Wrap" />
+                  <TextBlock Text="{Binding Literal21, Source={x:Static s:UiText.Current}}" Style="{StaticResource Hint}" TextWrapping="Wrap" />
                   <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
                     <TextBlock Text="{Binding BackgroundOpacity, Source={x:Static s:UiText.Current}}" Style="{StaticResource Label}" />
                     <Slider x:Name="OpacityValue" Style="{StaticResource GoldSlider}" Width="180" Minimum="0.15" Maximum="1" />
@@ -78,7 +78,7 @@
               </Border>
               <Border Style="{StaticResource Section}">
                 <StackPanel>
-                  <TextBlock Text="PLAYER DISPLAY" Style="{StaticResource SectionLabel}" Margin="0,0,0,8" />
+                  <TextBlock Text="{Binding Literal22, Source={x:Static s:UiText.Current}}" Style="{StaticResource SectionLabel}" Margin="0,0,0,8" />
                   <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
                     <TextBlock Text="{Binding RowsShown, Source={x:Static s:UiText.Current}}" Style="{StaticResource Label}" />
                     <ComboBox x:Name="MaxRows" MinWidth="80" />
@@ -89,18 +89,18 @@
                     <TextBlock x:Name="RowSizeText" VerticalAlignment="Center" Margin="10,0,0,0" />
                   </StackPanel>
                   <TextBlock Style="{StaticResource Hint}" Margin="190,2,0,0" Text="{Binding RowSizeHint, Source={x:Static s:UiText.Current}}" />
-                  <CheckBox x:Name="CompactModeCheck" Content="Compact mode: narrow display with two lines per player" Style="{StaticResource DarkCheck}" Margin="0,10,0,0" />
+                  <CheckBox x:Name="CompactModeCheck" Content="{Binding Literal23, Source={x:Static s:UiText.Current}}" Style="{StaticResource DarkCheck}" Margin="0,10,0,0" />
                   <CheckBox x:Name="BarsRelative" Style="{StaticResource DarkCheck}" Content="{Binding BarsRelative, Source={x:Static s:UiText.Current}}" />
                   <TextBlock Style="{StaticResource Hint}" Text="{Binding BarsRelativeHint, Source={x:Static s:UiText.Current}}" />
-                  <CheckBox x:Name="ShowGear" Style="{StaticResource DarkCheck}" Margin="0,6,0,0" Content="Show gear score (GS)" />
-                  <CheckBox x:Name="ShowCombatPower" Style="{StaticResource DarkCheck}" Margin="0,6,0,0" Content="Show combat power (CP)" />
-                  <TextBlock Style="{StaticResource Hint}" Text="Received party CP/GS appears below player names. Long labels shorten when the meter is narrow." />
+                  <CheckBox x:Name="ShowGear" Style="{StaticResource DarkCheck}" Margin="0,6,0,0" Content="{Binding Literal24, Source={x:Static s:UiText.Current}}" />
+                  <CheckBox x:Name="ShowCombatPower" Style="{StaticResource DarkCheck}" Margin="0,6,0,0" Content="{Binding Literal25, Source={x:Static s:UiText.Current}}" />
+                  <TextBlock Style="{StaticResource Hint}" Text="{Binding Literal26, Source={x:Static s:UiText.Current}}" />
                   <CheckBox x:Name="ShowBoss" Style="{StaticResource DarkCheck}" Content="{Binding ShowBossPanel, Source={x:Static s:UiText.Current}}" />
                 </StackPanel>
               </Border>
               <Border Style="{StaticResource Section}">
                 <StackPanel>
-                  <TextBlock Text="VISIBILITY" Style="{StaticResource SectionLabel}" Margin="0,0,0,8" />
+                  <TextBlock Text="{Binding Literal27, Source={x:Static s:UiText.Current}}" Style="{StaticResource SectionLabel}" Margin="0,0,0,8" />
                   <CheckBox x:Name="AutoShow" Style="{StaticResource DarkCheck}" Margin="0,6,0,0" Content="{Binding AutoShow, Source={x:Static s:UiText.Current}}" />
                   <TextBlock Style="{StaticResource Hint}" Text="{Binding AutoShowHint, Source={x:Static s:UiText.Current}}" />
                   <StackPanel Orientation="Horizontal" Margin="24,0,0,4">
@@ -113,7 +113,7 @@
             </StackPanel>
           </ScrollViewer>
         </TabItem>
-        <TabItem Header="Combat" Padding="12,10">
+        <TabItem Header="{Binding Literal28, Source={x:Static s:UiText.Current}}" Padding="12,10">
           <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="14,0,0,0">
             <StackPanel>
               <Border Style="{StaticResource Section}">
@@ -138,17 +138,17 @@
               </Border>
               <Border Style="{StaticResource Section}">
                 <StackPanel>
-                  <TextBlock Text="PERSONAL COMBAT" Style="{StaticResource SectionLabel}" Margin="0,0,0,8" />
-                  <CheckBox x:Name="ShowPersonalCombatModule" Style="{StaticResource DarkCheck}" Content="Show personal combat in the DPS meter" />
-                  <CheckBox x:Name="ShowDamageTaken" Style="{StaticResource DarkCheck}" Content="Show damage taken" Margin="0,6,0,0" />
-                  <CheckBox x:Name="ShowHealingDone" Style="{StaticResource DarkCheck}" Content="Show healing done (self and others)" Margin="0,6,0,0" />
-                  <TextBlock Style="{StaticResource Hint}" Text="Integrated below the DPS list. Values follow the selected fight and include only received combat events." />
+                  <TextBlock Text="{Binding Literal10, Source={x:Static s:UiText.Current}}" Style="{StaticResource SectionLabel}" Margin="0,0,0,8" />
+                  <CheckBox x:Name="ShowPersonalCombatModule" Style="{StaticResource DarkCheck}" Content="{Binding Literal29, Source={x:Static s:UiText.Current}}" />
+                  <CheckBox x:Name="ShowDamageTaken" Style="{StaticResource DarkCheck}" Content="{Binding Literal30, Source={x:Static s:UiText.Current}}" Margin="0,6,0,0" />
+                  <CheckBox x:Name="ShowHealingDone" Style="{StaticResource DarkCheck}" Content="{Binding Literal31, Source={x:Static s:UiText.Current}}" Margin="0,6,0,0" />
+                  <TextBlock Style="{StaticResource Hint}" Text="{Binding Literal32, Source={x:Static s:UiText.Current}}" />
                 </StackPanel>
               </Border>
             </StackPanel>
           </ScrollViewer>
         </TabItem>
-        <TabItem Header="Hotkeys" Padding="12,10">
+        <TabItem Header="{Binding Literal33, Source={x:Static s:UiText.Current}}" Padding="12,10">
           <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="14,0,0,0">
             <StackPanel>
               <Border Style="{StaticResource Section}">
@@ -176,14 +176,14 @@
             </StackPanel>
           </ScrollViewer>
         </TabItem>
-        <TabItem Header="History" Padding="12,10">
+        <TabItem Header="{Binding Literal34, Source={x:Static s:UiText.Current}}" Padding="12,10">
           <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="14,0,0,0">
             <StackPanel>
               <Border Style="{StaticResource Section}">
                 <StackPanel>
                   <TextBlock Text="{Binding SecHistory, Source={x:Static s:UiText.Current}}" Style="{StaticResource SectionLabel}" Margin="0,0,0,8" />
-                  <TextBlock Style="{StaticResource Hint}" Text="Fights are saved only when you press Save last fight, unless automatic saving is enabled below. Only the last 10 saved fights are kept." Margin="0,0,0,8" />
-                  <Button Style="{StaticResource GhostButton}" Content="Delete saved fights" Click="DeleteSavedFights_Click" HorizontalAlignment="Left" Margin="0,0,0,8" />
+                  <TextBlock Style="{StaticResource Hint}" Text="{Binding Literal35, Source={x:Static s:UiText.Current}}" Margin="0,0,0,8" />
+                  <Button Style="{StaticResource GhostButton}" Content="{Binding Literal36, Source={x:Static s:UiText.Current}}" Click="DeleteSavedFights_Click" HorizontalAlignment="Left" Margin="0,0,0,8" />
                   <CheckBox x:Name="SaveHistory" Style="{StaticResource DarkCheck}" Content="{Binding SaveAuto, Source={x:Static s:UiText.Current}}" />
                   <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
                     <TextBlock Text="{Binding WhichFights, Source={x:Static s:UiText.Current}}" Style="{StaticResource Label}" />
@@ -204,7 +204,7 @@
             </StackPanel>
           </ScrollViewer>
         </TabItem>
-        <TabItem Header="Capture &amp; data" Padding="12,10">
+        <TabItem Header="{Binding Literal37, Source={x:Static s:UiText.Current}}" Padding="12,10">
           <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="14,0,0,0">
             <StackPanel>
               <Border Style="{StaticResource Section}">
@@ -236,16 +236,17 @@
             </StackPanel>
           </ScrollViewer>
         </TabItem>
-        <TabItem Header="General" Padding="12,10">
+        <TabItem Header="{Binding Literal38, Source={x:Static s:UiText.Current}}" Padding="12,10">
           <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="14,0,0,0">
             <StackPanel>
               <Border Style="{StaticResource Section}">
                 <StackPanel>
-                  <TextBlock Text="LANGUAGE" Style="{StaticResource SectionLabel}" Margin="0,0,0,8" />
+                  <TextBlock Text="{Binding Literal39, Source={x:Static s:UiText.Current}}" Style="{StaticResource SectionLabel}" Margin="0,0,0,8" />
                   <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="Language" Style="{StaticResource Label}" />
+                    <TextBlock Text="{Binding SettingLanguageLabel, Source={x:Static s:UiText.Current}}" Style="{StaticResource Label}" />
                     <ComboBox x:Name="LanguageBox" MinWidth="160">
                       <ComboBoxItem Content="English" Tag="en" />
+                      <ComboBoxItem Content="Deutsch" Tag="de" />
                     </ComboBox>
                   </StackPanel>
                   <TextBlock Style="{StaticResource Hint}" Margin="0,6,0,0" Text="{Binding LanguageHint, Source={x:Static s:UiText.Current}}" />
@@ -256,12 +257,11 @@
                   <TextBlock Text="{Binding SecUpdates, Source={x:Static s:UiText.Current}}" Style="{StaticResource SectionLabel}" Margin="0,0,0,8" />
                   <CheckBox x:Name="CheckUpdates" Style="{StaticResource DarkCheck}" Content="{Binding CheckUpdatesAuto, Source={x:Static s:UiText.Current}}" />
                   <TextBlock Style="{StaticResource Hint}" Text="{Binding UpdatesHint, Source={x:Static s:UiText.Current}}" />
-                  <TextBlock Style="{StaticResource Hint}" Text="Updates are installed only after you press Update now." />
+                  <TextBlock Style="{StaticResource Hint}" Text="{Binding Literal40, Source={x:Static s:UiText.Current}}" />
                   <WrapPanel Margin="0,8,0,0">
                     <TextBlock x:Name="VersionText" VerticalAlignment="Center" Foreground="{StaticResource TextDim}" Margin="0,0,14,0" />
                     <Button x:Name="CheckNowButton" Style="{StaticResource GhostButton}" Click="CheckNow_Click" Content="{Binding CheckNow, Source={x:Static s:UiText.Current}}" />
                     <Button Style="{StaticResource GhostButton}" Content="Patch notes" Click="PatchNotes_Click" Margin="8,0,0,0" />
-                    <Button Style="{StaticResource GhostButton}" Content="Event sounds" Click="EventSounds_Click" Margin="8,0,0,0" />
                   </WrapPanel>
                   <TextBlock x:Name="UpdateState" Style="{StaticResource Hint}" Margin="0,6,0,0" Foreground="{StaticResource TextDim}" Visibility="Collapsed" />
                 </StackPanel>

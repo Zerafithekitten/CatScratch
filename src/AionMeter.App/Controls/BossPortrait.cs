@@ -9,6 +9,8 @@ namespace AionMeter.App.Controls;
 /// </summary>
 public sealed class BossPortrait : FrameworkElement
 {
+    public static readonly DependencyProperty AccentProperty = DependencyProperty.Register(nameof(Accent),typeof(Brush),typeof(BossPortrait),new FrameworkPropertyMetadata(null,FrameworkPropertyMetadataOptions.AffectsRender));
+    public Brush? Accent { get => (Brush?)GetValue(AccentProperty); set => SetValue(AccentProperty,value); }
     public static readonly DependencyProperty SourceProperty = DependencyProperty.Register(
         nameof(Source), typeof(ImageSource), typeof(BossPortrait),
         new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.AffectsRender));
@@ -54,15 +56,15 @@ public sealed class BossPortrait : FrameworkElement
             dc.DrawImage(image, rect);
             dc.Pop();
             dc.DrawEllipse(null, InnerShade, center, r - 1.8, r - 1.8);
-            dc.DrawEllipse(null, Ring, center, r - 0.8, r - 0.8);
+            dc.DrawEllipse(null, Accent is { } accent ? new Pen(accent,1.6) : Ring, center, r - 0.8, r - 0.8);
             return;
         }
 
-        dc.DrawEllipse(Coin, DimRing, center, r - 0.6, r - 0.6);
+        dc.DrawEllipse(Coin, Accent is { } outline ? new Pen(outline,1.2) : DimRing, center, r - 0.6, r - 0.6);
         var s = size * 0.42 / 24;
         dc.PushTransform(new TranslateTransform(center.X - 12 * s, center.Y - 11.5 * s));
         dc.PushTransform(new ScaleTransform(s, s));
-        dc.DrawGeometry(SkullFill, null, Skull);
+        dc.DrawGeometry(Accent ?? SkullFill, null, Skull);
         dc.Pop();
         dc.Pop();
     }

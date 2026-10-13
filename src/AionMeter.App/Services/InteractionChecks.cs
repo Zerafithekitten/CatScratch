@@ -253,6 +253,10 @@ internal static class InteractionChecks
             var historyBefore = meter.History.List().Count;
             Check(!meter.CanSaveLastFight, "Manual saving waits for a completed fight");
             meter.Tracker.Tick(1_000_000);
+            meter.PartyPreview.Observe(new AionMeter.Core.Events.ZoneChangedEvent(1_000_000,600001,"Dungeon",true,true));
+            activeOverlay.Refresh();
+            Check(activeModel.SegmentId==segment && activeModel.Rows[0].Damage!="—" && activeModel.Title!="Room stats" && activeModel.Title!="Party stats",
+                "Finished boss damage stays visible inside the dungeon instead of being replaced by CP/GS preview");
             Check(meter.CanSaveLastFight && meter.History.List().Count == historyBefore,
                 "Completing a fight makes it saveable without automatically writing statistics");
             var manuallySaved = meter.SaveLastFight();
@@ -290,6 +294,7 @@ internal static class InteractionChecks
             meter.Tracker.Process(new AionMeter.Core.Events.DamageEvent(1_000_001,1,500,17010000,100,AionMeter.Core.Events.HitFlags.None));
             meter.Tracker.Process(new AionMeter.Core.Events.HealEvent(1_000_002,1,1,17010000,78500,AionMeter.Core.Events.HitFlags.None));
             activeOverlay.Refresh();
+            Check(activeModel.SegmentId!=segment,"A new fight replaces the finished fight automatically");
             var personalMetrics=(System.Windows.Controls.StackPanel)activeOverlay.FindName("PersonalMetrics");
             var healingGrid=(System.Windows.Controls.Grid)((System.Windows.Controls.Border)personalMetrics.Children[1]).Child;
             Check(healingGrid.Children.OfType<System.Windows.Controls.TextBlock>().Last().Text == "78,500",
@@ -320,6 +325,38 @@ internal static class InteractionChecks
                 "Unlocking restores integrated personal row surfaces");
             Check(activeOverlay.FindName("PersonalCombatButton") is System.Windows.Controls.Button,
                 "Personal module toggle is available beside the CatScratch title");
+            foreach(var soundName in new[]{"Chime","Bell","Ping"})
+            {
+                using var sound=File.OpenRead(Path.Combine(AppContext.BaseDirectory,"sounds",soundName+".wav"));
+                Check(Core.Audio.WaveSound.Validate(sound)<=TimeSpan.FromSeconds(10),"Bundled sound fits the WAV duration limit: "+soundName);
+            }
+            meter.SetLanguage("de");
+            Check(UiText.Current.Code=="de" && UiText.Current.WaitingTitle=="Warte auf Kampf" && UiText.Current.Localize("Event settings")=="Event-Einstellungen",
+                "German is selectable and interface literals translate without changing stored identifiers");
+            foreach(var property in typeof(UiText).GetProperties().Where(p=>p.PropertyType==typeof(string) && p.SetMethod is not null))
+            {
+                var english=(string)property.GetValue(new UiText())!; var german=(string)property.GetValue(UiText.Current)!;
+                var fields=System.Text.RegularExpressions.Regex.Matches(english,@"\{[^}]+\}").Select(m=>m.Value).Order().ToArray();
+                var translatedFields=System.Text.RegularExpressions.Regex.Matches(german,@"\{[^}]+\}").Select(m=>m.Value).Order().ToArray();
+                Check(fields.SequenceEqual(translatedFields),"German retains formatting placeholders: "+property.Name);
+            }
+            activeOverlay.OnLanguageChanged();
+            Check(((System.Windows.Controls.TextBlock)healingGrid.Children[2]).Text=="Selbstheilung","Personal metric labels switch to German in the live meter");
+            var germanSettings=new AionMeter.App.Windows.SettingsWindow(meter); windows.Add(germanSettings);
+            var languages=(System.Windows.Controls.ComboBox)germanSettings.FindName("LanguageBox");
+            Check(languages.Items.Count==2 && languages.SelectedIndex==1 && new AppSettings().Language=="en" && meter.Data.Language=="de","Language settings offer English and German, retain selection and reload game names; fresh installs default to English");
+            static IEnumerable<System.Windows.DependencyObject> Descendants(System.Windows.DependencyObject node)
+            {
+                foreach(var child in System.Windows.LogicalTreeHelper.GetChildren(node).OfType<System.Windows.DependencyObject>())
+                { yield return child; foreach(var nested in Descendants(child)) yield return nested; }
+            }
+            var germanSounds=new AionMeter.App.Windows.EventSoundsWindow(cards,(_,_)=>{}); windows.Add(germanSounds);
+            var localizedSound=Descendants(germanSounds).OfType<System.Windows.Controls.ComboBox>().Skip(1).First();
+            localizedSound.SelectedIndex=1;
+            Check(cards.Saved.Sounds[Core.Events.AutomaticEventSchedule.Catalog.First().Id].Sound=="Bell" && Equals(localizedSound.SelectedItem,"Glocke"),
+                "German sound choices store stable sound IDs rather than translated labels");
+            meter.SetLanguage("en"); activeOverlay.OnLanguageChanged();
+            Check(((System.Windows.Controls.TextBlock)healingGrid.Children[2]).Text=="Self healing","Switching back to English restores the live labels");
             meter.Settings.ShowDamageTaken=meter.Settings.ShowHealingDone=true;
             using var legacyUpdater = new Updater(new AppSettings { Transient = true, AutoInstallUpdates = true });
             var release = new AionMeter.Core.Updates.ReleaseInfo(new Version(99, 0, 0), "v99.0.0",
