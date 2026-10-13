@@ -1,3 +1,4 @@
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -129,8 +130,23 @@ public partial class OverlayWindow : Window, IDisplayAppearance
     }
 
     /// <summary>Called by the app's UI timer (≈5 Hz).</summary>
+    private async void SaveLastFight_Click(object sender, RoutedEventArgs e)
+    {
+        SaveLastFightButton.IsEnabled = false;
+        try
+        {
+            await Task.Run(() => _meter.SaveLastFight());
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
+            MessageBox.Show(this, "Could not save the fight: " + ex.Message, "CatScratch", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+        finally { Refresh(); }
+    }
+
     public void Refresh()
     {
+        SaveLastFightButton.IsEnabled = _meter.CanSaveLastFight;
         SetDisplayOnly(_settings.ClickThrough);
         _vm.WallClock = TimerCards.Berlin(DateTimeOffset.UtcNow).ToString("HH:mm", System.Globalization.CultureInfo.InvariantCulture);
         var uptime = Environment.TickCount64;

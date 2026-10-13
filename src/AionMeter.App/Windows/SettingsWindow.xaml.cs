@@ -11,6 +11,23 @@ namespace AionMeter.App.Windows;
 
 public partial class SettingsWindow : Window
 {
+    private void DeleteSavedFights_Click(object sender, RoutedEventArgs e)
+    {
+        var count = _meter.History.List().Count;
+        if (count == 0) { MessageBox.Show(this, "No saved fights to delete.", "CatScratch"); return; }
+        if (MessageBox.Show(this, $"Delete all {count} saved fights? This cannot be undone.", "CatScratch",
+            MessageBoxButton.YesNo, MessageBoxImage.Warning, MessageBoxResult.No) != MessageBoxResult.Yes) return;
+        try
+        {
+            _meter.DeleteSavedFights();
+            HistoryInfo.Text = "No saved fights.";
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
+            MessageBox.Show(this, "Could not delete saved fights: " + ex.Message, "CatScratch", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+    }
+
     private void PatchNotes_Click(object sender, RoutedEventArgs e) => AppHost.Current.ShowPatchNotes();
     private void EventSounds_Click(object sender, RoutedEventArgs e) => AppHost.Current.ShowEventSounds();
     private readonly MeterService _meter;

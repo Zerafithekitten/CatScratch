@@ -152,7 +152,9 @@
                     <Border Style="{StaticResource Section}">
                         <StackPanel>
                             <TextBlock Text="{Binding SecHistory, Source={x:Static s:UiText.Current}}" Style="{StaticResource SectionLabel}" Margin="0,0,0,8" />
-                            <CheckBox x:Name="SaveHistory" Style="{StaticResource DarkCheck}"
+<TextBlock Style="{StaticResource Hint}" Text="Fights are saved only when you press Save last fight, unless automatic saving is enabled below. Only the last 10 saved fights are kept." Margin="0,0,0,8" />
+                            <Button Style="{StaticResource GhostButton}" Content="Delete saved fights" Click="DeleteSavedFights_Click" HorizontalAlignment="Left" Margin="0,0,0,8" />
+                                                        <CheckBox x:Name="SaveHistory" Style="{StaticResource DarkCheck}"
                                       Content="{Binding SaveAuto, Source={x:Static s:UiText.Current}}" />
                             <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
                                 <TextBlock Text="{Binding WhichFights, Source={x:Static s:UiText.Current}}" Style="{StaticResource Label}" />

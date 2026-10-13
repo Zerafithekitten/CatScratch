@@ -18,6 +18,12 @@ public sealed class MeterService : IDisposable
     public MeterService(AppSettings settings, Func<GameData, IEventSource>? captureFactory)
     {
         Settings = settings;
+        if (!settings.Transient && !settings.ManualHistoryDefaultsApplied)
+        {
+            settings.SaveHistory = false;
+            settings.ManualHistoryDefaultsApplied = true;
+            settings.Save();
+        }
         CaptureFactory = captureFactory;
         Data = GameData.Load(DataDirectory, UiText.Normalize(settings.Language));
         Icons = new SkillIcons(DataDirectory, settings.DownloadIcons);
@@ -326,9 +332,42 @@ public sealed class MeterService : IDisposable
                  $"counted {Format.Compact(s.TotalDamage)}{capture}");
     }
 
+    private readonly object _fightSaveGate = new();
+    private FightRecord? _lastFinishedFight;
+    private Guid? _lastSavedFight;
+    public bool CanSaveLastFight { get { lock (_fightSaveGate) return _lastFinishedFight is { } r && r.Summary.Id != _lastSavedFight; } }
+
+    public string? SaveLastFight()
+    {
+        lock (_fightSaveGate)
+            return _lastFinishedFight is { } r && r.Summary.Id != _lastSavedFight ? SaveFight(r) : null;
+    }
+
+    private string SaveFight(FightRecord record)
+    {
+        lock (_fightSaveGate)
+        {
+            var path = History.Save(record);
+            _lastSavedFight = record.Summary.Id;
+            FightSaved?.Invoke(path);
+            return path;
+        }
+    }
+
+    public void DeleteSavedFights()
+    {
+        lock (_fightSaveGate)
+        {
+            foreach (var entry in History.List()) History.Delete(entry.Path);
+            _lastSavedFight = null;
+        }
+    }
+
     private void OnEncounterFinished(FightRecord record)
     {
         LogBossFight(record.Summary);
+        if (!_replaying && !DemoRunning)
+            lock (_fightSaveGate) _lastFinishedFight = record;
         if (!ShouldSave(record.Summary)) return;
         if (_exiting) Save(); // the process is about to end: a worker thread would not get to it
         else ThreadPool.QueueUserWorkItem(_ => Save());
@@ -337,8 +376,7 @@ public sealed class MeterService : IDisposable
         {
             try
             {
-                var path = History.Save(record);
-                FightSaved?.Invoke(path);
+                SaveFight(record);
             }
             catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
             {

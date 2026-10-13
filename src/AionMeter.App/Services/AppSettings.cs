@@ -77,7 +77,8 @@ public sealed class AppSettings
     public string? SkippedUpdate { get; set; }
 
     // Capture / storage
-    public bool SaveHistory { get; set; } = true;
+    public bool SaveHistory { get; set; } = false;
+    public bool ManualHistoryDefaultsApplied { get; set; }
     public HistoryMode HistoryMode { get; set; } = HistoryMode.BossesAndLong;
     /// <summary>For <see cref="HistoryMode.BossesAndLong"/>: non-boss fights shorter than this are not saved.</summary>
     public int HistoryMinSeconds { get; set; } = 20;

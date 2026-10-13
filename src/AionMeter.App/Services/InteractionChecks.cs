@@ -224,6 +224,23 @@ internal static class InteractionChecks
             Check(notes.Content is not null, "Patch notes can open without a network request");
             Check(DirectUpdate.Root == Path.Combine(AppContext.BaseDirectory, "userdata", "temp", "updates"),
                 "Temporary update downloads and staging stay inside the installation");
+            Check(!new AppSettings().SaveHistory, "Automatic fight saving is disabled by default");
+            var historyBefore = meter.History.List().Count;
+            Check(!meter.CanSaveLastFight, "Manual saving waits for a completed fight");
+            meter.Tracker.Tick(1_000_000);
+            Check(meter.CanSaveLastFight && meter.History.List().Count == historyBefore,
+                "Completing a fight makes it saveable without automatically writing statistics");
+            var manuallySaved = meter.SaveLastFight();
+            Check(manuallySaved is not null && meter.History.Load(manuallySaved) is { } && !meter.CanSaveLastFight,
+                "Manual save writes a readable fight and disables duplicate saving");
+            Check(meter.SaveLastFight() is null, "Repeated Save last fight does not duplicate statistics");
+            if (historyBefore == 0)
+            {
+                meter.DeleteSavedFights();
+                Check(meter.History.List().Count == 0 && !File.Exists(manuallySaved) && meter.CanSaveLastFight,
+                    "Deleting saved fights removes statistics and allows saving the last fight again");
+            }
+            else meter.History.Delete(manuallySaved!);
             using var legacyUpdater = new Updater(new AppSettings { Transient = true, AutoInstallUpdates = true });
             var release = new AionMeter.Core.Updates.ReleaseInfo(new Version(99, 0, 0), "v99.0.0",
                 "https://example.invalid/release", "Verification only", null, null,

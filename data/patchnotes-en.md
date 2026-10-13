@@ -1,3 +1,9 @@
+## CatScratch v1.0.23
+
+- Turn off automatic fight saving by default, including existing installations. It remains opt-in in Settings.
+- Add Save last fight to the meter. Save the latest completed fight once, retaining only the last 10 saved fights.
+- Add Delete saved fights in Settings with confirmation. Existing saves remain untouched until explicitly deleted.
+
 ## CatScratch v1.0.22
 
 - Make compact CP/GS and total damage larger and semibold, with brighter text and sharper shadows.
