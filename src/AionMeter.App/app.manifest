@@ -4,7 +4,8 @@
   <trustInfo xmlns="urn:schemas-microsoft-com:asm.v2">
     <security>
       <requestedPrivileges xmlns="urn:schemas-microsoft-com:asm.v3">
-        <!-- Npcap normally works without admin; the app asks to restart elevated only if capture fails. -->
+        <!-- The bootstrap stays asInvoker so existing direct updaters can launch the staging helper.
+             Normal meter startup requires elevation through AdministratorStartup before capture or UI starts. -->
         <requestedExecutionLevel level="asInvoker" uiAccess="false" />
       </requestedPrivileges>
     </security>

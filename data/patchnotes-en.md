@@ -1,3 +1,9 @@
+## CatScratch v1.0.8
+
+- Normal startup now requests administrator rights before opening the meter or starting capture.
+- Cancelling the Windows permission prompt closes the launch without running the meter.
+- Direct updates remain compatible with earlier CatScratch versions; the restarted meter follows the same administrator startup rule.
+
 ## CatScratch v1.0.7
 
 - Event type colors: BOSS orange, EVENT teal, PVP purple. Colors remain visible on locked and detached cards.

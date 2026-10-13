@@ -68,6 +68,9 @@ internal static class InteractionChecks
             for (var i = 0; i < 4; i++) { mode = !mode; WindowClickThrough.ApplyAll(mode); }
             Check(Style(first) == originals[0], "Repeated toggles preserve original styles");
             Check(!HotkeyManager.TryParse("+++", out _, out _), "Invalid hotkey text rejected");
+            var elevation = AdministratorStartup.StartInfo("C:\\Cat Scratch\\CatScratch.exe", ["--updated", "argument with spaces"]);
+            Check(elevation.UseShellExecute && elevation.Verb == "runas" && elevation.ArgumentList.SequenceEqual(new[] { "--updated", "argument with spaces" }),
+                "Normal startup requests administrator elevation and preserves arguments");
             using var meter = new MeterService(new AppSettings { Transient = true, DownloadIcons = false }, null);
             var cards = new TimerCards(meter, persistent: false);
             cards.Saved.SelectedEvents = ["shugo", "rift"];

@@ -7,6 +7,7 @@ A separate always-on-top Windows damage meter for AION 2 by Zerafithekitten.
 Get Setup or the portable ZIP from [Releases](https://github.com/Zerafithekitten/CatScratch/releases/latest).
 Install once with Setup, or unzip the portable package. Both can update directly in the app.
 Install [Npcap](https://npcap.com/#download) separately, start the meter and teleport once.
+Normal startup requests administrator rights through Windows. If you cancel that prompt, the meter does not start.
 Use borderless windowed mode to keep the meter visible above the game.
 
 ## Features

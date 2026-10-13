@@ -157,6 +157,7 @@ public partial class App : Application
             Shutdown();
             return;
         }
+        if (!AdministratorStartup.Ensure(e.Args)) { Shutdown(); return; }
         _singleInstance = new Mutex(true, "AionDpsMonitor.SingleInstance", out var first);
         if (!first)
         {

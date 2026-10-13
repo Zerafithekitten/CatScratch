@@ -1,4 +1,5 @@
 CatScratch — EU/NA
+Normal startup requires Windows administrator permission. Cancelling the prompt exits without starting capture.
 
 SETUP
 1. Extract the complete program folder to a writable location.
