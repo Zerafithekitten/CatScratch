@@ -13,7 +13,6 @@ public sealed class TimerCardWindow : Window, IDisplayAppearance
     {
         if (_card is null) return;
         _card.Background=EventPanelBrushes.Background;
-        _card.BorderBrush=EventPanelBrushes.ForKind(_kind.Text);
     }
     private readonly TextBlock _name = new() { FontSize = 15, FontWeight = FontWeights.SemiBold, TextWrapping = TextWrapping.Wrap };
     private readonly TextBlock _kind = new() { FontSize = 9, FontWeight = FontWeights.Bold, Margin = new(0,0,6,0), VerticalAlignment = VerticalAlignment.Center };
@@ -56,14 +55,16 @@ public sealed class TimerCardWindow : Window, IDisplayAppearance
         void Refresh()
         {
             var card = cards.Get(id);
-            if (card is null) { _name.Text = "No upcoming event"; _time.Text = ""; if (compact && IsLoaded) Hide(); return; }
+            if (card is null) { if (_card is not null) EventPulse.Apply(_card,EventPanelBrushes.Border,false); _name.Text = "No upcoming event"; _time.Text = ""; if (compact && IsLoaded) Hide(); return; }
             if (compact && IsLoaded && !IsVisible) Show();
             Title = $"{card.Kind} · {card.Name}";
             _kind.Text = card.Kind; _kind.Foreground = EventPanelBrushes.ForKind(card.Kind);
-            if (_card is not null) _card.BorderBrush = EventPanelBrushes.ForKind(card.Kind);
             _name.Text = card.Name;
             var now = DateTimeOffset.UtcNow;
+            var started = compact && card.Next is { } at && at <= now && at > now.AddMinutes(-2);
+            if (_card is not null) EventPulse.Apply(_card,EventPanelBrushes.ForKind(card.Kind),started);
             _time.Text = (card.Next is { } next && !card.Alive ? (compact ? TimerCards.StartLabel(next, now) : TimerCards.Berlin(next).ToString("dd.MM. HH:mm")) + " · " : "") + TimerCards.Countdown(card, now);
+            if (started) _time.Text = "Started · " + TimerCards.StartLabel(card.Next!.Value,now);
             _time.TextWrapping = TextWrapping.Wrap;
             _source.Text = card.Source;
             _time.ToolTip = card.Source;
@@ -80,6 +81,6 @@ public sealed class TimerCardWindow : Window, IDisplayAppearance
             cards.Save();
         }
         LocationChanged += (_, _) => SavePosition(); SizeChanged += (_, _) => SavePosition();
-        Closed += (_, _) => clock.Stop();
+        Closed += (_, _) => { clock.Stop(); if (_card is not null) EventPulse.Apply(_card,EventPanelBrushes.Border,false); };
     }
 }

@@ -98,6 +98,8 @@ public static class SampleRenderer
                 break;
             case "events":
             case "events-locked":
+            case "events-live":
+            case "event-settings":
             case "timer-card":
                 var cards = new TimerCards(meter, persistent: false);
                 cards.Saved.Events.Add(new("sample-event", "Example: Shugo Festival", "EVENT", DateTimeOffset.UtcNow.AddHours(2)));
@@ -110,7 +112,12 @@ public static class SampleRenderer
                     break;
                 }
                 cards.Saved.SelectedEvents = ["shugo", "rift"];
-                var hub = new TimerHubWindow(cards) { Width = o.Width ?? 480, Height = 80, ClockOverride = () => new DateTimeOffset(2026, 10, 13, 13, 42, 0, TimeSpan.FromHours(2)) };
+                if (o.Window == "event-settings")
+                {
+                    host = new EventPreferencesWindow(cards, () => 480, _ => { }, _ => { }, () => { }) { Height=o.Height??680 };
+                    refresh=()=>{}; break;
+                }
+                var hub = new TimerHubWindow(cards) { Width = o.Width ?? 480, Height = o.Height??90, ClockOverride = () => o.Window == "events-live" ? new DateTimeOffset(2026,10,13,14,0,30,TimeSpan.FromHours(2)) : new DateTimeOffset(2026, 10, 13, 13, 42, 0, TimeSpan.FromHours(2)) };
                 WindowClickThrough.Attach(hub, () => o.Window == "events-locked");
                 host = hub;
                 refresh = hub.Reload;
@@ -146,7 +153,9 @@ public static class SampleRenderer
                 refresh = () => { };
                 break;
             case "settings":
-                host = new SettingsWindow(meter) { Width = o.Width ?? 640, Height = o.Height ?? 900 };
+                var settingsWindow = new SettingsWindow(meter) { Width = o.Width ?? 760, Height = o.Height ?? 660 };
+                if (int.TryParse(o.Tab,out var settingsTab)) ((System.Windows.Controls.TabControl)settingsWindow.FindName("SettingsTabs")).SelectedIndex=settingsTab;
+                host = settingsWindow;
                 refresh = () => { };
                 break;
             case "update" or "update-portable":

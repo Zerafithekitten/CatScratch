@@ -155,8 +155,8 @@ public partial class OverlayWindow : Window, IDisplayAppearance
         void Add(string label, string color, string shape)
         {
             var accent = FrozenBrush(color);
-            var surface = new Border { Background = PersonalSurface, CornerRadius = new(5), Margin = new(0,0,0,5) };
-            var grid = new Grid { Height = 30 };
+            var surface = new Border { Background = PersonalSurface, CornerRadius = new(5), Margin = new(0,0,0,2) };
+            var grid = new Grid { Height = 24 };
             grid.ColumnDefinitions.Add(new() { Width = new(3) });
             grid.ColumnDefinitions.Add(new() { Width = new(34) });
             grid.ColumnDefinitions.Add(new() { Width = new(1,GridUnitType.Star) });
@@ -847,7 +847,6 @@ public partial class OverlayWindow : Window, IDisplayAppearance
         HeaderClock.Visibility = _settings.CompactMode ? Visibility.Collapsed : Visibility.Visible;
         CompactTotal.Visibility = _settings.CompactMode ? Visibility.Visible : Visibility.Collapsed;
         CompactHistory.Visibility = CompactTotal.Visibility;
-        ViewMenuButton.Content = _settings.CompactMode ? "◫" : "View";
         if (_settings.CompactMode)
         {
             Toolbar.Visibility = Visibility.Collapsed;

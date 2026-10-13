@@ -55,10 +55,10 @@ public sealed class TimerCards : IDisposable
         var selected = Saved.ShowAllWorldBosses
             ? Saved.SelectedEvents.Concat(AutomaticEventSchedule.Catalog.Where(e => EventKinds.For(e.Id) == "BOSS").Select(e => e.Id))
             : Saved.SelectedEvents;
-        var scheduled = AutomaticEventSchedule.Next(now, Saved.EventRegion, selected);
+        var scheduled = AutomaticEventSchedule.Next(now, Saved.EventRegion, selected, TimeSpan.FromMinutes(2));
         var liveBosses = Saved.ShowAllWorldBosses
             ? _meter.Timers.ForServer(_meter.Timers.CurrentServer)
-                .Where(b => b.NpcCode > 0 && !b.AliveNow && b.NextSpawn is { } next && next >= now && next <= now.AddHours(1))
+                .Where(b => b.NpcCode > 0 && b.NextSpawn is { } next && next > now.AddMinutes(-2) && next <= now.AddHours(1))
                 .Select(b => new EventStart($"boss:{b.ServerId}:{b.NpcCode}", _meter.Data.NpcName(b.NpcCode), b.NextSpawn!.Value))
             : Enumerable.Empty<EventStart>();
         var candidates = scheduled.Concat(liveBosses).ToArray();
@@ -68,8 +68,12 @@ public sealed class TimerCards : IDisposable
         _scheduleKey = key;
         _scheduleAt = now;
         _scheduleUntil = now.AddSeconds(1);
-        if (_nextEvents.Count > 0 && _nextEvents[0].StartsAt < _scheduleUntil)
-            _scheduleUntil = _nextEvents[0].StartsAt.AddTicks(1);
+        if (_nextEvents.Count > 0)
+        {
+            var start = _nextEvents[0].StartsAt;
+            var transition = start > now ? start : start.AddMinutes(2);
+            if (transition < _scheduleUntil) _scheduleUntil = transition;
+        }
         return _nextEvents;
     }
     public TimerCards(MeterService meter, bool persistent = true)

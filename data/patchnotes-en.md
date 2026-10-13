@@ -1,3 +1,12 @@
+## CatScratch v2.1.0
+
+- Remove the unused View button from the DPS footer; display options remain available in Settings.
+- Reorganize Settings into Appearance, Combat, Hotkeys, History, Capture & data, and General. Group window, player display and visibility options separately.
+- Match both Settings and Event settings to the meter's dark rounded surfaces, teal accents and readable controls.
+- Make Personal combat more compact with shorter rows and tighter spacing.
+- Keep selected events visible for two minutes after their scheduled start. Show Started and pulse only the colored border, including detached automatic cards.
+- Keep the nearest-start and one-hour event filters. Stop animations when events expire or windows close.
+
 ## CatScratch v2.0.3
 
 - Keep a subtle dark background behind each player in click-through mode for better readability; the outer window remains transparent.

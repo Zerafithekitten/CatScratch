@@ -209,6 +209,22 @@ internal static class InteractionChecks
                 "Countdown refresh preserves locked event backgrounds");
             hub.SetDisplayOnly(false);
             Check(header.Visibility == Visibility.Visible, "Unlock restores the event header");
+            hub.ClockOverride=()=>new DateTimeOffset(2026,10,13,14,0,30,TimeSpan.FromHours(2)); hub.Reload();
+            Check(list.Children.OfType<System.Windows.Controls.Border>().Count()==2 && list.Children.OfType<System.Windows.Controls.Border>().All(b=>b.BorderBrush is System.Windows.Media.SolidColorBrush brush && brush.HasAnimatedProperties),
+                "Started simultaneous events remain visible with pulsing borders");
+            hub.SetDisplayOnly(true);
+            Check(list.Children.OfType<System.Windows.Controls.Border>().All(b=>b.BorderBrush.HasAnimatedProperties),
+                "Locking preserves active event border animation");
+            hub.ClockOverride=()=>new DateTimeOffset(2026,10,13,14,2,0,TimeSpan.FromHours(2)); hub.Reload();
+            Check(cards.NextEvents(hub.ClockOverride()).All(e=>e.StartsAt>hub.ClockOverride()) && list.Children.OfType<System.Windows.Controls.Border>().All(b=>!b.BorderBrush.HasAnimatedProperties),
+                "Started events expire at two minutes and upcoming borders stop pulsing");
+            var eventPreferences=new AionMeter.App.Windows.EventPreferencesWindow(cards,()=>480,_=>{},_=>{},()=>{}); windows.Add(eventPreferences);
+            Check(eventPreferences.Background is System.Windows.Media.SolidColorBrush eventBg && eventBg.Color.A==255 && eventPreferences.Opacity==1,
+                "Event settings use a solid interactive meter-style surface");
+            var settings=new AionMeter.App.Windows.SettingsWindow(meter); windows.Add(settings);
+            Check(((System.Windows.Controls.TabControl)settings.FindName("SettingsTabs")).Items.Count==6 && ((System.Windows.Controls.TextBox)settings.FindName("HkClick")).IsReadOnly,
+                "Settings are organized into six categories while retaining recorded hotkeys");
+            Check(activeOverlay.FindName("ViewMenuButton") is null,"Unused View button is removed from the DPS footer");
             var detached = new AionMeter.App.Windows.TimerCardWindow(cards, "auto:shugo", new CardPlacement());
             windows.Add(detached);
             detached.SetDisplayOnly(true);
@@ -271,7 +287,8 @@ internal static class InteractionChecks
             Check(AionMeter.Core.Events.EventKinds.For("boss:2305:123") == "BOSS", "Live world-boss cards retain the boss color category");
             Check(activeOverlay.FindName("EventsButton") is null, "Unused meter Events button is removed");
             meter.Settings.ShowPersonalCombatModule = true;
-            meter.Tracker.Process(new AionMeter.Core.Events.HealEvent(3,1,1,17010000,78500,AionMeter.Core.Events.HitFlags.None));
+            meter.Tracker.Process(new AionMeter.Core.Events.DamageEvent(1_000_001,1,500,17010000,100,AionMeter.Core.Events.HitFlags.None));
+            meter.Tracker.Process(new AionMeter.Core.Events.HealEvent(1_000_002,1,1,17010000,78500,AionMeter.Core.Events.HitFlags.None));
             activeOverlay.Refresh();
             var personalMetrics=(System.Windows.Controls.StackPanel)activeOverlay.FindName("PersonalMetrics");
             var healingGrid=(System.Windows.Controls.Grid)((System.Windows.Controls.Border)personalMetrics.Children[1]).Child;

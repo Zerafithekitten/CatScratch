@@ -4,11 +4,11 @@ A separate always-on-top Windows damage meter for AION 2 by Zerafithekitten.
 
 ## Preview
 
-Actual CatScratch 2.0 UI, rendered with sample data. These images show the app's appearance; names and numbers are examples.
+Actual CatScratch 2.1 UI, rendered with sample data. These images show the app's appearance; names and numbers are examples.
 
 ### DPS meter and Personal combat
 
-<img src="docs/screenshots/meter.png" alt="CatScratch 2.0 DPS meter with integrated personal damage taken and healing" width="420" />
+<img src="docs/screenshots/meter.png" alt="CatScratch 2.1 DPS meter with integrated personal damage taken and healing" width="420" />
 
 ### Click-through mode
 
@@ -26,6 +26,14 @@ The meter can be resized down to 260 px wide. Long names and CP/GS labels shorte
 
 <img src="docs/screenshots/fight-details.png" alt="Fight statistics with DPS timeline and skill damage breakdown" width="900" />
 
+### Settings and upcoming events
+
+<img src="docs/screenshots/settings.png" alt="Organized CatScratch settings" width="760" />
+
+<img src="docs/screenshots/event-settings.png" alt="Event preferences" width="470" />
+
+<img src="docs/screenshots/upcoming-events.png" alt="Events just started with colored borders" width="520" />
+
 ## Downloads
 
 Get Setup or the portable ZIP from [Releases](https://github.com/Zerafithekitten/CatScratch/releases/latest).
@@ -41,14 +49,14 @@ Use borderless windowed mode to keep the meter visible above the game.
 - Dark player rows with separate class-colored DPS bars, resizing, opacity and shortcuts recorded by pressing keys.
 - Integrated, collapsible Personal combat showing your damage taken, self healing and healing of others.
 - Click-through removes window frames while preserving damage, time and RTT.
-- Movable event cards for the next selected start within an hour.
+- Movable event cards for the next selected start within an hour, with a pulsing border for two minutes after the start.
 - Separate observed boss timers; optional fight saving, retaining the last ten saved fights.
 - Colored EVENT / PVP / BOSS badges and readable boss panels when locked.
 - Optional per-event sounds with preview, volume, reminder timing and custom WAV files.
 - Patch notes available in the meter, including offline notes for the installed version.
 - English interface and verified GitHub updates for installed and portable copies.
 
-Use Settings > Updates > Check now to update from inside the meter.
+Use Settings > General > Updates > Check now to update from inside the meter.
 CatScratch replaces its program files and restarts without running Setup. Its own userdata is preserved; failed file replacement restores backups. Updates need a writable program folder.
 Existing Zerafi DPS Monitor installations use one final migration installer to switch the executable and shortcuts to CatScratch. The installation identity and userdata stay the same; the old GitHub URL redirects to this repository.
 The main window's X exits the whole program, including event and boss windows.

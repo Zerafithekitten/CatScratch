@@ -368,9 +368,9 @@
                            Visibility="{Binding HasData, Converter={StaticResource VisibleIf}, ConverterParameter=!}" />
             </Grid>
 
-            <StackPanel x:Name="PersonalSection" Grid.Row="4" Margin="0,8,0,0" Visibility="Collapsed">
+            <StackPanel x:Name="PersonalSection" Grid.Row="4" Margin="0,5,0,0" Visibility="Collapsed">
                 <Border x:Name="PersonalDivider" Height="1" Background="#403D5261" Margin="0,0,0,6"/>
-                <Grid Height="26" Margin="0,0,0,5">
+                <Grid Height="22" Margin="0,0,0,2">
                     <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
                     <TextBlock Text="Personal combat" FontSize="13" FontWeight="SemiBold" Foreground="#EDF2F7" VerticalAlignment="Center"/>
                     <TextBlock x:Name="PersonalName" Grid.Column="1" FontSize="12" FontWeight="SemiBold" Foreground="#F2C25A" VerticalAlignment="Center" MaxWidth="120" TextTrimming="CharacterEllipsis"/>
@@ -409,7 +409,6 @@
                                    Effect="{StaticResource TextShadow}" />
                     </StackPanel>
                     <StackPanel x:Name="FooterControls" Grid.Column="1" Orientation="Horizontal" Margin="0,0,10,0">
-                        <Button x:Name="ViewMenuButton" Style="{StaticResource FooterLink}" Content="View" Click="Appearance_Click" ToolTip="View"/>
                         <Button x:Name="CompactHistory" Style="{StaticResource ToolIcon}" Content="&#xE8A5;" Click="Segments_Click" ToolTip="Statistics"/>
                         <Button Style="{StaticResource ToolIcon}" Content="&#xE8BD;" Click="Chat_Click" ToolTip="Copy fight damage (numbers + %)"/>
                         <Button Style="{StaticResource ToolIcon}" Content="&#xE8A1;" Click="PatchNotes_Click" ToolTip="Patch notes"/>

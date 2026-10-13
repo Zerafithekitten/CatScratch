@@ -2,6 +2,28 @@ using AionMeter.Core.Events;
 namespace AionMeter.Tests;
 public class AutomaticEventTests
 {
+    [Fact] public void StartedEventsRemainTogetherUntilTwoMinuteBoundary()
+    {
+        var start = DateTimeOffset.Parse("2026-10-13T14:00:00+02:00");
+        var running = AutomaticEventSchedule.Next(start.AddSeconds(119),"Europe",["shugo","rift","invasion"],TimeSpan.FromMinutes(2));
+        Assert.Equal(2,running.Count);
+        Assert.All(running,e => Assert.Equal(start,e.StartsAt));
+        var next = Assert.Single(AutomaticEventSchedule.Next(start.AddMinutes(2),"Europe",["shugo","rift","invasion"],TimeSpan.FromMinutes(2)));
+        Assert.Equal("invasion",next.Id);
+        Assert.Equal(start.AddMinutes(30),next.StartsAt);
+    }
+    [Fact] public void RecentStartsHandleMidnightAndRespectSelection()
+    {
+        var now = DateTimeOffset.Parse("2026-10-14T00:01:00+02:00");
+        var item = Assert.Single(AutomaticEventSchedule.Next(now,"Europe",["shugo"],TimeSpan.FromMinutes(2)));
+        Assert.Equal(now.AddMinutes(-1),item.StartsAt);
+        Assert.Empty(AutomaticEventSchedule.Next(now,"Europe",[],TimeSpan.FromMinutes(2)));
+    }
+    [Fact] public void DefaultScheduleDoesNotReturnPastStartsForSoundAlerts()
+    {
+        var now = DateTimeOffset.Parse("2026-10-13T14:01:00+02:00");
+        Assert.All(AutomaticEventSchedule.Next(now,"Europe",["shugo","rift"]),e => Assert.True(e.StartsAt>=now));
+    }
     [Fact] public void SimultaneousStartsAreShownTogether()
     { var next=AutomaticEventSchedule.Next(DateTimeOffset.Parse("2026-10-13T13:42:00+02:00"),"Europa",["shugo","rift"]); Assert.Equal(2,next.Count); Assert.Single(next.Select(e=>e.StartsAt).Distinct()); }
     [Fact] public void OnlyEarliestSelectedStartIsShown()

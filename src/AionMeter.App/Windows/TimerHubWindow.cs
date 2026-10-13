@@ -20,7 +20,7 @@ public sealed class TimerHubWindow : Window, IDisplayAppearance
         if (_header is not null) _header.Visibility=enabled ? Visibility.Collapsed : Visibility.Visible;
         foreach(var tile in _list.Children.OfType<Border>()) {
             tile.Background=EventPanelBrushes.Background;
-            tile.BorderBrush=tile.Child is StackPanel { Tag: EventStart item } ? EventPanelBrushes.ForKind(EventKinds.For(item.Id)) : EventPanelBrushes.Border;
+            if (tile.Child is StackPanel { Tag: EventStart item }) EventPulse.Apply(tile,EventPanelBrushes.ForKind(EventKinds.For(item.Id)),item.StartsAt <= (ClockOverride?.Invoke() ?? DateTimeOffset.UtcNow));
         }
         foreach (var placeholder in _list.Children.OfType<TextBlock>())
             placeholder.Visibility = enabled ? Visibility.Collapsed : Visibility.Visible;
@@ -34,11 +34,11 @@ public sealed class TimerHubWindow : Window, IDisplayAppearance
         SizeToContent=SizeToContent.Height; WindowStyle=WindowStyle.None; Background=Brushes.Transparent;
         Topmost=true; Foreground=Brushes.White; Opacity=cards.Saved.EventOpacity;
         var root = new DockPanel { Margin=new(4,2,4,4) };
-        var header=new DockPanel { Margin=new(0,0,0,7), Background=ColorBrush("#DF10120F"), MinHeight=24 }; DockPanel.SetDock(header,Dock.Top); root.Children.Add(header);
+        var header=new DockPanel { Margin=new(0,0,0,7), Background=ColorBrush("#DF1B2027"), MinHeight=24 }; DockPanel.SetDock(header,Dock.Top); root.Children.Add(header);
         _header=header;
-        void Button(string text, Action action) { var b=new Button { Content=text, Background=Brushes.Transparent, Foreground=ColorBrush("#99ACC8"), BorderThickness=new(0), Padding=new(6,1,6,1) }; b.Click+=(_,_)=>action(); DockPanel.SetDock(b,Dock.Right); header.Children.Add(b); }
-        Button("×",()=> { cards.Saved.EventWindowOpen=false; Close(); }); Button("⚙",Preferences);
-        header.Children.Add(new TextBlock { Text="Upcoming events", FontSize=10, FontWeight=FontWeights.SemiBold, Foreground=ColorBrush("#91A5C3"), VerticalAlignment=VerticalAlignment.Center,
+        void Button(string text, Action action) { var b=new Button { Content=text, Style=(Style)FindResource("IconButton"), Width=22, Height=22, FontSize=12 }; b.Click+=(_,_)=>action(); DockPanel.SetDock(b,Dock.Right); header.Children.Add(b); }
+        Button("\uE711",()=> { cards.Saved.EventWindowOpen=false; Close(); }); Button("\uE713",Preferences);
+        header.Children.Add(new TextBlock { Text="Upcoming events", FontSize=10, FontWeight=FontWeights.SemiBold, Foreground=ColorBrush("#79E3CF"), VerticalAlignment=VerticalAlignment.Center,
             ToolTip="Community schedule · Shugo.GG · checked Oct 12, 2026 · not officially confirmed" });
         header.MouseLeftButtonDown+=(_,e)=> {
             var source=e.OriginalSource as DependencyObject;
@@ -59,7 +59,7 @@ public sealed class TimerHubWindow : Window, IDisplayAppearance
             Top=Math.Clamp(Top,SystemParameters.VirtualScreenTop,Math.Max(SystemParameters.VirtualScreenTop,SystemParameters.VirtualScreenTop+SystemParameters.VirtualScreenHeight-ActualHeight));
             cards.Saved.EventWindowOpen=true; cards.Save(); Reload();_clock.Start();
         };
-        Closed+=(_,_)=> { _clock.Stop(); _preferences?.Close(); SavePlacement(); };
+        Closed+=(_,_)=> { _clock.Stop(); foreach (var tile in _list.Children.OfType<Border>()) EventPulse.Apply(tile,EventPanelBrushes.Border,false); _preferences?.Close(); SavePlacement(); };
         SizeChanged+=(_,_)=>Reload();
         Reload();
     }
@@ -70,6 +70,7 @@ public sealed class TimerHubWindow : Window, IDisplayAppearance
         var key=string.Join('|',events.Select(e=>$"{e.Id}:{e.StartsAt:O}"));
         if(_list.Tag as string != key)
         {
+            foreach (var tile in _list.Children.OfType<Border>()) EventPulse.Apply(tile,EventPanelBrushes.Border,false);
             _list.Children.Clear(); _list.Tag=key;
             foreach(var item in events)
             {
@@ -100,7 +101,7 @@ public sealed class TimerHubWindow : Window, IDisplayAppearance
         {
             var row=(StackPanel)border.Child; var item=(EventStart)row.Tag; var remaining=item.StartsAt-now;
             border.Width = Math.Max(220, (Width-16) / (Width>=460 ? 2 : 1));
-            ((TextBlock)row.Children[1]).Text=$"{TimerCards.StartLabel(item.StartsAt, now)} · in {(int)remaining.TotalMinutes:00}:{remaining.Seconds:00}";
+            ((TextBlock)row.Children[1]).Text=remaining <= TimeSpan.Zero ? $"Started · {(int)(-remaining).TotalMinutes:00}:{(-remaining).Seconds:00} ago" : $"{TimerCards.StartLabel(item.StartsAt, now)} · in {(int)remaining.TotalMinutes:00}:{remaining.Seconds:00}";
         }
         SetDisplayOnly(_displayOnly);
     }
@@ -112,33 +113,7 @@ public sealed class TimerHubWindow : Window, IDisplayAppearance
     private void Preferences()
     {
         if(_preferences is not null) { _preferences.Activate(); return; }
-        var panel=new StackPanel { Margin=new(20), Background=ColorBrush("#161C27") };
-        panel.Children.Add(new TextBlock { Text="Automatic events", FontSize=20, FontWeight=FontWeights.SemiBold });
-        panel.Children.Add(new TextBlock { Text="Only the next start within 60 minutes.\nEvents starting together are shown together.", Margin=new(0,8,0,12) });
-        var region=new ComboBox { ItemsSource=new[]{"Europe","NA East","NA West"}, SelectedItem=_cards.Saved.EventRegion, Margin=new(0,0,0,12) };
-        region.SelectionChanged+=(_,_)=> { _cards.Saved.EventRegion=(string)region.SelectedItem; _cards.Save(); _list.Tag=null; Reload(); }; panel.Children.Add(region);
-        var allBosses = new CheckBox { Content="Show all world bosses", IsChecked=_cards.Saved.ShowAllWorldBosses, Margin=new(0,4,0,8) };
-        allBosses.Click+=(_,_)=> { _cards.Saved.ShowAllWorldBosses=allBosses.IsChecked==true; _cards.Save(); Reload(); };
-        panel.Children.Add(allBosses);
-        panel.Children.Add(new TextBlock { Text="Includes scheduled bosses and known world-boss respawns from the game. Only the next start within one hour is shown.", TextWrapping=TextWrapping.Wrap, FontSize=11, Margin=new(0,0,0,8) });
-        foreach(var e in AutomaticEventSchedule.Catalog)
-        {
-            var check=new CheckBox { Content=e.Name, IsChecked=_cards.Saved.SelectedEvents.Contains(e.Id), Margin=new(0,4,0,4) };
-            check.Click+=(_,_)=> { _cards.Saved.SelectedEvents.Remove(e.Id); if(check.IsChecked==true) _cards.Saved.SelectedEvents.Add(e.Id); _cards.Save(); Reload(); }; panel.Children.Add(check);
-        }
-        panel.Children.Add(new TextBlock { Text="Opacity", Margin=new(0,15,0,6) });
-        var opacity=new Slider { Minimum=.4,Maximum=1,Value=_cards.Saved.EventOpacity };
-        opacity.ValueChanged+=(_,e)=> { Opacity=e.NewValue; _cards.Saved.EventOpacity=e.NewValue; _cards.Save(); }; panel.Children.Add(opacity);
-        panel.Children.Add(new TextBlock { Text="Window width", Margin=new(0,12,0,6) });
-        var width=new Slider { Minimum=240,Maximum=1000,Value=Width };
-        width.ValueChanged+=(_,e)=> { Width=e.NewValue; Reload(); }; panel.Children.Add(width);
-        var bosses=new Button { Content="Open separate boss timers", Margin=new(0,15,0,10) }; bosses.Click+=(_,_)=>AppHost.Current.ShowBossTimers(); panel.Children.Add(bosses);
-        var sounds=new Button { Content="Event sounds…", Margin=new(0,0,0,10) }; sounds.Click+=(_,_)=>AppHost.Current.ShowEventSounds(); panel.Children.Add(sounds);
-        panel.Children.Add(new TextBlock { Text="Schedule: Shugo.GG · checked Oct 12, 2026\nCommunity information, not officially confirmed.\nTimes may change with game updates.", FontSize=11, TextWrapping=TextWrapping.Wrap });
-        var source=new Button { Content="Open schedule source", Margin=new(0,8,0,0) }; source.Click+=(_,_)=>System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(AutomaticEventSchedule.Source){UseShellExecute=true}); panel.Children.Add(source);
-        _preferences=new Window { Title="Event preferences", Content=new ScrollViewer { Content=panel, Background=ColorBrush("#161C27") },
-            Background=ColorBrush("#161C27"), Foreground=Brushes.White, Opacity=1, AllowsTransparency=false, WindowStyle=WindowStyle.SingleBorderWindow,
-            Width=380, Height=600, Topmost=true, Owner=this, WindowStartupLocation=WindowStartupLocation.CenterOwner };
+        _preferences=new EventPreferencesWindow(_cards, () => Width, value => { Width=value; Reload(); SavePlacement(); }, value => Opacity=value, Reload) { Owner=this, WindowStartupLocation=WindowStartupLocation.CenterOwner };
         _preferences.Closed+=(_,_)=>_preferences=null; _preferences.Show();
     }
 }
