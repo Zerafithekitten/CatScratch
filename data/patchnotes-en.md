@@ -1,3 +1,8 @@
+## CatScratch v1.0.16
+
+- Add a Check for updates button directly to the DPS meter footer, including compact mode.
+- Show checking feedback, prevent repeat clicks while checking and open the existing update window when a new version is available.
+
 ## CatScratch v1.0.15
 
 - Fix confirmed party damage silently reverting to self-only tracking after 30 seconds without a roster update.

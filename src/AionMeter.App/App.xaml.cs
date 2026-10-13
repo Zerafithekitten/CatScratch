@@ -703,7 +703,7 @@ public partial class App : Application
         return result;
     }
 
-    private async Task CheckUpdatesFromTrayAsync()
+    public async Task CheckUpdatesFromTrayAsync()
     {
         var t = UiText.Current;
         switch (await CheckUpdatesNowAsync())

@@ -737,6 +737,18 @@ public partial class OverlayWindow : Window, IDisplayAppearance
     private void Hide_Click(object sender, RoutedEventArgs e) => Close();
     private void Events_Click(object sender, RoutedEventArgs e) => AppHost.Current.ShowTimerHub();
     private void PatchNotes_Click(object sender, RoutedEventArgs e) => AppHost.Current.ShowPatchNotes();
+
+    private async void CheckUpdates_Click(object sender, RoutedEventArgs e)
+    {
+        CheckUpdatesButton.IsEnabled = false;
+        CheckUpdatesButton.ToolTip = "Checking for updates…";
+        try { await AppHost.Current.CheckUpdatesFromTrayAsync(); }
+        finally
+        {
+            CheckUpdatesButton.IsEnabled = true;
+            CheckUpdatesButton.ToolTip = "Check for updates";
+        }
+    }
     private void NpcapDownload_Click(object sender, RoutedEventArgs e) => App.ShowNpcapHelp();
 
     private void ApplyCompactLayout()

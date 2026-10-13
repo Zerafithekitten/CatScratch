@@ -445,6 +445,7 @@
                         <Button x:Name="CompactHistory" Style="{StaticResource ToolIcon}" Content="&#xE8A5;" Click="Segments_Click" ToolTip="Statistics"/>
                         <Button Style="{StaticResource ToolIcon}" Content="&#xE8BD;" Click="Chat_Click" ToolTip="Copy fight damage (numbers + %)"/>
                         <Button Style="{StaticResource ToolIcon}" Content="&#xE8A1;" Click="PatchNotes_Click" ToolTip="Patch notes"/>
+                        <Button x:Name="CheckUpdatesButton" Style="{StaticResource ToolIcon}" Content="&#xE895;" Click="CheckUpdates_Click" ToolTip="Check for updates" AutomationProperties.Name="Check for updates"/>
                         <!-- Boss timers: always visible, shows the next respawn -->
                         <Button x:Name="BossTimersLink" Style="{StaticResource TimersPill}" Click="Timers_Click" ToolTip="{Binding T.TipTimers}" Margin="10,0,0,0">
                             <StackPanel Orientation="Horizontal">
