@@ -1,3 +1,9 @@
+## CatScratch v2.0.3
+
+- Keep a subtle dark background behind each player in click-through mode for better readability; the outer window remains transparent.
+- Allow window widths down to 260 px, including in Settings. Adapt the title bar, value columns and footer at narrow widths.
+- Display embedded GitHub preview images inside Patch notes. Load previews only when viewing notes, in memory, with download limits and an offline fallback.
+
 ## CatScratch v2.0.2
 
 - Make individual player rows noticeably more compact: shorter cards, tighter gaps, smaller class emblems and thinner DPS bars.

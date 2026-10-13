@@ -12,9 +12,15 @@ Actual CatScratch 2.0 UI, rendered with sample data. These images show the app's
 
 ### Click-through mode
 
-Window backgrounds, borders and controls disappear; DPS bars, personal values, clock and ping remain visible. The green backdrop below represents the game behind the transparent window.
+The outer window background, borders and controls disappear; subtle dark player backgrounds keep names and numbers readable. DPS bars, personal values, clock and ping remain visible. The green backdrop below represents the game behind the transparent window.
 
 <img src="docs/screenshots/meter-click-through.png" alt="Transparent click-through DPS meter and personal statistics" width="420" />
+
+### Narrow window
+
+The meter can be resized down to 260 px wide. Long names and CP/GS labels shorten when space is limited; the footer adapts to keep its controls accessible.
+
+<img src="docs/screenshots/meter-narrow.png" alt="CatScratch at its 260 px minimum width" width="260" />
 
 ### Fight details
 

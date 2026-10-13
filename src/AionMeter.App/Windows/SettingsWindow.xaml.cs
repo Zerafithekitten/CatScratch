@@ -146,7 +146,7 @@ public partial class SettingsWindow : Window
     {
         var s = _meter.Settings;
         s.CompactMode = CompactModeCheck.IsChecked == true;
-        if (int.TryParse(WindowWidthText.Text, out var width)) s.OverlayWidth = Math.Clamp(width, s.CompactMode ? 280 : 520, 1600);
+        if (int.TryParse(WindowWidthText.Text, out var width)) s.OverlayWidth = Math.Clamp(width, 260, 1600);
         if (int.TryParse(WindowHeightText.Text, out var height)) s.OverlayHeight = Math.Clamp(height, 180, 1200);
         s.WindowOpacity = WindowOpacityValue.Value;
         var captureChanged = false;

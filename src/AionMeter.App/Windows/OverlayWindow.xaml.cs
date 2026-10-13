@@ -50,7 +50,7 @@ public partial class OverlayWindow : Window, IDisplayAppearance
         DataContext = _vm;
         CreatePersonalRows();
         WindowClickThrough.Attach(this, () => _settings.ClickThrough, () => _settings.WindowOpacity);
-        MinWidth = _settings.CompactMode ? 320 : 520;
+        MinWidth = 260;
         Closing += (_, _) => AppHost.Current.ExitProgram();
 
         Left = _settings.OverlayLeft;
@@ -67,7 +67,8 @@ public partial class OverlayWindow : Window, IDisplayAppearance
         UpdateModeLabel();
         ApplyHotkeyTips();
         LayoutUpdated += (_, _) => FitNames();
-        SizeChanged += (_, _) => { if (IsLoaded && WindowState == WindowState.Normal) SavePlacement(); };
+        SizeChanged += (_, _) => { ApplyNarrowLayout(); if (IsLoaded && WindowState == WindowState.Normal) SavePlacement(); };
+        ApplyNarrowLayout();
         _meter.Updates.Changed += ShowUpdateBanner;
         ShowUpdateBanner();
 
@@ -210,6 +211,7 @@ public partial class OverlayWindow : Window, IDisplayAppearance
     private (bool Gs, bool Cp) _partyGearVisibility;
     public void Refresh()
     {
+        ApplyNarrowLayout();
         SaveLastFightButton.IsEnabled = _meter.CanSaveLastFight;
         SetDisplayOnly(_settings.ClickThrough);
         _vm.WallClock = TimerCards.Berlin(DateTimeOffset.UtcNow).ToString("HH:mm", System.Globalization.CultureInfo.InvariantCulture);
@@ -356,7 +358,7 @@ public partial class OverlayWindow : Window, IDisplayAppearance
     {
         var desiredWidth = _settings.OverlayWidth;
         var desiredHeight = _settings.OverlayHeight;
-        MinWidth = _settings.CompactMode ? 320 : 520;
+        MinWidth = 260;
         Width = Math.Max(MinWidth, desiredWidth);
         Height = Math.Max(MinHeight, desiredHeight);
         WindowClickThrough.SetOpacity(_settings.WindowOpacity);
@@ -858,6 +860,42 @@ public partial class OverlayWindow : Window, IDisplayAppearance
         DetailsLink.Visibility = visible;
         HistoryLink.Visibility = visible;
         FooterText.Visibility = visible;
+        _narrowLayoutWidth = double.NaN;
+        ApplyNarrowLayout();
+    }
+
+    private double _narrowLayoutWidth = double.NaN;
+    private void ApplyNarrowLayout()
+    {
+        if (FooterControls is null) return;
+        if (_narrowLayoutWidth == Width) return;
+        _narrowLayoutWidth = Width;
+        var narrow = Width < 360;
+        ShellPaw.Visibility = Width < 300 ? Visibility.Collapsed : Visibility.Visible;
+        ShellTitle.FontSize = Width < 320 ? 12 : 16;
+        Resources["DpsColumnWidth"] = new GridLength(Width < 320 ? 64 : 76);
+        Resources["ShareColumnWidth"] = new GridLength(Width < 320 ? 44 : 57);
+        PersonalName.MaxWidth = Math.Clamp(Width - 220,40,120);
+        Grid.SetRow(FooterControls,narrow ? 1 : 0);
+        Grid.SetColumn(FooterControls,narrow ? 0 : 1);
+        Grid.SetColumnSpan(FooterControls,narrow ? 2 : 1);
+        FooterControls.HorizontalAlignment = HorizontalAlignment.Right;
+        FooterControls.Margin = new Thickness(0,narrow ? 3 : 0,10,0);
+        if (narrow)
+        {
+            BossTimersLink.Visibility = Visibility.Collapsed;
+            DetailsLink.Visibility = Visibility.Collapsed;
+            HistoryLink.Visibility = Visibility.Collapsed;
+            FooterText.Visibility = Visibility.Collapsed;
+            CompactTotal.Visibility = Visibility.Visible;
+            CompactHistory.Visibility = Visibility.Visible;
+        }
+        else
+        {
+            var visibility = _settings.CompactMode ? Visibility.Collapsed : Visibility.Visible;
+            BossTimersLink.Visibility = DetailsLink.Visibility = HistoryLink.Visibility = FooterText.Visibility = visibility;
+            CompactTotal.Visibility = CompactHistory.Visibility = _settings.CompactMode ? Visibility.Visible : Visibility.Collapsed;
+        }
     }
 
     private void Appearance_Click(object sender, RoutedEventArgs e)

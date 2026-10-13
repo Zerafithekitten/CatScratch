@@ -5,13 +5,14 @@
         xmlns:vm="clr-namespace:AionMeter.App.ViewModels"
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
         x:Name="Root"
-        Title="CatScratch" Width="420" Height="540" MinWidth="320" MinHeight="320"
+        Title="CatScratch" Width="420" Height="540" MinWidth="260" MinHeight="320"
         WindowStyle="None" AllowsTransparency="False" Background="#101420"
         Topmost="True" ShowInTaskbar="True" ShowActivated="True" ResizeMode="CanResize"
         UseLayoutRounding="True" TextOptions.TextFormattingMode="Display"
         FontFamily="{StaticResource UiFont}">
     <Window.Resources>
         <c:VisibleIf x:Key="VisibleIf" />
+        <GridLength x:Key="DpsColumnWidth">76</GridLength><GridLength x:Key="ShareColumnWidth">57</GridLength>
 
         <Storyboard x:Key="Pulse" RepeatBehavior="Forever" AutoReverse="True">
             <DoubleAnimation Storyboard.TargetProperty="Opacity" From="1" To="0.25" Duration="0:0:0.8" />
@@ -170,12 +171,12 @@
             <Grid x:Name="ModernRow" Height="{DynamicResource CompactRowHeight}" Margin="0,0,0,2" Cursor="Hand" Background="Transparent" ToolTip="{Binding Tooltip}" MouseLeftButtonUp="Row_Click" MouseRightButtonUp="Row_RightClick">
                 <Border x:Name="RowSurface" Background="#D0171E27" BorderBrush="#302E4252" BorderThickness="1" CornerRadius="6" />
                 <Grid Margin="8,3,8,3">
-                    <Grid.ColumnDefinitions><ColumnDefinition Width="{DynamicResource ColGlyphWidth}"/><ColumnDefinition Width="*"/><ColumnDefinition Width="76"/><ColumnDefinition Width="57"/></Grid.ColumnDefinitions>
+                    <Grid.ColumnDefinitions><ColumnDefinition Width="{DynamicResource ColGlyphWidth}"/><ColumnDefinition Width="*"/><ColumnDefinition Width="{DynamicResource DpsColumnWidth}"/><ColumnDefinition Width="{DynamicResource ShareColumnWidth}"/></Grid.ColumnDefinitions>
                     <c:ClassGlyph Class="{Binding Class}" Width="{DynamicResource RowGlyphSize}" Height="{DynamicResource RowGlyphSize}" VerticalAlignment="Center" HorizontalAlignment="Left"/>
                     <Grid Grid.Column="1" Grid.ColumnSpan="3" Margin="4,0,0,0">
                         <Grid.RowDefinitions><RowDefinition Height="*"/><RowDefinition Height="5"/></Grid.RowDefinitions>
                         <Grid Margin="0,0,0,2">
-                            <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="76"/><ColumnDefinition Width="57"/></Grid.ColumnDefinitions>
+                            <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="{DynamicResource DpsColumnWidth}"/><ColumnDefinition Width="{DynamicResource ShareColumnWidth}"/></Grid.ColumnDefinitions>
                             <StackPanel VerticalAlignment="Center" Margin="0,0,6,0">
                                 <TextBlock Text="{Binding Name}" FontSize="{DynamicResource CompactNameFont}" FontWeight="SemiBold" Foreground="#EDF2F7" TextTrimming="CharacterEllipsis"/>
                                 <TextBlock Text="{Binding CompactGear}" FontSize="{DynamicResource CompactSubFont}" Foreground="#ADBCCD" TextTrimming="CharacterEllipsis"/>
@@ -196,7 +197,7 @@
             <DataTemplate.Triggers>
                 <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="RowSurface" Property="BorderBrush" Value="#6079E3CF"/></Trigger>
                 <DataTrigger Binding="{Binding DataContext.IsDisplayOnly, RelativeSource={RelativeSource AncestorType=Window}}" Value="True">
-                    <Setter TargetName="RowSurface" Property="Background" Value="Transparent"/>
+                    <Setter TargetName="RowSurface" Property="Background" Value="#B8101822"/>
                     <Setter TargetName="RowSurface" Property="BorderBrush" Value="Transparent"/>
                 </DataTrigger>
             </DataTemplate.Triggers>
@@ -208,8 +209,8 @@
         <Grid DockPanel.Dock="Top" Height="38" Margin="8,2,6,0">
             <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
             <StackPanel x:Name="ShellCaption" Orientation="Horizontal" VerticalAlignment="Center">
-                <Image Source="/Assets/app.ico" Width="22" Height="22" Margin="0,0,7,0"/>
-                <TextBlock Text="CatScratch" Foreground="#79E3CF" FontSize="16" FontWeight="Bold" VerticalAlignment="Center"/>
+                <Image x:Name="ShellPaw" Source="/Assets/app.ico" Width="22" Height="22" Margin="0,0,7,0"/>
+                <TextBlock x:Name="ShellTitle" Text="CatScratch" Foreground="#79E3CF" FontSize="16" FontWeight="Bold" VerticalAlignment="Center"/>
                             <Button x:Name="PersonalCombatButton" Style="{StaticResource ToolIcon}" Content="&#xE95E;" Click="PersonalCombat_Click" ToolTip="Show / hide personal combat" AutomationProperties.Name="Toggle personal combat module" Margin="4,0,0,0" />
 </StackPanel>
             <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
@@ -394,7 +395,8 @@
                     <Button Grid.Column="1" Style="{StaticResource IconButton}" Content="&#xE711;" Click="UpdateBannerClose_Click" Margin="4,0,8,0"
                             VerticalAlignment="Center" ToolTip="{Binding T.UpdateLater}" />
                 </Grid>
-                <Grid>
+                <Grid x:Name="FooterLayout">
+                    <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="Auto" />

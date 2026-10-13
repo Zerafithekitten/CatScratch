@@ -3,6 +3,9 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Net.Http;
+using System.Text.RegularExpressions;
 using AionMeter.App.Services;
 using AionMeter.Core.Updates;
 
@@ -10,7 +13,9 @@ namespace AionMeter.App.Windows;
 
 public sealed class PatchNotesWindow : Window
 {
-    private readonly TextBlock _notes = new() { TextWrapping = TextWrapping.Wrap, FontSize = 13, LineHeight = 21 };
+    private readonly StackPanel _notes = new();
+    private readonly HttpClient _images = new() { Timeout = TimeSpan.FromSeconds(15) };
+    private int _notesRevision;
     private readonly TextBlock _state = new() { Margin = new Thickness(0,8,0,12), Foreground = Brushes.LightGray };
     private readonly CancellationTokenSource _lifetime = new();
     public PatchNotesWindow(Updater updater)
@@ -48,17 +53,64 @@ public sealed class PatchNotesWindow : Window
             { if (!_lifetime.IsCancellationRequested) _state.Text = "GitHub unavailable. Displaying the saved notes."; }
             finally { if (!_lifetime.IsCancellationRequested) refresh.IsEnabled = true; }
         };
-        Closed += (_, _) => _lifetime.Cancel();
+        Closed += (_, _) => { _lifetime.Cancel(); _images.Dispose(); };
     }
-    private void ShowNotes(string markdown, string caption)
+    private async void ShowNotes(string markdown, string caption)
     {
+        var revision = ++_notesRevision;
         _state.Text = caption;
-        _notes.Inlines.Clear();
-        foreach (var (text, heading) in ReleaseNotes.Lines(markdown, "en"))
+        _notes.Children.Clear();
+        var pending = new List<(Image Image, TextBlock Status, Uri Uri)>();
+        foreach (var line in markdown.Split('\n'))
         {
-            if (_notes.Inlines.Count > 0) _notes.Inlines.Add(new LineBreak());
-            _notes.Inlines.Add(new Run(text) { FontWeight = heading ? FontWeights.SemiBold : FontWeights.Normal,
-                Foreground = heading ? Brushes.PaleGoldenrod : Brushes.White });
+            var match = Regex.Match(line, "<img\\b[^>]*\\bsrc=[\"'](?<url>[^\"']+)[\"']|!\\[[^\\]]*\\]\\((?<url>[^\\s)]+)\\)", RegexOptions.IgnoreCase);
+            if (match.Success && Uri.TryCreate(match.Groups["url"].Value, UriKind.Absolute, out var uri) &&
+                uri.Scheme == "https" && uri.Host == "raw.githubusercontent.com" &&
+                uri.AbsolutePath.StartsWith("/Zerafithekitten/CatScratch/", StringComparison.OrdinalIgnoreCase) && pending.Count < 4)
+            {
+                var image = new Image { Stretch = Stretch.Uniform, MaxWidth = 560, HorizontalAlignment = HorizontalAlignment.Left, Margin = new(0,8,0,12) };
+                var status = new TextBlock { Text = "Loading preview…", Foreground = Brushes.LightGray, Margin = new(0,4,0,8) };
+                _notes.Children.Add(status); _notes.Children.Add(image);
+                pending.Add((image,status,uri));
+                continue;
+            }
+            foreach (var (text, heading) in ReleaseNotes.Lines(line, "en"))
+                _notes.Children.Add(new TextBlock { Text = text, TextWrapping = TextWrapping.Wrap, FontSize = 13, LineHeight = 21,
+                    Margin = new(0,0,0,4), FontWeight = heading ? FontWeights.SemiBold : FontWeights.Normal,
+                    Foreground = heading ? Brushes.PaleGoldenrod : Brushes.White });
+        }
+        foreach (var preview in pending)
+        {
+            if (_lifetime.IsCancellationRequested || revision != _notesRevision) return;
+            try
+            {
+                using var timeout = CancellationTokenSource.CreateLinkedTokenSource(_lifetime.Token);
+                timeout.CancelAfter(TimeSpan.FromSeconds(15));
+                using var response = await _images.GetAsync(preview.Uri, HttpCompletionOption.ResponseHeadersRead, timeout.Token);
+                response.EnsureSuccessStatusCode();
+                const int limit = 4 * 1024 * 1024;
+                if (response.Content.Headers.ContentLength is > limit) throw new InvalidDataException("Preview too large");
+                await using var stream = await response.Content.ReadAsStreamAsync(timeout.Token);
+                using var bytes = new MemoryStream();
+                var buffer = new byte[8192];
+                int read;
+                while ((read = await stream.ReadAsync(buffer, timeout.Token)) > 0)
+                {
+                    if (bytes.Length + read > limit) throw new InvalidDataException("Preview too large");
+                    bytes.Write(buffer,0,read);
+                }
+                if (_lifetime.IsCancellationRequested || revision != _notesRevision) return;
+                bytes.Position = 0;
+                var bitmap = new BitmapImage();
+                bitmap.BeginInit(); bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                bitmap.DecodePixelWidth = 900; bitmap.StreamSource = bytes; bitmap.EndInit(); bitmap.Freeze();
+                preview.Image.Source = bitmap; preview.Status.Visibility = Visibility.Collapsed;
+            }
+            catch (Exception error) when (error is HttpRequestException or OperationCanceledException or IOException or NotSupportedException or InvalidOperationException or FormatException or ArgumentException)
+            {
+                if (_lifetime.IsCancellationRequested || revision != _notesRevision) return;
+                preview.Status.Text = "Preview unavailable. Open the release on GitHub to view screenshots.";
+            }
         }
     }
 }
