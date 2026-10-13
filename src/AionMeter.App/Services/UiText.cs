@@ -332,7 +332,7 @@ public sealed class UiText
     public string StatusPrefix { get; init; } = "Status: ";
     public string NpcapMissing { get; init; } = "Npcap not installed";
     public string NpcapNeeded { get; init; } =
-        "AION2 DPS Meter reads the game's own network traffic through Npcap, a free capture driver — and it is not installed yet.\n\n" +
+        "CatScratch reads the game's own network traffic through Npcap, a free capture driver — and it is not installed yet.\n\n" +
         "Install it from npcap.com with the default options (ExitLag and other ping boosters work with them too), then start the meter again.\n\n" +
         "Open the download page now?";
     public string SecHotkeys { get; init; } = "HOTKEYS";
@@ -347,24 +347,24 @@ public sealed class UiText
     public string OpenDataFolder { get; init; } = "Open data folder";
     public string OpenAppFolder { get; init; } = "Open app folder";
     public string Logs { get; init; } = "Logs";
-    public string Disclaimer { get; init; } = "AION2 DPS Meter only listens to your own network connection. It never reads game memory, injects anything or sends a byte to the game. Third-party tools may still be against the game's terms of service — use at your own risk.";
+    public string Disclaimer { get; init; } = "CatScratch only listens to your own network connection. It never reads game memory, injects anything or sends a byte to the game. Third-party tools may still be against the game's terms of service — use at your own risk.";
     public string Cancel { get; init; } = "Cancel";
     public string Save { get; init; } = "Save";
 
     // Updates
     public string UpdateTitle { get; init; } = "Update available";
-    public string UpdateHeadline { get; init; } = "AION2 DPS Meter {0} is out";
+    public string UpdateHeadline { get; init; } = "CatScratch {0} is out";
     public string UpdateYouHave { get; init; } = "You have {0}.";
     public string UpdateReleased { get; init; } = "You have {0}. The new one was released {1}.";
     public string UpdateWhatsNew { get; init; } = "WHAT'S NEW";
-    public string UpdateInstalledHint { get; init; } = "The meter closes, the installer updates it and starts it again. Settings, fight history and timers stay.";
-    public string UpdatePortableHint { get; init; } = "This copy was unzipped by hand, so it cannot replace itself: download the new zip and unzip it over this folder, or switch to the installer.";
+    public string UpdateInstalledHint { get; init; } = "CatScratch downloads the update, replaces its program files and restarts. Settings, fight history and timers stay.";
+    public string UpdatePortableHint { get; init; } = "This release has no verified update package. Open its release page to download it.";
     public string UpdateNow { get; init; } = "Update";
     public string UpdateOpenPage { get; init; } = "Open download page";
     public string UpdateLater { get; init; } = "Later";
     public string UpdateSkip { get; init; } = "Skip this version";
-    public string UpdateDownloading { get; init; } = "Downloading the installer… {0:0}%";
-    public string UpdateStarting { get; init; } = "Starting the installer…";
+    public string UpdateDownloading { get; init; } = "Downloading the update… {0:0}%";
+    public string UpdateStarting { get; init; } = "Restarting to apply the update…";
     public string UpdateFailed { get; init; } = "Could not update: {0}. The new version can be downloaded from the release page.";
     public string UpdateBanner { get; init; } = "Version {0} is out — click to update";
     public string TipUpdate { get; init; } = "What's new, and update in one click";
@@ -376,7 +376,7 @@ public sealed class UiText
     public string CheckUpdatesAuto { get; init; } = "Check GitHub for new versions";
     public string UpdatesHint { get; init; } = "Shortly after start and every 2 hours. The meter only asks GitHub which version is the newest; nothing about you or your fights is sent.";
     public string AutoInstallUpdates { get; init; } = "Install updates by itself";
-    public string AutoInstallHint { get; init; } = "A new version is downloaded in the background and installed when you are not playing (or after 10 minutes without a fight): the meter restarts by itself, without any window. Installed copies only.";
+    public string AutoInstallHint { get; init; } = "A new version is downloaded in the background and installed when you are not playing (or after 10 minutes without a fight): the meter restarts by itself, without any window. Works with installed and portable copies.";
     public string UpdateBannerReady { get; init; } = "Update {0} is ready — it installs itself when you are not playing";
     public string UpdateReadyBalloon { get; init; } = "Version {0} is downloaded and installs itself when you are not playing. Click here to install it now.";
     public string VersionInstalled { get; init; } = "Version {0} · installed";
@@ -666,7 +666,7 @@ public sealed class UiText
         StatusPrefix = "Статус: ",
         NpcapMissing = "Npcap не установлен",
         NpcapNeeded =
-            "AION2 DPS Meter читает сетевой трафик игры через Npcap — бесплатный драйвер захвата, а он ещё не установлен.\n\n" +
+            "CatScratch читает сетевой трафик игры через Npcap — бесплатный драйвер захвата, а он ещё не установлен.\n\n" +
             "Установите его с npcap.com с настройками по умолчанию (с ними работают и ExitLag, и другие ускорители пинга), затем запустите метр снова.\n\n" +
             "Открыть страницу загрузки?",
         SecHotkeys = "ГОРЯЧИЕ КЛАВИШИ",
@@ -681,11 +681,11 @@ public sealed class UiText
         OpenDataFolder = "Папка данных",
         OpenAppFolder = "Папка программы",
         Logs = "Логи",
-        Disclaimer = "AION2 DPS Meter только слушает ваше собственное сетевое соединение. Он не читает память игры, ничего не внедряет и не отправляет в игру ни байта. Тем не менее сторонние программы могут нарушать правила игры — используйте на свой риск.",
+        Disclaimer = "CatScratch только слушает ваше собственное сетевое соединение. Он не читает память игры, ничего не внедряет и не отправляет в игру ни байта. Тем не менее сторонние программы могут нарушать правила игры — используйте на свой риск.",
         Cancel = "Отмена",
         Save = "Сохранить",
         UpdateTitle = "Доступно обновление",
-        UpdateHeadline = "Вышла версия AION2 DPS Meter {0}",
+        UpdateHeadline = "Вышла версия CatScratch {0}",
         UpdateYouHave = "У вас {0}.",
         UpdateReleased = "У вас {0}. Новая выпущена {1}.",
         UpdateWhatsNew = "ЧТО НОВОГО",

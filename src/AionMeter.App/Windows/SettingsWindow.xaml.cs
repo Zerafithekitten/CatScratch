@@ -81,7 +81,7 @@ public partial class SettingsWindow : Window
         Icons.IsChecked = s.DownloadIcons;
         CheckUpdates.IsChecked = s.CheckUpdates;
         AutoInstallUpdates.IsChecked = s.AutoInstallUpdates;
-        AutoInstallUpdates.IsEnabled = Updater.IsInstalled; // a portable copy cannot replace itself
+        AutoInstallUpdates.IsEnabled = true;
         VersionText.Text = string.Format(Updater.IsInstalled ? T.VersionInstalled : T.VersionPortable, _meter.Updates.Current.ToString(3));
 
         CaptureState.Text = T.StatusPrefix + _meter.CaptureStatus.Message;

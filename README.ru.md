@@ -1,10 +1,10 @@
-# AION2 DPS Meter — DPS-метр для AION 2 (Global / EU)
+# CatScratch — DPS-метр для AION 2 (Global / EU)
 
 [English](README.md) · **Русский**
 
-**[⬇ Скачать установщик](https://github.com/cyberbadger6969/aion2-dps-meter/releases/latest/download/AION2DpsMeter-Setup.exe)** ·
-[zip без установки](https://github.com/cyberbadger6969/aion2-dps-meter/releases/latest/download/AION2DpsMeter-win-x64.zip) ·
-[все файлы последнего релиза](https://github.com/cyberbadger6969/aion2-dps-meter/releases/latest) — ссылки всегда ведут на
+**[⬇ Скачать установщик](https://github.com/Zerafithekitten/CatScratch/releases/latest/download/CatScratch-Setup.exe)** ·
+[zip без установки](https://github.com/Zerafithekitten/CatScratch/releases/latest/download/CatScratch-win-x64.zip) ·
+[все файлы последнего релиза](https://github.com/Zerafithekitten/CatScratch/releases/latest) — ссылки всегда ведут на
 самую новую версию.
 
 <p align="center"><img src="docs/images/overlay-fight.gif" width="380" alt="Оверлей во время боя с боссом"></p>
@@ -18,15 +18,15 @@
 
 ## Установка (для игроков)
 
-**Установщик** — `AION2DpsMeter-Setup-v<версия>.exe`: запустить и нажимать «Далее». Ставится для текущего пользователя
-(без прав администратора) в `%LocalAppData%\Programs\AION2 DPS Meter`, создаёт ярлыки на рабочем столе и в «Пуске»,
+**Установщик** — `CatScratch-Setup-v<версия>.exe`: запустить и нажимать «Далее». Ставится для текущего пользователя
+(без прав администратора) в `%LocalAppData%\Programs\CatScratch`, создаёт ярлыки на рабочем столе и в «Пуске»,
 удаляется через «Параметры → Приложения». Если нет [Npcap](https://npcap.com/#download) (бесплатный драйвер захвата),
 установщик покажет страницу с кнопкой загрузки — Npcap ставится с настройками по умолчанию, они подходят и для ExitLag.
 Обновления метр предлагает сам (с версии 0.2.0); можно и вручную запустить установщик новой версии — он сам закроет
 запущенный метр. На предупреждение SmartScreen: «Подробнее» → «Выполнить в любом случае».
 
-**Без установки** — `AION2DpsMeter-v<версия>-win-x64.zip`: поставить Npcap, распаковать архив в любую папку и запустить
-`AION2DpsMeter.exe`. .NET ставить не нужно ни в одном из вариантов — он внутри.
+**Без установки** — `CatScratch-v<версия>-win-x64.zip`: поставить Npcap, распаковать архив в любую папку и запустить
+`CatScratch.exe`. .NET ставить не нужно ни в одном из вариантов — он внутри.
 
 Настройки, история и таймеры лежат в `%AppData%\AionMeter` и переживают обновления. Подробная инструкция на русском и
 английском — `INSTALL.txt`.
@@ -39,10 +39,10 @@
 
 Скрипт собирает в `dist\`:
 
-- `AION2DpsMeter-Setup-v<версия>.exe` — установщик ([Inno Setup 7](https://jrsoftware.org/isdl.php), скрипт
-  `installer/AION2DpsMeter.iss`; если Inno Setup не установлен, этот шаг пропускается с предупреждением);
-- `AION2DpsMeter-v<версия>-win-x64.zip` — то же без установки (самодостаточный exe, папка `data`, `LICENSE`, `INSTALL.txt`);
-- `AION2DpsMeter-v<версия>-source.zip` — исходники без записей трафика (по GPL-3.0 их нужно давать вместе с программой).
+- `CatScratch-Setup-v<версия>.exe` — установщик ([Inno Setup 7](https://jrsoftware.org/isdl.php), скрипт
+  `installer/CatScratch.iss`; если Inno Setup не установлен, этот шаг пропускается с предупреждением);
+- `CatScratch-v<версия>-win-x64.zip` — то же без установки (самодостаточный exe, папка `data`, `LICENSE`, `INSTALL.txt`);
+- `CatScratch-v<версия>-source.zip` — исходники без записей трафика (по GPL-3.0 их нужно давать вместе с программой).
 
 Версия берётся из `<Version>` в `src/AionMeter.App/AionMeter.App.csproj` — поднимите её перед выпуском. Всё
 выкладывается вместе в GitHub Releases с тегом `v<версия>`. Проверка обновлений в метре смотрит на последний релиз
@@ -50,11 +50,11 @@
 копии предложат только страницу загрузки.
 
 ```powershell
-gh release create v<версия> dist\AION2DpsMeter-Setup-v<версия>.exe dist\AION2DpsMeter-Setup.exe dist\AION2DpsMeter-v<версия>-win-x64.zip dist\AION2DpsMeter-win-x64.zip dist\AION2DpsMeter-v<версия>-source.zip --title "AION2 DPS Meter <версия>" --notes-file notes.md
+gh release create v<версия> dist\CatScratch-Setup-v<версия>.exe dist\CatScratch-Setup.exe dist\CatScratch-v<версия>-win-x64.zip dist\CatScratch-win-x64.zip dist\CatScratch-v<версия>-source.zip --title "CatScratch <версия>" --notes-file notes.md
 ```
 
-Файлы без номера версии (`AION2DpsMeter-Setup.exe`, `AION2DpsMeter-win-x64.zip`) нужны для постоянных ссылок: сайт ведёт на
-`https://github.com/cyberbadger6969/aion2-dps-meter/releases/latest/download/AION2DpsMeter-Setup.exe` и всегда отдаёт
+Файлы без номера версии (`CatScratch-Setup.exe`, `CatScratch-win-x64.zip`) нужны для постоянных ссылок: сайт ведёт на
+`https://github.com/Zerafithekitten/CatScratch/releases/latest/download/CatScratch-Setup.exe` и всегда отдаёт
 последнюю версию.
 
 ## Требования для сборки из исходников
@@ -70,7 +70,7 @@ dotnet build AionMeter.sln -c Release
 ```
 
 ```bash
-src/AionMeter.App/bin/Release/net10.0-windows/AION2DpsMeter.exe
+src/AionMeter.App/bin/Release/net10.0-windows/CatScratch.exe
 ```
 
 Запускайте метр **до** входа в подземелье. Игра присылает ники только на экране загрузки, поэтому игроки, которые
@@ -175,7 +175,7 @@ GitHub, и ставит его в спокойный момент — сразу
 установщик не сработал, снова запускается старая версия. Выключить — Настройки → Обновления («Устанавливать обновления
 самому»): тогда метр только сообщает о новой версии, а ставит её кнопка «Обновить» в окне обновления (описание там — на
 языке интерфейса). Копия из zip открывает страницу загрузки. Метр отправляет только сам
-запрос к `api.github.com` (заголовок `AION2DpsMeter/<версия>`), ничего о пользователе и боях.
+запрос к `api.github.com` (заголовок `CatScratch/<версия>`), ничего о пользователе и боях.
 
 Проверить то, что видит метр, можно из консоли: `aionmeter-cli update-check [--pretend 0.0.1] [--download <папка>]`.
 

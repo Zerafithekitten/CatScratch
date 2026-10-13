@@ -33,7 +33,7 @@ public partial class UpdateWindow : Window
             ? string.Format(t.UpdateReleased, current, FormatDate(at))
             : string.Format(t.UpdateYouHave, current);
         ShowNotes(release.Notes);
-        _canInstall = installed && release.Installer is not null;
+        _canInstall = release.Portable is { Sha256.Length: 64 };
         UpdateButton.Content = _canInstall ? t.UpdateNow : t.UpdateOpenPage;
         Hint.Text = _canInstall ? t.UpdateInstalledHint : t.UpdatePortableHint;
     }
@@ -64,11 +64,11 @@ public partial class UpdateWindow : Window
         });
         try
         {
-            var installer = await _updater.DownloadInstallerAsync(Release, progress, _download.Token);
+            var package = await _updater.DownloadPackageAsync(Release, progress, _download.Token);
             State.Text = t.UpdateStarting;
-            Log.Info($"Updating to {Release.Tag} with {installer}");
-            Updater.LaunchInstaller(installer);
-            AppHost.Current.ExitProgram(); // the installer replaces our files and starts the new version
+            Log.Info($"Updating to {Release.Tag} with {package}");
+            DirectUpdate.Launch(package, Release.Version);
+            AppHost.Current.ExitProgram();
         }
         catch (OperationCanceledException) when (_download.IsCancellationRequested)
         {

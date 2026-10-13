@@ -1,11 +1,11 @@
-# Zerafi DPS Monitor
+# CatScratch
 
 A separate always-on-top Windows damage meter for AION 2 by Zerafithekitten.
 
 ## Downloads
 
-Get Setup or the portable ZIP from [Releases](https://github.com/Zerafithekitten/zerafi-dps-monitor/releases/latest).
-Use Setup for automatic installation of updates. Portable copies offer downloads.
+Get Setup or the portable ZIP from [Releases](https://github.com/Zerafithekitten/CatScratch/releases/latest).
+Install once with Setup, or unzip the portable package. Both can update directly in the app.
 Install [Npcap](https://npcap.com/#download) separately, start the meter and teleport once.
 Use borderless windowed mode to keep the meter visible above the game.
 
@@ -17,9 +17,11 @@ Use borderless windowed mode to keep the meter visible above the game.
 - Click-through removes window frames while preserving damage, time and RTT.
 - Movable event cards for the next selected start within an hour.
 - Separate observed boss timers; history limited to ten completed fights.
-- English interface and GitHub updates for installed copies.
+- English interface and verified GitHub updates for installed and portable copies.
 
 Use Settings > Updates > Check now to update from inside the meter.
+CatScratch replaces its program files and restarts without running Setup. Its own userdata is preserved; failed file replacement restores backups. Updates need a writable program folder.
+Existing Zerafi DPS Monitor installations use one final migration installer to switch the executable and shortcuts to CatScratch. The installation identity and userdata stay the same; the old GitHub URL redirects to this repository.
 The main window's X exits the whole program, including event and boss windows.
 The show/hide shortcut only changes visibility.
 

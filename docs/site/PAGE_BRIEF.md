@@ -1,6 +1,6 @@
-# AION2 DPS Meter — страница загрузки (задание для Claude Code)
+# CatScratch — страница загрузки (задание для Claude Code)
 
-В этой папке всё для страницы, с которой игроки скачивают AION2 DPS Meter:
+В этой папке всё для страницы, с которой игроки скачивают CatScratch:
 
 - этот файл — что сделать, ссылки, тексты на английском и русском, метатеги;
 - `page-preview.html` — образец страницы (откройте в браузере): структура, порядок блоков и оформление;
@@ -20,13 +20,13 @@
 5. Добавить метатеги (раздел 7).
 6. Сделать скачивание прямо с сайта: адрес `/download/aion2-dps-meter` с переадресацией на установщик (раздел 2).
 7. Проверить: ширина телефона 375 px, видео играет само без звука и по кругу, у всех картинок есть alt, все ссылки
-   открываются, кнопка «Скачать» сразу скачивает `AION2DpsMeter-Setup.exe`.
+   открываются, кнопка «Скачать» сразу скачивает `CatScratch-Setup.exe`.
 
 ## 2. Ссылки
 
 | Что | Адрес |
 |---|---|
-| Скачать установщик (последняя версия, с 0.2.0) | https://github.com/cyberbadger6969/aion2-dps-meter/releases/latest/download/AION2DpsMeter-Setup.exe |
+| Скачать установщик (последняя версия, с 0.2.0) | https://github.com/cyberbadger6969/aion2-dps-meter/releases/latest/download/CatScratch-Setup.exe |
 | Страница последнего релиза | https://github.com/cyberbadger6969/aion2-dps-meter/releases/latest |
 | Исходный код | https://github.com/cyberbadger6969/aion2-dps-meter |
 | Сообщить об ошибке | https://github.com/cyberbadger6969/aion2-dps-meter/issues |
@@ -35,11 +35,11 @@
 
 ### Скачивание прямо с сайта
 
-Кнопка «Скачать» должна сразу отдавать файл `AION2DpsMeter-Setup.exe` — без перехода на GitHub. Начиная с версии 0.2.0
+Кнопка «Скачать» должна сразу отдавать файл `CatScratch-Setup.exe` — без перехода на GitHub. Начиная с версии 0.2.0
 в каждом релизе есть копии с постоянными именами, поэтому эти адреса всегда отдают самую новую версию:
 
-- установщик: `https://github.com/cyberbadger6969/aion2-dps-meter/releases/latest/download/AION2DpsMeter-Setup.exe`
-- без установки: `https://github.com/cyberbadger6969/aion2-dps-meter/releases/latest/download/AION2DpsMeter-win-x64.zip`
+- установщик: `https://github.com/cyberbadger6969/aion2-dps-meter/releases/latest/download/CatScratch-Setup.exe`
+- без установки: `https://github.com/cyberbadger6969/aion2-dps-meter/releases/latest/download/CatScratch-win-x64.zip`
 
 **Рекомендуемый способ — свой адрес с переадресацией.** Сделать на сайте адреса
 `/download/aion2-dps-meter` и `/download/aion2-dps-meter-zip`, которые отвечают переадресацией (302) на адреса выше.
@@ -51,8 +51,8 @@
 module.exports = {
   async redirects() {
     return [
-      { source: '/download/aion2-dps-meter', destination: 'https://github.com/cyberbadger6969/aion2-dps-meter/releases/latest/download/AION2DpsMeter-Setup.exe', permanent: false },
-      { source: '/download/aion2-dps-meter-zip', destination: 'https://github.com/cyberbadger6969/aion2-dps-meter/releases/latest/download/AION2DpsMeter-win-x64.zip', permanent: false },
+      { source: '/download/aion2-dps-meter', destination: 'https://github.com/cyberbadger6969/aion2-dps-meter/releases/latest/download/CatScratch-Setup.exe', permanent: false },
+      { source: '/download/aion2-dps-meter-zip', destination: 'https://github.com/cyberbadger6969/aion2-dps-meter/releases/latest/download/CatScratch-win-x64.zip', permanent: false },
     ];
   },
 };
@@ -60,27 +60,27 @@ module.exports = {
 
 ```nginx
 # nginx
-location = /download/aion2-dps-meter     { return 302 https://github.com/cyberbadger6969/aion2-dps-meter/releases/latest/download/AION2DpsMeter-Setup.exe; }
-location = /download/aion2-dps-meter-zip { return 302 https://github.com/cyberbadger6969/aion2-dps-meter/releases/latest/download/AION2DpsMeter-win-x64.zip; }
+location = /download/aion2-dps-meter     { return 302 https://github.com/cyberbadger6969/aion2-dps-meter/releases/latest/download/CatScratch-Setup.exe; }
+location = /download/aion2-dps-meter-zip { return 302 https://github.com/cyberbadger6969/aion2-dps-meter/releases/latest/download/CatScratch-win-x64.zip; }
 ```
 
 ```text
 # Netlify / Cloudflare Pages — файл _redirects
-/download/aion2-dps-meter      https://github.com/cyberbadger6969/aion2-dps-meter/releases/latest/download/AION2DpsMeter-Setup.exe  302
-/download/aion2-dps-meter-zip  https://github.com/cyberbadger6969/aion2-dps-meter/releases/latest/download/AION2DpsMeter-win-x64.zip  302
+/download/aion2-dps-meter      https://github.com/cyberbadger6969/aion2-dps-meter/releases/latest/download/CatScratch-Setup.exe  302
+/download/aion2-dps-meter-zip  https://github.com/cyberbadger6969/aion2-dps-meter/releases/latest/download/CatScratch-win-x64.zip  302
 ```
 
 ```apache
 # Apache — .htaccess
-Redirect 302 /download/aion2-dps-meter https://github.com/cyberbadger6969/aion2-dps-meter/releases/latest/download/AION2DpsMeter-Setup.exe
-Redirect 302 /download/aion2-dps-meter-zip https://github.com/cyberbadger6969/aion2-dps-meter/releases/latest/download/AION2DpsMeter-win-x64.zip
+Redirect 302 /download/aion2-dps-meter https://github.com/cyberbadger6969/aion2-dps-meter/releases/latest/download/CatScratch-Setup.exe
+Redirect 302 /download/aion2-dps-meter-zip https://github.com/cyberbadger6969/aion2-dps-meter/releases/latest/download/CatScratch-win-x64.zip
 ```
 
 Переадресация должна быть временной (302 / `permanent: false`), чтобы браузеры не запоминали её навсегда.
 
 **Если файл должен лежать на самом сайте** (например, сайт не может делать переадресацию): положить
-`AION2DpsMeter-Setup.exe` в статические файлы и отдавать его с заголовками `Content-Type: application/octet-stream` и
-`Content-Disposition: attachment; filename="AION2DpsMeter-Setup.exe"`. Минус — при каждой новой версии файл нужно
+`CatScratch-Setup.exe` в статические файлы и отдавать его с заголовками `Content-Type: application/octet-stream` и
+`Content-Disposition: attachment; filename="CatScratch-Setup.exe"`. Минус — при каждой новой версии файл нужно
 заменять (взять из нового релиза на GitHub). Встроенное обновление в программе в любом случае берёт новые версии с
 GitHub, сайт для него не нужен.
 
@@ -113,7 +113,7 @@ GitHub, сайт для него не нужен.
 | `images/update-banner-en.png`, `-ru.png` | 750×150 | 500×100 | «Always up to date» (с 0.2.0) | The overlay announces a new version | Оверлей сообщает о новой версии |
 | `images/overlay-en-transparent.png` | 750×1140 | по месту | Если нужен оверлей поверх своего фона (например, игрового скриншота) | Live overlay | Оверлей |
 | `images/social-preview.png` | 1200×630 | — | `og:image`, `twitter:image` | — | — |
-| `images/icon-256.png` | 256×256 | 48–96 | Логотип программы в шапке блока, favicon раздела | AION2 DPS Meter icon | Значок AION2 DPS Meter |
+| `images/icon-256.png` | 256×256 | 48–96 | Логотип программы в шапке блока, favicon раздела | CatScratch icon | Значок CatScratch |
 | `images/installer-art.png` | 430×824 | по месту | Необязательно: декор у блока установки | — | — |
 
 Видео на странице:
@@ -121,7 +121,7 @@ GitHub, сайт для него не нужен.
 ```html
 <video autoplay muted loop playsinline preload="metadata" width="375" height="570"
        poster="/media/aion2-dps-meter/overlay-fight-en-poster.png"
-       aria-label="AION2 DPS Meter overlay during a boss fight">
+       aria-label="CatScratch overlay during a boss fight">
   <source src="/media/aion2-dps-meter/overlay-fight-en.mp4" type="video/mp4">
 </video>
 ```
@@ -144,7 +144,7 @@ GitHub, сайт для него не нужен.
 
 ### First screen
 
-- **Title:** AION2 DPS Meter
+- **Title:** CatScratch
 - **Subtitle:** A free live DPS meter for AION 2 Global (EU / NA). Party DPS, boss HP, a full skill breakdown and field
   boss timers — right on top of the game.
 - **Primary button:** Download for Windows
@@ -192,12 +192,12 @@ tools may still be against the game's terms of service — use it at your own ri
 
 1. **Install Npcap** — the free capture driver Wireshark uses. Keep the default options: they work with ExitLag and
    other ping boosters. The meter's installer checks for Npcap and opens the download page if it is missing.
-2. **Run the installer** — download `AION2DpsMeter-Setup.exe` and run it. No administrator rights needed. If Windows
+2. **Run the installer** — download `CatScratch-Setup.exe` and run it. No administrator rights needed. If Windows
    says "Windows protected your PC", click *More info* → *Run anyway*: the app is not code-signed yet.
 3. **Play** — start the meter before you enter a dungeon (the game sends player names on loading screens). The overlay
    appears as soon as the fight starts.
 
-**No installer?** Download the `.zip`, unzip it anywhere and run `AION2DpsMeter.exe`.
+**No installer?** Download the `.zip`, unzip it anywhere and run `CatScratch.exe`.
 
 **Requirements:** Windows 10 or 11 (64-bit) · AION 2 on Global servers (EU or NA) · Npcap (free) · about 200 MB of disk space.
 
@@ -230,7 +230,7 @@ tools may still be against the game's terms of service — use it at your own ri
 
 ### Footer
 
-AION2 DPS Meter is free and open source under GPL-3.0. Game data tables come from the GPL-3.0 projects
+CatScratch is free and open source under GPL-3.0. Game data tables come from the GPL-3.0 projects
 A2Tools-DPS-Meter (taengu) and AIon2-Dps-Meter (Kuroukihime); skill icons from the official AION 2 CDN; boss portraits
 from MetaBot.GG. AION 2 and its game data and art are © NCSOFT. This project is not affiliated with NCSOFT.
 Third-party tools may be against the game's terms of service — use at your own risk.
@@ -239,7 +239,7 @@ Third-party tools may be against the game's terms of service — use at your own
 
 ### Первый экран
 
-- **Заголовок:** AION2 DPS Meter
+- **Заголовок:** CatScratch
 - **Подзаголовок:** Бесплатный DPS-метр для AION 2 Global (EU / NA). Урон группы, HP босса, подробный разбор умений и
   таймеры полевых боссов — прямо поверх игры.
 - **Главная кнопка:** Скачать для Windows
@@ -287,13 +287,13 @@ Third-party tools may be against the game's terms of service — use at your own
 1. **Установите Npcap** — бесплатный драйвер захвата трафика (его же использует Wireshark). Настройки оставьте по
    умолчанию: с ними работают ExitLag и другие ускорители пинга. Установщик метра сам проверит Npcap и откроет
    страницу загрузки, если его нет.
-2. **Запустите установщик** — скачайте `AION2DpsMeter-Setup.exe` и запустите. Права администратора не нужны. Если
+2. **Запустите установщик** — скачайте `CatScratch-Setup.exe` и запустите. Права администратора не нужны. Если
    Windows покажет «Система Windows защитила ваш компьютер», нажмите *Подробнее* → *Выполнить в любом случае*:
    программа пока не подписана сертификатом.
 3. **Играйте** — запускайте метр до входа в подземелье (ники игроков игра присылает на экранах загрузки). Оверлей
    появится, как только начнётся бой.
 
-**Без установщика?** Скачайте `.zip`, распакуйте в любую папку и запустите `AION2DpsMeter.exe`.
+**Без установщика?** Скачайте `.zip`, распакуйте в любую папку и запустите `CatScratch.exe`.
 
 **Требования:** Windows 10 или 11 (64-бит) · AION 2 на серверах Global (EU или NA) · Npcap (бесплатно) · около 200 МБ на диске.
 
@@ -326,7 +326,7 @@ Third-party tools may be against the game's terms of service — use at your own
 
 ### Подвал
 
-AION2 DPS Meter — бесплатная программа с открытым кодом под лицензией GPL-3.0. Таблицы игровых данных взяты из
+CatScratch — бесплатная программа с открытым кодом под лицензией GPL-3.0. Таблицы игровых данных взяты из
 проектов A2Tools-DPS-Meter (taengu) и AIon2-Dps-Meter (Kuroukihime) под GPL-3.0; иконки умений — с официального CDN
 AION 2; портреты боссов — с MetaBot.GG. AION 2, игровые данные и арт © NCSOFT. Проект не связан с NCSOFT. Сторонние
 программы могут нарушать правила игры — используйте на свой риск.
@@ -335,7 +335,7 @@ AION 2; портреты боссов — с MetaBot.GG. AION 2, игровые 
 
 | | English | Русский |
 |---|---|---|
-| `<title>` | AION2 DPS Meter — free DPS meter for AION 2 (EU / NA) | AION2 DPS Meter — бесплатный DPS-метр для AION 2 (EU / NA) |
+| `<title>` | CatScratch — free DPS meter for AION 2 (EU / NA) | CatScratch — бесплатный DPS-метр для AION 2 (EU / NA) |
 | `description` | Free, open-source live DPS overlay for AION 2 Global: party DPS, boss HP, skill breakdown, accuracy, rotation, fight history and field boss respawn timers. Windows 10/11. | Бесплатный DPS-метр с открытым кодом для AION 2 Global: урон группы, HP босса, разбор умений, точность, ротация, история боёв и таймеры полевых боссов. Windows 10/11. |
 | `og:image` / `twitter:image` | `images/social-preview.png` (1200×630) | то же |
 | `twitter:card` | `summary_large_image` | то же |
@@ -346,7 +346,7 @@ AION 2; портреты боссов — с MetaBot.GG. AION 2, игровые 
 {
   "@context": "https://schema.org",
   "@type": "SoftwareApplication",
-  "name": "AION2 DPS Meter",
+  "name": "CatScratch",
   "operatingSystem": "Windows 10, Windows 11",
   "applicationCategory": "GameApplication",
   "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },

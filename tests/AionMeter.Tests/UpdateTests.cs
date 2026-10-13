@@ -11,9 +11,9 @@ public class UpdateTests
         {"tag_name":"v0.2.0","html_url":"https://github.com/o/r/releases/tag/v0.2.0","draft":false,"prerelease":false,
          "published_at":"2026-10-07T10:00:00Z","body":"## What's new\nUpdate check.",
          "assets":[
-           {"name":"AION2DpsMeter-v0.2.0-source.zip","size":10,"browser_download_url":"https://e/src.zip","digest":"sha256:aa"},
-           {"name":"AION2DpsMeter-Setup-v0.2.0.exe","size":52786865,"browser_download_url":"https://e/setup.exe","digest":"sha256:93AF8A"},
-           {"name":"AION2DpsMeter-v0.2.0-win-x64.zip","size":65388791,"browser_download_url":"https://e/win.zip"}]}
+           {"name":"CatScratch-v0.2.0-source.zip","size":10,"browser_download_url":"https://e/src.zip","digest":"sha256:aa"},
+           {"name":"CatScratch-Setup-v0.2.0.exe","size":52786865,"browser_download_url":"https://e/setup.exe","digest":"sha256:93AF8A"},
+           {"name":"CatScratch-v0.2.0-win-x64.zip","size":65388791,"browser_download_url":"https://e/win.zip"}]}
         """;
 
     [Fact]
@@ -23,10 +23,10 @@ public class UpdateTests
         Assert.Equal(new Version(0, 2, 0), r.Version);
         Assert.Equal("https://github.com/o/r/releases/tag/v0.2.0", r.PageUrl);
         Assert.Equal(new DateTimeOffset(2026, 10, 7, 10, 0, 0, TimeSpan.Zero), r.PublishedAt);
-        Assert.Equal("AION2DpsMeter-Setup-v0.2.0.exe", r.Installer!.Name);
+        Assert.Equal("CatScratch-Setup-v0.2.0.exe", r.Installer!.Name);
         Assert.Equal(52786865, r.Installer.Size);
         Assert.Equal("93af8a", r.Installer.Sha256);
-        Assert.Equal("AION2DpsMeter-v0.2.0-win-x64.zip", r.Portable!.Name);
+        Assert.Equal("CatScratch-v0.2.0-win-x64.zip", r.Portable!.Name);
         Assert.Null(r.Portable.Sha256);
     }
 
@@ -57,10 +57,10 @@ public class UpdateTests
     public void Installer_product_name_ignores_inno_setup_padding()
     {
         // What FileVersionInfo reads from an Inno Setup 7 installer: the name padded to its placeholder's length.
-        Assert.True(UpdateFeed.IsProductName("AION2 DPS Meter" + new string(' ', 45), "AION2 DPS Meter"));
-        Assert.True(UpdateFeed.IsProductName("AION2 DPS Meter", "AION2 DPS Meter"));
-        Assert.False(UpdateFeed.IsProductName("AION2 DPS Meter Pro", "AION2 DPS Meter"));
-        Assert.False(UpdateFeed.IsProductName(null, "AION2 DPS Meter"));
+        Assert.True(UpdateFeed.IsProductName("CatScratch" + new string(' ', 45), "CatScratch"));
+        Assert.True(UpdateFeed.IsProductName("CatScratch", "CatScratch"));
+        Assert.False(UpdateFeed.IsProductName("CatScratch Pro", "CatScratch"));
+        Assert.False(UpdateFeed.IsProductName(null, "CatScratch"));
     }
 
     [Fact]

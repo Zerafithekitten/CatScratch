@@ -1,0 +1,71 @@
+using System.Diagnostics;
+using System.IO;
+using System.Windows;
+using AionMeter.Core.Updates;
+
+namespace AionMeter.App.Services;
+
+internal static class DirectUpdate
+{
+    public static string Root => Path.Combine(Path.GetTempPath(), "CatScratch-update");
+
+    public static void Launch(string archive, Version version, string? checkResult = null)
+    {
+        var stage = Path.Combine(Root, "stage-" + Guid.NewGuid().ToString("N"));
+        var payload = Path.Combine(stage, "payload");
+        UpdatePackage.Extract(archive, payload);
+        var exe = Path.Combine(payload, "CatScratch.exe");
+        var info = FileVersionInfo.GetVersionInfo(exe);
+        if (!UpdateFeed.IsProductName(info.ProductName, AppInfo.Name) || UpdateFeed.ParseVersion(info.ProductVersion) != version)
+            throw new InvalidDataException("The update's product or version does not match its release.");
+        var start = new ProcessStartInfo(exe) { UseShellExecute = false, WorkingDirectory = payload };
+        foreach (var arg in new[] { "--apply-update", AppContext.BaseDirectory, "--parent", Environment.ProcessId.ToString() })
+            start.ArgumentList.Add(arg);
+        if (checkResult is not null) { start.ArgumentList.Add("--update-check"); start.ArgumentList.Add(checkResult); }
+        using var helper = Process.Start(start) ?? throw new InvalidOperationException("Could not start the updater.");
+        if (checkResult is not null) File.WriteAllText(checkResult + ".helperpid", helper.Id.ToString());
+    }
+
+    public static void Run(string target, int parentId, string? checkResult = null)
+    {
+        var stage = Directory.GetParent(AppContext.BaseDirectory.TrimEnd(Path.DirectorySeparatorChar))!.FullName;
+        var boundary = Path.GetFullPath(Root).TrimEnd(Path.DirectorySeparatorChar) + Path.DirectorySeparatorChar;
+        target = Path.GetFullPath(target);
+        var targetExe = UpdatePackage.Resolve(target, "CatScratch.exe");
+        if (!stage.StartsWith(boundary, StringComparison.OrdinalIgnoreCase) ||
+            Path.GetFileName(stage).Length != 38 || !Path.GetFileName(stage).StartsWith("stage-", StringComparison.Ordinal) ||
+            target.StartsWith(boundary, StringComparison.OrdinalIgnoreCase) ||
+            !UpdateFeed.IsProductName(FileVersionInfo.GetVersionInfo(targetExe).ProductName, AppInfo.Name))
+            throw new InvalidDataException("Invalid update destination.");
+        // Only wait for the requesting meter; never terminate the game or another process.
+        try
+        {
+            using var parent = Process.GetProcessById(parentId);
+            if (!string.Equals(parent.MainModule?.FileName, targetExe, StringComparison.OrdinalIgnoreCase))
+                throw new InvalidDataException("Update requester does not match this installation.");
+            if (!parent.WaitForExit(30000)) throw new IOException("The meter has not closed. The update was cancelled.");
+        }
+        catch (ArgumentException) { } // The meter has already finished closing.
+        var backup = Path.Combine(stage, "backup");
+        try
+        {
+            UpdatePackage.Apply(AppContext.BaseDirectory, target, backup);
+        }
+        catch (Exception error)
+        {
+            File.WriteAllText(Path.Combine(stage, "failure.txt"), error.ToString());
+            System.Windows.MessageBox.Show("The update could not be applied. Previous files were restored where possible.\n\n" +
+                "Details and backups: " + stage, AppInfo.Name, MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+        var restart = new ProcessStartInfo(targetExe) { UseShellExecute = false, WorkingDirectory = target };
+        restart.ArgumentList.Add("--updated");
+        if (checkResult is not null)
+        {
+            restart.ArgumentList.Add("--check-shutdown");
+            restart.ArgumentList.Add(checkResult);
+        }
+        using var restarted = Process.Start(restart) ?? throw new IOException("Could not restart CatScratch.");
+        if (checkResult is not null && (!restarted.WaitForExit(20000) || restarted.ExitCode != 0))
+            throw new IOException("Updated program verification failed.");
+    }
+}

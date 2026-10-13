@@ -16,17 +16,14 @@ public enum UpdateCheckResult
 }
 
 /// <summary>
-/// New versions of the meter. Asks GitHub shortly after start and every few hours (Settings → Updates) and raises
-/// <see cref="Changed"/> for the tray, the overlay and the update window. A copy installed by the installer updates
-/// itself: it downloads the new installer in the background (<see cref="Downloaded"/>), and the app runs it at a quiet
-/// moment without any window; the installer replaces this copy and starts the new one. A portable copy gets the
-/// download page.
+/// Checks GitHub periodically and prepares verified packages for installed and portable copies.
+/// The staging copy waits for this meter to exit, replaces program files and restarts it.
 /// </summary>
 public sealed class Updater : IDisposable
 {
     private static readonly TimeSpan FirstCheckDelay = TimeSpan.FromSeconds(20);
     private static readonly TimeSpan CheckInterval = TimeSpan.FromHours(2);
-    private const string UninstallKey = @"Software\Microsoft\Windows\CurrentVersion\Uninstall\{BCF3CB47-B2BC-4F8D-964A-A94F061C81E2}_is1"; // AppId in installer/AION2DpsMeter.iss
+    private const string UninstallKey = @"Software\Microsoft\Windows\CurrentVersion\Uninstall\{BCF3CB47-B2BC-4F8D-964A-A94F061C81E2}_is1"; // AppId in installer/CatScratch.iss
 
     private readonly AppSettings _settings;
     private readonly UpdateFeed _feed;
@@ -37,7 +34,7 @@ public sealed class Updater : IDisposable
     {
         _settings = settings;
         Current = UpdateFeed.Normalize(typeof(Updater).Assembly.GetName().Version ?? new Version(0, 0, 0));
-        _feed = new UpdateFeed($"AION2DpsMeter/{Current.ToString(3)}");
+        _feed = new UpdateFeed($"CatScratch/{Current.ToString(3)}");
     }
 
     /// <summary>This copy's version (major.minor.patch).</summary>
@@ -55,10 +52,10 @@ public sealed class Updater : IDisposable
     /// <summary>True when this copy runs from the folder the installer put it in (it can update itself).</summary>
     public static bool IsInstalled { get; } = DetectInstalled();
 
-    /// <summary>This copy fetches and installs new versions by itself (installed copies, unless turned off).</summary>
-    public bool AutoInstall => IsInstalled && _settings.AutoInstallUpdates;
+    /// <summary>This copy fetches and installs new versions by itself (unless turned off).</summary>
+    public bool AutoInstall => _settings.AutoInstallUpdates;
 
-    /// <summary>The update whose installer is downloaded and checked, waiting for a quiet moment to be installed.</summary>
+    /// <summary>The update whose package is downloaded and checked, waiting for a quiet moment to be installed.</summary>
     public ReleaseInfo? Downloaded { get; private set; }
 
     /// <summary>The background download of <see cref="Available"/> failed: fall back to asking the player.</summary>
@@ -105,7 +102,7 @@ public sealed class Updater : IDisposable
             Latest = await _feed.GetLatestAsync();
             LastError = null;
             Log.Info($"Update check: newest release {Latest?.Tag ?? "none"}, this copy {Current.ToString(3)}.");
-            if (Available is { Installer: not null } update && AutoInstall) _ = PrepareAsync(update);
+            if (Available is { Portable: not null } update && AutoInstall) _ = PrepareAsync(update);
             return Latest is { } r && r.Version > Current ? UpdateCheckResult.Available : UpdateCheckResult.UpToDate;
         }
         catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException or JsonException or InvalidOperationException)
@@ -128,11 +125,18 @@ public sealed class Updater : IDisposable
         Changed?.Invoke();
     }
 
-    /// <summary>Downloads the release's installer to the temp folder, checked against GitHub's size and SHA-256.</summary>
-    public Task<string> DownloadInstallerAsync(ReleaseInfo release, IProgress<double>? progress, CancellationToken ct) =>
-        release.Installer is { } installer
-            ? _feed.DownloadAsync(installer, DownloadFolder, progress, ct)
-            : throw new InvalidOperationException($"Release {release.Tag} has no installer");
+    /// <summary>Downloads the release's package to the temp folder, checked against GitHub's size and SHA-256.</summary>
+    private readonly SemaphoreSlim _downloadGate = new(1, 1);
+    private readonly CancellationTokenSource _lifetime = new();
+    public async Task<string> DownloadPackageAsync(ReleaseInfo release, IProgress<double>? progress, CancellationToken ct)
+    {
+        if (release.Portable is not { Sha256.Length: 64 } package)
+            throw new InvalidOperationException("This release has no verified update package.");
+        using var linked = CancellationTokenSource.CreateLinkedTokenSource(ct, _lifetime.Token);
+        await _downloadGate.WaitAsync(linked.Token);
+        try { return await _feed.DownloadAsync(package, DownloadFolder, progress, linked.Token); }
+        finally { _downloadGate.Release(); }
+    }
 
     /// <summary>Fetches the update in the background, so it can go in at the next quiet moment.</summary>
     private async Task PrepareAsync(ReleaseInfo release)
@@ -142,7 +146,7 @@ public sealed class Updater : IDisposable
         DownloadFailed = false;
         try
         {
-            _downloadedPath = await DownloadInstallerAsync(release, null, CancellationToken.None);
+            _downloadedPath = await DownloadPackageAsync(release, null, _lifetime.Token);
             Downloaded = release;
             Log.Info($"Update {release.Tag} downloaded: {_downloadedPath}");
         }
@@ -159,25 +163,11 @@ public sealed class Updater : IDisposable
         }
     }
 
-    /// <summary>Runs the downloaded installer without any window; the caller exits right after.</summary>
+    /// <summary>Starts the staged updater without any window; the caller exits right after.</summary>
     public void InstallDownloaded()
     {
         if (_downloadedPath is null) throw new InvalidOperationException("No update downloaded");
-        LaunchInstaller(_downloadedPath, quiet: true);
-    }
-
-    /// <summary>
-    /// Starts the downloaded installer: <paramref name="quiet"/> with no window at all (automatic updates), otherwise
-    /// with a small progress window (the player clicked Update). It closes this copy if it is still running (Restart
-    /// Manager), installs over it and starts the new version (<c>/RELAUNCH=1</c>, see the [Run] section of the
-    /// installer). The caller exits right after.
-    /// </summary>
-    public static void LaunchInstaller(string path, bool quiet = false)
-    {
-        if (!UpdateFeed.IsProductName(FileVersionInfo.GetVersionInfo(path).ProductName, AppInfo.Name))
-            throw new InvalidDataException($"{Path.GetFileName(path)} is not the {AppInfo.Name} installer");
-        Process.Start(new ProcessStartInfo(path, (quiet ? "/VERYSILENT" : "/SILENT") + " /SUPPRESSMSGBOXES /NORESTART /RELAUNCH=1")
-            { UseShellExecute = true });
+        DirectUpdate.Launch(_downloadedPath, Downloaded!.Version);
     }
 
     public static void OpenReleasePage(ReleaseInfo? release)
@@ -192,7 +182,7 @@ public sealed class Updater : IDisposable
         }
     }
 
-    private static string DownloadFolder => Path.Combine(Path.GetTempPath(), "AION2DpsMeter-update");
+    private static string DownloadFolder => DirectUpdate.Root;
 
     /// <summary>Installers of earlier updates are no longer needed (the one running right now is locked and stays).</summary>
     public static void CleanDownloads()
@@ -203,6 +193,11 @@ public sealed class Updater : IDisposable
             foreach (var file in Directory.EnumerateFiles(DownloadFolder))
                 if (DateTime.UtcNow - File.GetLastWriteTimeUtc(file) > TimeSpan.FromHours(1))
                     File.Delete(file);
+            foreach (var stage in Directory.EnumerateDirectories(DownloadFolder, "stage-*"))
+                if (DateTime.UtcNow - Directory.GetLastWriteTimeUtc(stage) > TimeSpan.FromDays(1) &&
+                    !File.Exists(Path.Combine(stage, "failure.txt")) &&
+                    (File.GetAttributes(stage) & FileAttributes.ReparsePoint) == 0)
+                    Directory.Delete(stage, recursive: true);
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
         {
@@ -230,6 +225,7 @@ public sealed class Updater : IDisposable
     public void Dispose()
     {
         _timer?.Stop();
+        _lifetime.Cancel();
         _feed.Dispose();
     }
 }

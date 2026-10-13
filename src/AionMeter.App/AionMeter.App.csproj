@@ -11,10 +11,10 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
     <UseWindowsForms>true</UseWindowsForms>
-    <AssemblyName>AION2DpsMeter</AssemblyName>
+    <AssemblyName>CatScratch</AssemblyName>
     <RootNamespace>AionMeter.App</RootNamespace>
-    <Product>Zerafi DPS Monitor</Product>
-    <AssemblyTitle>Zerafi DPS Monitor</AssemblyTitle>
+    <Product>CatScratch</Product>
+    <AssemblyTitle>CatScratch</AssemblyTitle>
     <ApplicationIcon>Assets\app.ico</ApplicationIcon>
     <Version>0.2.8</Version>
     <ApplicationManifest>app.manifest</ApplicationManifest>

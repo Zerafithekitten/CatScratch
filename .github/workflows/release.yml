@@ -38,18 +38,21 @@ jobs:
           if ($LASTEXITCODE) { throw 'Publish failed' }
           Copy-Item LICENSE dist/payload
           Copy-Item INSTALL.txt dist/payload
-          Compress-Archive -Path dist/payload/* -DestinationPath dist/AION2DpsMeter-win-x64.zip
-          git archive --format=zip --output=dist/AION2DpsMonitor-source.zip HEAD
+          Compress-Archive -Path dist/payload/* -DestinationPath dist/CatScratch-win-x64.zip
+          git archive --format=zip --output=dist/CatScratch-source.zip HEAD
       - name: Verify event panels and complete shutdown
         shell: pwsh
         run: |
           foreach ($check in @('interaction', 'shutdown', 'performance')) {
             $result = "$env:RUNNER_TEMP/meter-$check.txt"
-            $process = Start-Process "$PWD/dist/payload/AION2DpsMeter.exe" -ArgumentList @("--check-$check",("`"$result`"")) -WindowStyle Hidden -PassThru
+            $process = Start-Process "$PWD/dist/payload/CatScratch.exe" -ArgumentList @("--check-$check",("`"$result`"")) -WindowStyle Hidden -PassThru
             if (-not $process.WaitForExit(20000)) { Stop-Process -Id $process.Id; throw "$check verification timed out" }
             Get-Content $result
             if ($process.ExitCode) { throw "$check verification failed" }
           }
+      - name: Verify direct update and preserved userdata
+        shell: pwsh
+        run: ./tools/check-direct-update.ps1 -Payload "$PWD/dist/payload"
       - name: Install official Inno Setup compiler
         shell: pwsh
         run: |
@@ -63,13 +66,17 @@ jobs:
       - name: Build installer
         shell: pwsh
         run: |
-          & $env:INNO_COMPILER /Qp "/DAppVer=$env:APP_VERSION" "/DUpdateRepo=$env:GITHUB_REPOSITORY" "/DPayloadDir=$PWD/dist/payload" "/O$PWD/dist" installer/AION2DpsMeter.iss
+          & $env:INNO_COMPILER /Qp "/DAppVer=$env:APP_VERSION" "/DUpdateRepo=$env:GITHUB_REPOSITORY" "/DPayloadDir=$PWD/dist/payload" "/O$PWD/dist" installer/CatScratch.iss
           if ($LASTEXITCODE) { throw 'Installer build failed' }
-          Copy-Item "dist/AION2DpsMeter-Setup-v$env:APP_VERSION.exe" dist/AION2DpsMeter-Setup.exe
+          Copy-Item "dist/CatScratch-Setup-v$env:APP_VERSION.exe" dist/CatScratch-Setup.exe
+          $setupInfo = [Diagnostics.FileVersionInfo]::GetVersionInfo("$PWD/dist/CatScratch-Setup.exe")
+          if ($setupInfo.ProductName.Trim() -ne 'Zerafi DPS Monitor') { throw 'Legacy update compatibility missing' }
+          $appInfo = [Diagnostics.FileVersionInfo]::GetVersionInfo("$PWD/dist/payload/CatScratch.exe")
+          if ($appInfo.ProductName.Trim() -ne 'CatScratch') { throw 'App branding incorrect' }
       - name: Publish release downloads
         shell: pwsh
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release create $env:RELEASE_TAG dist/AION2DpsMeter-Setup.exe dist/AION2DpsMeter-win-x64.zip dist/AION2DpsMonitor-source.zip --verify-tag --generate-notes
+          gh release create $env:RELEASE_TAG dist/CatScratch-Setup.exe dist/CatScratch-win-x64.zip dist/CatScratch-source.zip --verify-tag --generate-notes
           if ($LASTEXITCODE) { throw 'Release publication failed' }

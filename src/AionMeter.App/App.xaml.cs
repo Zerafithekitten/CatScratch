@@ -64,6 +64,36 @@ public partial class App : Application
     protected override void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);
+        if (ArgValue(e.Args, "--check-update-start") is { } packagePath)
+        {
+            try
+            {
+                DirectUpdate.Launch(packagePath, Core.Updates.UpdateFeed.Normalize(typeof(App).Assembly.GetName().Version!),
+                    ArgValue(e.Args, "--update-check") ?? throw new InvalidDataException("Missing check result path."));
+                Shutdown();
+            }
+            catch (Exception error)
+            {
+                File.WriteAllText(packagePath + ".failure.txt", error.ToString());
+                Shutdown(1);
+            }
+            return;
+        }
+        if (ArgValue(e.Args, "--apply-update") is { } updateTarget)
+        {
+            try
+            {
+                if (!int.TryParse(ArgValue(e.Args, "--parent"), out var parent)) throw new InvalidDataException("Missing update requester.");
+                DirectUpdate.Run(updateTarget, parent, ArgValue(e.Args, "--update-check"));
+                Shutdown();
+            }
+            catch (Exception error)
+            {
+                System.Windows.MessageBox.Show(error.Message, AppInfo.Name, MessageBoxButton.OK, MessageBoxImage.Error);
+                Shutdown(1);
+            }
+            return;
+        }
         if (ArgValue(e.Args, "--check-performance") is { } performancePath)
         {
             Log.Enabled = false;
@@ -146,9 +176,13 @@ public partial class App : Application
         settings.ShowGear = true;
         if (Core.Updates.UpdateFeed.IsConfigured && settings.UpdateSource != Core.Updates.UpdateFeed.Repository)
         {
+            var renamedRepository = settings.UpdateSource == "Zerafithekitten/zerafi-dps-monitor";
             settings.UpdateSource = Core.Updates.UpdateFeed.Repository;
-            settings.CheckUpdates = true;
-            settings.AutoInstallUpdates = true;
+            if (!renamedRepository)
+            {
+                settings.CheckUpdates = true;
+                settings.AutoInstallUpdates = true;
+            }
         }
         if (!Core.Updates.UpdateFeed.IsConfigured) { settings.CheckUpdates = false; settings.AutoInstallUpdates = false; }
         settings.Save(); // persist any migration done while loading

@@ -1,7 +1,7 @@
-; Zerafi DPS Monitor — Windows installer (Inno Setup 7, https://jrsoftware.org).
+; CatScratch — Windows installer (Inno Setup 7, https://jrsoftware.org).
 ; Built by build-release.ps1:
-;   ISCC /DAppVer=<x.y.z> /DPayloadDir=<self-contained publish folder> /O<output folder> AION2DpsMeter.iss
-; Installs for the current user only (no administrator prompt) into %LocalAppData%\Programs\Zerafi DPS Monitor.
+;   ISCC /DAppVer=<x.y.z> /DPayloadDir=<self-contained publish folder> /O<output folder> CatScratch.iss
+; Installs for the current user only (no administrator prompt) into %LocalAppData%\Programs\CatScratch.
 ; Settings, fight history and boss timers stay in {app}\userdata; uninstall asks before deleting them.
 
 #ifndef AppVer
@@ -10,8 +10,8 @@
 #ifndef PayloadDir
   #error Pass /DPayloadDir=<folder with the published program>
 #endif
-#define AppName "Zerafi DPS Monitor"
-#define AppExe "AION2DpsMeter.exe"
+#define AppName "CatScratch"
+#define AppExe "CatScratch.exe"
 
 #ifndef UpdateRepo
   #error Pass /DUpdateRepo=<owner/repo>
@@ -27,13 +27,15 @@ AppPublisherURL=https://github.com/{#UpdateRepo}
 AppSupportURL=https://github.com/{#UpdateRepo}/issues
 AppUpdatesURL=https://github.com/{#UpdateRepo}/releases
 VersionInfoDescription={#AppName} Setup
+; Old meters validate this name for the migration update.
+VersionInfoProductName=Zerafi DPS Monitor
 DefaultDirName={autopf}\{#AppName}
 DisableProgramGroupPage=yes
 DisableReadyPage=yes
 PrivilegesRequired=lowest
 SetupArchitecture=x64
 MinVersion=10.0
-OutputBaseFilename=AION2DpsMeter-Setup-v{#AppVer}
+OutputBaseFilename=CatScratch-Setup-v{#AppVer}
 SetupIconFile=..\src\AionMeter.App\Assets\app.ico
 UninstallDisplayIcon={app}\{#AppExe}
 UninstallDisplayName={#AppName}
@@ -61,11 +63,19 @@ en.NpcapRecheck=Check again
 en.NpcapFound=✔  Npcap found, you are all set.
 en.NpcapMissing=✖  Npcap not found yet.
 en.NpcapContinue=Npcap is still not installed. Install the meter anyway?%n%nThe meter will remind you about Npcap when it starts.
-en.CloseRunning=Zerafi DPS Monitor is running. Close it and continue?
+en.CloseRunning=CatScratch is running. Close it and continue?
 en.RemoveUserData=Also delete your settings, fight history and boss timers?%n%n%1
 
 [Files]
 Source: "{#PayloadDir}\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+
+[InstallDelete]
+Type: files; Name: "{autoprograms}\Zerafi DPS Monitor.lnk"
+
+Type: files; Name: "{app}\AION2DpsMeter.exe"
+Type: files; Name: "{app}\AION2DpsMeter.dll"
+Type: files; Name: "{app}\AION2DpsMeter.deps.json"
+Type: files; Name: "{app}\AION2DpsMeter.runtimeconfig.json"
 
 [Icons]
 Name: "{autoprograms}\{#AppName}"; Filename: "{app}\{#AppExe}"
@@ -172,7 +182,8 @@ end;
 function DesktopShortcutWanted: Boolean;
 begin
   Result := not RegValueExists(HKCU, 'Software\Microsoft\Windows\CurrentVersion\Uninstall\{BCF3CB47-B2BC-4F8D-964A-A94F061C81E2}_is1', 'UninstallString')
-            or FileExists(ExpandConstant('{autodesktop}\{#AppName}.lnk'));
+            or FileExists(ExpandConstant('{autodesktop}\{#AppName}.lnk'))
+            or FileExists(ExpandConstant('{autodesktop}\Zerafi DPS Monitor.lnk'));
 end;
 
 function RelaunchAfterUpdate: Boolean;
@@ -183,7 +194,10 @@ end;
 procedure CurStepChanged(CurStep: TSetupStep);
 begin
   if CurStep = ssPostInstall then
+  begin
     FilesInstalled := True;
+    DeleteFile(ExpandConstant('{autodesktop}\Zerafi DPS Monitor.lnk'));
+  end;
 end;
 
 // The meter closed itself for this in-app update. If the update did not go through, start the copy that is still

@@ -1,10 +1,10 @@
-Zerafi DPS Monitor — EU/NA
+CatScratch — EU/NA
 
 SETUP
 1. Extract the complete program folder to a writable location.
 2. Install Npcap from https://npcap.com/#download if it is missing.
    The application offers to open the official page; installation is done by you.
-3. Start AION2DpsMeter.exe, then teleport once or enter a new zone in game.
+3. Start CatScratch.exe, then teleport once or enter a new zone in game.
    Your character is confirmed only when fresh identity data arrives.
 4. Use borderless windowed mode if the meter should remain visible above the game.
 
@@ -112,12 +112,12 @@ new name caches to you and your party, rather than preventing shared packet rece
 NPC and boss data are read for the requested timers.
 This is not a statement of publisher approval.
 Settings and statistics are stored in userdata inside the program folder.
-Installed copies use GitHub releases from Zerafithekitten/zerafi-dps-monitor.
+Installed and portable copies use GitHub releases from Zerafithekitten/CatScratch.
 Automatic checking and installation can be disabled in Settings.
-Portable copies offer release downloads; install Setup for automatic replacement.
+Updates download a verified package, close all windows, replace program files and restart without Setup. Userdata is preserved. Existing Zerafi DPS Monitor installations use one final migration installer.
 
 VALIDATION
-Release build completed. 133 combat/storage/schedule/latency tests passed. Compact meter and event previews were visually checked.
+Release build completed. 141 combat/storage/schedule/latency/update tests passed. Compact meter and event previews were visually checked.
 Own-window click-through, restoration and repeated toggles passed native checks.
 System-wide hotkey registration is blocked in the protected test environment
 (Windows error 5). Actual hotkey operation and clicks passing into the game still

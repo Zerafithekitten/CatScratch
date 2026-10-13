@@ -1,4 +1,4 @@
-# Zerafi DPS Monitor releases
+# CatScratch releases
 
 This GPL-3.0 customization is based on cyberbadger6969/aion2-dps-meter.
 Keep LICENSE and data/NOTICE.md when redistributing it.
@@ -8,10 +8,8 @@ It tests the source, builds the app and installer, and publishes a public releas
 with installer, portable ZIP and full source. Packet captures and userdata are ignored.
 
 The workflow compiles its own GitHub repository name into the update feed.
-Local builds default to Zerafithekitten/zerafi-dps-monitor; the workflow uses its own repository.
-Installed copies automatically check after startup and every two hours, and apply
-an available installer during an idle period. Settings can disable this behavior.
-Portable copies offer downloads; use the Setup release for automatic installation.
+Local builds default to Zerafithekitten/CatScratch; the workflow uses its own repository.
+Installed and portable copies check GitHub after startup and every two hours. Verified ZIP updates are applied during an idle period, without Setup. Settings can disable this behavior. Userdata is preserved and a failed file replacement restores backups.
 
 The custom installer uses a separate app name, installer ID and instance locks.
 It does not update an installation of the original upstream meter.
