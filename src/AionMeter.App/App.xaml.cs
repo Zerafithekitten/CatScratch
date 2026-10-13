@@ -507,7 +507,7 @@ public partial class App : Application
             return;
         }
         _history = new HistoryWindow(_meter);
-        WindowClickThrough.Attach(_history, () => _meter.Settings.ClickThrough, () => _meter.Settings.WindowOpacity);
+        // Fight history is an interactive tool, independent of meter locking and opacity.
         _history.Closed += (_, _) => _history = null;
         _history.Show();
     }

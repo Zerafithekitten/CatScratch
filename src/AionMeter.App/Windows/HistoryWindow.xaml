@@ -40,7 +40,7 @@
         </Style>
     </Window.Resources>
 
-    <Border BorderBrush="{StaticResource GoldDim}" BorderThickness="1">
+    <Border Background="{StaticResource Bg0}" BorderBrush="{StaticResource GoldDim}" BorderThickness="1">
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="52" />

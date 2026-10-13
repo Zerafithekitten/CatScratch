@@ -1,3 +1,8 @@
+## CatScratch v1.0.24
+
+- Keep Your fights fully clickable and opaque when the DPS meter is locked or transparent.
+- Give the history window its own solid background without changing the meter display settings.
+
 ## CatScratch v1.0.23
 
 - Turn off automatic fight saving by default, including existing installations. It remains opt-in in Settings.

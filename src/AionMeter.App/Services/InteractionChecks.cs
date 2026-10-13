@@ -142,10 +142,19 @@ internal static class InteractionChecks
                 { Left = -30000, Top = -30000, WindowStartupLocation = WindowStartupLocation.Manual, ShowInTaskbar = false, ShowActivated = false };
             windows.Add(breakdown);
             breakdown.Show();
+            var historyWindow = new AionMeter.App.Windows.HistoryWindow(meter)
+                { Left = -30000, Top = -30000, WindowStartupLocation = WindowStartupLocation.Manual, ShowInTaskbar = false, ShowActivated = false };
+            windows.Add(historyWindow);
+            historyWindow.Show();
             foreach (var locked in new[] { true, false, true })
             {
                 WindowClickThrough.ApplyAll(locked);
                 WindowClickThrough.SetOpacity(0.4);
+                Check((Style(historyWindow) & (NativeMethods.WS_EX_TRANSPARENT | NativeMethods.WS_EX_NOACTIVATE)) == 0 && historyWindow.IsHitTestVisible,
+                    "Your fights remains clickable when the meter is locked or unlocked");
+                Check(historyWindow.Opacity == 1 && historyWindow.Content is System.Windows.Controls.Border historyShell &&
+                    historyShell.Background is System.Windows.Media.SolidColorBrush historyBg && historyBg.Color.A == 255,
+                    "Your fights retains a solid background independently of meter opacity");
                 Check((Style(breakdown) & (NativeMethods.WS_EX_TRANSPARENT | NativeMethods.WS_EX_NOACTIVATE)) == 0,
                     "Detailed statistics remain clickable when display windows are locked or unlocked");
                 Check(breakdown.Opacity == 1 && breakdown.Content is System.Windows.Controls.Border detailShell &&
