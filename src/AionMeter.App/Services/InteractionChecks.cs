@@ -210,7 +210,7 @@ internal static class InteractionChecks
                     b.BorderBrush is System.Windows.Media.SolidColorBrush border && border.Color.A > 0),
                 "Locked simultaneous events retain separate visible cards");
             var colors = list.Children.OfType<System.Windows.Controls.Border>().Select(tile =>
-                ((System.Windows.Controls.Border)((System.Windows.Controls.DockPanel)((System.Windows.Controls.StackPanel)tile.Child).Children[0]).Children[0]).BorderBrush).Distinct().Count();
+                ((System.Windows.Controls.Border)((System.Windows.Controls.Grid)tile.Child).Children[0]).BorderBrush).Distinct().Count();
             Check(colors == 2, "Simultaneous EVENT and PVP cards use different type colors");
             hub.Reload();
             Check(list.Children.OfType<System.Windows.Controls.Border>().All(b =>
@@ -242,6 +242,8 @@ internal static class InteractionChecks
             var detached = new AionMeter.App.Windows.TimerCardWindow(cards, "auto:shugo", new CardPlacement());
             windows.Add(detached);
             detached.SetDisplayOnly(true);
+            Check(detached.Height==28 && detached.Content is System.Windows.Controls.Border single && single.Child is System.Windows.Controls.Grid singleRow && singleRow.ColumnDefinitions.Count==3,
+                "Explicitly detached events use the same single-line compact layout");
             Check(detached.Content is System.Windows.Controls.Border panel &&
                 panel.Background is System.Windows.Media.SolidColorBrush cardBackground && cardBackground.Color.A > 0,
                 "Detached locked events retain their card background");

@@ -1,3 +1,8 @@
+## CatScratch v2.3.2
+
+- Stop opening extra event windows on double-click. Separate cards are available only through the explicit right-click action and now match the compact single-line layout.
+- Update the native layout checks and validate diagnostic output during release builds.
+
 ## CatScratch v2.3.1
 
 - Display Upcoming events in compact single-line cards: event type and name on the left, countdown on the right. Remove scheduled clock times while retaining the two-minute started-event pulse.

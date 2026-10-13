@@ -114,7 +114,7 @@ public static class SampleRenderer
                 cards.Saved.Events.Add(new("sample-pvp", "Example: PvP event", "PVP", DateTimeOffset.UtcNow.AddMinutes(45)));
                 if (o.Window == "timer-card")
                 {
-                    host = new TimerCardWindow(cards, "sample-event", new CardPlacement());
+                    host = new TimerCardWindow(cards, "auto:shugo", new CardPlacement { Width=300 });
                     WindowClickThrough.Attach(host, () => false);
                     refresh = () => { };
                     break;

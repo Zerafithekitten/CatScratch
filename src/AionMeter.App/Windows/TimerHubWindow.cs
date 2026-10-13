@@ -86,10 +86,9 @@ public sealed class TimerHubWindow : Window, IDisplayAppearance
                 var countdown=new TextBlock { FontSize=10, FontWeight=FontWeights.SemiBold, Foreground=ColorBrush("#D8C789"), Margin=new(8,0,0,0), VerticalAlignment=VerticalAlignment.Center, TextAlignment=TextAlignment.Right }; Grid.SetColumn(countdown,2); row.Children.Add(countdown);
                 var tile=new Border { Child=row, CornerRadius=new(5), Padding=new(7,4,7,4), Height=28,
                     Background=EventPanelBrushes.Background, BorderBrush=accent, BorderThickness=new(1), Margin=new(2),
-                    ToolTip=$"{UiText.Current.Localize(item.Name)} · {UiText.Current.Localize(item.Id.StartsWith("boss:") ? "Time from in-game boss list" : "Community schedule · Shugo.GG")} ({UiText.Current.Localize(_cards.Saved.EventRegion)}). {UiText.Current.Localize("Double-click to open a separate window.")}" };
+                    ToolTip=$"{UiText.Current.Localize(item.Name)} · {UiText.Current.Localize(item.Id.StartsWith("boss:") ? "Time from in-game boss list" : "Community schedule · Shugo.GG")} ({UiText.Current.Localize(_cards.Saved.EventRegion)}). {UiText.Current.Localize("Right-click to open a separate window.")}" };
                 tile.MouseLeftButtonDown+=(_,e)=> {
-                    if(e.ClickCount==2) _cards.Pin(item.Id.StartsWith("boss:") ? item.Id : "auto:"+item.Id);
-                    else if(e.LeftButton==System.Windows.Input.MouseButtonState.Pressed) { DragMove(); SavePlacement(); }
+                    if(e.LeftButton==System.Windows.Input.MouseButtonState.Pressed) { DragMove(); SavePlacement(); }
                     e.Handled=true;
                 };
                 tile.MouseRightButtonUp+=(_,_)=> { var menu=new ContextMenu(); var detach=new MenuItem { Header=UiText.Current.Localize("Open separate window") }; detach.Click+=(_,_)=>_cards.Pin(item.Id.StartsWith("boss:") ? item.Id : "auto:"+item.Id); menu.Items.Add(detach); menu.IsOpen=true; };

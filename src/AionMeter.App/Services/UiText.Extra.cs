@@ -38,6 +38,7 @@ public sealed partial class UiText
         ["Copy line {0} of {1}"]="Zeile {0} von {1} kopieren", ["Started · {0} ago"]="Gestartet · vor {0}",
         ["Toggle click-through"]="Durchklicken umschalten",
         ["Double-click to open a separate window."]="Doppelklicken, um ein eigenes Fenster zu öffnen.",
+        ["Right-click to open a separate window."]="Rechtsklicken, um ein eigenes Fenster zu öffnen.",
         ["FEEDBACK"]="FEEDBACK", ["Report a bug / request a feature"]="Bug melden / Wunsch einreichen",
         ["Opens GitHub in your browser. Choose a bug report or feature request. A GitHub account is required. Nothing is submitted automatically; no logs or captures are attached."]="Öffnet GitHub im Browser. Wähle eine Fehlermeldung oder einen Funktionswunsch. Ein GitHub-Konto ist erforderlich. Nichts wird automatisch gesendet; keine Protokolle oder Mitschnitte werden angehängt.",
         ["Could not open the browser. Please visit GitHub and choose New issue."]="Browser konnte nicht geöffnet werden. Öffne GitHub und wähle New issue.",

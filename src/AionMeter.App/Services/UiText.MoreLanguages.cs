@@ -9,6 +9,7 @@ public sealed partial class UiText
         ("Toggle click-through","Переключить клики сквозь окно","Activer / désactiver les clics traversants"),
         ("Started · {0} ago","Началось · {0} назад","Commencé · il y a {0}"),
         ("Double-click to open a separate window.","Дважды нажмите, чтобы открыть отдельное окно.","Double-cliquez pour ouvrir une fenêtre séparée."),
+        ("Right-click to open a separate window.","Нажмите правой кнопкой, чтобы открыть отдельное окно.","Cliquez avec le bouton droit pour ouvrir une fenêtre séparée."),
         ("Appearance","Внешний вид","Apparence"), ("Combat","Бой","Combat"), ("Hotkeys","Горячие клавиши","Raccourcis"), ("History","История","Historique"), ("Capture & data","Захват и данные","Capture et données"), ("General","Общие","Général"),
         ("Capturing · ","Захват · ","Capture · "), ("Listening on ","Прослушивание: ","Écoute sur "), ("Capture error: ","Ошибка захвата: ","Erreur de capture : "),
         ("Starting capture…","Запуск захвата…","Démarrage de la capture…"), ("Capture stopped","Захват остановлен","Capture arrêtée"), ("Npcap is not installed — get it from npcap.com","Npcap не установлен — загрузите с npcap.com","Npcap non installé : téléchargez-le sur npcap.com"), ("Selected network adapter not found","Выбранный сетевой адаптер не найден","Carte réseau sélectionnée introuvable"), ("AION 2 is not running","AION 2 не запущен","AION 2 n'est pas lancé"), ("Waiting for the game to connect…","Ожидание подключения игры…","En attente de la connexion du jeu…"),

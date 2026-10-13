@@ -28,9 +28,10 @@ public sealed class TimerCardWindow : Window, IDisplayAppearance
         if (compact)
         {
             WindowStyle = WindowStyle.None; Background = Brushes.Transparent;
-            Width = Math.Max(220, placement.Width); Height = 54; MinHeight = 48;
+            Width = Math.Max(220, placement.Width); Height = 28; MinHeight = 28; MaxHeight=28;
             _name.FontSize = 10; _name.TextWrapping = TextWrapping.NoWrap; _name.TextTrimming = TextTrimming.CharacterEllipsis;
-            _time.FontSize = 10; _time.Margin = new Thickness(0, 4, 0, 0);
+            _time.FontSize = 10; _time.Margin = new Thickness(8, 0, 0, 0);
+            _time.VerticalAlignment=VerticalAlignment.Center;
         }
         Left = Math.Clamp(placement.Left, SystemParameters.VirtualScreenLeft, Math.Max(SystemParameters.VirtualScreenLeft, SystemParameters.VirtualScreenLeft + SystemParameters.VirtualScreenWidth - Width));
         Top = Math.Clamp(placement.Top, SystemParameters.VirtualScreenTop, Math.Max(SystemParameters.VirtualScreenTop, SystemParameters.VirtualScreenTop + SystemParameters.VirtualScreenHeight - Height));
@@ -41,8 +42,13 @@ public sealed class TimerCardWindow : Window, IDisplayAppearance
         if (compact)
         {
             Content = null;
-            body.Margin = new Thickness(8, 5, 8, 5);
-            Content = _card = new Border { Child = body, CornerRadius = new CornerRadius(5), Background = new SolidColorBrush(Color.FromArgb(223,16,18,15)), BorderBrush = Brushes.DarkKhaki, BorderThickness = new Thickness(1) };
+            heading.Children.Clear(); body.Children.Clear();
+            var row=new Grid { Margin=new Thickness(7,4,7,4) };
+            row.ColumnDefinitions.Add(new(){Width=GridLength.Auto}); row.ColumnDefinitions.Add(new(){Width=new GridLength(1,GridUnitType.Star)}); row.ColumnDefinitions.Add(new(){Width=GridLength.Auto});
+            var badge=new Border { Child=_kind, CornerRadius=new(6), BorderThickness=new(1), BorderBrush=EventPanelBrushes.ForKind("EVENT"), Padding=new(4,1,4,1), Margin=new(0,0,5,0), VerticalAlignment=VerticalAlignment.Center };
+            _kind.Margin=new Thickness(0); _kind.FontSize=8;
+            row.Children.Add(badge); Grid.SetColumn(_name,1); row.Children.Add(_name); Grid.SetColumn(_time,2); row.Children.Add(_time);
+            Content = _card = new Border { Child = row, CornerRadius = new CornerRadius(5), Background = EventPanelBrushes.Background, BorderBrush = EventPanelBrushes.Border, BorderThickness = new Thickness(1) };
             MouseLeftButtonDown += (_, e) => { if (e.LeftButton == System.Windows.Input.MouseButtonState.Pressed) DragMove(); };
             MouseRightButtonUp += (_, _) => { var menu = new ContextMenu(); var close = new MenuItem { Header = UiText.Current.Localize("Close card") }; close.Click += (_, _) => Close(); menu.Items.Add(close); menu.IsOpen = true; };
         }
@@ -65,7 +71,13 @@ public sealed class TimerCardWindow : Window, IDisplayAppearance
             if (_card is not null) EventPulse.Apply(_card,EventPanelBrushes.ForKind(card.Kind),started);
             _time.Text = (card.Next is { } next && !card.Alive ? (compact ? TimerCards.StartLabel(next, now) : TimerCards.Berlin(next).ToString("dd.MM. HH:mm")) + " · " : "") + TimerCards.Countdown(card, now);
             if (started) _time.Text = UiText.Current.Localize("Started · ") + TimerCards.StartLabel(card.Next!.Value,now);
-            _time.TextWrapping = TextWrapping.Wrap;
+            if(compact)
+            {
+                var remaining=card.Next is { } scheduled ? scheduled-now : TimeSpan.Zero;
+                _time.Text=started ? $"{UiText.Current.Localize("Started")} · {(int)(-remaining).TotalMinutes:00}:{(-remaining).Seconds:00}" : $"{UiText.Current.Localize("in")} {(int)Math.Max(0,remaining.TotalMinutes):00}:{Math.Max(0,remaining.Seconds):00}";
+                if(_card?.Child is Grid row && row.Children[0] is Border badge) badge.BorderBrush=EventPanelBrushes.ForKind(card.Kind);
+            }
+            _time.TextWrapping = compact ? TextWrapping.NoWrap : TextWrapping.Wrap;
             _source.Text = UiText.Current.Localize(card.Source);
             _time.ToolTip = UiText.Current.Localize(card.Source);
             _source.Visibility = compact || Height < 170 ? Visibility.Collapsed : Visibility.Visible;
