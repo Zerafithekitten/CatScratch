@@ -6,9 +6,10 @@ $target = Join-Path $case 'installed'
 $stage = Join-Path (Join-Path $env:TEMP 'CatScratch-update') ('stage-' + [guid]::NewGuid().ToString('N'))
 $source = Join-Path $stage 'payload'
 New-Item -ItemType Directory -Path $target, $source -Force | Out-Null
-Copy-Item "$Payload/*" $target -Recurse
-Copy-Item "$Payload/*" $source -Recurse
-New-Item -ItemType Directory -Path "$target/userdata" | Out-Null
+$programFiles = Get-ChildItem -LiteralPath $Payload | Where-Object { $_.Name -notin @('userdata', 'captures') }
+$programFiles | Copy-Item -Destination $target -Recurse
+$programFiles | Copy-Item -Destination $source -Recurse
+New-Item -ItemType Directory -Path "$target/userdata" -Force | Out-Null
 [IO.File]::WriteAllText("$target/userdata/update-preserve.txt", 'keep-me')
 [IO.File]::WriteAllText("$source/update-proof.txt", 'new-version')
 $result = Join-Path $case 'shutdown.txt'

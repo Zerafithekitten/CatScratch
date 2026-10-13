@@ -50,6 +50,13 @@ jobs:
             Get-Content $result
             if ($process.ExitCode) { throw "$check verification failed" }
           }
+          # Diagnostics may create their own empty cache folders. Never include them in Setup.
+          $payload = [IO.Path]::GetFullPath("$PWD/dist/payload").TrimEnd('\') + '\'
+          foreach ($name in @('userdata', 'captures')) {
+            $testData = [IO.Path]::GetFullPath((Join-Path $payload $name))
+            if (-not $testData.StartsWith($payload, [StringComparison]::OrdinalIgnoreCase)) { throw 'Invalid diagnostic cleanup path' }
+            if (Test-Path -LiteralPath $testData) { Remove-Item -LiteralPath $testData -Recurse -Force }
+          }
       - name: Verify direct update and preserved userdata
         shell: pwsh
         run: ./tools/check-direct-update.ps1 -Payload "$PWD/dist/payload"
