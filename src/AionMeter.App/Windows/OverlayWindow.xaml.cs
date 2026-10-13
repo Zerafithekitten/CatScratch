@@ -375,7 +375,7 @@ public partial class OverlayWindow : Window, IDisplayAppearance
     {
         var k = Math.Clamp(percent, AppSettings.MinRowSize, AppSettings.MaxRowSize) / 100.0;
         var f = Math.Sqrt(k);
-        var height = Math.Max(54, Math.Round((_settings.CompactMode ? 62 : 70) * k));
+        var height = Math.Max(52, Math.Round((_settings.CompactMode ? 56 : 64) * k));
         Resources["RowHeight"] = height;
         Resources["CompactRowHeight"] = height;
         Resources["CompactNameFont"] = Math.Max(12, Math.Round(14 * f, 1));

@@ -1,3 +1,8 @@
+## CatScratch v2.0.1
+
+- Make DPS rows slightly more compact by reducing row height, vertical padding and spacing.
+- Preserve fonts, colors, the overall design and transparent click-through behavior.
+
 ## CatScratch v2.0.0
 
 - Redesign the DPS meter with dark rounded player rows, larger class emblems and separate class-colored damage bars.

@@ -167,9 +167,9 @@
         </Style>
 
         <DataTemplate x:Key="CompactRowTemplate" DataType="{x:Type vm:RowViewModel}">
-            <Grid x:Name="ModernRow" Height="{DynamicResource CompactRowHeight}" Margin="0,0,0,6" Cursor="Hand" Background="Transparent" ToolTip="{Binding Tooltip}" MouseLeftButtonUp="Row_Click" MouseRightButtonUp="Row_RightClick">
+            <Grid x:Name="ModernRow" Height="{DynamicResource CompactRowHeight}" Margin="0,0,0,4" Cursor="Hand" Background="Transparent" ToolTip="{Binding Tooltip}" MouseLeftButtonUp="Row_Click" MouseRightButtonUp="Row_RightClick">
                 <Border x:Name="RowSurface" Background="#D0171E27" BorderBrush="#302E4252" BorderThickness="1" CornerRadius="6" />
-                <Grid Margin="8,5,8,5">
+                <Grid Margin="8,4,8,4">
                     <Grid.ColumnDefinitions><ColumnDefinition Width="{DynamicResource ColGlyphWidth}"/><ColumnDefinition Width="*"/><ColumnDefinition Width="76"/><ColumnDefinition Width="57"/></Grid.ColumnDefinitions>
                     <c:ClassGlyph Class="{Binding Class}" Width="{DynamicResource RowGlyphSize}" Height="{DynamicResource RowGlyphSize}" VerticalAlignment="Center" HorizontalAlignment="Left"/>
                     <Grid Grid.Column="1" Grid.ColumnSpan="3" Margin="4,0,0,0">
