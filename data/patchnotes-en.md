@@ -1,3 +1,10 @@
+## CatScratch v1.0.27
+
+- Match Personal combat to the DPS meter with its purple paw, teal title, font and compact icon buttons.
+- Align the close button to the right at every window width.
+- Replace bright gray waiting rows and unknown-class icons with subdued dark placeholders.
+- Keep class-colored metric rows visible when locked.
+
 ## CatScratch v1.0.26
 
 - Restyle Personal combat with compact class-colored rows matching the DPS meter.

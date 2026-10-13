@@ -10,7 +10,7 @@ namespace AionMeter.App.Windows;
 public sealed class PersonalCombatWindow : Window, IDisplayAppearance
 {
     private readonly MeterService _meter;
-    private readonly StackPanel _header;
+    private readonly Grid _header;
     private readonly Border _takenPanel, _healingPanel;
     private readonly Border _shell;
     private readonly List<(Border Bar, AionMeter.App.Controls.ClassGlyph Glyph)> _bars = [];
@@ -30,16 +30,22 @@ public sealed class PersonalCombatWindow : Window, IDisplayAppearance
         Top = Math.Clamp(s.PersonalModuleTop, SystemParameters.VirtualScreenTop, SystemParameters.VirtualScreenTop + Math.Max(0,SystemParameters.VirtualScreenHeight - 120));
         Background = new SolidColorBrush(Color.FromRgb(17,23,34)); Foreground = Brushes.White;
         UseLayoutRounding = true; TextOptions.SetTextFormattingMode(this,TextFormattingMode.Display);
+        FontFamily = (FontFamily)FindResource("UiFont");
         var root = new StackPanel { Margin = new(5) };
-        _header = new StackPanel { Orientation = Orientation.Horizontal, Margin = new(0,0,0,5) };
-        _header.Children.Add(new TextBlock { Text = "Personal combat", FontSize = 12, FontWeight = FontWeights.SemiBold, Width = 200 });
-        var close = new Button { Content = "×", Padding = new(6,0,6,0), ToolTip = "Close personal combat module" };
-        close.Click += (_,_) => Close(); _header.Children.Add(close);
-        _header.MouseLeftButtonDown += (_,e) => { if(e.OriginalSource is TextBlock) DragMove(); };
+        _header = new Grid { Height = 24, Margin = new(0,0,0,4), Background = Brushes.Transparent };
+        _header.ColumnDefinitions.Add(new ColumnDefinition { Width = new(1,GridUnitType.Star) });
+        _header.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+        var caption = new StackPanel { Orientation = Orientation.Horizontal, VerticalAlignment = VerticalAlignment.Center };
+        caption.Children.Add(new Image { Source = Icon, Width = 14, Height = 14, Margin = new(0,0,5,0) });
+        caption.Children.Add(new TextBlock { Text = "Personal combat", FontSize = 11, FontWeight = FontWeights.Bold, Foreground = ColorBrush("#79E3CF"), VerticalAlignment = VerticalAlignment.Center });
+        _header.Children.Add(caption);
+        var close = new Button { Content = "\uE711", Style = (Style)FindResource("IconButton"), Width = 22, Height = 22, FontSize = 12, ToolTip = "Close personal combat module" };
+        close.Click += (_,_) => Close(); Grid.SetColumn(close,1); _header.Children.Add(close);
+        _header.MouseLeftButtonDown += (_,e) => { if (!close.IsMouseOver) DragMove(); };
         root.Children.Add(_header); root.Children.Add(_fight);
         _takenPanel = Panel("Damage taken", _taken, null); root.Children.Add(_takenPanel);
         _healingPanel = Panel("Healing done", _selfHealing, _otherHealing); root.Children.Add(_healingPanel);
-        _shell = new Border { Background = Background, CornerRadius = new(10), BorderThickness = new(1), BorderBrush = Brushes.DimGray, Child = root };
+        _shell = new Border { Background = Background, CornerRadius = new(10), BorderThickness = new(1), BorderBrush = ColorBrush("#607B827F"), Child = root };
         Content = _shell;
         Closed += (_,_) => { s.PersonalModuleLeft = Left; s.PersonalModuleTop = Top; s.PersonalModuleWidth = Width; if (!AppHost.Current.IsExiting) s.ShowPersonalCombatModule = false; s.Save(); };
         Refresh();
@@ -53,7 +59,7 @@ public sealed class PersonalCombatWindow : Window, IDisplayAppearance
             grid.ColumnDefinitions.Add(new ColumnDefinition { Width=new GridLength(25) });
             grid.ColumnDefinitions.Add(new ColumnDefinition { Width=new GridLength(1,GridUnitType.Star) });
             grid.ColumnDefinitions.Add(new ColumnDefinition { Width=GridLength.Auto });
-            var glyph=new AionMeter.App.Controls.ClassGlyph { Width=20,Height=20,OnBar=true,VerticalAlignment=VerticalAlignment.Center };
+            var glyph=new AionMeter.App.Controls.ClassGlyph { Width=20,Height=20,OnBar=true,VerticalAlignment=VerticalAlignment.Center, Visibility=Visibility.Hidden };
             grid.Children.Add(glyph);
             var caption=new TextBlock { Text=label,FontSize=12,FontWeight=FontWeights.SemiBold,Foreground=Brushes.White,VerticalAlignment=VerticalAlignment.Center,TextTrimming=TextTrimming.CharacterEllipsis };
             Grid.SetColumn(caption,1); grid.Children.Add(caption);
@@ -70,7 +76,12 @@ public sealed class PersonalCombatWindow : Window, IDisplayAppearance
         _header.Visibility=enabled ? Visibility.Collapsed : Visibility.Visible;
         Background=Brushes.Transparent;
         _shell.Background=enabled ? Brushes.Transparent : new SolidColorBrush(Color.FromArgb(223,27,32,39));
-        _shell.BorderBrush=enabled ? Brushes.Transparent : Brushes.DimGray;
+        _shell.BorderBrush=enabled ? Brushes.Transparent : ColorBrush("#607B827F");
+    }
+    private static Brush ColorBrush(string color)
+    {
+        var brush = new SolidColorBrush((Color)ColorConverter.ConvertFromString(color));
+        brush.Freeze(); return brush;
     }
     public void Refresh()
     {
@@ -82,11 +93,12 @@ public sealed class PersonalCombatWindow : Window, IDisplayAppearance
         {
             _barClass=cls;
             var color=AionMeter.App.Controls.ClassVisuals.BarColorOf(cls);
-            var brush=new SolidColorBrush(Color.FromArgb(194,color.R,color.G,color.B)); brush.Freeze();
-            var contrast=new AionMeter.App.ViewModels.RowViewModel { Class=cls }.CompactTextBrush;
+            var brush=cls == AionMeter.Core.Events.GameClass.Unknown ? ColorBrush("#60202A32") : new SolidColorBrush(Color.FromArgb(194,color.R,color.G,color.B)); brush.Freeze();
+            var contrast=cls == AionMeter.Core.Events.GameClass.Unknown ? Brushes.White : new AionMeter.App.ViewModels.RowViewModel { Class=cls }.CompactTextBrush;
             foreach(var row in _bars)
             {
                 row.Bar.Background=brush; row.Glyph.Class=cls;
+                row.Glyph.Visibility=cls == AionMeter.Core.Events.GameClass.Unknown ? Visibility.Hidden : Visibility.Visible;
                 foreach(var text in ((Grid)row.Bar.Child).Children.OfType<TextBlock>()) text.Foreground=contrast;
             }
         }

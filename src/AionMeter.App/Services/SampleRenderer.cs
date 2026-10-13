@@ -54,7 +54,7 @@ public static class SampleRenderer
         using var meter = CreateMeter(language, o.RowSize);
         var start = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() - 20_500; // a fight that is still going
         var fight = new SampleFight(start, 20);
-        if (o.Window is not ("party" or "room")) fight.FeedUntil(meter.Tracker, start + 20_000);
+        if (o.Window is not ("party" or "room" or "personal-waiting")) fight.FeedUntil(meter.Tracker, start + 20_000);
         else
         {
             meter.PartyPreview.Observe(new SelfIdentifiedEvent(start, 1, "Sample self", 2305, Core.Events.GameClass.Cleric));
@@ -79,13 +79,19 @@ public static class SampleRenderer
         switch (o.Window)
         {
             case "personal":
+            case "personal-locked":
                 var sample = meter.Tracker.Snapshot(null,start+20000)!;
                 var sampleSelf = sample.Combatants.First(c=>c.IsSelf).ActorId;
                 var sampleOther = sample.Combatants.First(c=>!c.IsSelf && !c.IsUnknownSummons).ActorId;
                 meter.Tracker.Process(new HealEvent(start+20001,sampleSelf,sampleSelf,17010000,78500,HitFlags.None));
                 meter.Tracker.Process(new HealEvent(start+20002,sampleSelf,sampleOther,17010000,231400,HitFlags.None));
-                var personal = new PersonalCombatWindow(meter) { Width=o.Width??320, Height=o.Height??340 };
+                meter.Settings.ClickThrough = o.Window == "personal-locked";
+                var personal = new PersonalCombatWindow(meter) { Width=o.Width??320, Height=o.Height??182 };
                 host=personal; refresh=personal.Refresh;
+                break;
+            case "personal-waiting":
+                var waiting = new PersonalCombatWindow(meter) { Width=o.Width??320, Height=o.Height??182 };
+                host=waiting; refresh=waiting.Refresh;
                 break;
             case "events":
             case "events-locked":
