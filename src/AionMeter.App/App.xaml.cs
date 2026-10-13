@@ -64,6 +64,13 @@ public partial class App : Application
     protected override void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);
+        if (ArgValue(e.Args, "--check-performance") is { } performancePath)
+        {
+            Log.Enabled = false;
+            SampleRenderer.CheckPerformance(performancePath);
+            Shutdown();
+            return;
+        }
         if (ArgValue(e.Args, "--check-shutdown") is { } shutdownPath)
         {
             Log.Enabled = false;

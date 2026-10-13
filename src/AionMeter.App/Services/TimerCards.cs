@@ -41,6 +41,21 @@ public sealed class TimerCards : IDisposable
     private readonly string _path = Path.Combine(AppSettings.AppDataDir, "timer-cards.json");
     private readonly Dictionary<string, TimerCardWindow> _windows = [];
     public State Saved { get; private set; } = new();
+    private IReadOnlyList<EventStart> _nextEvents = [];
+    private string? _scheduleKey;
+    private DateTimeOffset _scheduleAt, _scheduleUntil;
+    public IReadOnlyList<EventStart> NextEvents(DateTimeOffset now)
+    {
+        var key = Saved.EventRegion + ":" + string.Join('|', Saved.SelectedEvents);
+        if (key == _scheduleKey && now >= _scheduleAt && now < _scheduleUntil) return _nextEvents;
+        _nextEvents = AutomaticEventSchedule.Next(now, Saved.EventRegion, Saved.SelectedEvents);
+        _scheduleKey = key;
+        _scheduleAt = now;
+        _scheduleUntil = now.AddSeconds(1);
+        if (_nextEvents.Count > 0 && _nextEvents[0].StartsAt < _scheduleUntil)
+            _scheduleUntil = _nextEvents[0].StartsAt.AddTicks(1);
+        return _nextEvents;
+    }
     public TimerCards(MeterService meter, bool persistent = true)
     {
         _meter = meter;
@@ -73,7 +88,7 @@ public sealed class TimerCards : IDisposable
         if (id.StartsWith("auto:"))
         {
             var key = id[5..];
-            var next = AutomaticEventSchedule.Next(DateTimeOffset.UtcNow, Saved.EventRegion, Saved.SelectedEvents).FirstOrDefault(e => e.Id == key);
+            var next = NextEvents(DateTimeOffset.UtcNow).FirstOrDefault(e => e.Id == key);
             return next is null ? null : new(id, next.Name, "EVENT", next.StartsAt, "Community schedule · Shugo.GG");
         }
         if (id.StartsWith("boss:"))

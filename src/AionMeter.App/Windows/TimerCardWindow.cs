@@ -12,8 +12,8 @@ public sealed class TimerCardWindow : Window, IDisplayAppearance
     public void SetDisplayOnly(bool enabled)
     {
         if (_card is null) return;
-        _card.Background=new SolidColorBrush(Color.FromArgb(223,16,18,15));
-        _card.BorderBrush=new SolidColorBrush(Color.FromRgb(112,96,74));
+        _card.Background=EventPanelBrushes.Background;
+        _card.BorderBrush=EventPanelBrushes.Border;
     }
     private readonly TextBlock _name = new() { FontSize = 15, FontWeight = FontWeights.SemiBold, TextWrapping = TextWrapping.Wrap };
     private readonly TextBlock _time = new() { FontSize = 14, Foreground = Brushes.PaleGoldenrod, Margin = new(0, 6, 0, 0) };

@@ -76,6 +76,13 @@ internal static class InteractionChecks
                 ClockOverride = () => new DateTimeOffset(2026, 10, 13, 13, 42, 0, TimeSpan.FromHours(2))
             };
             hub.Reload();
+            var scheduleTime = hub.ClockOverride();
+            Check(ReferenceEquals(cards.NextEvents(scheduleTime), cards.NextEvents(scheduleTime.AddMilliseconds(100))),
+                "Event windows share the schedule calculation within a refresh interval");
+            cards.Saved.SelectedEvents = ["shugo"];
+            Check(cards.NextEvents(scheduleTime).Count == 1, "Event selection invalidates the shared schedule immediately");
+            cards.Saved.SelectedEvents = ["shugo", "rift"];
+            hub.Reload();
             windows.Add(hub);
             WindowClickThrough.Attach(hub, () => mode);
             var shell = (System.Windows.Controls.Border)hub.Content;

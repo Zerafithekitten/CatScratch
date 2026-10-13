@@ -14,6 +14,32 @@ namespace AionMeter.App.Services;
 /// </summary>
 public static class SampleRenderer
 {
+    public static void CheckPerformance(string path)
+    {
+        using var meter = new MeterService(new AppSettings { Transient = true, DownloadIcons = false, CompactMode = true }, null);
+        var start = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() - 20_500;
+        new SampleFight(start, 20).FeedUntil(meter.Tracker, start + 20_000);
+        var overlay = new OverlayWindow(meter);
+        var cards = new TimerCards(meter, persistent: false);
+        cards.Saved.SelectedEvents = ["shugo", "rift"];
+        var hub = new TimerHubWindow(cards) { ClockOverride = () => new DateTimeOffset(2026, 10, 13, 13, 42, 0, TimeSpan.FromHours(2)) };
+        OverlayWindow.ClockOverride = () => start + 20_000;
+        for (var i = 0; i < 100; i++) { overlay.Refresh(); hub.Reload(); }
+        GC.Collect(); GC.WaitForPendingFinalizers(); GC.Collect();
+        var allocated = GC.GetAllocatedBytesForCurrentThread();
+        var clock = System.Diagnostics.Stopwatch.StartNew();
+        const int count = 2000;
+        for (var i = 0; i < count; i++) { overlay.Refresh(); hub.Reload(); }
+        clock.Stop();
+        var bytes = GC.GetAllocatedBytesForCurrentThread() - allocated;
+        File.WriteAllText(path, System.Text.Json.JsonSerializer.Serialize(new {
+            Iterations = count, Milliseconds = clock.Elapsed.TotalMilliseconds,
+            AllocatedBytes = bytes, BytesPerRefresh = bytes / count,
+            WorkingSetBytes = Environment.WorkingSet,
+            Scope = "Synthetic party DPS and event refresh logic, no game capture or GPU rendering"
+        }, new System.Text.Json.JsonSerializerOptions { WriteIndented = true }));
+        OverlayWindow.ClockOverride = null;
+    }
     /// <param name="Window">overlay (default), overlay-update, overlay-crowd (a world boss whose crowd's damage never
     /// arrives), breakdown, history, timers, settings, update or update-portable.</param>
     /// <param name="Width">Overlay width (default 560): narrow sizes show how the footer copes.</param>

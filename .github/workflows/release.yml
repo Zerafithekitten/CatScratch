@@ -43,7 +43,7 @@ jobs:
       - name: Verify event panels and complete shutdown
         shell: pwsh
         run: |
-          foreach ($check in @('interaction', 'shutdown')) {
+          foreach ($check in @('interaction', 'shutdown', 'performance')) {
             $result = "$env:RUNNER_TEMP/meter-$check.txt"
             $process = Start-Process "$PWD/dist/payload/AION2DpsMeter.exe" -ArgumentList @("--check-$check",("`"$result`"")) -WindowStyle Hidden -PassThru
             if (-not $process.WaitForExit(20000)) { Stop-Process -Id $process.Id; throw "$check verification timed out" }

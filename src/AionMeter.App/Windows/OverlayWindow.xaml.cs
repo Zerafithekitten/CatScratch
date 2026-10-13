@@ -23,6 +23,15 @@ public partial class OverlayWindow : Window, IDisplayAppearance
     private SavedFight? _saved; // a fight loaded from history (takes precedence over _segment)
     private nint _hwnd;
     private readonly DragAnywhere _drag;
+    private long _npcapCheckedAt = long.MinValue;
+    private bool _npcapInstalled;
+    private static readonly Brush ClickableCursorBrush = CreateCursorBrush();
+    private static Brush CreateCursorBrush()
+    {
+        var brush = new SolidColorBrush(Color.FromRgb(121, 227, 207));
+        brush.Freeze();
+        return brush;
+    }
 
     private sealed record SavedFight(HistoryEntry Entry, FightRecord Record, RecordFightView View, string Title);
 
@@ -121,7 +130,13 @@ public partial class OverlayWindow : Window, IDisplayAppearance
     {
         SetDisplayOnly(_settings.ClickThrough);
         _vm.WallClock = TimerCards.Berlin(DateTimeOffset.UtcNow).ToString("HH:mm", System.Globalization.CultureInfo.InvariantCulture);
-        var npcInstalled = LiveCapture.IsNpcapInstalled();
+        var uptime = Environment.TickCount64;
+        if (_npcapCheckedAt == long.MinValue || uptime - _npcapCheckedAt >= 2_000)
+        {
+            _npcapInstalled = LiveCapture.IsNpcapInstalled();
+            _npcapCheckedAt = uptime;
+        }
+        var npcInstalled = _npcapInstalled;
         NpcapDownloadButton.Visibility = npcInstalled || _meter.Settings.Transient || _meter.DemoRunning ? Visibility.Collapsed : Visibility.Visible;
         IdentityStatusText.Text = _meter.Settings.Transient || _meter.DemoRunning
             ? "PREVIEW / DEMO – no confirmed live data"
@@ -133,7 +148,7 @@ public partial class OverlayWindow : Window, IDisplayAppearance
         IdentityStatusText.Foreground = _meter.LiveIdentity.Current is not null && !_meter.DemoRunning
             ? (Brush)FindResource("Green") : (Brush)FindResource("Amber");
         ClickModeSlash.Visibility = _settings.ClickThrough ? Visibility.Visible : Visibility.Collapsed;
-        ClickModeCursor.Fill = _settings.ClickThrough ? Brushes.Gray : new SolidColorBrush(Color.FromRgb(121, 227, 207));
+        ClickModeCursor.Fill = _settings.ClickThrough ? Brushes.Gray : ClickableCursorBrush;
         SetupPanel.Visibility = _settings.CompactMode && (_settings.Transient || _meter.DemoRunning || _meter.LiveIdentity.ActorId is not null) ? Visibility.Collapsed : Visibility.Visible;
         if (_settings.ClickThrough) SetupPanel.Visibility = Visibility.Collapsed;
         Title = AppInfo.Name;

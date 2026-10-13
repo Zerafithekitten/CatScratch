@@ -19,8 +19,8 @@ public sealed class TimerHubWindow : Window, IDisplayAppearance
         _displayOnly=enabled;
         if (_header is not null) _header.Visibility=enabled ? Visibility.Collapsed : Visibility.Visible;
         foreach(var tile in _list.Children.OfType<Border>()) {
-            tile.Background=ColorBrush("#DF10120F");
-            tile.BorderBrush=ColorBrush("#70604A");
+            tile.Background=EventPanelBrushes.Background;
+            tile.BorderBrush=EventPanelBrushes.Border;
         }
         foreach (var placeholder in _list.Children.OfType<TextBlock>())
             placeholder.Visibility = enabled ? Visibility.Collapsed : Visibility.Visible;
@@ -65,7 +65,7 @@ public sealed class TimerHubWindow : Window, IDisplayAppearance
     public void Reload()
     {
         var now=ClockOverride?.Invoke()??DateTimeOffset.UtcNow;
-        var events=AutomaticEventSchedule.Next(now,_cards.Saved.EventRegion,_cards.Saved.SelectedEvents);
+        var events=_cards.NextEvents(now);
         var key=string.Join('|',events.Select(e=>$"{e.Id}:{e.StartsAt:O}"));
         if(_list.Tag as string != key)
         {
@@ -82,7 +82,7 @@ public sealed class TimerHubWindow : Window, IDisplayAppearance
                 row.Children.Add(heading);
                 row.Children.Add(new TextBlock { FontSize=10, FontWeight=FontWeights.SemiBold, Foreground=ColorBrush("#D8C789"), Margin=new(0,4,0,0) });
                 var tile=new Border { Child=row, CornerRadius=new(5), Padding=new(8,5,8,5), Height=48,
-                    Background=ColorBrush("#DF10120F"), BorderBrush=ColorBrush("#70604A"), BorderThickness=new(1), Margin=new(2),
+                    Background=EventPanelBrushes.Background, BorderBrush=EventPanelBrushes.Border, BorderThickness=new(1), Margin=new(2),
                     ToolTip=$"{item.Name} · Community schedule ({_cards.Saved.EventRegion}). Double-click to open a separate window." };
                 tile.MouseLeftButtonDown+=(_,e)=> {
                     if(e.ClickCount==2) _cards.Pin("auto:"+item.Id);

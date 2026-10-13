@@ -9,7 +9,8 @@ public readonly record struct GameConnection(IPAddress LocalIp, ushort LocalPort
 /// <summary>Finds the running AION 2 client and the TCP connections it owns (via the Windows TCP table).</summary>
 public static class GameProcessLocator
 {
-    public static readonly string[] ProcessNames = ["AION2", "Aion2", "AION2-Win64-Shipping", "Aion2-Win64-Shipping"];
+    // GetProcessesByName already matches names without regard to case.
+    public static readonly string[] ProcessNames = ["AION2", "AION2-Win64-Shipping"];
 
     public static int[] FindGameProcessIds()
     {
