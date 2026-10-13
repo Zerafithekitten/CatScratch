@@ -247,8 +247,8 @@ public partial class OverlayWindow : Window, IDisplayAppearance
         UpdateBanner.Visibility = show ? Visibility.Visible : Visibility.Collapsed;
         if (show)
         {
-            var ready = _meter.Updates.Downloaded?.Version == available!.Version; // downloaded: it installs itself soon
-            UpdateBannerText.Text = string.Format(ready ? UiText.Current.UpdateBannerReady : UiText.Current.UpdateBanner, available.Version.ToString(3));
+            // Checking only announces availability; Update now is the only installation action.
+            UpdateBannerText.Text = string.Format(UiText.Current.UpdateBanner, available!.Version.ToString(3));
         }
     }
 

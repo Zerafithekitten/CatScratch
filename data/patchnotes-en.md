@@ -1,3 +1,8 @@
+## CatScratch v1.0.19
+
+- Check for updates only checks availability and shows the release notes.
+- Download and installation start only after pressing Update now. Remove automatic background installation, including for existing settings.
+
 ## CatScratch v1.0.18
 
 - Remove fixed class-color blocks behind compact names and stats so only the actual damage bar defines the colored length.

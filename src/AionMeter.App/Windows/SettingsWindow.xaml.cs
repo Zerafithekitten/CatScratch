@@ -83,8 +83,8 @@ public partial class SettingsWindow : Window
         LanguageBox.SelectedIndex = UiText.Normalize(s.Language) == "ru" ? 1 : 0;
         Icons.IsChecked = s.DownloadIcons;
         CheckUpdates.IsChecked = s.CheckUpdates;
-        AutoInstallUpdates.IsChecked = s.AutoInstallUpdates;
-        AutoInstallUpdates.IsEnabled = true;
+
+
         VersionText.Text = string.Format(Updater.IsInstalled ? T.VersionInstalled : T.VersionPortable, _meter.Updates.Current.ToString(3));
 
         CaptureState.Text = T.StatusPrefix + _meter.CaptureStatus.Message;
@@ -154,7 +154,7 @@ public partial class SettingsWindow : Window
         var language = (LanguageBox.SelectedItem as ComboBoxItem)?.Tag as string ?? "en";
         s.DownloadIcons = Icons.IsChecked == true;
         s.CheckUpdates = CheckUpdates.IsChecked == true;
-        s.AutoInstallUpdates = AutoInstallUpdates.IsChecked == true;
+        s.AutoInstallUpdates = false; // Legacy setting: installation now always requires explicit approval.
         s.HotkeyToggleOverlay = HkToggle.Text.Trim();
         s.HotkeyReset = HkReset.Text.Trim();
         s.HotkeyClickThrough = HkClick.Text.Trim();

@@ -52,18 +52,6 @@ public sealed class Updater : IDisposable
     /// <summary>True when this copy runs from the folder the installer put it in (it can update itself).</summary>
     public static bool IsInstalled { get; } = DetectInstalled();
 
-    /// <summary>This copy fetches and installs new versions by itself (unless turned off).</summary>
-    public bool AutoInstall => _settings.AutoInstallUpdates;
-
-    /// <summary>The update whose package is downloaded and checked, waiting for a quiet moment to be installed.</summary>
-    public ReleaseInfo? Downloaded { get; private set; }
-
-    /// <summary>The background download of <see cref="Available"/> failed: fall back to asking the player.</summary>
-    public bool DownloadFailed { get; private set; }
-
-    private string? _downloadedPath;
-    private bool _downloading;
-
     /// <summary>Raised on the UI thread after every check and when a version is skipped.</summary>
     public event Action? Changed;
 
@@ -102,7 +90,7 @@ public sealed class Updater : IDisposable
             Latest = await _feed.GetLatestAsync();
             LastError = null;
             Log.Info($"Update check: newest release {Latest?.Tag ?? "none"}, this copy {Current.ToString(3)}.");
-            if (Available is { Portable: not null } update && AutoInstall) _ = PrepareAsync(update);
+
             return Latest is { } r && r.Version > Current ? UpdateCheckResult.Available : UpdateCheckResult.UpToDate;
         }
         catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException or JsonException or InvalidOperationException)
@@ -136,38 +124,6 @@ public sealed class Updater : IDisposable
         await _downloadGate.WaitAsync(linked.Token);
         try { return await _feed.DownloadAsync(package, DownloadFolder, progress, linked.Token); }
         finally { _downloadGate.Release(); }
-    }
-
-    /// <summary>Fetches the update in the background, so it can go in at the next quiet moment.</summary>
-    private async Task PrepareAsync(ReleaseInfo release)
-    {
-        if (_downloading || Downloaded?.Version == release.Version) return;
-        _downloading = true;
-        DownloadFailed = false;
-        try
-        {
-            _downloadedPath = await DownloadPackageAsync(release, null, _lifetime.Token);
-            Downloaded = release;
-            Log.Info($"Update {release.Tag} downloaded: {_downloadedPath}");
-        }
-        catch (Exception ex) when (ex is HttpRequestException or IOException or InvalidDataException or InvalidOperationException
-                                       or OperationCanceledException)
-        {
-            DownloadFailed = true;
-            Log.Info($"Update {release.Tag} not downloaded: {ex.Message}");
-        }
-        finally
-        {
-            _downloading = false;
-            Changed?.Invoke();
-        }
-    }
-
-    /// <summary>Starts the staged updater without any window; the caller exits right after.</summary>
-    public void InstallDownloaded()
-    {
-        if (_downloadedPath is null) throw new InvalidOperationException("No update downloaded");
-        DirectUpdate.Launch(_downloadedPath, Downloaded!.Version);
     }
 
     public static void OpenReleasePage(ReleaseInfo? release)

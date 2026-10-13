@@ -222,6 +222,17 @@ internal static class InteractionChecks
             Check(cards.Saved.Sounds.Count == 8 && !cards.Saved.Sounds.Values.Any(s => s.Enabled), "All automatic events and tracked bosses have disabled sound preferences");
             var notes = new AionMeter.App.Windows.PatchNotesWindow(meter.Updates); windows.Add(notes);
             Check(notes.Content is not null, "Patch notes can open without a network request");
+            using var legacyUpdater = new Updater(new AppSettings { Transient = true, AutoInstallUpdates = true });
+            var release = new AionMeter.Core.Updates.ReleaseInfo(new Version(99, 0, 0), "v99.0.0",
+                "https://example.invalid/release", "Verification only", null, null,
+                new AionMeter.Core.Updates.ReleaseAsset("CatScratch-win-x64.zip", 1, "https://example.invalid/package", new string('a', 64)));
+            legacyUpdater.Preview(release);
+            var updateWindow = new AionMeter.App.Windows.UpdateWindow(legacyUpdater, release, false); windows.Add(updateWindow);
+            var updateButton = (System.Windows.Controls.Button)updateWindow.FindName("UpdateButton");
+            var downloadBar = (System.Windows.Controls.ProgressBar)updateWindow.FindName("DownloadBar");
+            Check(updateButton.IsEnabled && Equals(updateButton.Content, UiText.Current.UpdateNow) &&
+                downloadBar.Visibility == Visibility.Collapsed,
+                "Available update waits for Update now without starting download, including legacy automatic-install settings");
             File.WriteAllText(output, JsonSerializer.Serialize(passed, new JsonSerializerOptions { WriteIndented = true }));
         }
         finally { foreach (var window in windows) window.Close(); }
