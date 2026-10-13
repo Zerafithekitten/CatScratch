@@ -566,6 +566,21 @@ public sealed class PacketParser
             }
         }
 
+        if (!isSelf && server == 0 && cls != GameClass.Unknown)
+        {
+            // Global dungeon records move the database identity into the extended player payload.
+            // Require both the matching live roster entry and its exact 64-bit identity; never infer from name alone.
+            PartyMemberInfo? match = null;
+            foreach (var entry in _rosterMembers.Values)
+            {
+                if (entry.Member.Name != name || entry.Member.Class != cls || entry.DbId == 0 ||
+                    b.IndexOf(BitConverter.GetBytes(entry.DbId)) < 0) continue;
+                if (match is not null) { match = null; break; }
+                match = entry.Member;
+            }
+            if (match is not null) server = match.ServerId;
+        }
+
         Emit(isSelf
             ? new SelfIdentifiedEvent(TimeMs, id, name, server, cls, level, combatPower, gearScore)
             : new PlayerSeenEvent(TimeMs, id, name, server, cls));

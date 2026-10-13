@@ -16,6 +16,37 @@ public class PartyOnlyTests
     private static void Roster(CombatTracker t, string mate) => t.Process(new PartyRosterEvent(110,
         [new("Self",1001,50,1000,20000,GameClass.Gladiator),new(mate,1001,50,1000,20000,GameClass.Gladiator)]));
     private static void Hit(CombatTracker t,uint actor,long time=200) => t.Process(new DamageEvent(time,actor,500,11010000,100,HitFlags.None));
+    [Fact] public void Group_survives_dungeon_load_but_requires_new_actor_proofs()
+    {
+        var t=Setup(); Hit(t,2);
+        t.Process(new ZoneChangedEvent(300,600001,"Dungeon",true));
+        Hit(t,2,301); Assert.Null(t.Snapshot(null,302));
+        t.Process(new SelfIdentifiedEvent(400,11,"Self",1001,GameClass.Gladiator));
+        Assert.True(t.PartyConfirmed);
+        Hit(t,2,401); Assert.Null(t.Snapshot(null,402));
+        t.Process(new PlayerSeenEvent(410,12,"Mate",1001,GameClass.Gladiator));
+        t.Process(new PlayerSeenEvent(411,13,"Mate",1002,GameClass.Gladiator));
+        Hit(t,12,420); Hit(t,11,421); Hit(t,13,422);
+        var snapshot=t.Snapshot(null,430)!;
+        Assert.Equal(200,snapshot.TotalDamage); Assert.Equal(2,snapshot.Combatants.Count);
+        t.Process(new PartyLeftEvent(440)); Hit(t,12,441); Hit(t,11,442);
+        Assert.Equal(100,t.Snapshot(null,450)!.TotalDamage);
+    }
+    [Fact] public void Roster_before_identity_enables_only_fresh_confirmed_members()
+    {
+        var t=Setup(false); t.InvalidateParty();
+        Roster(t,"Mate"); Assert.False(t.PartyConfirmed);
+        t.Process(new SelfIdentifiedEvent(150,1,"Self",1001,GameClass.Gladiator));
+        Assert.True(t.PartyConfirmed); Hit(t,1); Hit(t,2); Hit(t,3);
+        Assert.Equal(200,t.Snapshot(null,300)!.TotalDamage);
+    }
+    [Fact] public void Character_change_revokes_group_after_loading()
+    {
+        var t=Setup(); t.Process(new ZoneChangedEvent(300,600001,"Dungeon",true));
+        t.Process(new SelfIdentifiedEvent(400,11,"Other",1001,GameClass.Gladiator));
+        Assert.False(t.PartyConfirmed); Hit(t,2,420); Hit(t,11,421);
+        Assert.Equal(100,t.Snapshot(null,430)!.TotalDamage);
+    }
     [Fact] public void SoloCountsOnlyFreshSelf() { var t=Setup(false); Hit(t,2); Hit(t,3); Hit(t,1); Assert.Equal(100,t.Snapshot(null,300)!.TotalDamage); }
     [Fact] public void SoloSurvivesTickAndCountsOwnPet()
     { var t=Setup(false); t.Process(new SummonSeenEvent(150,8,1,null,0)); Hit(t,8,40000); t.Tick(40001); Hit(t,1,40002); Assert.Equal(200,t.Snapshot(null,40003)!.TotalDamage); }

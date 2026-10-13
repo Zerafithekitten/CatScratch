@@ -10,6 +10,21 @@ namespace AionMeter.Tests;
 /// <summary>Gear score ("GS") and combat power ("CP"): the party roster, the own record, and where they show.</summary>
 public class GearTests
 {
+    [Theory]
+    [InlineData(true,2305)][InlineData(false,0)]
+    public void Dungeon_player_server_requires_exact_roster_database_identity(bool exact,int expected)
+    {
+        var events=new List<GameEvent>(); var parser=new PacketParser(GameData.Empty,events.Add);
+        parser.Handle(Opcodes.PartyRoster,Roster([new("Self",2305,31,45,1900,85510,[0],[]),new("Mate",2305,28,45,1238,63529,[0],[])]));
+        var body=new List<byte> {12,0,0,0,0,1,4}; body.AddRange("Mate"u8.ToArray());
+        body.AddRange(BitConverter.GetBytes(28u)); body.AddRange(new byte[16]);
+        body.AddRange(BitConverter.GetBytes((2305UL<<48)|(exact ? 1001UL : 9999UL)));
+        parser.Handle(Opcodes.PlayerInfo,body.ToArray());
+        var player=Assert.IsType<PlayerSeenEvent>(events[^1]); Assert.Equal(expected,player.ServerId);
+        parser.Handle(Opcodes.PartyLeft,[0,0]);
+        parser.Handle(Opcodes.PlayerInfo,body.ToArray());
+        Assert.Equal(0,Assert.IsType<PlayerSeenEvent>(events[^1]).ServerId);
+    }
     [Fact]
     public void Room_member_updates_removals_and_leave_refresh_the_roster()
     {

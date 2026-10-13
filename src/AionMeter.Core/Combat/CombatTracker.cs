@@ -19,14 +19,17 @@ public sealed class CombatTracker
     private readonly HashSet<(string Name, int Server)> _party = new();
     private bool _freshSelf;
     private (string Name, int Server) _selfKey;
-    public bool PartyConfirmed { get { lock (_gate) return !Options.PartyOnly || (_freshSelf && _party.Count > 0); } }
+    private (string Name, int Server) _partyIdentity;
+    private PartyRosterEvent? _pendingPartyRoster;
+    public bool PartyConfirmed { get { lock (_gate) return !Options.PartyOnly || (_freshSelf && _party.Count > 0 && _selfKey == _partyIdentity); } }
     public void InvalidateParty()
     {
-        lock (_gate) { _freshSelf = false; ClearParty(); }
+        lock (_gate) { _freshSelf = false; _pendingPartyRoster = null; ClearParty(); }
     }
     private void ClearParty()
     {
         _party.Clear();
+        _partyIdentity = default;
         if (Options.PartyOnly) { _current = null; _viewCleared = true; }
     }
     private bool InParty(uint actor)
@@ -34,6 +37,7 @@ public sealed class CombatTracker
         if (!Options.PartyOnly) return true;
         if (_freshSelf && _entities.SelfId == actor) return true;
         if (!_freshSelf || !_entities.TryGetPlayer(actor, out var player) || player.FromCache) return false;
+        if (_selfKey != _partyIdentity) return false;
         var key = (player.Name, player.ServerId);
         return (_entities.SelfId == actor && key == _selfKey) || _party.Contains(key);
     }
@@ -45,6 +49,7 @@ public sealed class CombatTracker
         if (!_freshSelf || _selfKey.Server <= 0 || self is null || !members.Contains(_selfKey)) { ClearParty(); return; }
         if (!_party.SetEquals(members)) ClearParty();
         _party.UnionWith(members);
+        _partyIdentity = _selfKey;
     }
 
     public CombatTracker(GameData data, MeterOptions options)
@@ -126,7 +131,9 @@ public sealed class CombatTracker
                         && (string.IsNullOrWhiteSpace(s.Name) || string.IsNullOrWhiteSpace(_selfKey.Name) || s.Name == _selfKey.Name)
                         && (s.ServerId <= 0 || _selfKey.Server <= 0 || s.ServerId == _selfKey.Server)
                         && (s.Class == GameClass.Unknown || _entities.Self?.Class is null or GameClass.Unknown || s.Class == _entities.Self.Class);
-                    if (!sameSelf) ClearParty();
+                    var keepsGroup = _party.Count > 0 && (string.IsNullOrWhiteSpace(s.Name) ||
+                        (s.Name == _partyIdentity.Name && s.ServerId == _partyIdentity.Server));
+                    if (!sameSelf && !keepsGroup) ClearParty();
                     if (!sameSelf) _selfKey = default;
                     _freshSelf = true;
                     if (!string.IsNullOrWhiteSpace(s.Name)) _selfKey = (s.Name, s.ServerId > 0 ? s.ServerId : _selfKey.Server);
@@ -134,16 +141,33 @@ public sealed class CombatTracker
                     if (!sameSelf && string.IsNullOrWhiteSpace(s.Name) && _entities.Self is { } anonymous)
                     { anonymous.Name = ""; anonymous.ServerId = 0; anonymous.Class = s.Class; anonymous.GearScore = 0; anonymous.CombatPower = 0; }
                     _entities.SetGear(s.Name, s.GearScore, s.CombatPower);
+                    if (_pendingPartyRoster is { } pending && _selfKey.Server > 0 && !string.IsNullOrWhiteSpace(_selfKey.Name))
+                    {
+                        _pendingPartyRoster = null;
+                        ApplyRoster(pending);
+                        if (_party.Count > 0)
+                        {
+                            foreach (var member in pending.Members) _entities.SetGear(member.Name, member.GearScore, member.CombatPower);
+                            _pendingRosters.Add(pending);
+                        }
+                    }
                     LinkSummonsCastBy(s.ActorId, s.Name);
                     selfName = s.Name;
                     break;
                 case PartyRosterEvent roster:
+                    if (Options.PartyOnly && (!_freshSelf || _selfKey.Server <= 0 || string.IsNullOrWhiteSpace(_selfKey.Name)))
+                    {
+                        _pendingPartyRoster = roster.Members.Count > 0 ? roster : null;
+                        if (roster.Members.Count == 0) ClearParty();
+                        break;
+                    }
                     ApplyRoster(roster);
                     if (Options.PartyOnly && _party.Count == 0) break;
                     foreach (var m in roster.Members) _entities.SetGear(m.Name, m.GearScore, m.CombatPower);
                     _pendingRosters.Add(roster);
                     break;
                 case PartyLeftEvent:
+                    _pendingPartyRoster = null;
                     ClearParty();
                     break;
                 case PlayerSeenEvent p:
@@ -202,7 +226,7 @@ public sealed class CombatTracker
                     if (z.IsTeleport || z.MapId == _entities.MapId) break;
                     _timers.Clear(); // the instance's countdowns end with it
                     if (_current is { IsActive: true }) Finish(EncounterEndReason.ZoneChange, _current.LastDamageMs);
-                    if (Options.PartyOnly) { _freshSelf = false; ClearParty(); }
+                    if (Options.PartyOnly) { _freshSelf = false; _current = null; _viewCleared = true; }
                     _entities.OnZoneChanged(z.MapId, z.ZoneName);
                     break;
             }

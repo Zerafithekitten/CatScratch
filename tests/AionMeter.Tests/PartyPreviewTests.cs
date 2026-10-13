@@ -14,11 +14,42 @@ public sealed class PartyPreviewTests
         p.Observe(new PartyLeftEvent(2)); Assert.Empty(p.Snapshot().Members);
         p.Observe(roster with { TimeMs = 3 }); Assert.True(p.Snapshot().InRoom);
     }
-    [Fact] public void Entering_dungeon_blocks_old_room_even_when_members_change()
+    [Fact] public void Entering_dungeon_keeps_confirmed_room_and_member_updates()
     {
         var p = Ready(); var roster = new PartyRosterEvent(1, [Member("Self"), Member("Mate")], 42, 600001);
         p.Observe(roster); p.Observe(new ZoneChangedEvent(2, 600001, "Dungeon", true));
         p.Observe(roster with { Members = [Member("Self"), Member("New mate")] });
+        Assert.Equal(2,p.Snapshot().Members.Count);
+    }
+    [Fact] public void Roster_before_identity_is_confirmed_after_named_self_arrives()
+    {
+        var p=new PartyPreview();
+        p.Observe(new PartyRosterEvent(1,[Member("Self"),Member("Mate")],42,600001));
+        Assert.Empty(p.Snapshot().Members);
+        p.Observe(new SelfIdentifiedEvent(2,15185,"",0,GameClass.Cleric));
+        Assert.Empty(p.Snapshot().Members);
+        p.Observe(new SelfIdentifiedEvent(3,15185,"Self",2305,GameClass.Cleric));
+        Assert.Equal(2,p.Snapshot().Members.Count); Assert.True(p.Snapshot().InRoom);
+    }
+    [Theory]
+    [InlineData("leave")][InlineData("reset")][InlineData("empty")]
+    public void Pending_roster_is_discarded_at_session_boundaries(string boundary)
+    {
+        var p=new PartyPreview(); p.Observe(new PartyRosterEvent(1,[Member("Self"),Member("Mate")],42,600001));
+        switch(boundary)
+        {
+            case "zone": p.Observe(new ZoneChangedEvent(2,600001,"Dungeon",true)); break;
+            case "leave": p.Observe(new PartyLeftEvent(2)); break;
+            case "empty": p.Observe(new PartyRosterEvent(2,[])); break;
+            default: p.Reset(); break;
+        }
+        p.Observe(new SelfIdentifiedEvent(3,15185,"Self",2305,GameClass.Cleric));
+        Assert.Empty(p.Snapshot().Members);
+    }
+    [Fact] public void Pending_roster_never_confirms_another_server_or_character()
+    {
+        var p=new PartyPreview(); p.Observe(new PartyRosterEvent(1,[Member("Self"),Member("Mate")],42,600001));
+        p.Observe(new SelfIdentifiedEvent(2,15185,"Self",2306,GameClass.Cleric));
         Assert.Empty(p.Snapshot().Members);
     }
     private static PartyMemberInfo Member(string name, int server = 2305) => new(name, server, 45, 1894, 85471, GameClass.Cleric);
@@ -35,11 +66,11 @@ public sealed class PartyPreviewTests
         Assert.Equal(2, first.Members.Count); Assert.Equal(85471, first.Members[1].CombatPower);
         p.Observe(roster); Assert.Equal(first.Revision, p.Snapshot().Revision);
     }
-    [Fact] public void Loading_clears_preview_and_repeated_roster_cannot_restore_it()
+    [Fact] public void Loading_preserves_group_stats_until_explicit_leave()
     {
         var p = Ready(); var roster = new PartyRosterEvent(1, [Member("Self"), Member("Mate")]);
         p.Observe(roster); p.Observe(new ZoneChangedEvent(2, 1110, "Open world", false, true));
-        p.Observe(roster with { TimeMs = 3 }); Assert.Empty(p.Snapshot().Members);
+        p.Observe(roster with { TimeMs = 3 }); Assert.Equal(2,p.Snapshot().Members.Count);
         p.Observe(new PartyRosterEvent(4, [Member("Self"), Member("New mate")]));
         Assert.Equal(2, p.Snapshot().Members.Count);
     }

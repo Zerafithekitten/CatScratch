@@ -150,6 +150,14 @@ internal static class InteractionChecks
                 Check(tab.IsChecked == true && tab.IsEnabled && tab.IsHitTestVisible,
                     "Detailed-statistics tabs remain interactive with the display locked");
             }
+                        meter.PartyPreview.Observe(new AionMeter.Core.Events.SelfIdentifiedEvent(1,1,"Sample",2305,AionMeter.Core.Events.GameClass.Cleric));
+            meter.PartyPreview.Observe(new AionMeter.Core.Events.PartyRosterEvent(2,
+                [new("Sample",2305,45,1894,85471,AionMeter.Core.Events.GameClass.Cleric)],42,600001,"Sample room"));
+            var activeOverlay = new AionMeter.App.Windows.OverlayWindow(meter); windows.Add(activeOverlay);
+            activeOverlay.Refresh();
+            var activeModel=(AionMeter.App.ViewModels.OverlayViewModel)activeOverlay.DataContext;
+            Check(activeModel.Rows.Count > 0 && activeModel.Rows[0].Dps != "—" && activeModel.SegmentId is not null,
+                "Active fight damage takes priority over retained dungeon-room stats");
             var cards = new TimerCards(meter, persistent: false);
             cards.Saved.SelectedEvents = ["shugo", "rift"];
             var hub = new AionMeter.App.Windows.TimerHubWindow(cards)

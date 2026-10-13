@@ -39,7 +39,7 @@ int Usage()
         aionmeter-cli conns                         show the AION 2 process and its TCP connections
         aionmeter-cli live [seconds] [--record]     capture live, print what was decoded
         aionmeter-cli replay <file.pcap>            run a capture through the meter, print fights
-        aionmeter-cli party <file.pcap>             inspect transient party stats and loading-screen clears
+        aionmeter-cli party <file.pcap>             inspect confirmed party stats and group damage across loading
         aionmeter-cli dump <file.pcap> [opcode]     print decoded packets (opcode as hex, e.g. 0438)
         aionmeter-cli replay <file.pcap> --boss --brief   player counts per fight only
         aionmeter-cli crits <file.pcap>             damage-type / modifier statistics per class (crit check)
@@ -150,10 +150,17 @@ int Party(string path)
 {
     using var replay = new PcapReplaySource(data, path, realtime: false);
     var preview = new PartyPreview();
+    var identity = new LiveIdentity();
+    var tracker = new CombatTracker(data, new MeterOptions { PartyOnly = true, TargetMode = TargetMode.All });
+    long lastTime = 0;
     replay.EventDecoded += e =>
     {
         var before = preview.Snapshot();
-        preview.Observe(e);
+        lastTime = e.TimeMs;
+        var resolvedIdentity = identity.Observe(e);
+        var resolved = e is SelfIdentifiedEvent && resolvedIdentity is not null ? resolvedIdentity : e;
+        preview.Observe(resolved); tracker.Process(resolved);
+        if (e is PlayerSeenEvent && resolvedIdentity is not null) { preview.Observe(resolvedIdentity); tracker.Process(resolvedIdentity); }
         var after = preview.Snapshot();
         if (before.Revision == after.Revision) return;
         if (after.Members.Count == 0 && before.Members.Count > 0)
@@ -162,6 +169,10 @@ int Party(string path)
             Console.WriteLine($"Party preview: {m.Name}, {m.Class}, GS {m.GearScore}, CP {m.CombatPower}");
     };
     replay.RunToEnd();
+    tracker.Tick(lastTime + 30000);
+    foreach (var segment in tracker.Segments())
+        if (tracker.Snapshot(segment.Id, lastTime) is { } fight)
+            Console.WriteLine($"Confirmed-party fight: {fight.Combatants.Count} players, {fight.TotalDamage} damage; " + string.Join(", ", fight.Combatants.Select(p => $"{p.Name}: {p.Damage}")));
     Console.WriteLine($"Remaining preview members: {preview.Snapshot().Members.Count}");
     return 0;
 }

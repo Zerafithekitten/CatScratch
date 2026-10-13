@@ -135,8 +135,6 @@ public sealed class MeterService : IDisposable
     {
         var identity = !_replaying && !DemoRunning ? LiveIdentity.Observe(value) : null;
         var resolved = value is Core.Events.SelfIdentifiedEvent && identity is not null ? identity : value;
-        if (!_replaying && !DemoRunning && value is Core.Events.SelfIdentifiedEvent && LiveIdentity.Current is null)
-            PartyPreview.Reset();
         if (!_replaying && !DemoRunning) PartyPreview.Observe(resolved);
         Tracker.Process(resolved);
         if (value is Core.Events.PlayerSeenEvent && identity is not null)

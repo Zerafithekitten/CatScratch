@@ -184,7 +184,7 @@ public partial class OverlayWindow : Window, IDisplayAppearance
                 snap = _meter.Tracker.Snapshot(null, now);
             }
             var party = _meter.PartyPreview.Snapshot();
-            if (_segment is null && (party.InRoom || snap?.IsActive != true) && party.Members.Count > 0)
+            if (_segment is null && (snap?.IsActive != true) && party.Members.Count > 0)
             {
                 if (!_showingPartyPreview || _partyPreviewRevision != party.Revision)
                     _vm.ApplyParty(party.Members, _meter.LiveIdentity.Current?.Name ?? "", party.InRoom);

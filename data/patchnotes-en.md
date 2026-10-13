@@ -1,3 +1,12 @@
+## CatScratch v1.0.17
+
+- Fix intermittent room-stat previews when the group roster arrives before complete character identity.
+- Keep only the latest pending live roster and confirm it against the fresh character name and server.
+- Preserve confirmed group stats and membership through dungeon/matchmaking loading. Reconfirm fresh actor IDs by character name and server before attributing teammate damage.
+- Clear membership on leaving, group or character changes and capture reset; discard stale actor IDs on zone changes.
+- Actual fight damage takes priority over pre-combat group stats.
+- Recognize Global dungeon player records using the exact 64-bit character identity from the live roster when the short server field is absent. Verified against a private real dungeon capture with all five teammates contributing damage.
+
 ## CatScratch v1.0.16
 
 - Add a Check for updates button directly to the DPS meter footer, including compact mode.
