@@ -296,9 +296,10 @@ public sealed class CombatTracker
 
         if (targetIsPlayer)
         {
-            // Mob → player: incoming damage for the defence view. Player → player (PvP, duels) is ignored for now.
-            if (!sourceIsPlayer && _current is { IsActive: true } && _current.Combatants.TryGetValue(target, out var victim))
+            // Incoming damage is attributed only to a freshly confirmed own/group recipient.
+            if (InParty(target) && _current is { IsActive: true } incomingFight)
             {
+                var victim = GetCombatant(incomingFight, target);
                 victim.DamageTaken += d.Damage;
                 victim.HitsTaken++;
             }
@@ -358,7 +359,10 @@ public sealed class CombatTracker
     {
         if (_current is not { IsActive: true } enc) return;
         var source = _entities.ResolveOwner(h.SourceId);
-        if (enc.Combatants.TryGetValue(source, out var c)) c.Healing += h.Amount;
+        if (h.Amount <= 0 || !IsLikelyPlayer(source) || !InParty(source)) return;
+        var c = GetCombatant(enc, source);
+        c.Healing += h.Amount;
+        if (_entities.ResolveOwner(h.TargetId) == source) c.SelfHealing += h.Amount;
     }
 
     private void OnNpcHp(NpcHpEvent e)
@@ -840,7 +844,7 @@ public sealed class CombatTracker
                 c.ActorId, c.Name, c.Class, c.IsSelf,
                 t.Damage, t.Damage / seconds, (double)t.Damage / total,
                 t.Hits, t.Hits > 0 ? (double)t.Crits / t.Hits : 0,
-                t.Max, c.DamageTaken, c.ServerId, c.GearScore, c.CombatPower));
+                t.Max, c.DamageTaken, c.ServerId, c.GearScore, c.CombatPower, c.Healing, c.SelfHealing));
         }
         rows.Sort((a, b) => b.Damage.CompareTo(a.Damage));
         // Pets without a known owner are not a player: list them last so they never take a place in the ranking.
@@ -897,7 +901,7 @@ public sealed class CombatTracker
         var casts = c.Casts.Count <= maxCasts ? c.Casts.ToArray() : c.Casts.GetRange(0, maxCasts).ToArray();
         return new CombatantDetail(
             c.ActorId, c.Name, c.Class, c.IsSelf, t.Damage, t.Damage / seconds, (double)t.Damage / Math.Max(1, enc.TotalDamage),
-            enc.CombatMs, c.DamageTaken, c.HitsTaken, quality, skills, c.PerSecond.ToArray(), casts, c.ServerId, c.GearScore, c.CombatPower);
+            enc.CombatMs, c.DamageTaken, c.HitsTaken, quality, skills, c.PerSecond.ToArray(), casts, c.ServerId, c.GearScore, c.CombatPower, c.Healing, c.SelfHealing);
     }
 
     private FightRecord BuildRecord(Encounter enc)

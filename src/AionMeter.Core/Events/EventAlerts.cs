@@ -2,7 +2,7 @@ namespace AionMeter.Core.Events;
 
 public static class EventKinds
 {
-    public static string For(string id) => id switch
+    public static string For(string id) => id.StartsWith("boss:", StringComparison.Ordinal) ? "BOSS" : id switch
     {
         "rift" or "siege" => "PVP",
         "nahma" or "kaira" or "siege-bosses" => "BOSS",

@@ -144,6 +144,7 @@ public partial class OverlayWindow : Window, IDisplayAppearance
         finally { Refresh(); }
     }
 
+    private (bool Gs, bool Cp) _partyGearVisibility;
     public void Refresh()
     {
         SaveLastFightButton.IsEnabled = _meter.CanSaveLastFight;
@@ -174,6 +175,7 @@ public partial class OverlayWindow : Window, IDisplayAppearance
         if (_settings.ClickThrough) SetupPanel.Visibility = Visibility.Collapsed;
         Title = AppInfo.Name;
         _vm.ShowGear = _settings.ShowGear;
+        _vm.ShowCombatPower = _settings.ShowCombatPower ?? _settings.ShowGear;
         // Looking at an old fight when a new pull starts: jump back to live so the fight is never missed.
         if ((_saved is not null || _segment is not null) &&
             _meter.Tracker.Segments() is [{ IsActive: true } running, ..] && running.StartedAt > _selectedAt)
@@ -202,9 +204,10 @@ public partial class OverlayWindow : Window, IDisplayAppearance
             var party = _meter.PartyPreview.Snapshot();
             if (_segment is null && (snap?.IsActive != true) && party.Members.Count > 0)
             {
-                if (!_showingPartyPreview || _partyPreviewRevision != party.Revision)
+                if (!_showingPartyPreview || _partyPreviewRevision != party.Revision || _partyGearVisibility != (_vm.ShowGear, _vm.ShowCombatPower))
                     _vm.ApplyParty(party.Members, _meter.LiveIdentity.Current?.Name ?? "", party.InRoom);
                 _partyPreviewRevision = party.Revision;
+                _partyGearVisibility = (_vm.ShowGear, _vm.ShowCombatPower);
                 _showingPartyPreview = true;
                 _vm.SetSegment("live");
             }
@@ -754,7 +757,6 @@ public partial class OverlayWindow : Window, IDisplayAppearance
     private void Settings_Click(object sender, RoutedEventArgs e) => AppHost.Current.ShowSettings();
 
     private void Hide_Click(object sender, RoutedEventArgs e) => Close();
-    private void Events_Click(object sender, RoutedEventArgs e) => AppHost.Current.ShowTimerHub();
     private void PatchNotes_Click(object sender, RoutedEventArgs e) => AppHost.Current.ShowPatchNotes();
 
     private async void CheckUpdates_Click(object sender, RoutedEventArgs e)
@@ -777,7 +779,6 @@ public partial class OverlayWindow : Window, IDisplayAppearance
         CompactTotal.Visibility = _settings.CompactMode ? Visibility.Visible : Visibility.Collapsed;
         CompactHistory.Visibility = CompactTotal.Visibility;
         ViewMenuButton.Content = _settings.CompactMode ? "◫" : "View";
-        EventsButton.Content = _settings.CompactMode ? "Events" : "Events & Timers";
         if (_settings.CompactMode)
         {
             Toolbar.Visibility = Visibility.Collapsed;

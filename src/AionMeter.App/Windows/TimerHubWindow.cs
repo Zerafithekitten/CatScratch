@@ -87,11 +87,11 @@ public sealed class TimerHubWindow : Window, IDisplayAppearance
                     Background=EventPanelBrushes.Background, BorderBrush=accent, BorderThickness=new(1), Margin=new(2),
                     ToolTip=$"{item.Name} · Community schedule ({_cards.Saved.EventRegion}). Double-click to open a separate window." };
                 tile.MouseLeftButtonDown+=(_,e)=> {
-                    if(e.ClickCount==2) _cards.Pin("auto:"+item.Id);
+                    if(e.ClickCount==2) _cards.Pin(item.Id.StartsWith("boss:") ? item.Id : "auto:"+item.Id);
                     else if(e.LeftButton==System.Windows.Input.MouseButtonState.Pressed) { DragMove(); SavePlacement(); }
                     e.Handled=true;
                 };
-                tile.MouseRightButtonUp+=(_,_)=> { var menu=new ContextMenu(); var detach=new MenuItem { Header="Open separate window" }; detach.Click+=(_,_)=>_cards.Pin("auto:"+item.Id); menu.Items.Add(detach); menu.IsOpen=true; };
+                tile.MouseRightButtonUp+=(_,_)=> { var menu=new ContextMenu(); var detach=new MenuItem { Header="Open separate window" }; detach.Click+=(_,_)=>_cards.Pin(item.Id.StartsWith("boss:") ? item.Id : "auto:"+item.Id); menu.Items.Add(detach); menu.IsOpen=true; };
                 _list.Children.Add(tile);
             }
             if(events.Count==0) _list.Children.Add(new TextBlock { Text="No events in the next hour", FontSize=11, Foreground=ColorBrush("#91A5C3"), Margin=new(0,4,0,2) });
@@ -117,6 +117,10 @@ public sealed class TimerHubWindow : Window, IDisplayAppearance
         panel.Children.Add(new TextBlock { Text="Only the next start within 60 minutes.\nEvents starting together are shown together.", Margin=new(0,8,0,12) });
         var region=new ComboBox { ItemsSource=new[]{"Europe","NA East","NA West"}, SelectedItem=_cards.Saved.EventRegion, Margin=new(0,0,0,12) };
         region.SelectionChanged+=(_,_)=> { _cards.Saved.EventRegion=(string)region.SelectedItem; _cards.Save(); _list.Tag=null; Reload(); }; panel.Children.Add(region);
+        var allBosses = new CheckBox { Content="Show all world bosses", IsChecked=_cards.Saved.ShowAllWorldBosses, Margin=new(0,4,0,8) };
+        allBosses.Click+=(_,_)=> { _cards.Saved.ShowAllWorldBosses=allBosses.IsChecked==true; _cards.Save(); Reload(); };
+        panel.Children.Add(allBosses);
+        panel.Children.Add(new TextBlock { Text="Includes scheduled bosses and known world-boss respawns from the game. Only the next start within one hour is shown.", TextWrapping=TextWrapping.Wrap, FontSize=11, Margin=new(0,0,0,8) });
         foreach(var e in AutomaticEventSchedule.Catalog)
         {
             var check=new CheckBox { Content=e.Name, IsChecked=_cards.Saved.SelectedEvents.Contains(e.Id), Margin=new(0,4,0,4) };

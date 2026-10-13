@@ -78,6 +78,15 @@ public static class SampleRenderer
         Action refresh;
         switch (o.Window)
         {
+            case "personal":
+                var sample = meter.Tracker.Snapshot(null,start+20000)!;
+                var sampleSelf = sample.Combatants.First(c=>c.IsSelf).ActorId;
+                var sampleOther = sample.Combatants.First(c=>!c.IsSelf && !c.IsUnknownSummons).ActorId;
+                meter.Tracker.Process(new HealEvent(start+20001,sampleSelf,sampleSelf,17010000,78500,HitFlags.None));
+                meter.Tracker.Process(new HealEvent(start+20002,sampleSelf,sampleOther,17010000,231400,HitFlags.None));
+                var personal = new PersonalCombatWindow(meter) { Width=o.Width??320, Height=o.Height??340 };
+                host=personal; refresh=personal.Refresh;
+                break;
             case "events":
             case "events-locked":
             case "timer-card":

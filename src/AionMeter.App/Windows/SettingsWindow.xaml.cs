@@ -63,7 +63,11 @@ public partial class SettingsWindow : Window
         WindowOpacityValue.Value = s.WindowOpacity;
         BarsRelative.IsChecked = s.BarsRelativeToTop;
         ShowBoss.IsChecked = s.ShowBossPanel;
+        ShowPersonalCombatModule.IsChecked = s.ShowPersonalCombatModule;
+        ShowDamageTaken.IsChecked = s.ShowDamageTaken;
+        ShowHealingDone.IsChecked = s.ShowHealingDone;
         ShowGear.IsChecked = s.ShowGear;
+        ShowCombatPower.IsChecked = s.ShowCombatPower ?? s.ShowGear;
         AutoShow.IsChecked = s.AutoShow;
         AutoHideSeconds.Text = s.AutoHideSeconds.ToString();
         ShowOnStart.IsChecked = s.ShowOnStart;
@@ -149,7 +153,11 @@ public partial class SettingsWindow : Window
 
         s.BarsRelativeToTop = BarsRelative.IsChecked == true;
         s.ShowBossPanel = ShowBoss.IsChecked == true;
+        s.ShowPersonalCombatModule = ShowPersonalCombatModule.IsChecked == true;
+        s.ShowDamageTaken = ShowDamageTaken.IsChecked == true;
+        s.ShowHealingDone = ShowHealingDone.IsChecked == true;
         s.ShowGear = ShowGear.IsChecked == true;
+        s.ShowCombatPower = ShowCombatPower.IsChecked == true;
         s.AutoShow = AutoShow.IsChecked == true;
         if (int.TryParse(AutoHideSeconds.Text, out var autoHide)) s.AutoHideSeconds = Math.Clamp(autoHide, 0, 3600);
         s.ShowOnStart = ShowOnStart.IsChecked == true;

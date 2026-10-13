@@ -87,6 +87,7 @@ public sealed class Combatant
     public long DamageTaken { get; set; }
     public int HitsTaken { get; set; }
     public long Healing { get; set; }
+    public long SelfHealing { get; set; }
 
     public long FirstHitMs { get; set; }
     public long LastHitMs { get; set; }
@@ -118,6 +119,7 @@ public sealed class Combatant
         DamageTaken += other.DamageTaken;
         HitsTaken += other.HitsTaken;
         Healing += other.Healing;
+        SelfHealing += other.SelfHealing;
         if (FirstHitMs == 0 || (other.FirstHitMs != 0 && other.FirstHitMs < FirstHitMs)) FirstHitMs = other.FirstHitMs;
         LastHitMs = Math.Max(LastHitMs, other.LastHitMs);
     }

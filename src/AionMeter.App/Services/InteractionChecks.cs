@@ -250,6 +250,39 @@ internal static class InteractionChecks
                     "Deleting saved fights removes statistics and allows saving the last fight again");
             }
             else meter.History.Delete(manuallySaved!);
+            var gearPreview = new AionMeter.App.ViewModels.OverlayViewModel();
+            foreach (var gsVisible in new[] { true, false })
+            foreach (var cpVisible in new[] { true, false })
+            {
+                gearPreview.ShowGear = gsVisible; gearPreview.ShowCombatPower = cpVisible;
+                gearPreview.ApplyParty([new("Sample", 2305, 1, 1900, 85000, AionMeter.Core.Events.GameClass.Cleric)], "Sample");
+                var gearRow = gearPreview.Rows.Single();
+                Check(gearRow.CompactGear.Contains("GS") == gsVisible && gearRow.CompactGear.Contains("CP") == cpVisible &&
+                    gearRow.HasGearScore == gsVisible && gearRow.HasCombatPower == cpVisible,
+                    "GS and CP visibility are independent in compact and normal party rows");
+            }
+            var bossCards = new TimerCards(meter, persistent: false);
+            bossCards.Saved.SelectedEvents = [];
+            var bossTime = new DateTimeOffset(2026, 10, 13, 12, 40, 0, TimeSpan.FromHours(2));
+            Check(bossCards.NextEvents(bossTime).Count == 0, "Disabled world-boss option does not add scheduled bosses");
+            bossCards.Saved.ShowAllWorldBosses = true;
+            Check(bossCards.NextEvents(bossTime).Any(e => e.Id == "kaira") && bossCards.NextEvents(bossTime).All(e => e.StartsAt <= bossTime.AddHours(1)),
+                "All world bosses enables scheduled bosses while preserving the one-hour upcoming limit");
+            Check(AionMeter.Core.Events.EventKinds.For("boss:2305:123") == "BOSS", "Live world-boss cards retain the boss color category");
+            Check(activeOverlay.FindName("EventsButton") is null, "Unused meter Events button is removed");
+            var personal = new AionMeter.App.Windows.PersonalCombatWindow(meter) { Left=-30000, Top=-30000, ShowInTaskbar=false };
+            windows.Add(personal);
+            foreach (var showTaken in new[] { true, false })
+            foreach (var showHealing in new[] { true, false })
+            {
+                meter.Settings.ShowDamageTaken=showTaken; meter.Settings.ShowHealingDone=showHealing;
+                personal.Refresh();
+                var rootPanel=(System.Windows.Controls.StackPanel)((System.Windows.Controls.Border)personal.Content).Child;
+                Check(((System.Windows.Controls.Border)rootPanel.Children[2]).Visibility == (showTaken ? Visibility.Visible : Visibility.Collapsed) &&
+                    ((System.Windows.Controls.Border)rootPanel.Children[3]).Visibility == (showHealing ? Visibility.Visible : Visibility.Collapsed),
+                    "Personal damage and healing sections can be shown together or independently");
+            }
+            meter.Settings.ShowDamageTaken=meter.Settings.ShowHealingDone=true;
             using var legacyUpdater = new Updater(new AppSettings { Transient = true, AutoInstallUpdates = true });
             var release = new AionMeter.Core.Updates.ReleaseInfo(new Version(99, 0, 0), "v99.0.0",
                 "https://example.invalid/release", "Verification only", null, null,

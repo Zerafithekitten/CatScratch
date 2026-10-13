@@ -50,7 +50,10 @@ public sealed class RowViewModel : ObservableObject
 
     public bool HasCombatPower => _combatPower.Length > 0;
     public string CompactMeta => $"CP {(HasCombatPower ? CombatPower : "—")} · GS {(HasGearScore ? GearScore : "—")} · {UiText.Current.ClassName(Class)}";
-    public string CompactGear => $"CP {(HasCombatPower ? CombatPower : "—")} · GS {(HasGearScore ? GearScore : "—")}";
+    public bool ShowGearScore { get => _showGearScore; set { if (Set(ref _showGearScore, value)) Raise(nameof(CompactGear)); } }
+    public bool ShowCombatPower { get => _showCombatPower; set { if (Set(ref _showCombatPower, value)) Raise(nameof(CompactGear)); } }
+    private bool _showGearScore = true, _showCombatPower = true;
+    public string CompactGear => string.Join(" · ", new[] { ShowCombatPower ? $"CP {(HasCombatPower ? CombatPower : "—")}" : null, ShowGearScore ? $"GS {(HasGearScore ? GearScore : "—")}" : null }.Where(s => s is not null));
     public string Dps { get => _dps; set => Set(ref _dps, value); }
     public string Damage { get => _damage; set => Set(ref _damage, value); }
     public string Share { get => _share; set => Set(ref _share, value); }
@@ -337,6 +340,7 @@ public sealed class OverlayViewModel : ObservableObject
 
     /// <summary>Gear score and combat power columns (Settings → Overlay).</summary>
     public bool ShowGear { get; set; } = true;
+    public bool ShowCombatPower { get; set; } = true;
 
     /// <summary>False while the overlay is too narrow for them next to the names (the fight's numbers come first).</summary>
     public bool GearFits { get; set; } = true;
@@ -356,12 +360,13 @@ public sealed class OverlayViewModel : ObservableObject
             Rows.Add(new RowViewModel
             {
                 Name = m.Name, Class = m.Class, IsSelf = m.Name == selfName,
-                GearScore = m.GearScore > 0 ? m.GearScore.ToString() : "",
-                CombatPower = m.CombatPower > 0 ? Format.Grouped(m.CombatPower) : "",
+                ShowGearScore = ShowGear, ShowCombatPower = ShowCombatPower,
+                GearScore = ShowGear && m.GearScore > 0 ? m.GearScore.ToString() : "",
+                CombatPower = ShowCombatPower && m.CombatPower > 0 ? Format.Grouped(m.CombatPower) : "",
                 Dps = "—", Damage = "—", Share = "", Fill = 1,
                 Tooltip = $"{m.Name} · {T.ClassName(m.Class)}\nGS {(m.GearScore > 0 ? m.GearScore.ToString() : "—")} · CP {(m.CombatPower > 0 ? Format.Grouped(m.CombatPower) : "—")}",
             });
-        HasGear = true;
+        HasGear = Rows.Any(r => r.HasGearScore || r.HasCombatPower);
     }
 
     public void Apply(EncounterSnapshot? snap, int maxRows, bool relativeToTop)
@@ -457,8 +462,10 @@ public sealed class OverlayViewModel : ObservableObject
             row.ActorId = cb.ActorId;
             row.Rank = cb.IsUnknownSummons ? 0 : i + 1;
             row.Name = T.CombatantLabel(cb.ActorId, cb.Name, cb.Class);
+            row.ShowGearScore = ShowGear;
+            row.ShowCombatPower = ShowCombatPower;
             row.GearScore = ShowGear && GearFits && cb.GearScore > 0 ? cb.GearScore.ToString() : "";
-            row.CombatPower = ShowGear && GearFits && cb.CombatPower > 0 ? Format.Power(cb.CombatPower) : "";
+            row.CombatPower = ShowCombatPower && GearFits && cb.CombatPower > 0 ? Format.Power(cb.CombatPower) : "";
             row.Class = cb.Class;
             row.IsSelf = cb.IsSelf;
             row.Dps = Format.Compact(cb.Dps) + "/s";

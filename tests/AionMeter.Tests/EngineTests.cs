@@ -9,6 +9,40 @@ namespace AionMeter.Tests;
 public class EngineTests
 {
     [Fact]
+    public void Personal_statistics_reject_non_party_healers_and_recipients()
+    {
+        var t=Tracker(TargetMode.All); t.Options.PartyOnly=true; Setup(t);
+        t.Process(new PartyRosterEvent(1,[new("Ilvane",1304,1,0,0,GameClass.Elementalist),new("Borgrim",1304,1,0,0,GameClass.Gladiator)]));
+        t.Process(new PlayerSeenEvent(2,102,"Stranger",1304,GameClass.Cleric));
+        t.Process(new DamageEvent(1000,Me,Boss,14010000,1000,HitFlags.None));
+        t.Process(new HealEvent(1100,102,Me,17010000,900,HitFlags.None));
+        t.Process(new DamageEvent(1200,Boss,102,2300001,500,HitFlags.None));
+        t.Process(new HealEvent(1300,Me,Me,17010000,400,HitFlags.None));
+        t.Process(new HealEvent(1400,Me,Me,17010000,-5,HitFlags.None));
+        var snap=t.Snapshot(null,1500)!;
+        Assert.DoesNotContain(snap.Combatants,c=>c.ActorId==102);
+        Assert.Equal(400,snap.Combatants.Single(c=>c.IsSelf).Healing);
+    }
+
+    [Fact]
+    public void Personal_healing_splits_self_and_others_and_includes_non_attacking_players()
+    {
+        var t = Tracker(TargetMode.All);
+        Setup(t);
+        t.Process(new DamageEvent(1000, Mate, Boss, 14010000, 1000, HitFlags.None));
+        t.Process(new HealEvent(1100, Me, Me, 17010000, 400, HitFlags.None));
+        t.Process(new HealEvent(1200, Me, Mate, 17010000, 600, HitFlags.None));
+        t.Process(new DamageEvent(1300, Boss, Me, 2300001, 200, HitFlags.None));
+        var own = t.Snapshot(null,1400)!.Combatants.Single(c=>c.ActorId==Me);
+        Assert.Equal(1000, own.Healing);
+        Assert.Equal(400, own.SelfHealing);
+        Assert.Equal(200, own.DamageTaken);
+        Assert.Equal(0, own.Damage);
+        t.Tick(100000);
+        Assert.Equal(400, t.Record(null)!.Summary.Combatants.Single(c=>c.ActorId==Me).SelfHealing);
+    }
+
+    [Fact]
     public void Reassembler_reorders_trims_and_skips_lost_data()
     {
         var output = new List<byte>();

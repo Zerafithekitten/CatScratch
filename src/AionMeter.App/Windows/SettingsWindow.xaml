@@ -85,7 +85,8 @@
                             <CheckBox x:Name="ShowBoss" Style="{StaticResource DarkCheck}"
                                       Content="{Binding ShowBossPanel, Source={x:Static s:UiText.Current}}" />
                             <CheckBox x:Name="ShowGear" Style="{StaticResource DarkCheck}" Margin="0,6,0,0"
-                                      Content="{Binding ShowGear, Source={x:Static s:UiText.Current}}" />
+                                      Content="Show gear score (GS)" />
+                            <CheckBox x:Name="ShowCombatPower" Style="{StaticResource DarkCheck}" Margin="0,6,0,0" Content="Show combat power (CP)" />
                             <TextBlock Style="{StaticResource Hint}" Text="{Binding ShowGearHint, Source={x:Static s:UiText.Current}}" />
                             <CheckBox x:Name="AutoShow" Style="{StaticResource DarkCheck}" Margin="0,6,0,0"
                                       Content="{Binding AutoShow, Source={x:Static s:UiText.Current}}" />
@@ -148,6 +149,15 @@
                         </StackPanel>
                     </Border>
 
+                    <Border Style="{StaticResource Section}">
+                        <StackPanel>
+                            <TextBlock Text="PERSONAL COMBAT MODULE" Style="{StaticResource SectionLabel}" Margin="0,0,0,8" />
+                            <CheckBox x:Name="ShowPersonalCombatModule" Style="{StaticResource DarkCheck}" Content="Show personal combat module" />
+                            <CheckBox x:Name="ShowDamageTaken" Style="{StaticResource DarkCheck}" Content="Show damage taken" Margin="0,6,0,0" />
+                            <CheckBox x:Name="ShowHealingDone" Style="{StaticResource DarkCheck}" Content="Show healing done (self and others)" Margin="0,6,0,0" />
+                            <TextBlock Style="{StaticResource Hint}" Text="A separate window for your current or latest fight. Values include only combat events received from the game." />
+                        </StackPanel>
+                    </Border>
                     <!-- History -->
                     <Border Style="{StaticResource Section}">
                         <StackPanel>

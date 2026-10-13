@@ -57,6 +57,13 @@ public sealed class AppSettings
     public int RowSize { get; set; } = 100;
     /// <summary>Gear score and combat power after the names in the overlay (when the party roster gave them).</summary>
     public bool ShowGear { get; set; } = true;
+    public bool? ShowCombatPower { get; set; }
+    public bool ShowPersonalCombatModule { get; set; }
+    public bool ShowDamageTaken { get; set; } = true;
+    public bool ShowHealingDone { get; set; } = true;
+    public double PersonalModuleLeft { get; set; } = 100;
+    public double PersonalModuleTop { get; set; } = 100;
+    public double PersonalModuleWidth { get; set; } = 320;
     public bool ShowBossPanel { get; set; } = true;
     public int IdleTimeoutSec { get; set; } = 10;
     public int BossIdleTimeoutSec { get; set; } = 30;

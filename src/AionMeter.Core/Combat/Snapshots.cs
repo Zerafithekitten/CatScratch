@@ -30,7 +30,9 @@ public sealed record CombatantSnapshot(
     long DamageTaken,
     int ServerId = 0,
     int GearScore = 0,
-    long CombatPower = 0)
+    long CombatPower = 0,
+    long Healing = 0,
+    long SelfHealing = 0)
 {
     /// <summary>The "summons, owner unknown" pseudo-row (see <see cref="Combatant.UnknownSummonsId"/>).</summary>
     [System.Text.Json.Serialization.JsonIgnore]
@@ -140,7 +142,9 @@ public sealed record CombatantDetail(
     IReadOnlyList<CastRecord> Casts,
     int ServerId = 0,
     int GearScore = 0,
-    long CombatPower = 0);
+    long CombatPower = 0,
+    long Healing = 0,
+    long SelfHealing = 0);
 
 public sealed record SegmentInfo(Guid Id, string Title, DateTimeOffset StartedAt, long CombatMs, bool IsActive, EncounterEndReason Reason, long TotalDamage);
 

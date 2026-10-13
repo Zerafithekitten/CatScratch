@@ -1,3 +1,11 @@
+## CatScratch v1.0.25
+
+- Remove the unused Events button from the DPS meter.
+- Add Show all world bosses to Upcoming events preferences. Include scheduled bosses and known world-boss respawns received from the game, keeping the next-start and one-hour filters.
+- Separate Show gear score (GS) and Show combat power (CP), including group previews. Preserve the previous combined preference until changed.
+- Add an optional Personal combat window showing your damage taken and healing split into Self and Others. Enable damage and healing independently in Settings.
+- Include non-attacking healers and damage recipients during tracked fights. Keep personal statistics limited to confirmed own/group players and received combat events.
+
 ## CatScratch v1.0.24
 
 - Keep Your fights fully clickable and opaque when the DPS meter is locked or transparent.

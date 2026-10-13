@@ -31,6 +31,7 @@ public sealed class TimerCards : IDisposable
         public string EventRegion { get; set; } = "Europe";
         public List<string> SelectedEvents { get; set; } = ["shugo", "rift", "invasion"];
         public double EventOpacity { get; set; } = 0.85;
+        public bool ShowAllWorldBosses { get; set; }
         public int EventTileVersion { get; set; }
         public bool EventWindowOpen { get; set; } = true;
         public List<ScheduledTimer> Events { get; set; } = [];
@@ -49,9 +50,21 @@ public sealed class TimerCards : IDisposable
     private DateTimeOffset _scheduleAt, _scheduleUntil;
     public IReadOnlyList<EventStart> NextEvents(DateTimeOffset now)
     {
-        var key = Saved.EventRegion + ":" + string.Join('|', Saved.SelectedEvents);
+        var key = Saved.EventRegion + ":" + Saved.ShowAllWorldBosses + ":" + string.Join('|', Saved.SelectedEvents);
         if (key == _scheduleKey && now >= _scheduleAt && now < _scheduleUntil) return _nextEvents;
-        _nextEvents = AutomaticEventSchedule.Next(now, Saved.EventRegion, Saved.SelectedEvents);
+        var selected = Saved.ShowAllWorldBosses
+            ? Saved.SelectedEvents.Concat(AutomaticEventSchedule.Catalog.Where(e => EventKinds.For(e.Id) == "BOSS").Select(e => e.Id))
+            : Saved.SelectedEvents;
+        var scheduled = AutomaticEventSchedule.Next(now, Saved.EventRegion, selected);
+        var liveBosses = Saved.ShowAllWorldBosses
+            ? _meter.Timers.ForServer(_meter.Timers.CurrentServer)
+                .Where(b => b.NpcCode > 0 && !b.AliveNow && b.NextSpawn is { } next && next >= now && next <= now.AddHours(1))
+                .Select(b => new EventStart($"boss:{b.ServerId}:{b.NpcCode}", _meter.Data.NpcName(b.NpcCode), b.NextSpawn!.Value))
+            : Enumerable.Empty<EventStart>();
+        var candidates = scheduled.Concat(liveBosses).ToArray();
+        var first = candidates.Length == 0 ? (DateTimeOffset?)null : candidates.Min(c => c.StartsAt);
+        _nextEvents = candidates.Where(e => e.StartsAt == first)
+            .OrderBy(e => e.Id).ToArray();
         _scheduleKey = key;
         _scheduleAt = now;
         _scheduleUntil = now.AddSeconds(1);
