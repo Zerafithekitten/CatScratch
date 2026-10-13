@@ -1,16 +1,26 @@
 name: Feature request
-description: Suggest an improvement (English / Deutsch / Русский / Français).
+description: Suggest an improvement to CatScratch. English only.
 title: "[Feature]: "
 body:
+  - type: markdown
+    attributes:
+      value: "Please write your feature request in English only."
   - type: textarea
     id: suggestion
     attributes:
-      label: Your suggestion / Dein Wunsch / Ваше предложение / Votre suggestion
-      description: Describe what you want and how it would help. All four interface languages are welcome.
+      label: Your suggestion
+      description: Describe in English what you want and how it would help.
     validations:
       required: true
   - type: textarea
     id: context
     attributes:
-      label: Additional context / Ergänzungen / Дополнения / Informations complémentaires
+      label: Additional context
       description: Examples or screenshots are optional. Hide private information before uploading.
+  - type: checkboxes
+    id: language
+    attributes:
+      label: Request language
+      options:
+        - label: I have written this request in English.
+          required: true

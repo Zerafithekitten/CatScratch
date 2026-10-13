@@ -86,7 +86,7 @@ Skill and monster names use the bundled language tables, with English as the fal
 
 ## Bugs and feature requests
 
-[Report a bug or request a feature](https://github.com/Zerafithekitten/CatScratch/issues/new/choose). Choose the appropriate form; reports in English, German, Russian or French are welcome. A GitHub account is required.
+[Report a bug or request a feature](https://github.com/Zerafithekitten/CatScratch/issues/new/choose). Choose the appropriate form; bug reports and feature requests must be written in English only. A GitHub account is required.
 
 Use the **Report a bug / request a feature** button in **Settings > General** which opens this page in your browser. No separate server is needed. CatScratch does not submit anything or attach logs or packet captures automatically.
 

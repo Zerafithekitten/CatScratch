@@ -1,34 +1,41 @@
 name: Bug report
-description: Report a problem with CatScratch (English / Deutsch / Русский / Français).
+description: Report a problem with CatScratch. English only.
 title: "[Bug]: "
 body:
   - type: markdown
     attributes:
-      value: "Write in English, German, Russian or French. Please do not upload packet captures, account details or private logs."
+      value: "Please write your report in English only. Do not upload packet captures, account details or private logs."
   - type: input
     id: version
     attributes:
       label: CatScratch version
-      description: Shown in Settings > General. / Einstellungen > Allgemein / Настройки > Общие / Paramètres > Général
-      placeholder: 2.2.0
+      description: Shown in Settings > General.
+      placeholder: 2.3.2
     validations:
       required: true
   - type: textarea
     id: problem
     attributes:
-      label: What happened? / Was ist passiert? / Что произошло? / Que s'est-il passé ?
-      description: Include what you expected and what actually happened.
+      label: What happened?
+      description: Describe the expected and actual behavior in English.
     validations:
       required: true
   - type: textarea
     id: reproduce
     attributes:
-      label: Steps to reproduce / Schritte / Шаги / Étapes
+      label: Steps to reproduce
       description: What actions lead to the problem? Screenshots are optional; hide private information first.
     validations:
       required: true
   - type: input
     id: environment
     attributes:
-      label: Windows version / Spielregion / Регион игры / Région du jeu
-      description: Windows version and game region, if relevant.
+      label: Windows version and game region
+      description: Include your Windows version and game region, if relevant.
+  - type: checkboxes
+    id: language
+    attributes:
+      label: Report language
+      options:
+        - label: I have written this report in English.
+          required: true
