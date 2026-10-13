@@ -1,3 +1,9 @@
+## CatScratch v1.0.22
+
+- Make compact CP/GS and total damage larger and semibold, with brighter text and sharper shadows.
+- Increase compact row spacing to fit both lines and let text follow the row-size setting without becoming tiny.
+- Improve compact RTT, party DPS and percentage readability while preserving the existing layout.
+
 ## CatScratch v1.0.21
 
 - Small release to test the manual update flow and installation-local download folder.
