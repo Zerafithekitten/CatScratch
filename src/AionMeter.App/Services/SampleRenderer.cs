@@ -54,7 +54,7 @@ public static class SampleRenderer
         using var meter = CreateMeter(language, o.RowSize);
         var start = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() - 20_500; // a fight that is still going
         var fight = new SampleFight(start, 20);
-        if (o.Window != "party") fight.FeedUntil(meter.Tracker, start + 20_000);
+        if (o.Window is not ("party" or "room")) fight.FeedUntil(meter.Tracker, start + 20_000);
         else
         {
             meter.PartyPreview.Observe(new SelfIdentifiedEvent(start, 1, "Sample self", 2305, Core.Events.GameClass.Cleric));
@@ -64,10 +64,11 @@ public static class SampleRenderer
                 new("Sample fighter", 2305, 45, 864, 42520, Core.Events.GameClass.Gladiator),
                 new("Sample spirit", 2305, 45, 1132, 52644, Core.Events.GameClass.Elementalist),
                 new("Sample ranger", 2305, 45, 894, 37373, Core.Events.GameClass.Ranger)
-            ]));
+            ], o.Window == "room" ? 42u : 0u, o.Window == "room" ? 600001 : 0, "Sample room"));
         }
         // A dungeon's time limit, 12:48 of its hour gone: the countdown in the overlay's top line.
-        meter.Tracker.Process(new InstanceTimerEvent(start, 600092, 2, start - 768_000, start + 2_832_000));
+        if (o.Window is not ("party" or "room"))
+            meter.Tracker.Process(new InstanceTimerEvent(start, 600092, 2, start - 768_000, start + 2_832_000));
         if (o.Window == "overlay-crowd") fight.FeedCrowd(meter.Tracker, start + 20_000, 124);
         if (o.Window == "history")
             foreach (var entry in meter.History.List().Take(20)) meter.PortraitOf(entry);

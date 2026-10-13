@@ -26,6 +26,9 @@ public static class Opcodes
     public const ushort BattleToggle = 0x218D;   // KR only, unverified on Global
     public const ushort HpMp = 0x1B92;
     public const ushort PartyRoster = 0x0297;
+    public const ushort PartyMemberUpdate = 0x0B97;
+    public const ushort PartyMemberRemoved = 0x1697;
+    public const ushort PartyLeft = 0x1D97;
     public const ushort FieldBossList = 0x0191;  // a map's field bosses: alive since / back at (in-game map list)
 
     public static string Name(ushort op) => op switch
@@ -45,6 +48,9 @@ public static class Opcodes
         BattleToggle => "BattleToggle",
         HpMp => "HpMp",
         PartyRoster => "PartyRoster",
+        PartyMemberUpdate => "PartyMemberUpdate",
+        PartyMemberRemoved => "PartyMemberRemoved",
+        PartyLeft => "PartyLeft",
         FieldBossList => "FieldBosses",
         _ => $"{op >> 8:x2} {op & 0xFF:x2}",
     };

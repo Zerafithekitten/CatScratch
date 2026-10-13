@@ -133,9 +133,17 @@ public sealed class MeterService : IDisposable
 
     private void ProcessLiveEvent(Core.Events.GameEvent value)
     {
-        if (!_replaying && !DemoRunning) PartyPreview.Observe(value);
-        Tracker.Process(value);
-        if (!_replaying && !DemoRunning) LiveIdentity.Observe(value);
+        var identity = !_replaying && !DemoRunning ? LiveIdentity.Observe(value) : null;
+        var resolved = value is Core.Events.SelfIdentifiedEvent && identity is not null ? identity : value;
+        if (!_replaying && !DemoRunning && value is Core.Events.SelfIdentifiedEvent && LiveIdentity.Current is null)
+            PartyPreview.Reset();
+        if (!_replaying && !DemoRunning) PartyPreview.Observe(resolved);
+        Tracker.Process(resolved);
+        if (value is Core.Events.PlayerSeenEvent && identity is not null)
+        {
+            Tracker.Process(identity);
+            PartyPreview.Observe(identity);
+        }
     }
 
     public void StartCapture()
@@ -181,7 +189,7 @@ public sealed class MeterService : IDisposable
         {
             previous?.Dispose();
             if (_exiting) return;
-            LiveIdentity.Reset(); PartyPreview.Reset(); Tracker.InvalidateParty();
+            LiveIdentity.Suspend(); PartyPreview.Reset(); Tracker.InvalidateParty();
             StartCapture();
         }
         finally

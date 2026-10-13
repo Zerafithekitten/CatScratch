@@ -128,7 +128,8 @@ public sealed class CombatTracker
                     if (s.ActorId == 0) break;
                     var sameSelf = _freshSelf && _entities.SelfId == s.ActorId
                         && (string.IsNullOrWhiteSpace(s.Name) || string.IsNullOrWhiteSpace(_selfKey.Name) || s.Name == _selfKey.Name)
-                        && (s.ServerId <= 0 || _selfKey.Server <= 0 || s.ServerId == _selfKey.Server);
+                        && (s.ServerId <= 0 || _selfKey.Server <= 0 || s.ServerId == _selfKey.Server)
+                        && (s.Class == GameClass.Unknown || _entities.Self?.Class is null or GameClass.Unknown || s.Class == _entities.Self.Class);
                     if (!sameSelf) ClearParty();
                     if (!sameSelf) _selfKey = default;
                     _freshSelf = true;
@@ -145,6 +146,9 @@ public sealed class CombatTracker
                     if (Options.PartyOnly && _party.Count == 0) break;
                     foreach (var m in roster.Members) _entities.SetGear(m.Name, m.GearScore, m.CombatPower);
                     _pendingRosters.Add(roster);
+                    break;
+                case PartyLeftEvent:
+                    ClearParty();
                     break;
                 case PlayerSeenEvent p:
                     if (Options.PartyOnly && _freshSelf && _entities.SelfId == p.ActorId && !string.IsNullOrWhiteSpace(_selfKey.Name)

@@ -2,6 +2,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\AionMeter.Core\AionMeter.Core.csproj" />
+    <Resource Include="Assets\app.ico" />
   </ItemGroup>
 
   <PropertyGroup>

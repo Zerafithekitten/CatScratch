@@ -1,5 +1,4 @@
 using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.Windows.Forms;
 
 namespace AionMeter.App.Services;
@@ -115,26 +114,9 @@ public sealed class TrayIcon : IDisposable
         _icon.ShowBalloonTip(4000, title, text, ToolTipIcon.Info);
     }
 
-    /// <summary>Gold "A" on a dark disc, drawn at runtime so the repo needs no binary assets.</summary>
-    private static Icon CreateIcon()
-    {
-        using var bmp = new Bitmap(32, 32);
-        using (var g = Graphics.FromImage(bmp))
-        {
-            g.SmoothingMode = SmoothingMode.AntiAlias;
-            g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAliasGridFit;
-            using var bg = new SolidBrush(Color.FromArgb(255, 17, 23, 38));
-            using var ring = new Pen(Color.FromArgb(255, 201, 164, 92), 2.2f);
-            g.FillEllipse(bg, 1, 1, 30, 30);
-            g.DrawEllipse(ring, 1.5f, 1.5f, 29, 29);
-            using var font = new Font("Segoe UI", 15f, System.Drawing.FontStyle.Bold, GraphicsUnit.Pixel);
-            using var gold = new SolidBrush(Color.FromArgb(255, 236, 203, 130));
-            var size = g.MeasureString("A", font);
-            g.DrawString("A", font, gold, (32 - size.Width) / 2 + 0.5f, (32 - size.Height) / 2 + 0.5f);
-        }
-        return Icon.FromHandle(bmp.GetHicon());
-    }
-
+    /// <summary>Use the same embedded purple paw as the executable and shortcuts.</summary>
+    private static Icon CreateIcon() =>
+        Icon.ExtractAssociatedIcon(Environment.ProcessPath!) ?? (Icon)SystemIcons.Application.Clone();
     public void Dispose()
     {
         _icon.Visible = false;

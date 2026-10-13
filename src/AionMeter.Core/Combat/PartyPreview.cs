@@ -10,33 +10,50 @@ public sealed class PartyPreview
     private string? _lastMembership, _suppressedMembership;
     private string _selfName = "";
     private int _selfServer;
+    private uint _selfActor;
     private long _revision;
-    public (long Revision, IReadOnlyList<PartyMemberInfo> Members) Snapshot()
+    private bool _inRoom;
+    private uint _lastPartyKey, _suppressedPartyKey;
+    public (long Revision, IReadOnlyList<PartyMemberInfo> Members, bool InRoom) Snapshot()
     {
-        lock (_gate) return (_revision, _members);
+        lock (_gate) return (_revision, _members, _inRoom);
     }
     public void Reset()
     {
         lock (_gate)
         {
-            _selfName = ""; _selfServer = 0;
+            _selfName = ""; _selfServer = 0; _selfActor = 0;
             _suppressedMembership = _lastMembership;
+            _suppressedPartyKey = _lastPartyKey;
             Clear();
         }
     }
-    private void Clear() { _members = []; _revision++; }
+    private void Clear() { _members = []; _inRoom = false; _revision++; }
     public void Observe(GameEvent value)
     {
-        if (value is not (ZoneChangedEvent or SelfIdentifiedEvent or PartyRosterEvent)) return;
+        if (value is not (ZoneChangedEvent or SelfIdentifiedEvent or PartyRosterEvent or PartyLeftEvent)) return;
         lock (_gate)
         {
             switch (value)
             {
                 case ZoneChangedEvent:
                     _suppressedMembership = _lastMembership;
+                    _suppressedPartyKey = _lastPartyKey;
+                    Clear();
+                    break;
+                case PartyLeftEvent:
+                    _lastMembership = _suppressedMembership = null;
+                    _lastPartyKey = _suppressedPartyKey = 0;
                     Clear();
                     break;
                 case SelfIdentifiedEvent self:
+                    if (string.IsNullOrWhiteSpace(self.Name))
+                    {
+                        if (_selfActor != self.ActorId) { _selfName = ""; Clear(); }
+                        _selfActor = self.ActorId;
+                        break;
+                    }
+                    _selfActor = self.ActorId;
                     if (_selfName.Length > 0 && (self.Name != _selfName || self.ServerId != _selfServer))
                     { _suppressedMembership = _lastMembership; Clear(); }
                     _selfName = self.Name; _selfServer = self.ServerId;
@@ -44,13 +61,16 @@ public sealed class PartyPreview
                 case PartyRosterEvent roster:
                     var members = roster.Members.ToArray();
                     var membership = string.Join("|", members.Select(m => $"{m.ServerId}:{m.Name}").Order(StringComparer.Ordinal));
-                    if (members.Length < 2 || _selfName.Length == 0 ||
+                    if (members.Length < (roster.DungeonId > 0 ? 1 : 2) || _selfName.Length == 0 ||
                         !members.Any(m => m.Name == _selfName && m.ServerId == _selfServer))
                     { Clear(); return; }
                     // A repeated roster after loading must not bring the old preview back.
-                    if (membership == _suppressedMembership) return;
+                    if ((_suppressedPartyKey != 0 && roster.PartyKey == _suppressedPartyKey) ||
+                        (membership == _suppressedMembership && roster.PartyKey == _suppressedPartyKey)) return;
                     _lastMembership = membership;
-                    if (!_members.SequenceEqual(members)) { _members = members; _revision++; }
+                    _lastPartyKey = roster.PartyKey;
+                    var room = roster.DungeonId > 0;
+                    if (!_members.SequenceEqual(members) || _inRoom != room) { _members = members; _inRoom = room; _revision++; }
                     break;
             }
         }

@@ -1,3 +1,12 @@
+## CatScratch v1.0.10
+
+- New purple paw icon for the meter, executable, shortcuts, installer and system tray.
+- Dungeon-room stats take priority while in a room. Incoming member updates and removals refresh names, classes, GS and CP.
+- Leaving the room clears the room preview immediately and resumes the normal meter view. Entering the dungeon clears the pre-entry preview.
+- Keep confirmed character information through partial updates. Fresh matching player announcements can rebind the character after zone loading without an additional teleport.
+- Restarting capture retains known character metadata while requiring fresh actor proof; game exit and character conflicts invalidate live identity.
+- All character reconciliation remains passive. Old actor IDs and other-server names cannot claim your damage.
+
 ## CatScratch v1.0.9
 
 - Show received party members, classes, GS and CP before combat, including the recorded group-finder party format.

@@ -10,6 +10,41 @@ namespace AionMeter.Tests;
 /// <summary>Gear score ("GS") and combat power ("CP"): the party roster, the own record, and where they show.</summary>
 public class GearTests
 {
+    [Fact]
+    public void Room_member_updates_removals_and_leave_refresh_the_roster()
+    {
+        var events = new List<GameEvent>(); var parser = new PacketParser(GameData.Empty, events.Add);
+        parser.Handle(Opcodes.PartyRoster, Roster([new("Self", 2305, 31, 45, 1894, 85471, [0], [])]));
+        var first = Assert.IsType<PartyRosterEvent>(events[^1]);
+        Assert.Equal(600091, first.DungeonId); Assert.NotEqual(0u, first.PartyKey);
+        var member = Roster([new("Mate", 2305, 24, 45, 945, 53718, [0], [])])[29..];
+        member[1] = 2;
+        var dbid = (2305UL << 48) | 1001UL;
+        BitConverter.GetBytes(dbid).CopyTo(member, 2);
+        parser.Handle(Opcodes.PartyMemberUpdate, member);
+        var updated = Assert.IsType<PartyRosterEvent>(events[^1]);
+        Assert.Equal(2, updated.Members.Count); Assert.Equal(53718, updated.Members[1].CombatPower);
+        parser.Handle(Opcodes.PartyMemberRemoved, [.. BitConverter.GetBytes(dbid), 1]);
+        Assert.Single(Assert.IsType<PartyRosterEvent>(events[^1]).Members);
+        parser.Handle(Opcodes.PartyLeft, [0, 0]);
+        Assert.IsType<PartyLeftEvent>(events[^2]);
+        Assert.Empty(Assert.IsType<PartyRosterEvent>(events[^1]).Members);
+        var count = events.Count; parser.Handle(Opcodes.PartyMemberUpdate, member);
+        Assert.Equal(count, events.Count);
+    }
+    [Fact]
+    public void Room_updates_require_an_existing_roster_and_a_valid_leave_payload()
+    {
+        var events = new List<GameEvent>(); var parser = new PacketParser(GameData.Empty, events.Add);
+        var member = Roster([new("Mate", 2305, 24, 45, 945, 53718, [0], [])])[29..];
+        parser.Handle(Opcodes.PartyMemberUpdate, member); parser.Handle(Opcodes.PartyLeft, [0, 0]);
+        Assert.Empty(events);
+        parser.Handle(Opcodes.PartyRoster, Roster([new("Self", 2305, 31, 45, 1894, 85471, [0], [])]));
+        var count = events.Count;
+        parser.Handle(Opcodes.PartyLeft, [1, 0]); parser.Handle(Opcodes.PartyLeft, [0]);
+        parser.Handle(Opcodes.PartyMemberUpdate, [0, 12, 1]);
+        Assert.Equal(count, events.Count);
+    }
     [Theory]
     [InlineData(1889,1889,45,1889)]
     [InlineData(1889,2000,45,1889)]

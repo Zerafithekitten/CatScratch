@@ -15,6 +15,10 @@ public sealed class PacketParser
     private readonly GameData _data;
     private readonly Action<GameEvent> _sink;
     private int _lastMapId = -1;
+    private readonly SortedDictionary<byte, (ulong DbId, PartyMemberInfo Member)> _rosterMembers = new();
+    private uint _partyKey;
+    private int _partyDungeon;
+    private string _partyName = "";
 
     public PacketParser(GameData data, Action<GameEvent> sink)
     {
@@ -67,6 +71,26 @@ public sealed class PacketParser
                 break;
             case Opcodes.PartyRoster:
                 ParsePartyRoster(body);
+                break;
+            case Opcodes.PartyMemberUpdate:
+                ParsePartyMemberUpdate(body);
+                break;
+            case Opcodes.PartyMemberRemoved:
+                if (_partyKey != 0 && body.Length == 9)
+                {
+                    var id = BinaryPrimitives.ReadUInt64LittleEndian(body);
+                    foreach (var slot in _rosterMembers.Where(p => p.Value.DbId == id).Select(p => p.Key).ToArray())
+                        _rosterMembers.Remove(slot);
+                    EmitRoster();
+                }
+                break;
+            case Opcodes.PartyLeft:
+                if (_partyKey != 0 && body.Length == 2 && body[0] == 0 && body[1] == 0)
+                {
+                    _rosterMembers.Clear(); _partyKey = 0; _partyDungeon = 0; _partyName = "";
+                    Emit(new PartyLeftEvent(TimeMs));
+                    EmitRoster();
+                }
                 break;
             case Opcodes.PlayerInfo:
             case Opcodes.PlayerInfoOld:
@@ -586,14 +610,18 @@ public sealed class PacketParser
         if (o >= b.Length) return false;
         int partyNameLength = b[o++];
         if (partyNameLength > 64 || o + partyNameLength + 18 > b.Length || !IsText(b.Slice(o, partyNameLength))) return false;
+        var partyName = Encoding.UTF8.GetString(b.Slice(o, partyNameLength));
+        var partyKey = Wire.U32(b, 0);
         o += partyNameLength;
         if (b[o] is < 1 or > 12) return false; // party size
+        var dungeon = (int)Wire.U32(b, o + 1);
         o += 1 + 4 + 2 + 8 + 3;                // size, dungeon, 2 bytes, leader dbid, 3 bytes
         if (!Wire.TryVarint(b, ref o, out var count) || count is < 1 or > 12) return false;
 
-        var members = new List<PartyMemberInfo>();
+        var members = new SortedDictionary<byte, (ulong DbId, PartyMemberInfo Member)>();
         for (var i = 0; i < count && o + 11 <= b.Length; i++)
         {
+            var memberStart = o;
             var mask = b[o];
             var slot = b[o + 1];
             var server = Wire.U16(b, o + 8);
@@ -620,7 +648,9 @@ public sealed class PacketParser
             var power = BinaryPrimitives.ReadUInt64LittleEndian(b[(anchor + 5)..]);
             if (power > MaxCombatPower) break;
             o = anchor + 5 + 8;
-            members.Add(new PartyMemberInfo(name, server, (int)level, gear is >= 1 and <= 50_000 ? (int)gear : 0, (long)power, cls));
+            if (slot is < 1 or > 12 || members.ContainsKey(slot)) return false;
+            members.Add(slot, (BinaryPrimitives.ReadUInt64LittleEndian(b[(memberStart + 2)..]),
+                new PartyMemberInfo(name, server, (int)level, gear is >= 1 and <= 50_000 ? (int)gear : 0, (long)power, cls)));
 
             if (i + 1 == count) break;
             var nextMember = FindRosterMember(b, o, (byte)(slot + 1));
@@ -628,8 +658,40 @@ public sealed class PacketParser
             o = nextMember;
         }
         if (members.Count == 0) return false;
-        Emit(new PartyRosterEvent(TimeMs, members));
+        _rosterMembers.Clear();
+        foreach (var m in members) _rosterMembers.Add(m.Key, m.Value);
+        _partyKey = partyKey; _partyDungeon = dungeon; _partyName = partyName;
+        EmitRoster();
         return true;
+    }
+
+    private void EmitRoster() => Emit(new PartyRosterEvent(TimeMs,
+        _rosterMembers.Values.Select(v => v.Member).ToArray(), _partyKey, _partyDungeon, _partyName));
+
+    private void ParsePartyMemberUpdate(ReadOnlySpan<byte> b)
+    {
+        if (_partyKey == 0 || b.Length < 32 || b[1] is < 1 or > 12) return;
+        var slot = b[1];
+        var server = Wire.U16(b, 8);
+        var nameLength = b[10];
+        if (server is 0 or > 9_999 || nameLength is 0 or > 40 || 11 + nameLength + 12 > b.Length ||
+            !Wire.TryName(b.Slice(11, nameLength), out var name)) return;
+        var o = 11 + nameLength;
+        var cls = GameData.ClassFromWire(Wire.U32(b, o));
+        var level = Wire.U32(b, o + 4);
+        var gear = Wire.U32(b, o + 8); o += 12;
+        if (level is < 1 or > 200) return;
+        if ((b[0] & 1) != 0 && gear < 100 && o + 4 <= b.Length && Wire.U32(b, o) is var next and >= 100 and <= 50_000)
+        { gear = next; o += 4; }
+        var anchor = -1;
+        for (var at = o; at <= Math.Min(o + 10, b.Length - 13); at++)
+            if (Wire.U16(b, at) == server) { anchor = at; break; }
+        if (anchor < 0) return;
+        var power = BinaryPrimitives.ReadUInt64LittleEndian(b[(anchor + 5)..]);
+        if (power > MaxCombatPower) return;
+        _rosterMembers[slot] = (BinaryPrimitives.ReadUInt64LittleEndian(b[2..]),
+            new PartyMemberInfo(name, server, (int)level, gear is >= 1 and <= 50_000 ? (int)gear : 0, (long)power, cls));
+        EmitRoster();
     }
 
     /// <summary>Rosters also ride inside other packets and in the bundles embedded in them, like identity records.</summary>

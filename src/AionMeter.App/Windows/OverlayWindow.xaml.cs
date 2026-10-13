@@ -146,6 +146,8 @@ public partial class OverlayWindow : Window, IDisplayAppearance
             ? "Npcap is missing. Open the download page, install it yourself and restart the meter. Then teleport once in game."
             : _meter.LiveIdentity.Current is { } identity
             ? (_meter.Tracker.PartyConfirmed ? $"Party confirmed · {identity.Name}" : $"Solo tracking · {identity.Name}")
+            : _meter.LiveIdentity.KnownCharacter is { } known
+            ? $"Character recognized · {known.Name}. Waiting for fresh actor data from the game…"
             : "Character not confirmed yet. Teleport once or change zones through a loading screen. Waiting for fresh game data…";
         IdentityStatusText.Foreground = _meter.LiveIdentity.Current is not null && !_meter.DemoRunning
             ? (Brush)FindResource("Green") : (Brush)FindResource("Amber");
@@ -181,10 +183,10 @@ public partial class OverlayWindow : Window, IDisplayAppearance
                 snap = _meter.Tracker.Snapshot(null, now);
             }
             var party = _meter.PartyPreview.Snapshot();
-            if (_segment is null && snap?.IsActive != true && party.Members.Count > 0)
+            if (_segment is null && (party.InRoom || snap?.IsActive != true) && party.Members.Count > 0)
             {
                 if (!_showingPartyPreview || _partyPreviewRevision != party.Revision)
-                    _vm.ApplyParty(party.Members, _meter.LiveIdentity.Current?.Name ?? "");
+                    _vm.ApplyParty(party.Members, _meter.LiveIdentity.Current?.Name ?? "", party.InRoom);
                 _partyPreviewRevision = party.Revision;
                 _showingPartyPreview = true;
                 _vm.SetSegment("live");

@@ -35,6 +35,12 @@ internal static class InteractionChecks
         }
         try
         {
+            using (var appIcon = System.Drawing.Icon.ExtractAssociatedIcon(Environment.ProcessPath!))
+            using (var bitmap = appIcon!.ToBitmap())
+            {
+                var paw = bitmap.GetPixel(bitmap.Width / 2, bitmap.Height * 2 / 3);
+                Check(paw.B > paw.R && paw.R > paw.G, "Published executable contains the purple paw icon");
+            }
             var partyView = new AionMeter.App.ViewModels.OverlayViewModel();
             partyView.ApplyParty([
                 new("Sample self", 2305, 45, 1894, 85471, AionMeter.Core.Events.GameClass.Cleric),
@@ -44,6 +50,10 @@ internal static class InteractionChecks
                 "Party preview displays names, classes and received GS before damage");
             Check(partyView.SegmentId is null && partyView.Rows.All(r => r.Dps == "—") && partyView.Rows[1].HasCombatPower,
                 "Party preview carries CP without inventing damage or an encounter");
+            partyView.ApplyParty([new("Sample self", 2305, 45, 1894, 85471, AionMeter.Core.Events.GameClass.Cleric)], "Sample self", true);
+            Check(partyView.Title == "Room stats" && partyView.Rows.Count == 1, "Room view shows received stats even while waiting alone");
+            partyView.Apply(null, 10, false);
+            Check(!partyView.HasData && partyView.Rows.Count == 0, "Leaving room preview restores the normal waiting view");
             var first = Create(); var second = Create();
             var originals = windows.Select(Style).ToArray();
             var frame = (System.Windows.Controls.Border)first.Content;

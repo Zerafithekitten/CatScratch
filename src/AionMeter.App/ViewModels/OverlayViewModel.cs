@@ -337,13 +337,13 @@ public sealed class OverlayViewModel : ObservableObject
     public bool HasGear { get => _hasGear; private set => Set(ref _hasGear, value); }
     private bool _hasGear;
 
-    public void ApplyParty(IReadOnlyList<PartyMemberInfo> members, string selfName)
+    public void ApplyParty(IReadOnlyList<PartyMemberInfo> members, string selfName, bool room = false)
     {
         Apply(null, 0, false);
         HasData = true;
-        Title = "Party stats";
-        Detail = "Until the next loading screen";
-        Footer = $"{members.Count} party members";
+        Title = room ? "Room stats" : "Party stats";
+        Detail = room ? "Until you leave the room or enter the dungeon" : "Until the next loading screen";
+        Footer = $"{members.Count} {(room ? "room" : "party")} members";
         foreach (var m in members)
             Rows.Add(new RowViewModel
             {

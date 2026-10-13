@@ -67,7 +67,10 @@ public sealed record PartyMemberInfo(string Name, int ServerId, int Level, int G
 /// The party roster (<c>02 97</c>), sent whenever the party changes. Members are named, not identified by entity id:
 /// the meter joins them to the players it sees by name.
 /// </summary>
-public sealed record PartyRosterEvent(long TimeMs, IReadOnlyList<PartyMemberInfo> Members) : GameEvent(TimeMs);
+public sealed record PartyRosterEvent(long TimeMs, IReadOnlyList<PartyMemberInfo> Members, uint PartyKey = 0,
+    int DungeonId = 0, string PartyName = "") : GameEvent(TimeMs);
+
+public sealed record PartyLeftEvent(long TimeMs) : GameEvent(TimeMs);
 
 public sealed record PlayerSeenEvent(long TimeMs, uint ActorId, string Name, int ServerId, GameClass Class) : GameEvent(TimeMs);
 

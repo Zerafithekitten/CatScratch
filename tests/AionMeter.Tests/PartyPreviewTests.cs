@@ -7,6 +7,20 @@ namespace AionMeter.Tests;
 
 public sealed class PartyPreviewTests
 {
+    [Fact] public void Room_leave_clears_immediately_and_rejoining_the_same_room_is_allowed()
+    {
+        var p = Ready(); var roster = new PartyRosterEvent(1, [Member("Self"), Member("Mate")], 42, 600001, "Room");
+        p.Observe(roster); Assert.True(p.Snapshot().InRoom);
+        p.Observe(new PartyLeftEvent(2)); Assert.Empty(p.Snapshot().Members);
+        p.Observe(roster with { TimeMs = 3 }); Assert.True(p.Snapshot().InRoom);
+    }
+    [Fact] public void Entering_dungeon_blocks_old_room_even_when_members_change()
+    {
+        var p = Ready(); var roster = new PartyRosterEvent(1, [Member("Self"), Member("Mate")], 42, 600001);
+        p.Observe(roster); p.Observe(new ZoneChangedEvent(2, 600001, "Dungeon", true));
+        p.Observe(roster with { Members = [Member("Self"), Member("New mate")] });
+        Assert.Empty(p.Snapshot().Members);
+    }
     private static PartyMemberInfo Member(string name, int server = 2305) => new(name, server, 45, 1894, 85471, GameClass.Cleric);
     private static PartyPreview Ready()
     {
