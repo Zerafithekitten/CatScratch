@@ -23,6 +23,9 @@ foreach ($arg in @('--check-update-start', $archive, '--update-check', $result))
 $process = [Diagnostics.Process]::Start($start)
 if (-not $process.WaitForExit(30000)) { Stop-Process -Id $process.Id; throw 'Direct update timed out' }
 if ($process.ExitCode) { throw 'Direct update failed' }
+$actualStage = [IO.File]::ReadAllText($result + '.stage')
+$expectedRoot = [IO.Path]::GetFullPath("$target/userdata/temp/updates") + [IO.Path]::DirectorySeparatorChar
+if (-not $actualStage.StartsWith($expectedRoot, [StringComparison]::OrdinalIgnoreCase)) { throw 'Update staging escaped installed folder' }
 $helperId = [int][IO.File]::ReadAllText($result + '.helperpid')
 $helper = Get-Process -Id $helperId -ErrorAction SilentlyContinue
 if ($helper -and -not $helper.WaitForExit(30000)) { Stop-Process -Id $helperId; throw 'Update helper timed out' }

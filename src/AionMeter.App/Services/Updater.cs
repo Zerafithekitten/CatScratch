@@ -113,7 +113,7 @@ public sealed class Updater : IDisposable
         Changed?.Invoke();
     }
 
-    /// <summary>Downloads the release's package to the temp folder, checked against GitHub's size and SHA-256.</summary>
+    /// <summary>Downloads the release's package to this installation's userdata/temp/updates folder, checked against GitHub's size and SHA-256.</summary>
     private readonly SemaphoreSlim _downloadGate = new(1, 1);
     private readonly CancellationTokenSource _lifetime = new();
     public async Task<string> DownloadPackageAsync(ReleaseInfo release, IProgress<double>? progress, CancellationToken ct)

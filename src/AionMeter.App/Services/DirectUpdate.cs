@@ -7,7 +7,8 @@ namespace AionMeter.App.Services;
 
 internal static class DirectUpdate
 {
-    public static string Root => Path.Combine(Path.GetTempPath(), "CatScratch-update");
+    public static string Root => RootFor(AppContext.BaseDirectory);
+    internal static string RootFor(string installation) => Path.Combine(Path.GetFullPath(installation), "userdata", "temp", "updates");
 
     public static void Launch(string archive, Version version, string? checkResult = null)
     {
@@ -23,16 +24,26 @@ internal static class DirectUpdate
             start.ArgumentList.Add(arg);
         if (checkResult is not null) { start.ArgumentList.Add("--update-check"); start.ArgumentList.Add(checkResult); }
         using var helper = Process.Start(start) ?? throw new InvalidOperationException("Could not start the updater.");
-        if (checkResult is not null) File.WriteAllText(checkResult + ".helperpid", helper.Id.ToString());
+        if (checkResult is not null)
+        {
+            File.WriteAllText(checkResult + ".helperpid", helper.Id.ToString());
+            File.WriteAllText(checkResult + ".stage", stage);
+        }
     }
 
     public static void Run(string target, int parentId, string? checkResult = null)
     {
         var stage = Directory.GetParent(AppContext.BaseDirectory.TrimEnd(Path.DirectorySeparatorChar))!.FullName;
-        var boundary = Path.GetFullPath(Root).TrimEnd(Path.DirectorySeparatorChar) + Path.DirectorySeparatorChar;
+
         target = Path.GetFullPath(target);
+        var boundary = RootFor(target).TrimEnd(Path.DirectorySeparatorChar) + Path.DirectorySeparatorChar;
+        // Compatibility for the one migration update launched by an older installed version.
+        var legacyBoundary = Path.Combine(Path.GetTempPath(), "CatScratch-update") + Path.DirectorySeparatorChar;
         var targetExe = UpdatePackage.Resolve(target, "CatScratch.exe");
-        if (!stage.StartsWith(boundary, StringComparison.OrdinalIgnoreCase) ||
+        if ((!stage.StartsWith(boundary, StringComparison.OrdinalIgnoreCase) &&
+             !stage.StartsWith(legacyBoundary, StringComparison.OrdinalIgnoreCase)) ||
+            !string.Equals(Path.GetDirectoryName(stage) + Path.DirectorySeparatorChar,
+                stage.StartsWith(boundary, StringComparison.OrdinalIgnoreCase) ? boundary : legacyBoundary, StringComparison.OrdinalIgnoreCase) ||
             Path.GetFileName(stage).Length != 38 || !Path.GetFileName(stage).StartsWith("stage-", StringComparison.Ordinal) ||
             target.StartsWith(boundary, StringComparison.OrdinalIgnoreCase) ||
             !UpdateFeed.IsProductName(FileVersionInfo.GetVersionInfo(targetExe).ProductName, AppInfo.Name))

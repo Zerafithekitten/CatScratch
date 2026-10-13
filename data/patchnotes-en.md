@@ -1,3 +1,8 @@
+## CatScratch v1.0.20
+
+- Store update packages, extracted files and rollback backups in userdata/temp/updates inside the installation, instead of Windows temp on C:.
+- Keep compatibility with older updaters for the migration update and retain cleanup of stale temporary files.
+
 ## CatScratch v1.0.19
 
 - Check for updates only checks availability and shows the release notes.
