@@ -120,6 +120,25 @@ internal static class InteractionChecks
             export[1].RaiseEvent(new RoutedEventArgs(System.Windows.Controls.MenuItem.SubmenuOpenedEvent, export[1]));
             Check(export[1].Items.Count == 1 && ((System.Windows.Controls.MenuItem)export[1].Items[0]).ToolTip.ToString()!.Contains("1,600,000 dmg (100.0%)"),
                 "Chat submenu previews exact damage and share without posting or changing the clipboard");
+                        var segment = meter.Tracker.LiveFight()!.Value.Id;
+            var breakdown = new AionMeter.App.Windows.BreakdownWindow(new AionMeter.App.ViewModels.LiveFightView(meter.Tracker, segment), 1, meter.Data, meter.Icons, meter.Portraits)
+                { Left = -30000, Top = -30000, WindowStartupLocation = WindowStartupLocation.Manual, ShowInTaskbar = false, ShowActivated = false };
+            windows.Add(breakdown);
+            breakdown.Show();
+            foreach (var locked in new[] { true, false, true })
+            {
+                WindowClickThrough.ApplyAll(locked);
+                WindowClickThrough.SetOpacity(0.4);
+                Check((Style(breakdown) & (NativeMethods.WS_EX_TRANSPARENT | NativeMethods.WS_EX_NOACTIVATE)) == 0,
+                    "Detailed statistics remain clickable when display windows are locked or unlocked");
+                Check(breakdown.Opacity == 1 && breakdown.Content is System.Windows.Controls.Border detailShell &&
+                    detailShell.Background is System.Windows.Media.SolidColorBrush detailBg && detailBg.Color.A == 255,
+                    "Detailed statistics retain their opaque background independently of display opacity");
+                var tab = (System.Windows.Controls.RadioButton)breakdown.FindName(locked ? "TabAccuracy" : "TabDps");
+                tab.IsChecked = true;
+                Check(tab.IsChecked == true && tab.IsEnabled && tab.IsHitTestVisible,
+                    "Detailed-statistics tabs remain interactive with the display locked");
+            }
             var cards = new TimerCards(meter, persistent: false);
             cards.Saved.SelectedEvents = ["shugo", "rift"];
             var hub = new AionMeter.App.Windows.TimerHubWindow(cards)

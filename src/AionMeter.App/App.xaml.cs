@@ -472,7 +472,7 @@ public partial class App : Application
             return;
         }
         var w = new BreakdownWindow(view, actorId, _meter.Data, _meter.Icons, _meter.Portraits);
-        WindowClickThrough.Attach(w, () => _meter.Settings.ClickThrough, () => _meter.Settings.WindowOpacity);
+        // Detailed statistics are interactive tools, independent of the meter's display lock and opacity.
         _breakdowns[key] = w;
         w.Closed += (_, _) => _breakdowns.Remove(key);
         w.Show();

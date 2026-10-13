@@ -1,3 +1,8 @@
+## CatScratch v1.0.13
+
+- Detailed fight statistics stay clickable even while the DPS meter and event displays are locked.
+- Keep detailed statistics fully opaque with a solid dark background, independent of display opacity.
+
 ## CatScratch v1.0.12
 
 - Assign the purple paw explicitly to all application windows and their native small and large Windows icons.
