@@ -19,6 +19,13 @@ public sealed class TimerCards : IDisposable
 {
     public static readonly TimeZoneInfo DisplayZone = TimeZoneInfo.FindSystemTimeZoneById("W. Europe Standard Time");
     public static DateTimeOffset Berlin(DateTimeOffset value) => TimeZoneInfo.ConvertTime(value, DisplayZone);
+    public static string StartLabel(DateTimeOffset start, DateTimeOffset now)
+    {
+        var local = Berlin(start);
+        var today = Berlin(now).Date;
+        var day = local.Date == today ? "Today" : local.Date == today.AddDays(1) ? "Tomorrow" : local.ToString("dd.MM.");
+        return $"{day} {local:HH:mm}";
+    }
     public sealed class State
     {
         public string EventRegion { get; set; } = "Europe";
@@ -37,8 +44,8 @@ public sealed class TimerCards : IDisposable
     public TimerCards(MeterService meter, bool persistent = true)
     {
         _meter = meter;
-        _persistent = persistent;
-        if (persistent && File.Exists(_path))
+        _persistent = persistent && !meter.Settings.Transient;
+        if (_persistent && File.Exists(_path))
             try { Saved = JsonSerializer.Deserialize<State>(File.ReadAllText(_path)) ?? new(); }
             catch (Exception ex) when (ex is IOException or JsonException) { Log.Error("Timer cards could not be loaded", ex); }
         if (Saved.EventRegion == "Europa") Saved.EventRegion = "Europe";
@@ -89,7 +96,7 @@ public sealed class TimerCards : IDisposable
         var window = new TimerCardWindow(this, id, placement);
         WindowClickThrough.Attach(window, () => _meter.Settings.ClickThrough, () => _meter.Settings.WindowOpacity);
         _windows[id] = window;
-        window.Closed += (_, _) => { _windows.Remove(id); placement.Open = false; Save(); };
+        window.Closed += (_, _) => { _windows.Remove(id); if (!AppHost.Current.IsExiting) placement.Open = false; Save(); };
         window.Show();
         Save();
     }

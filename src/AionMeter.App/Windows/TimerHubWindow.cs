@@ -19,9 +19,11 @@ public sealed class TimerHubWindow : Window, IDisplayAppearance
         _displayOnly=enabled;
         if (_header is not null) _header.Visibility=enabled ? Visibility.Collapsed : Visibility.Visible;
         foreach(var tile in _list.Children.OfType<Border>()) {
-            tile.Background=enabled ? Brushes.Transparent : ColorBrush("#DF10120F");
-            tile.BorderBrush=enabled ? Brushes.Transparent : ColorBrush("#70604A");
+            tile.Background=ColorBrush("#DF10120F");
+            tile.BorderBrush=ColorBrush("#70604A");
         }
+        foreach (var placeholder in _list.Children.OfType<TextBlock>())
+            placeholder.Visibility = enabled ? Visibility.Collapsed : Visibility.Visible;
     }
     public Func<DateTimeOffset>? ClockOverride { get; set; }
     private static SolidColorBrush ColorBrush(string hex) => new((Color)ColorConverter.ConvertFromString(hex));
@@ -96,7 +98,7 @@ public sealed class TimerHubWindow : Window, IDisplayAppearance
         {
             var row=(StackPanel)border.Child; var item=(EventStart)row.Tag; var remaining=item.StartsAt-now;
             border.Width = Math.Max(220, (Width-16) / (Width>=460 ? 2 : 1));
-            ((TextBlock)row.Children[1]).Text=$"Today {TimerCards.Berlin(item.StartsAt):HH:mm} · in {(int)remaining.TotalMinutes:00}:{remaining.Seconds:00}";
+            ((TextBlock)row.Children[1]).Text=$"{TimerCards.StartLabel(item.StartsAt, now)} · in {(int)remaining.TotalMinutes:00}:{remaining.Seconds:00}";
         }
         SetDisplayOnly(_displayOnly);
     }

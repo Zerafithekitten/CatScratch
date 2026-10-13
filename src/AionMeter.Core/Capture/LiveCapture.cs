@@ -87,8 +87,9 @@ public sealed class LiveCapture : IEventSource
     {
         if (_monitor is not null) return;
         _cts = new CancellationTokenSource();
+        var token = _cts.Token;
         SetStatus(CaptureState.Starting, "Starting capture…");
-        _monitor = Task.Run(() => MonitorLoop(_cts.Token));
+        _monitor = Task.Run(() => MonitorLoop(token));
     }
 
     public void Stop()

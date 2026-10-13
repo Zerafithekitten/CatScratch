@@ -39,7 +39,7 @@ public partial class OverlayWindow : Window, IDisplayAppearance
         DataContext = _vm;
         WindowClickThrough.Attach(this, () => _settings.ClickThrough, () => _settings.WindowOpacity);
         MinWidth = _settings.CompactMode ? 280 : 520;
-        Closing += (_, _) => AppHost.Current.Shutdown();
+        Closing += (_, _) => AppHost.Current.ExitProgram();
 
         Left = _settings.OverlayLeft;
         Top = _settings.OverlayTop;

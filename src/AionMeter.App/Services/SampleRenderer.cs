@@ -41,6 +41,7 @@ public static class SampleRenderer
         switch (o.Window)
         {
             case "events":
+            case "events-locked":
             case "timer-card":
                 var cards = new TimerCards(meter, persistent: false);
                 cards.Saved.Events.Add(new("sample-event", "Example: Shugo Festival", "EVENT", DateTimeOffset.UtcNow.AddHours(2)));
@@ -54,7 +55,7 @@ public static class SampleRenderer
                 }
                 cards.Saved.SelectedEvents = ["shugo", "rift"];
                 var hub = new TimerHubWindow(cards) { Width = o.Width ?? 480, Height = 80, ClockOverride = () => new DateTimeOffset(2026, 10, 13, 13, 42, 0, TimeSpan.FromHours(2)) };
-                WindowClickThrough.Attach(hub, () => false);
+                WindowClickThrough.Attach(hub, () => o.Window == "events-locked");
                 host = hub;
                 refresh = hub.Reload;
                 break;

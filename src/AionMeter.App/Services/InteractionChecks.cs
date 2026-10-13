@@ -68,6 +68,42 @@ internal static class InteractionChecks
             for (var i = 0; i < 4; i++) { mode = !mode; WindowClickThrough.ApplyAll(mode); }
             Check(Style(first) == originals[0], "Repeated toggles preserve original styles");
             Check(!HotkeyManager.TryParse("+++", out _, out _), "Invalid hotkey text rejected");
+            using var meter = new MeterService(new AppSettings { Transient = true, DownloadIcons = false }, null);
+            var cards = new TimerCards(meter, persistent: false);
+            cards.Saved.SelectedEvents = ["shugo", "rift"];
+            var hub = new AionMeter.App.Windows.TimerHubWindow(cards)
+            {
+                ClockOverride = () => new DateTimeOffset(2026, 10, 13, 13, 42, 0, TimeSpan.FromHours(2))
+            };
+            hub.Reload();
+            windows.Add(hub);
+            WindowClickThrough.Attach(hub, () => mode);
+            var shell = (System.Windows.Controls.Border)hub.Content;
+            var root = (System.Windows.Controls.DockPanel)shell.Child;
+            var header = (System.Windows.Controls.DockPanel)root.Children[0];
+            var list = (System.Windows.Controls.WrapPanel)root.Children[1];
+            hub.SetDisplayOnly(true);
+            Check(header.Visibility == Visibility.Collapsed, "Locked events hide the shared header");
+            Check(list.Children.OfType<System.Windows.Controls.Border>().Count() == 2 &&
+                list.Children.OfType<System.Windows.Controls.Border>().All(b =>
+                    b.Background is System.Windows.Media.SolidColorBrush bg && bg.Color.A > 0 &&
+                    b.BorderBrush is System.Windows.Media.SolidColorBrush border && border.Color.A > 0),
+                "Locked simultaneous events retain separate visible cards");
+            hub.Reload();
+            Check(list.Children.OfType<System.Windows.Controls.Border>().All(b =>
+                b.Background is System.Windows.Media.SolidColorBrush bg && bg.Color.A > 0),
+                "Countdown refresh preserves locked event backgrounds");
+            hub.SetDisplayOnly(false);
+            Check(header.Visibility == Visibility.Visible, "Unlock restores the event header");
+            var detached = new AionMeter.App.Windows.TimerCardWindow(cards, "auto:shugo", new CardPlacement());
+            windows.Add(detached);
+            detached.SetDisplayOnly(true);
+            Check(detached.Content is System.Windows.Controls.Border panel &&
+                panel.Background is System.Windows.Media.SolidColorBrush cardBackground && cardBackground.Color.A > 0,
+                "Detached locked events retain their card background");
+            var beforeMidnight = new DateTimeOffset(2026, 10, 13, 23, 40, 0, TimeSpan.FromHours(2));
+            Check(TimerCards.StartLabel(beforeMidnight.AddMinutes(30), beforeMidnight) == "Tomorrow 00:10",
+                "Event start label handles midnight correctly");
             File.WriteAllText(output, JsonSerializer.Serialize(passed, new JsonSerializerOptions { WriteIndented = true }));
         }
         finally { foreach (var window in windows) window.Close(); }

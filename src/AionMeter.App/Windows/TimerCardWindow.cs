@@ -12,8 +12,8 @@ public sealed class TimerCardWindow : Window, IDisplayAppearance
     public void SetDisplayOnly(bool enabled)
     {
         if (_card is null) return;
-        _card.Background=enabled ? Brushes.Transparent : new SolidColorBrush(Color.FromArgb(223,16,18,15));
-        _card.BorderBrush=enabled ? Brushes.Transparent : Brushes.DarkKhaki;
+        _card.Background=new SolidColorBrush(Color.FromArgb(223,16,18,15));
+        _card.BorderBrush=new SolidColorBrush(Color.FromRgb(112,96,74));
     }
     private readonly TextBlock _name = new() { FontSize = 15, FontWeight = FontWeights.SemiBold, TextWrapping = TextWrapping.Wrap };
     private readonly TextBlock _time = new() { FontSize = 14, Foreground = Brushes.PaleGoldenrod, Margin = new(0, 6, 0, 0) };
@@ -38,6 +38,7 @@ public sealed class TimerCardWindow : Window, IDisplayAppearance
         Content = body;
         if (compact)
         {
+            Content = null;
             body.Margin = new Thickness(8, 5, 8, 5);
             Content = _card = new Border { Child = body, CornerRadius = new CornerRadius(5), Background = new SolidColorBrush(Color.FromArgb(223,16,18,15)), BorderBrush = Brushes.DarkKhaki, BorderThickness = new Thickness(1) };
             MouseLeftButtonDown += (_, e) => { if (e.LeftButton == System.Windows.Input.MouseButtonState.Pressed) DragMove(); };
@@ -50,7 +51,8 @@ public sealed class TimerCardWindow : Window, IDisplayAppearance
             if (compact && IsLoaded && !IsVisible) Show();
             Title = $"{card.Kind} · {card.Name}";
             _name.Text = $"{card.Kind}  {card.Name}";
-            _time.Text = (card.Next is { } next && !card.Alive ? TimerCards.Berlin(next).ToString(compact ? "'Today' HH:mm" : "dd.MM. HH:mm") + " · " : "") + TimerCards.Countdown(card, DateTimeOffset.UtcNow);
+            var now = DateTimeOffset.UtcNow;
+            _time.Text = (card.Next is { } next && !card.Alive ? (compact ? TimerCards.StartLabel(next, now) : TimerCards.Berlin(next).ToString("dd.MM. HH:mm")) + " · " : "") + TimerCards.Countdown(card, now);
             _time.TextWrapping = TextWrapping.Wrap;
             _source.Text = card.Source;
             _time.ToolTip = card.Source;

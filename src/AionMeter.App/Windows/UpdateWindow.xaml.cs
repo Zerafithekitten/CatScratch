@@ -68,7 +68,7 @@ public partial class UpdateWindow : Window
             State.Text = t.UpdateStarting;
             Log.Info($"Updating to {Release.Tag} with {installer}");
             Updater.LaunchInstaller(installer);
-            Application.Current.Shutdown(); // the installer replaces our files and starts the new version
+            AppHost.Current.ExitProgram(); // the installer replaces our files and starts the new version
         }
         catch (OperationCanceledException) when (_download.IsCancellationRequested)
         {

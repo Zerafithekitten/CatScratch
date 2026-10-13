@@ -53,6 +53,13 @@ public partial class App : Application
     private bool _shutdownStarted;
     private System.Threading.Timer? _exitDeadline;
     private string? _shutdownCheckPath;
+    public bool IsExiting => _shutdownStarted || Dispatcher.HasShutdownStarted;
+    public void ExitProgram()
+    {
+        if (_shutdownStarted) return;
+        _shutdownStarted = true;
+        Shutdown();
+    }
 
     protected override void OnStartup(StartupEventArgs e)
     {
@@ -63,6 +70,8 @@ public partial class App : Application
             _shutdownCheckPath = shutdownPath;
             _meter = new MeterService(new AppSettings { Transient = true, DownloadIcons = false }, null);
             _timerCards = new TimerCards(_meter);
+            _timerCards.Saved.SelectedEvents = ["shugo"];
+            _timerCards.Pin("auto:shugo");
             _overlay = new OverlayWindow(_meter);
             _timerHub = new TimerHubWindow(_timerCards);
             _timersWindow = new BossTimersWindow(_meter);
@@ -78,8 +87,8 @@ public partial class App : Application
         if (ArgValue(e.Args, "--check-interaction") is { } checkPath)
         {
             Log.Enabled = false;
-            InteractionChecks.Run(checkPath);
-            Shutdown();
+            try { InteractionChecks.Run(checkPath); Shutdown(); }
+            catch (Exception ex) { File.WriteAllText(checkPath, ex.ToString()); Shutdown(1); }
             return;
         }
         if (ArgValue(e.Args, "--render-sample") is { } samplePath)
@@ -176,7 +185,7 @@ public partial class App : Application
             Exit: () =>
             {
                 Log.Info("Exit chosen in the tray menu");
-                Shutdown();
+                ExitProgram();
             }));
         SessionEnding += (_, end) => Log.Info($"Windows {end.ReasonSessionEnding}: closing");
         if (_timerCards!.Saved.EventWindowOpen) ShowTimerHub();
@@ -566,7 +575,7 @@ public partial class App : Application
         {
             Log.Info($"Installing update {update.Tag}");
             _meter.Updates.InstallDownloaded();
-            Shutdown(); // the installer replaces our files and starts the new version
+            ExitProgram(); // the installer replaces our files and starts the new version
         }
         catch (Exception ex) when (ex is IOException or InvalidDataException or InvalidOperationException
                                        or System.ComponentModel.Win32Exception)
@@ -676,7 +685,7 @@ public partial class App : Application
         }
         _singleInstance?.Dispose();
         if (_shutdownCheckPath is not null)
-            File.WriteAllText(_shutdownCheckPath, $"Windows remaining: {Windows.Count}");
+            File.WriteAllText(_shutdownCheckPath, $"Windows remaining: {Windows.Count}; pinned card retained: {_timerCards?.Saved.Positions.GetValueOrDefault("auto:shugo")?.Open == true}");
         base.OnExit(e);
     }
 }

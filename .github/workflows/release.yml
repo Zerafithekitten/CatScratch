@@ -40,6 +40,16 @@ jobs:
           Copy-Item INSTALL.txt dist/payload
           Compress-Archive -Path dist/payload/* -DestinationPath dist/AION2DpsMeter-win-x64.zip
           git archive --format=zip --output=dist/AION2DpsMonitor-source.zip HEAD
+      - name: Verify event panels and complete shutdown
+        shell: pwsh
+        run: |
+          foreach ($check in @('interaction', 'shutdown')) {
+            $result = "$env:RUNNER_TEMP/meter-$check.txt"
+            $process = Start-Process "$PWD/dist/payload/AION2DpsMeter.exe" -ArgumentList @("--check-$check",("`"$result`"")) -WindowStyle Hidden -PassThru
+            if (-not $process.WaitForExit(20000)) { Stop-Process -Id $process.Id; throw "$check verification timed out" }
+            Get-Content $result
+            if ($process.ExitCode) { throw "$check verification failed" }
+          }
       - name: Install official Inno Setup compiler
         shell: pwsh
         run: |

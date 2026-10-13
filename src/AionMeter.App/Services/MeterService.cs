@@ -127,6 +127,7 @@ public sealed class MeterService : IDisposable
     private volatile bool _replaying;
 
     private readonly object _captureGate = new();
+    private readonly object _restartGate = new();
     private volatile bool _restarting;
 
     private void ProcessLiveEvent(Core.Events.GameEvent value)
@@ -160,6 +161,11 @@ public sealed class MeterService : IDisposable
     }
 
     public void RestartCapture()
+    {
+        lock (_restartGate) RestartCaptureCore();
+    }
+
+    private void RestartCaptureCore()
     {
         IEventSource? previous;
         lock (_captureGate)
@@ -345,7 +351,7 @@ public sealed class MeterService : IDisposable
         }
         var live = !Settings.Transient && !_replaying && !DemoRunning;
         // A final boss callback also reads _captureGate; never wait for it while holding that lock.
-        capture?.Dispose();
+        lock (_restartGate) capture?.Dispose();
         _replay?.Dispose();
         _demo?.Dispose();
         if (live)
