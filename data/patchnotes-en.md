@@ -1,3 +1,8 @@
+## CatScratch v1.0.21
+
+- Small release to test the manual update flow and installation-local download folder.
+- No changes to meter behavior, appearance or game-data handling.
+
 ## CatScratch v1.0.20
 
 - Store update packages, extracted files and rollback backups in userdata/temp/updates inside the installation, instead of Windows temp on C:.
