@@ -130,6 +130,12 @@ public partial class OverlayWindow : Window, IDisplayAppearance
     }
 
     /// <summary>Called by the app's UI timer (≈5 Hz).</summary>
+    private void PersonalCombat_Click(object sender, RoutedEventArgs e)
+    {
+        _settings.ShowPersonalCombatModule = !_settings.ShowPersonalCombatModule;
+        _settings.Save();
+    }
+
     private async void SaveLastFight_Click(object sender, RoutedEventArgs e)
     {
         SaveLastFightButton.IsEnabled = false;

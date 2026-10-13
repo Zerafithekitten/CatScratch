@@ -282,6 +282,14 @@ internal static class InteractionChecks
                     ((System.Windows.Controls.Border)rootPanel.Children[3]).Visibility == (showHealing ? Visibility.Visible : Visibility.Collapsed),
                     "Personal damage and healing sections can be shown together or independently");
             }
+            personal.SetDisplayOnly(true);
+            Check(((System.Windows.Controls.Border)personal.Content).Background == System.Windows.Media.Brushes.Transparent && personal.Background == System.Windows.Media.Brushes.Transparent,
+                "Locked personal combat hides its window background and frame");
+            personal.SetDisplayOnly(false);
+            Check(((System.Windows.Controls.Border)personal.Content).Background is System.Windows.Media.SolidColorBrush personalBackground && personalBackground.Color.A>0,
+                "Unlocking personal combat restores its window background");
+            Check(activeOverlay.FindName("PersonalCombatButton") is System.Windows.Controls.Button,
+                "Personal module toggle is available beside the CatScratch title");
             meter.Settings.ShowDamageTaken=meter.Settings.ShowHealingDone=true;
             using var legacyUpdater = new Updater(new AppSettings { Transient = true, AutoInstallUpdates = true });
             var release = new AionMeter.Core.Updates.ReleaseInfo(new Version(99, 0, 0), "v99.0.0",

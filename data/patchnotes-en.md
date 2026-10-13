@@ -1,3 +1,9 @@
+## CatScratch v1.0.26
+
+- Restyle Personal combat with compact class-colored rows matching the DPS meter.
+- Hide its window background, frame and title bar when click-through is enabled; keep metric rows visible.
+- Add a personal-module toggle button beside the CatScratch title.
+
 ## CatScratch v1.0.25
 
 - Remove the unused Events button from the DPS meter.

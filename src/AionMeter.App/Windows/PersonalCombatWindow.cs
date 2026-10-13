@@ -12,9 +12,12 @@ public sealed class PersonalCombatWindow : Window, IDisplayAppearance
     private readonly MeterService _meter;
     private readonly StackPanel _header;
     private readonly Border _takenPanel, _healingPanel;
+    private readonly Border _shell;
+    private readonly List<(Border Bar, AionMeter.App.Controls.ClassGlyph Glyph)> _bars = [];
+    private AionMeter.Core.Events.GameClass? _barClass;
     private readonly TextBlock _taken = Value(), _selfHealing = Value(), _otherHealing = Value();
     private readonly TextBlock _fight = new() { FontSize = 12, Foreground = Brushes.White, TextTrimming = TextTrimming.CharacterEllipsis, Margin = new(0,0,0,8) };
-    private static TextBlock Value() => new() { FontSize = 18, FontWeight = FontWeights.SemiBold, Foreground = Brushes.White, Margin = new(0,3,0,6) };
+    private static TextBlock Value() => new() { FontSize = 12, FontWeight = FontWeights.SemiBold, Foreground = Brushes.White, Margin = new(0) };
     public PersonalCombatWindow(MeterService meter)
     {
         _meter = meter;
@@ -27,36 +30,71 @@ public sealed class PersonalCombatWindow : Window, IDisplayAppearance
         Top = Math.Clamp(s.PersonalModuleTop, SystemParameters.VirtualScreenTop, SystemParameters.VirtualScreenTop + Math.Max(0,SystemParameters.VirtualScreenHeight - 120));
         Background = new SolidColorBrush(Color.FromRgb(17,23,34)); Foreground = Brushes.White;
         UseLayoutRounding = true; TextOptions.SetTextFormattingMode(this,TextFormattingMode.Display);
-        var root = new StackPanel { Margin = new(12) };
-        _header = new StackPanel { Orientation = Orientation.Horizontal, Margin = new(0,0,0,10) };
-        _header.Children.Add(new TextBlock { Text = "Personal combat", FontSize = 14, FontWeight = FontWeights.SemiBold, Width = 200 });
+        var root = new StackPanel { Margin = new(5) };
+        _header = new StackPanel { Orientation = Orientation.Horizontal, Margin = new(0,0,0,5) };
+        _header.Children.Add(new TextBlock { Text = "Personal combat", FontSize = 12, FontWeight = FontWeights.SemiBold, Width = 200 });
         var close = new Button { Content = "×", Padding = new(6,0,6,0), ToolTip = "Close personal combat module" };
         close.Click += (_,_) => Close(); _header.Children.Add(close);
         _header.MouseLeftButtonDown += (_,e) => { if(e.OriginalSource is TextBlock) DragMove(); };
         root.Children.Add(_header); root.Children.Add(_fight);
         _takenPanel = Panel("Damage taken", _taken, null); root.Children.Add(_takenPanel);
         _healingPanel = Panel("Healing done", _selfHealing, _otherHealing); root.Children.Add(_healingPanel);
-        Content = new Border { Background = Background, CornerRadius = new(10), Child = root };
+        _shell = new Border { Background = Background, CornerRadius = new(10), BorderThickness = new(1), BorderBrush = Brushes.DimGray, Child = root };
+        Content = _shell;
         Closed += (_,_) => { s.PersonalModuleLeft = Left; s.PersonalModuleTop = Top; s.PersonalModuleWidth = Width; if (!AppHost.Current.IsExiting) s.ShowPersonalCombatModule = false; s.Save(); };
         Refresh();
     }
-    private static Border Panel(string heading, TextBlock first, TextBlock? second)
+    private Border Panel(string heading, TextBlock first, TextBlock? second)
     {
-        var panel = new StackPanel { Margin = new(10,6,10,4) };
-        panel.Children.Add(new TextBlock { Text = heading, FontSize = 12, FontWeight = FontWeights.SemiBold, Foreground = Brushes.LightSteelBlue });
-        panel.Children.Add(first); if(second is not null) panel.Children.Add(second);
-        return new Border { Child = panel, Background = new SolidColorBrush(Color.FromRgb(29,36,50)), CornerRadius = new(6), Margin = new(0,0,0,6) };
+        var panel = new StackPanel();
+        void Row(string label, TextBlock value)
+        {
+            var grid = new Grid { Height=34, Margin=new(4,0,5,0) };
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width=new GridLength(25) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width=new GridLength(1,GridUnitType.Star) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width=GridLength.Auto });
+            var glyph=new AionMeter.App.Controls.ClassGlyph { Width=20,Height=20,OnBar=true,VerticalAlignment=VerticalAlignment.Center };
+            grid.Children.Add(glyph);
+            var caption=new TextBlock { Text=label,FontSize=12,FontWeight=FontWeights.SemiBold,Foreground=Brushes.White,VerticalAlignment=VerticalAlignment.Center,TextTrimming=TextTrimming.CharacterEllipsis };
+            Grid.SetColumn(caption,1); grid.Children.Add(caption);
+            value.VerticalAlignment=VerticalAlignment.Center; value.Margin=new(6,0,0,0); Grid.SetColumn(value,2); grid.Children.Add(value);
+            var bar=new Border { Child=grid, CornerRadius=new(3), Margin=new(0,0,0,2) };
+            panel.Children.Add(bar); _bars.Add((bar,glyph));
+        }
+        Row(second is null ? heading : "Self healing",first);
+        if(second is not null) Row("Healing others",second);
+        return new Border { Child=panel, Background=Brushes.Transparent, Margin=new(0,0,0,4) };
     }
-    public void SetDisplayOnly(bool enabled) => _header.Visibility = enabled ? Visibility.Collapsed : Visibility.Visible;
+    public void SetDisplayOnly(bool enabled)
+    {
+        _header.Visibility=enabled ? Visibility.Collapsed : Visibility.Visible;
+        Background=Brushes.Transparent;
+        _shell.Background=enabled ? Brushes.Transparent : new SolidColorBrush(Color.FromArgb(223,27,32,39));
+        _shell.BorderBrush=enabled ? Brushes.Transparent : Brushes.DimGray;
+    }
     public void Refresh()
     {
         var snap = _meter.Tracker.Snapshot(null, DateTimeOffset.UtcNow.ToUnixTimeMilliseconds());
         var own = snap?.Combatants.FirstOrDefault(c => c.IsSelf);
         _fight.Text = snap?.Title ?? "Waiting for combat";
+        var cls=own?.Class??AionMeter.Core.Events.GameClass.Unknown;
+        if(_barClass!=cls)
+        {
+            _barClass=cls;
+            var color=AionMeter.App.Controls.ClassVisuals.BarColorOf(cls);
+            var brush=new SolidColorBrush(Color.FromArgb(194,color.R,color.G,color.B)); brush.Freeze();
+            var contrast=new AionMeter.App.ViewModels.RowViewModel { Class=cls }.CompactTextBrush;
+            foreach(var row in _bars)
+            {
+                row.Bar.Background=brush; row.Glyph.Class=cls;
+                foreach(var text in ((Grid)row.Bar.Child).Children.OfType<TextBlock>()) text.Foreground=contrast;
+            }
+        }
+        SetDisplayOnly(_meter.Settings.ClickThrough);
         _takenPanel.Visibility = _meter.Settings.ShowDamageTaken ? Visibility.Visible : Visibility.Collapsed;
         _healingPanel.Visibility = _meter.Settings.ShowHealingDone ? Visibility.Visible : Visibility.Collapsed;
         _taken.Text = own is null ? "—" : Format.Grouped(own.DamageTaken);
-        _selfHealing.Text = "Self: " + (own is null ? "—" : Format.Grouped(own.SelfHealing));
-        _otherHealing.Text = "Others: " + (own is null ? "—" : Format.Grouped(Math.Max(0,own.Healing-own.SelfHealing)));
+        _selfHealing.Text = (own is null ? "—" : Format.Grouped(own.SelfHealing));
+        _otherHealing.Text = (own is null ? "—" : Format.Grouped(Math.Max(0,own.Healing-own.SelfHealing)));
     }
 }
