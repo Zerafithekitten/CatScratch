@@ -11,7 +11,7 @@ namespace AionMeter.App.Services;
 /// Skill icons from the official AION 2 game-data CDN, cached in %AppData%\AionMeter\icons. Lookups never block:
 /// a missing icon starts a background download and <see cref="IconReady"/> fires when it lands.
 /// </summary>
-public sealed class SkillIcons
+public sealed class SkillIcons : IDisposable
 {
     private const string BaseUrl = "https://assets.playnccdn.com/static-aion2-gamedata/resources/";
 
@@ -25,10 +25,16 @@ public sealed class SkillIcons
     private readonly Dictionary<int, string> _overrides = new();   // first 4 digits → icon name
     private readonly ConcurrentDictionary<string, ImageSource?> _loaded = new();
     private readonly ConcurrentDictionary<string, byte> _pending = new();
-    private readonly HttpClient _http = new() { Timeout = TimeSpan.FromSeconds(15) };
+    private readonly ConcurrentDictionary<string, DateTimeOffset> _retryAt = new();
+    private readonly CancellationTokenSource _stop = new();
+    private int _disposed;
+    private readonly HttpClient _http;
 
-    public SkillIcons(string dataDirectory, bool enabled)
+    public SkillIcons(string dataDirectory, bool enabled) : this(dataDirectory,enabled,null) { }
+    internal SkillIcons(string dataDirectory, bool enabled, HttpMessageHandler? handler)
     {
+        _http = handler is null ? new HttpClient() : new HttpClient(handler);
+        _http.Timeout=TimeSpan.FromSeconds(15);
         Enabled = enabled;
         Directory.CreateDirectory(_cacheDir);
         var path = Path.Combine(dataDirectory, "skill_icons.json");
@@ -86,35 +92,52 @@ public sealed class SkillIcons
             _loaded[name] = img;
             return img;
         }
-        if (Enabled && _pending.TryAdd(name, 0)) _ = DownloadAsync(name, file);
+        if (Enabled && Volatile.Read(ref _disposed)==0 && (!_retryAt.TryGetValue(name,out var retry) || DateTimeOffset.UtcNow>=retry) && _pending.TryAdd(name, 0)) _ = DownloadAsync(name, file);
         return null;
     }
 
     private async Task DownloadAsync(string name, string file)
     {
+        var acquired=false;
         try
         {
-            using var response = await _http.GetAsync(BaseUrl + name + ".png").ConfigureAwait(false);
+            var token=_stop.Token;
+            await AssetDownloads.Slots.WaitAsync(token).ConfigureAwait(false);
+            acquired=true;
+            using var response = await _http.GetAsync(BaseUrl + name + ".png",token).ConfigureAwait(false);
             if (!response.IsSuccessStatusCode)
             {
-                _loaded[name] = null; // remember the miss for this session
+                if(response.StatusCode==System.Net.HttpStatusCode.NotFound) _loaded[name] = null;
+                else _retryAt[name] = DateTimeOffset.UtcNow + AssetDownloads.RetryAfter;
                 return;
             }
             var bytes = await response.Content.ReadAsByteArrayAsync().ConfigureAwait(false);
-            var tmp = file + ".tmp";
+            var tmp = file + "." + Guid.NewGuid().ToString("N") + ".tmp";
             await File.WriteAllBytesAsync(tmp, bytes).ConfigureAwait(false);
-            File.Move(tmp, file, overwrite: true);
+            try { File.Move(tmp, file, overwrite: true); }
+            finally { if(File.Exists(tmp)) File.Delete(tmp); }
             _loaded[name] = Load(file);
-            IconReady?.Invoke();
+            _retryAt.TryRemove(name,out _);
+            if(Volatile.Read(ref _disposed)==0) IconReady?.Invoke();
         }
-        catch (Exception ex) when (ex is HttpRequestException or IOException or TaskCanceledException)
+        catch (Exception ex) when (ex is HttpRequestException or IOException or UnauthorizedAccessException or OperationCanceledException or ObjectDisposedException)
         {
-            Log.Info($"Icon {name} not downloaded: {ex.Message}");
+            _retryAt[name] = DateTimeOffset.UtcNow + AssetDownloads.RetryAfter;
+            if(Volatile.Read(ref _disposed)==0) Log.Info($"Icon {name} not downloaded: {ex.Message}");
         }
         finally
         {
+            if(acquired) AssetDownloads.Slots.Release();
             _pending.TryRemove(name, out _);
         }
+    }
+    public void Dispose()
+    {
+        if(Interlocked.Exchange(ref _disposed,1)!=0) return;
+        _stop.Cancel();
+        _http.Dispose();
+        _stop.Dispose();
+        IconReady=null;
     }
 
     private static ImageSource? Load(string file)

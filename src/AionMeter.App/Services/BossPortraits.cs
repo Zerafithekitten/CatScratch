@@ -15,7 +15,7 @@ namespace AionMeter.App.Services;
 /// remembered for a week, so the site is not asked again on every fight. Lookups never block —
 /// <see cref="PortraitReady"/> fires when a download lands.
 /// </summary>
-public sealed class BossPortraits
+public sealed class BossPortraits : IDisposable
 {
     private const string BaseUrl = "https://metabot.gg/web/aion2/npcs/";
     private static readonly TimeSpan RetryMissesAfter = TimeSpan.FromDays(7);
@@ -26,11 +26,17 @@ public sealed class BossPortraits
     private readonly ConcurrentDictionary<string, ImageSource?> _loaded = new();
     private readonly ConcurrentDictionary<string, DateTimeOffset> _misses = new();
     private readonly ConcurrentDictionary<string, byte> _pending = new();
-    private readonly HttpClient _http = new() { Timeout = TimeSpan.FromSeconds(15) };
+    private readonly ConcurrentDictionary<string, DateTimeOffset> _retryAt = new();
+    private readonly CancellationTokenSource _stop = new();
+    private int _disposed;
+    private readonly HttpClient _http;
     private readonly object _missesLock = new();
 
-    public BossPortraits(string dataDirectory, bool enabled)
+    public BossPortraits(string dataDirectory, bool enabled) : this(dataDirectory,enabled,null) { }
+    internal BossPortraits(string dataDirectory, bool enabled, HttpMessageHandler? handler)
     {
+        _http=handler is null ? new HttpClient() : new HttpClient(handler);
+        _http.Timeout=TimeSpan.FromSeconds(15);
         Enabled = enabled;
         Directory.CreateDirectory(_cacheDir);
         _missesFile = Path.Combine(_cacheDir, "missing.json");
@@ -81,21 +87,26 @@ public sealed class BossPortraits
             _loaded[name] = img;
             return img;
         }
-        if (!Enabled || (_misses.TryGetValue(name, out var missed) && DateTimeOffset.UtcNow - missed < RetryMissesAfter)) return null;
+        if (!Enabled || Volatile.Read(ref _disposed)!=0 || (_retryAt.TryGetValue(name,out var retry) && DateTimeOffset.UtcNow<retry) || (_misses.TryGetValue(name, out var missed) && DateTimeOffset.UtcNow - missed < RetryMissesAfter)) return null;
         if (_pending.TryAdd(name, 0)) _ = DownloadAsync(name, path);
         return null;
     }
 
     private async Task DownloadAsync(string name, string path)
     {
+        var acquired=false;
         try
         {
-            using var response = await _http.GetAsync(BaseUrl + name + ".webp").ConfigureAwait(false);
+            var token=_stop.Token;
+            await AssetDownloads.Slots.WaitAsync(token).ConfigureAwait(false);
+            acquired=true;
+            using var response = await _http.GetAsync(BaseUrl + name + ".webp",token).ConfigureAwait(false);
             // The site answers 403 (not 404) for files it does not have.
             if (!response.IsSuccessStatusCode || response.Content.Headers.ContentType?.MediaType != "image/webp")
             {
-                _misses[name] = DateTimeOffset.UtcNow;
-                SaveMisses();
+                if(response.StatusCode is System.Net.HttpStatusCode.NotFound or System.Net.HttpStatusCode.Forbidden || response.IsSuccessStatusCode)
+                { _misses[name] = DateTimeOffset.UtcNow; SaveMisses(); }
+                else _retryAt[name]=DateTimeOffset.UtcNow+AssetDownloads.RetryAfter;
                 return;
             }
             var bytes = await response.Content.ReadAsByteArrayAsync().ConfigureAwait(false);
@@ -111,16 +122,27 @@ public sealed class BossPortraits
                 File.Delete(tmp); // the other process won
             }
             _loaded[name] = Load(path);
-            PortraitReady?.Invoke();
+            _retryAt.TryRemove(name,out _);
+            if(Volatile.Read(ref _disposed)==0) PortraitReady?.Invoke();
         }
-        catch (Exception ex) when (ex is HttpRequestException or IOException or TaskCanceledException)
+        catch (Exception ex) when (ex is HttpRequestException or IOException or UnauthorizedAccessException or OperationCanceledException or ObjectDisposedException)
         {
-            Log.Info($"Portrait {name} not downloaded: {ex.Message}");
+            _retryAt[name]=DateTimeOffset.UtcNow+AssetDownloads.RetryAfter;
+            if(Volatile.Read(ref _disposed)==0) Log.Info($"Portrait {name} not downloaded: {ex.Message}");
         }
         finally
         {
+            if(acquired) AssetDownloads.Slots.Release();
             _pending.TryRemove(name, out _);
         }
+    }
+    public void Dispose()
+    {
+        if(Interlocked.Exchange(ref _disposed,1)!=0) return;
+        _stop.Cancel();
+        _http.Dispose();
+        _stop.Dispose();
+        PortraitReady=null;
     }
 
     private void LoadMap(string path)

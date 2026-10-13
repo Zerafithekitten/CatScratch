@@ -12,6 +12,7 @@ public sealed class TrayIcon : IDisposable
     private readonly ToolStripMenuItem _reset;
     private readonly ToolStripMenuItem _history;
     private readonly ToolStripMenuItem _timers;
+    private readonly ToolStripMenuItem _events;
     private readonly ToolStripMenuItem _settings;
     private readonly ToolStripMenuItem _language;
     private readonly ToolStripMenuItem _demo;
@@ -38,6 +39,7 @@ public sealed class TrayIcon : IDisposable
         _reset = new ToolStripMenuItem("", null, (_, _) => actions.Reset());
         _history = new ToolStripMenuItem("", null, (_, _) => actions.History());
         _timers = new ToolStripMenuItem("", null, (_, _) => actions.BossTimers());
+        _events = new ToolStripMenuItem("", null, (_, _) => actions.Events());
         _settings = new ToolStripMenuItem("", null, (_, _) => actions.Settings());
         _language = new ToolStripMenuItem("", null, (_, _) => actions.ToggleLanguage());
         _demo = new ToolStripMenuItem("", null, (_, _) => actions.Demo());
@@ -46,7 +48,7 @@ public sealed class TrayIcon : IDisposable
         menu.Items.AddRange([
             _update, _updateSeparator,
             _toggle, _clickThrough, _reset, new ToolStripSeparator(),
-            _history, new ToolStripMenuItem("Upcoming events", null, (_, _) => actions.Events()), _timers, _settings, _language, _demo, _replay, _checkUpdates, new ToolStripSeparator(),
+            _history, _events, _timers, _settings, _language, _demo, _replay, _checkUpdates, new ToolStripSeparator(),
             _exit,
         ]);
         ApplyTexts();
@@ -76,7 +78,8 @@ public sealed class TrayIcon : IDisposable
     {
         var t = UiText.Current;
         _toggle.Text = _overlayVisible ? t.TrayHide : t.TrayShow;
-        _clickThrough.Text = "Toggle click-through";
+        _clickThrough.Text = t.Localize("Toggle click-through");
+        _events.Text = t.Localize("Upcoming events");
         _reset.Text = t.HkReset;
         _history.Text = t.TrayHistory;
         _timers.Text = t.TrayTimers;

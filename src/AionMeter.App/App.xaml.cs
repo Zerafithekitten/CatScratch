@@ -496,7 +496,7 @@ public partial class App : Application
         w.Show();
     }
 
-    /// <summary>English ⇄ German, live: names reload and the meter re-binds.</summary>
+    /// <summary>All supported languages, live: names reload and the meter re-binds.</summary>
     public void SetLanguage(string language)
     {
         _meter.SetLanguage(language);
@@ -512,7 +512,7 @@ public partial class App : Application
         _overlay.OnLanguageChanged();
     }
 
-    public void ToggleLanguage() => SetLanguage(UiText.Current.Code == "de" ? "en" : "de");
+    public void ToggleLanguage() => SetLanguage(UiText.Languages[(Array.IndexOf(UiText.Languages, UiText.Current.Code) + 1) % UiText.Languages.Length]);
 
     public void ShowSavedInOverlay(Core.Storage.HistoryEntry entry)
     {

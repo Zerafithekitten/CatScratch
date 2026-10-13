@@ -30,7 +30,7 @@ public static class ChatCopy
             for (var i = 0; i < lines.Count; i++)
             {
                 var text = lines[i];
-                var line = new MenuItem { Header = T.Code=="de" ? $"Zeile {i + 1} von {lines.Count} kopieren" : $"Copy line {i + 1} of {lines.Count}", ToolTip = text };
+                var line = new MenuItem { Header = string.Format(T.Localize("Copy line {0} of {1}"),i+1,lines.Count), ToolTip = text };
                 line.Click += (_, _) => Copy(noteAnchor, text);
                 chat.Items.Add(line);
             }

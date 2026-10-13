@@ -1,25 +1,26 @@
 namespace AionMeter.App.Services;
 
 /// <summary>
-/// Interface wording in English (default) or German. Plain properties so XAML binds to them:
+/// Interface wording in English (default), German, Russian or French. Plain properties so XAML binds to them:
 /// <c>{Binding TabDps, Source={x:Static s:UiText.Current}}</c> in windows, <c>{Binding T.ColDps}</c> in the overlay.
 /// Switching language swaps <see cref="Current"/>; the overlay re-binds, other windows are reopened.
 /// </summary>
 public sealed partial class UiText
 {
-    public static readonly string[] Languages = ["en", "de"];
+    public static readonly string[] Languages = ["en", "de", "ru", "fr"];
 
     public static UiText Current { get; private set; } = new();
 
-    public static string Normalize(string? language) => language?.StartsWith("de", StringComparison.OrdinalIgnoreCase) == true ? "de" : "en";
+    public static string Normalize(string? language) => Languages.FirstOrDefault(code => language?.Equals(code, StringComparison.OrdinalIgnoreCase) == true || language?.StartsWith(code + "-", StringComparison.OrdinalIgnoreCase) == true) ?? "en";
 
-    public static void Use(string? language) => Current = Normalize(language) == "de" ? German : new UiText();
+    public static void Use(string? language) => Current = Normalize(language) switch { "de" => German, "ru" => Ru, "fr" => French, _ => English };
+    private static readonly UiText English = new();
 
     public string Code { get; init; } = "en";
     public string LanguageName { get; init; } = "English";
 
     /// <summary>Dates in the interface language ("06 Oct"), not in the Windows one.</summary>
-    public System.Globalization.CultureInfo Culture => System.Globalization.CultureInfo.GetCultureInfo(Code == "de" ? "de-DE" : "en-US");
+    public System.Globalization.CultureInfo Culture => System.Globalization.CultureInfo.GetCultureInfo(Code switch { "de" => "de-DE", "ru" => "ru-RU", "fr" => "fr-FR", _ => "en-US" });
 
     public IReadOnlyDictionary<Core.Events.GameClass, string> ClassNames { get; init; } = new Dictionary<Core.Events.GameClass, string>
     {
@@ -531,7 +532,7 @@ public sealed partial class UiText
         SavedYesterday = "СОХРАНЕНО · ВЧЕРА",
         SavedOn = "СОХРАНЕНО · {0}",
         AllSaved = "Все сохранённые бои ({0})…",
-        NoFights = "Боёв пока нет — они сохраняются автоматически",
+        NoFights = "Боёв пока нет · сохраните бой кнопкой сохранения",
         OpenBreakdown = "Открыть разбор",
         CopyPlayer = "Скопировать результат {0} в чат",
         CopyParty = "Скопировать рейтинг группы в чат",
@@ -612,7 +613,7 @@ public sealed partial class UiText
         FilterKills = "Убийства",
         ShowInOverlay = "Показать в оверлее",
         TipShowInOverlay = "Показать этот бой в оверлее (с началом нового боя вернётся живой режим)",
-        HistoryEmpty = "Убейте босса — бой сохранится здесь автоматически.",
+        HistoryEmpty = "Нет сохранённых боёв. Нажмите кнопку сохранения после боя.",
         PlayersShort = "игр.",
         JustNow = "только что",
         MinutesAgo = "{0} мин назад",
@@ -626,7 +627,7 @@ public sealed partial class UiText
 
         SettingsTitle = "Настройки",
         SecLanguage = "ЯЗЫК",
-        LanguageHint = "Интерфейс, названия умений и монстров. Применяется сразу.",
+        LanguageHint = "Интерфейс, названия умений и монстров. Применяется сразу. Список изменений остаётся на английском.",
         SecOverlay = "ОВЕРЛЕЙ",
         BarsRelative = "Полосы относительно лидера",
         BarsRelativeHint = "Полоса лидера полная, остальные — пропорционально ему. Выключено: полосы показывают долю урона группы.",
@@ -669,7 +670,7 @@ public sealed partial class UiText
         HkToggle = "Показать / скрыть оверлей",
         HkReset = "Перезапустить метр",
         HkClick = "Клики сквозь оверлей",
-        HotkeysHint = "Формат: Ctrl+Shift+D, Alt+F9 … Применяется после сохранения.",
+        HotkeysHint = "Нажмите поле и нужное сочетание клавиш. Применяется после сохранения.",
         SecData = "ДАННЫЕ",
         DownloadIcons = "Скачивать иконки умений и портреты боссов",
         IconsHint = "Иконки умений — официальный CDN AION 2 (assets.playnccdn.com), портреты боссов — MetaBot.GG (metabot.gg). Каждая картинка скачивается один раз, затем берётся из кэша.",
@@ -685,14 +686,14 @@ public sealed partial class UiText
         UpdateYouHave = "У вас {0}.",
         UpdateReleased = "У вас {0}. Новая выпущена {1}.",
         UpdateWhatsNew = "ЧТО НОВОГО",
-        UpdateInstalledHint = "Метр закроется, установщик обновит его и запустит снова. Настройки, история боёв и таймеры сохранятся.",
-        UpdatePortableHint = "Эта копия распакована из zip и не может заменить себя сама: скачайте новый архив и распакуйте его поверх этой папки или перейдите на установщик.",
+        UpdateInstalledHint = "CatScratch скачает обновление, заменит файлы программы и перезапустится. Настройки, история боёв и таймеры сохранятся.",
+        UpdatePortableHint = "Для этой версии нет проверенного пакета обновления. Откройте страницу загрузки.",
         UpdateNow = "Обновить",
         UpdateOpenPage = "Открыть страницу загрузки",
         UpdateLater = "Позже",
         UpdateSkip = "Пропустить эту версию",
-        UpdateDownloading = "Скачивание установщика… {0:0}%",
-        UpdateStarting = "Запуск установщика…",
+        UpdateDownloading = "Скачивание обновления… {0:0}%",
+        UpdateStarting = "Перезапуск для установки обновления…",
         UpdateFailed = "Не удалось обновить: {0}. Новую версию можно скачать со страницы релиза.",
         UpdateBanner = "Вышла версия {0} — нажмите, чтобы обновить",
         TipUpdate = "Что нового — и обновление в один клик",

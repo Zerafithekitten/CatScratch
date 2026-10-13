@@ -249,7 +249,7 @@ public sealed class MeterService : IDisposable
         _names.Save(Tracker.ExportCache());
     }
 
-    /// <summary>English / German for the interface and skill / NPC names, applied without a restart.</summary>
+    /// <summary>All supported languages for the interface and skill / NPC names, applied without a restart.</summary>
     public void SetLanguage(string language)
     {
         language = UiText.Normalize(language);
@@ -408,6 +408,8 @@ public sealed class MeterService : IDisposable
             SaveNames();
         }
         Updates.Dispose();
+        Icons.Dispose();
+        Portraits.Dispose();
     }
 
     /// <summary>Placeholder source that only reports why capture could not start.</summary>

@@ -4,28 +4,43 @@ public sealed partial class UiText
 {
     // Exact UI literals only. Never translate player names, paths, sound IDs, protocol values or patch notes.
     private static readonly Lazy<IReadOnlyDictionary<string,string>> GermanLiterals = new(CreateGermanLiterals);
-    private static IReadOnlyDictionary<string,string> CreateGermanLiterals()
+    private static readonly Lazy<IReadOnlyDictionary<string,string>> RussianLiterals = new(CreateRussianLiterals);
+    private static readonly Lazy<IReadOnlyDictionary<string,string>> FrenchLiterals = new(CreateFrenchLiterals);
+    private static IReadOnlyDictionary<string,string> CreateGermanLiterals() => CreateLiterals(German,ExtraGerman);
+    private static IReadOnlyDictionary<string,string> CreateRussianLiterals() => CreateLiterals(Ru,ExtraRussian);
+    private static IReadOnlyDictionary<string,string> CreateFrenchLiterals() => CreateLiterals(French,ExtraFrench);
+    private static IReadOnlyDictionary<string,string> CreateLiterals(UiText translated, IReadOnlyDictionary<string,string> extra)
     {
-        var map = new Dictionary<string,string>(ExtraGerman,StringComparer.Ordinal);
+        var map = new Dictionary<string,string>(extra,StringComparer.Ordinal);
         var english = new UiText();
         foreach (var property in typeof(UiText).GetProperties().Where(p=>p.PropertyType==typeof(string) && p.SetMethod is not null))
         {
-            var source=(string?)property.GetValue(english); var target=(string?)property.GetValue(German);
+            var source=(string?)property.GetValue(english); var target=(string?)property.GetValue(translated);
             if(source is not null && target is not null && source!=target) map.TryAdd(source,target);
         }
         return map;
     }
-    public string Localize(string english) => Code == "de" && GermanLiterals.Value.TryGetValue(english, out var german) ? german : english;
+    public string Localize(string english)
+    {
+        var literals = Code switch { "de" => GermanLiterals.Value, "ru" => RussianLiterals.Value, "fr" => FrenchLiterals.Value, _ => null };
+        return literals is not null && literals.TryGetValue(english, out var value) ? value : english;
+    }
     private static readonly (string Prefix,string Translation)[] CapturePrefixes = [("Capturing · ","Erfassung · "),("Listening on ","Lausche auf "),("Capture error: ","Erfassungsfehler: ")];
     public string CaptureMessage(string english)
     {
-        if(Code!="de") return english;
+        if(Code=="en") return english;
         foreach(var (prefix,translated) in CapturePrefixes)
-            if(english.StartsWith(prefix,StringComparison.Ordinal)) return translated+english[prefix.Length..];
+            if(english.StartsWith(prefix,StringComparison.Ordinal)) return (Code=="de" ? translated : Localize(prefix))+english[prefix.Length..];
         return Localize(english);
     }
     private static readonly Dictionary<string,string> ExtraGerman = new(StringComparer.Ordinal)
     {
+        ["Copy line {0} of {1}"]="Zeile {0} von {1} kopieren", ["Started · {0} ago"]="Gestartet · vor {0}",
+        ["Toggle click-through"]="Durchklicken umschalten",
+        ["Double-click to open a separate window."]="Doppelklicken, um ein eigenes Fenster zu öffnen.",
+        ["FEEDBACK"]="FEEDBACK", ["Report a bug / request a feature"]="Bug melden / Wunsch einreichen",
+        ["Opens GitHub in your browser. Choose a bug report or feature request. A GitHub account is required. Nothing is submitted automatically; no logs or captures are attached."]="Öffnet GitHub im Browser. Wähle eine Fehlermeldung oder einen Funktionswunsch. Ein GitHub-Konto ist erforderlich. Nichts wird automatisch gesendet; keine Protokolle oder Mitschnitte werden angehängt.",
+        ["Could not open the browser. Please visit GitHub and choose New issue."]="Browser konnte nicht geöffnet werden. Öffne GitHub und wähle New issue.",
         ["Appearance"]="Darstellung", ["Combat"]="Kampf", ["Hotkeys"]="Tastenkürzel", ["History"]="Verlauf", ["Capture & data"]="Erfassung & Daten", ["General"]="Allgemein",
         ["Starting capture…"]="Erfassung wird gestartet…", ["Capture stopped"]="Erfassung beendet", ["Npcap is not installed — get it from npcap.com"]="Npcap ist nicht installiert – erhältlich auf npcap.com", ["Selected network adapter not found"]="Gewählter Netzwerkadapter nicht gefunden", ["AION 2 is not running"]="AION 2 läuft nicht", ["Waiting for the game to connect…"]="Warte auf die Spielverbindung…", ["No Npcap adapter carries the game connection (VPN? pick one in Settings)"]="Kein Npcap-Adapter mit Spielverbindung gefunden (VPN? Adapter in Einstellungen wählen)", ["Connected · no game traffic for a while"]="Verbunden · seit einiger Zeit kein Spielverkehr", ["Demo fight running"]="Demo-Kampf läuft", ["Names appear after the next loading screen"]="Namen erscheinen nach dem nächsten Ladebildschirm",
         ["PREVIEW / DEMO – no confirmed live data"]="VORSCHAU / DEMO – keine bestätigten Live-Daten", ["Npcap is missing. Open the download page, install it yourself and restart the meter. Then teleport once in game."]="Npcap fehlt. Öffne die Downloadseite, installiere es und starte das Meter neu. Teleportiere danach einmal im Spiel.", ["Party confirmed · {0}"]="Gruppe bestätigt · {0}", ["Solo tracking · {0}"]="Solo-Messung · {0}",
@@ -48,7 +63,7 @@ public sealed partial class UiText
         ["Updates are installed only after you press Update now."]="Updates werden erst nach einem Klick auf Jetzt aktualisieren installiert.", ["Boss only / everything you hit"]="Nur Boss / alle getroffenen Gegner", ["Download Npcap"]="Npcap herunterladen", ["Exit"]="Beenden", ["Lock position"]="Position sperren",
         ["Click here and press your shortcut. Applied after saving."]="Hier klicken und Tastenkürzel drücken. Wird nach dem Speichern angewendet.", ["Compact mode"]="Kompaktmodus",
         ["Event settings"]="Event-Einstellungen", ["Event sounds"]="Event-Sounds", ["Upcoming events"]="Anstehende Events", ["SCHEDULE"]="ZEITPLAN", ["EVENTS TO SHOW"]="ANGEZEIGTE EVENTS", ["APPEARANCE"]="DARSTELLUNG", ["SOUNDS & BOSS TIMERS"]="SOUNDS & BOSS-TIMER",
-        ["Only the next selected start within one hour. Events stay visible for two minutes after starting, with a pulsing border."]="Nur der nächste gewählte Start innerhalb einer Stunde. Events bleiben nach Beginn zwei Minuten mit pulsierendem Rahmen sichtbar.",
+        ["All selected events within the next hour. Events stay visible for two minutes after starting, with a pulsing border."]="Alle gewählten Events innerhalb der nächsten Stunde. Events bleiben nach Beginn zwei Minuten mit pulsierendem Rahmen sichtbar.",
         ["Show all world bosses"]="Alle Weltbosse anzeigen", ["Includes scheduled bosses and known respawns received from the game."]="Enthält geplante Bosse und bekannte Wiederkehrzeiten aus dem Spiel.",
         ["Opacity"]="Deckkraft", ["Window width"]="Fensterbreite", ["Open boss timers"]="Boss-Timer öffnen", ["Open schedule source"]="Zeitplan-Quelle öffnen",
         ["Changes are saved automatically. Community schedule from Shugo.GG, checked Oct 12, 2026; availability is not officially confirmed."]="Änderungen werden automatisch gespeichert. Community-Zeitplan von Shugo.GG, geprüft am 12.10.2026; Verfügbarkeit nicht offiziell bestätigt.",

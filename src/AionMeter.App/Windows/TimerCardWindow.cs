@@ -57,8 +57,8 @@ public sealed class TimerCardWindow : Window, IDisplayAppearance
             var card = cards.Get(id);
             if (card is null) { if (_card is not null) EventPulse.Apply(_card,EventPanelBrushes.Border,false); _name.Text = UiText.Current.Localize("No upcoming event"); _time.Text = ""; if (compact && IsLoaded) Hide(); return; }
             if (compact && IsLoaded && !IsVisible) Show();
-            Title = $"{card.Kind} · {UiText.Current.Localize(card.Name)}";
-            _kind.Text = card.Kind; _kind.Foreground = EventPanelBrushes.ForKind(card.Kind);
+            Title = $"{UiText.Current.Localize(card.Kind)} · {UiText.Current.Localize(card.Name)}";
+            _kind.Text = UiText.Current.Localize(card.Kind); _kind.Foreground = EventPanelBrushes.ForKind(card.Kind);
             _name.Text = UiText.Current.Localize(card.Name);
             var now = DateTimeOffset.UtcNow;
             var started = compact && card.Next is { } at && at <= now && at > now.AddMinutes(-2);

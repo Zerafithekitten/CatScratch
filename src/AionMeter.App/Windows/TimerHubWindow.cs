@@ -79,14 +79,14 @@ public sealed class TimerHubWindow : Window, IDisplayAppearance
                 var kind=EventKinds.For(item.Id);
                 var accent=EventPanelBrushes.ForKind(kind);
                 var badge=new Border { CornerRadius=new(6), BorderBrush=accent, BorderThickness=new(1), Padding=new(4,1,4,1), Margin=new(0,0,5,0),
-                    Child=new TextBlock { Text=kind, FontSize=8, Foreground=accent } };
+                    Child=new TextBlock { Text=UiText.Current.Localize(kind), FontSize=8, Foreground=accent } };
                 DockPanel.SetDock(badge,Dock.Left); heading.Children.Add(badge);
                 heading.Children.Add(new TextBlock { Text=UiText.Current.Localize(item.Name), FontSize=10, FontWeight=FontWeights.SemiBold, VerticalAlignment=VerticalAlignment.Center, TextTrimming=TextTrimming.CharacterEllipsis });
                 row.Children.Add(heading);
-                row.Children.Add(new TextBlock { FontSize=10, FontWeight=FontWeights.SemiBold, Foreground=ColorBrush("#D8C789"), Margin=new(0,4,0,0) });
-                var tile=new Border { Child=row, CornerRadius=new(5), Padding=new(8,5,8,5), Height=48,
+                row.Children.Add(new TextBlock { FontSize=10, FontWeight=FontWeights.SemiBold, Foreground=ColorBrush("#D8C789"), Margin=new(0,2,0,0) });
+                var tile=new Border { Child=row, CornerRadius=new(5), Padding=new(7,4,7,4), Height=42,
                     Background=EventPanelBrushes.Background, BorderBrush=accent, BorderThickness=new(1), Margin=new(2),
-                    ToolTip=$"{item.Name} · Community schedule ({_cards.Saved.EventRegion}). Double-click to open a separate window." };
+                    ToolTip=$"{UiText.Current.Localize(item.Name)} · {UiText.Current.Localize(item.Id.StartsWith("boss:") ? "Time from in-game boss list" : "Community schedule · Shugo.GG")} ({UiText.Current.Localize(_cards.Saved.EventRegion)}). {UiText.Current.Localize("Double-click to open a separate window.")}" };
                 tile.MouseLeftButtonDown+=(_,e)=> {
                     if(e.ClickCount==2) _cards.Pin(item.Id.StartsWith("boss:") ? item.Id : "auto:"+item.Id);
                     else if(e.LeftButton==System.Windows.Input.MouseButtonState.Pressed) { DragMove(); SavePlacement(); }
@@ -101,7 +101,7 @@ public sealed class TimerHubWindow : Window, IDisplayAppearance
         {
             var row=(StackPanel)border.Child; var item=(EventStart)row.Tag; var remaining=item.StartsAt-now;
             border.Width = Math.Max(220, (Width-16) / (Width>=460 ? 2 : 1));
-            ((TextBlock)row.Children[1]).Text=remaining <= TimeSpan.Zero ? UiText.Current.Code=="de" ? $"Gestartet · vor {(int)(-remaining).TotalMinutes:00}:{(-remaining).Seconds:00}" : $"Started · {(int)(-remaining).TotalMinutes:00}:{(-remaining).Seconds:00} ago" : $"{TimerCards.StartLabel(item.StartsAt, now)} · {UiText.Current.Localize("in")} {(int)remaining.TotalMinutes:00}:{remaining.Seconds:00}";
+            ((TextBlock)row.Children[1]).Text=remaining <= TimeSpan.Zero ? string.Format(UiText.Current.Localize("Started · {0} ago"),$"{(int)(-remaining).TotalMinutes:00}:{(-remaining).Seconds:00}") : $"{TimerCards.StartLabel(item.StartsAt, now)} · {UiText.Current.Localize("in")} {(int)remaining.TotalMinutes:00}:{remaining.Seconds:00}";
         }
         SetDisplayOnly(_displayOnly);
     }

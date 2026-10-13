@@ -47,7 +47,7 @@ public sealed class EventSoundsWindow : Window
             if (!cards.Saved.Sounds.TryGetValue(item.Id, out var preference))
                 cards.Saved.Sounds[item.Id] = preference = new() { Sound = item.Kind == "BOSS" ? "Bell" : item.Kind == "PVP" ? "Ping" : "Chime" };
             var box = Card(body);
-            var enabled = new CheckBox { Content = $"{item.Kind} · {UiText.Current.Localize(item.Name)}", Foreground = EventPanelBrushes.ForKind(item.Kind), IsChecked = preference.Enabled };
+            var enabled = new CheckBox { Content = $"{UiText.Current.Localize(item.Kind)} · {UiText.Current.Localize(item.Name)}", Foreground = EventPanelBrushes.ForKind(item.Kind), IsChecked = preference.Enabled };
             enabled.Click += (_, _) => { preference.Enabled = enabled.IsChecked == true; cards.Save(); }; box.Children.Add(enabled);
             var controls = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(20,5,0,0) };
             var soundIds=new[] { "Chime", "Bell", "Ping", "Custom WAV" };

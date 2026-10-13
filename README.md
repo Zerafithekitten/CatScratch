@@ -4,7 +4,7 @@ A separate always-on-top Windows damage meter for AION 2 by Zerafithekitten.
 
 [Download the latest release](https://github.com/Zerafithekitten/CatScratch/releases/latest) · [Patch notes](data/patchnotes-en.md) · [Report an issue](https://github.com/Zerafithekitten/CatScratch/issues)
 
-Latest published version: **2.2.0**. English is the default; German is available in Settings.
+Latest published version: **2.3.0**. English is the default; German, Russian and French are available in Settings.
 
 ## Preview
 
@@ -77,10 +77,10 @@ Select the language in **Settings > General > Language**. English remains the de
 
 | Language | Interface | Availability |
 | --- | --- | --- |
-| English | English | Current release (2.2.0) · default |
-| German | Deutsch | Current release (2.2.0) |
-| Russian | Русский | Implemented and tested for the next update |
-| French | Français | Implemented and tested for the next update |
+| English | English | Current release (2.3.0) · default |
+| German | Deutsch | Current release (2.3.0) |
+| Russian | Русский | Current release (2.3.0) |
+| French | Français | Current release (2.3.0) |
 
 Skill and monster names use the bundled language tables, with English as the fallback for missing names. Player names are preserved.
 
@@ -88,9 +88,9 @@ Skill and monster names use the bundled language tables, with English as the fal
 
 [Report a bug or request a feature](https://github.com/Zerafithekitten/CatScratch/issues/new/choose). Choose the appropriate form; reports in English, German, Russian or French are welcome. A GitHub account is required.
 
-The next update adds a **Report a bug / request a feature** button in **Settings > General** which opens this page in your browser. No separate server is needed. CatScratch does not submit anything or attach logs or packet captures automatically.
+Use the **Report a bug / request a feature** button in **Settings > General** which opens this page in your browser. No separate server is needed. CatScratch does not submit anything or attach logs or packet captures automatically.
 
-Also prepared for the next update: a shared limit of four simultaneous optional image downloads, five-minute retry backoff after temporary failures, cancellation on exit and coalesced statistics redraws when images arrive. The meter's layout stays the same.
+Resource usage: a shared limit of four simultaneous optional image downloads, five-minute retry backoff after temporary failures, cancellation on exit and coalesced statistics redraws when images arrive. The meter's layout stays the same.
 
 ## Downloads
 
@@ -112,7 +112,7 @@ Use borderless windowed mode to keep the meter visible above the game.
 - Colored EVENT / PVP / BOSS badges and readable boss panels when locked.
 - Optional per-event sounds with preview, volume, reminder timing and custom PCM/float WAV files up to ten seconds.
 - Patch notes available in the meter, including offline notes for the installed version.
-- English by default, selectable German in Settings > General > Language; patch notes remain English.
+- English by default, selectable German, Russian and French in Settings > General > Language; patch notes remain English.
 - Verified GitHub updates for installed and portable copies.
 
 Use the meter's **Check for updates** button, or Settings > General > Updates > Check now. Checking only checks; installation starts when you press **Update now**.

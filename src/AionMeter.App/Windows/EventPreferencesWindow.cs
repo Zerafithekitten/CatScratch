@@ -38,11 +38,11 @@ public sealed class EventPreferencesWindow : Window
         var regionIds=new[]{"Europe","NA East","NA West"};
         var region=new ComboBox { ItemsSource=regionIds.Select(UiText.Current.Localize).ToArray(),SelectedIndex=Math.Max(0,Array.IndexOf(regionIds,cards.Saved.EventRegion)) };
         region.SelectionChanged+=(_,_)=> { if(region.SelectedIndex>=0) { cards.Saved.EventRegion=regionIds[region.SelectedIndex]; Save(); } }; regionPanel.Children.Add(region);
-        Hint(regionPanel,"Only the next selected start within one hour. Events stay visible for two minutes after starting, with a pulsing border.");
+        Hint(regionPanel,"All selected events within the next hour. Events stay visible for two minutes after starting, with a pulsing border.");
         var events=Section("EVENTS TO SHOW");
         foreach(var group in AutomaticEventSchedule.Catalog.GroupBy(e=>EventKinds.For(e.Id)))
         {
-            events.Children.Add(new TextBlock { Text=group.Key,Foreground=EventPanelBrushes.ForKind(group.Key),FontSize=10,FontWeight=FontWeights.SemiBold,Margin=new(0,6,0,3) });
+            events.Children.Add(new TextBlock { Text=UiText.Current.Localize(group.Key),Foreground=EventPanelBrushes.ForKind(group.Key),FontSize=10,FontWeight=FontWeights.SemiBold,Margin=new(0,6,0,3) });
             foreach(var item in group)
             {
                 var check=new CheckBox { Content=UiText.Current.Localize(item.Name),Style=(Style)FindResource("DarkCheck"),IsChecked=cards.Saved.SelectedEvents.Contains(item.Id) };

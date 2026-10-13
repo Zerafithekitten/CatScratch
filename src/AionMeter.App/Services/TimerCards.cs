@@ -23,7 +23,8 @@ public sealed class TimerCards : IDisposable
     {
         var local = Berlin(start);
         var today = Berlin(now).Date;
-        var day = local.Date == today ? "Today" : local.Date == today.AddDays(1) ? "Tomorrow" : local.ToString("dd.MM.");
+        if(local.Date == today) return local.ToString("HH:mm");
+        var day = local.Date == today.AddDays(1) ? "Tomorrow" : local.ToString("dd.MM.");
         return $"{UiText.Current.Localize(day)} {local:HH:mm}";
     }
     public sealed class State

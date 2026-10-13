@@ -29,6 +29,12 @@ public partial class SettingsWindow : Window
     }
 
     private void PatchNotes_Click(object sender, RoutedEventArgs e) => AppHost.Current.ShowPatchNotes();
+    private void Report_Click(object sender, RoutedEventArgs e)
+    {
+        try { System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(Feedback.IssueUrl) { UseShellExecute = true }); }
+        catch (Exception ex) when (ex is System.ComponentModel.Win32Exception or InvalidOperationException)
+        { MessageBox.Show(this, T.Localize("Could not open the browser. Please visit GitHub and choose New issue."), "CatScratch"); }
+    }
     private readonly MeterService _meter;
     private readonly List<(string? Name, string Label)> _devices = new();
 
@@ -100,7 +106,7 @@ public partial class SettingsWindow : Window
         var idx = _devices.FindIndex(d => d.Name == s.CaptureDevice);
         Device.SelectedIndex = Math.Max(0, idx);
 
-        LanguageBox.SelectedIndex = UiText.Normalize(s.Language) == "de" ? 1 : 0;
+        LanguageBox.SelectedIndex = Array.IndexOf(UiText.Languages, UiText.Normalize(s.Language));
         Icons.IsChecked = s.DownloadIcons;
         CheckUpdates.IsChecked = s.CheckUpdates;
 

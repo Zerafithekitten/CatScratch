@@ -247,6 +247,8 @@
                     <ComboBox x:Name="LanguageBox" MinWidth="160">
                       <ComboBoxItem Content="English" Tag="en" />
                       <ComboBoxItem Content="Deutsch" Tag="de" />
+                      <ComboBoxItem Content="Русский" Tag="ru" />
+                      <ComboBoxItem Content="Français" Tag="fr" />
                     </ComboBox>
                   </StackPanel>
                   <TextBlock Style="{StaticResource Hint}" Margin="0,6,0,0" Text="{Binding LanguageHint, Source={x:Static s:UiText.Current}}" />
@@ -264,6 +266,13 @@
                     <Button Style="{StaticResource GhostButton}" Content="Patch notes" Click="PatchNotes_Click" Margin="8,0,0,0" />
                   </WrapPanel>
                   <TextBlock x:Name="UpdateState" Style="{StaticResource Hint}" Margin="0,6,0,0" Foreground="{StaticResource TextDim}" Visibility="Collapsed" />
+                </StackPanel>
+              </Border>
+              <Border Style="{StaticResource Section}">
+                <StackPanel>
+                  <TextBlock Text="{Binding ReportTitle, Source={x:Static s:UiText.Current}}" Style="{StaticResource SectionLabel}" Margin="0,0,0,8" />
+                  <TextBlock Text="{Binding ReportHint, Source={x:Static s:UiText.Current}}" Style="{StaticResource Hint}" />
+                  <Button x:Name="ReportButton" Style="{StaticResource GhostButton}" Content="{Binding ReportButton, Source={x:Static s:UiText.Current}}" Click="Report_Click" HorizontalAlignment="Left" Margin="0,8,0,0" />
                 </StackPanel>
               </Border>
             </StackPanel>

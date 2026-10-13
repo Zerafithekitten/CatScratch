@@ -1,3 +1,12 @@
+## CatScratch v2.3.0
+
+- Make Upcoming events cards more compact without shrinking the text. Show today's start times without the Today label; retain Tomorrow/date labels across midnight.
+
+- Add selectable Russian and French interfaces alongside English and German. Translate the settings, meter, fight statistics, event panels, sounds and tray menu; load the bundled language-specific game names. English remains the default; patch notes remain English.
+- Add a feedback button in Settings > General that opens GitHub's bug/feature form chooser. A GitHub account is required; nothing is submitted automatically and no logs or captures are attached.
+- Limit optional icon/portrait downloads to four concurrent requests, back off for five minutes after temporary failures and cancel pending requests on exit. Coalesce concurrent image-ready redraws and skip reloading closed statistics windows.
+- Correct the event-settings hint to describe every selected event within the next hour, and keep recent-event labels localized.
+
 ## CatScratch v2.2.0
 
 - Show all selected events and enabled world-boss timers within the next hour, ordered by start time. Keep recently started events visible for two minutes with pulsing borders while later cards remain visible.

@@ -369,7 +369,7 @@ internal static class InteractionChecks
             Check(((System.Windows.Controls.TextBlock)healingGrid.Children[2]).Text=="Selbstheilung","Personal metric labels switch to German in the live meter");
             var germanSettings=new AionMeter.App.Windows.SettingsWindow(meter); windows.Add(germanSettings);
             var languages=(System.Windows.Controls.ComboBox)germanSettings.FindName("LanguageBox");
-            Check(languages.Items.Count==2 && languages.SelectedIndex==1 && new AppSettings().Language=="en" && meter.Data.Language=="de","Language settings offer English and German, retain selection and reload game names; fresh installs default to English");
+            Check(languages.Items.Count==4 && languages.SelectedIndex==1 && new AppSettings().Language=="en" && meter.Data.Language=="de","All four languages are selectable; fresh installs default to English");
             static IEnumerable<System.Windows.DependencyObject> Descendants(System.Windows.DependencyObject node)
             {
                 foreach(var child in System.Windows.LogicalTreeHelper.GetChildren(node).OfType<System.Windows.DependencyObject>())
@@ -380,6 +380,28 @@ internal static class InteractionChecks
             localizedSound.SelectedIndex=1;
             Check(cards.Saved.Sounds[Core.Events.AutomaticEventSchedule.Catalog.First().Id].Sound=="Bell" && Equals(localizedSound.SelectedItem,"Glocke"),
                 "German sound choices store stable sound IDs rather than translated labels");
+            foreach(var code in new[]{"ru","fr"})
+            {
+                meter.SetLanguage(code); activeOverlay.OnLanguageChanged();
+                var text=UiText.Current;
+                Check(text.Code==code && meter.Data.Language==code && UiText.Normalize(code.ToUpperInvariant()+"-XX")==code,"Language and game-name tables switch together: "+code);
+                foreach(var property in typeof(UiText).GetProperties().Where(p=>p.PropertyType==typeof(string) && p.SetMethod is not null))
+                {
+                    var english=(string)property.GetValue(new UiText())!; var translated=(string)property.GetValue(text)!;
+                    var fields=System.Text.RegularExpressions.Regex.Matches(english,@"\{[^}]+\}").Select(m=>m.Value).Order();
+                    var localFields=System.Text.RegularExpressions.Regex.Matches(translated,@"\{[^}]+\}").Select(m=>m.Value).Order();
+                    Check(fields.SequenceEqual(localFields),code+" formatting placeholders: "+property.Name);
+                }
+                var extra=(IReadOnlyDictionary<string,string>)typeof(UiText).GetField("ExtraGerman",System.Reflection.BindingFlags.NonPublic|System.Reflection.BindingFlags.Static)!.GetValue(null)!;
+                var target=(IReadOnlyDictionary<string,string>)typeof(UiText).GetField(code=="ru" ? "ExtraRussian" : "ExtraFrench",System.Reflection.BindingFlags.NonPublic|System.Reflection.BindingFlags.Static)!.GetValue(null)!;
+                Check(extra.Keys.All(target.ContainsKey),"Every supplemental interface literal has a translation: "+code);
+                var localizedSettings=new AionMeter.App.Windows.SettingsWindow(meter); windows.Add(localizedSettings);
+                Check(((System.Windows.Controls.ComboBox)localizedSettings.FindName("LanguageBox")).SelectedIndex==Array.IndexOf(UiText.Languages,code),"Settings retain language selection: "+code);
+                var report=(System.Windows.Controls.Button)localizedSettings.FindName("ReportButton");
+                Check((string)report.Content==text.ReportButton && text.ReportButton!=new UiText().ReportButton,"Feedback button is translated: "+code);
+            }
+            Check(new Uri(Feedback.IssueUrl).Host=="github.com" && new Uri(Feedback.IssueUrl).Query.Length==0,"Feedback opens the official issue chooser without sending user data");
+            AssetDownloadChecks.Run(output,Check);
             meter.SetLanguage("en"); activeOverlay.OnLanguageChanged();
             Check(((System.Windows.Controls.TextBlock)healingGrid.Children[2]).Text=="Self healing","Switching back to English restores the live labels");
             meter.Settings.ShowDamageTaken=meter.Settings.ShowHealingDone=true;

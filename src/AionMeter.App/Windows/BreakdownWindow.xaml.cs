@@ -46,7 +46,8 @@ public partial class BreakdownWindow : Window
 
     private readonly SkillIcons _icons;
     private readonly Func<int, string> _serverName;
-    private bool _iconRefreshQueued;
+    private int _iconRefreshQueued;
+    private bool _closed;
 
     private readonly BossPortraits? _portraits;
 
@@ -77,6 +78,7 @@ public partial class BreakdownWindow : Window
         if (_portraits is not null) _portraits.PortraitReady += OnIconReady;
         Closed += (_, _) =>
         {
+            _closed=true;
             _timer.Stop();
             _icons.IconReady -= OnIconReady;
             if (_portraits is not null) _portraits.PortraitReady -= OnIconReady;
@@ -86,13 +88,12 @@ public partial class BreakdownWindow : Window
     /// <summary>Icons arrive one by one from the CDN: coalesce them into one redraw.</summary>
     private void OnIconReady()
     {
-        if (_iconRefreshQueued) return;
-        _iconRefreshQueued = true;
+        if (Interlocked.Exchange(ref _iconRefreshQueued,1)!=0) return;
         Dispatcher.BeginInvoke(async () =>
         {
             await Task.Delay(400);
-            _iconRefreshQueued = false;
-            Reload();
+            Interlocked.Exchange(ref _iconRefreshQueued,0);
+            if(!_closed) Reload();
         });
     }
 
