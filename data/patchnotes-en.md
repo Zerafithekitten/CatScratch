@@ -1,3 +1,9 @@
+## CatScratch v1.0.14
+
+- Improve compact names, combat power and gear-score readability with automatic black or white text chosen for each class color.
+- Keep a solid class-colored backing behind compact identity labels, including when a damage bar is short or displays are locked.
+- Slightly increase compact gear text size.
+
 ## CatScratch v1.0.13
 
 - Detailed fight statistics stay clickable even while the DPS meter and event displays are locked.
