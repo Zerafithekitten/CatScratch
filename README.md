@@ -2,9 +2,13 @@
 
 A separate always-on-top Windows damage meter for AION 2 by Zerafithekitten.
 
+[Download the latest release](https://github.com/Zerafithekitten/CatScratch/releases/latest) · [Patch notes](data/patchnotes-en.md) · [Report an issue](https://github.com/Zerafithekitten/CatScratch/issues)
+
+Latest published version: **2.1.2**. English is the default; German is available in Settings.
+
 ## Preview
 
-Actual CatScratch 2.1 UI, rendered with sample data. These images show the app's appearance; names and numbers are examples.
+CatScratch UI rendered with sample data. Names and numbers are examples. Previews of changes that are not released yet are explicitly marked below.
 
 ### DPS meter and Personal combat
 
@@ -22,9 +26,27 @@ The meter can be resized down to 260 px wide. Long names and CP/GS labels shorte
 
 <img src="docs/screenshots/meter-narrow.png" alt="CatScratch at its 260 px minimum width" width="260" />
 
-### Fight details
+### Upcoming fight-details redesign
 
-<img src="docs/screenshots/fight-details.png" alt="Fight statistics with DPS timeline and skill damage breakdown" width="900" />
+Preview of the next update, not yet included in the 2.1.2 download. Dark player cards, a separate summary row, teal tabs, clearer skill tables and a class-colored timeline replace the older gold layout. Player selection, sorting, rotation, defense and chat/image export remain available.
+
+<img src="docs/screenshots/fight-details-next.png" alt="Upcoming CatScratch fight details redesign with player cards and DPS timeline" width="1040" />
+
+<details><summary>Accuracy and German interface previews</summary>
+
+<img src="docs/screenshots/fight-accuracy-next.png" alt="Upcoming accuracy dashboard with separate hit-quality cards" width="1040" />
+
+<img src="docs/screenshots/fight-details-de-next.png" alt="German fight details at the minimum supported window width" width="900" />
+
+</details>
+
+### Compact fight selection and Patch notes
+
+Available since 2.1.2. Saving fights is optional: press the save button after combat. The picker switches between the live fight, current-session fights and the last ten saved fights.
+
+<img src="docs/screenshots/fight-picker.png" alt="Compact CatScratch fight selection" width="340" />
+
+<img src="docs/screenshots/patch-notes.png" alt="CatScratch Patch notes with a dark custom header" width="580" />
 
 ### Settings and upcoming events
 
@@ -33,6 +55,21 @@ The meter can be resized down to 260 px wide. Long names and CP/GS labels shorte
 <img src="docs/screenshots/event-settings.png" alt="Event preferences" width="470" />
 
 <img src="docs/screenshots/upcoming-events.png" alt="Events just started with colored borders" width="520" />
+
+<details><summary>Boss timers and optional event sounds</summary>
+
+<img src="docs/screenshots/boss-timers.png" alt="CatScratch boss timers" width="760" />
+
+<img src="docs/screenshots/event-sounds.png" alt="Optional per-event sounds with the ten-second custom WAV limit" width="580" />
+
+</details>
+
+### Also prepared for the next update
+
+- Subtle dark backgrounds behind Personal combat rows in click-through mode for readability.
+- Remove the update's old staging copy, rollback backup and downloaded ZIP after the updated app starts successfully. Failed-update recovery files are retained.
+
+These changes are not part of the current public download yet.
 
 ## Downloads
 
@@ -57,8 +94,9 @@ Use borderless windowed mode to keep the meter visible above the game.
 - English by default, selectable German in Settings > General > Language; patch notes remain English.
 - Verified GitHub updates for installed and portable copies.
 
-Use Settings > General > Updates > Check now to update from inside the meter.
+Use the meter's **Check for updates** button, or Settings > General > Updates > Check now. Checking only checks; installation starts when you press **Update now**.
 CatScratch replaces its program files and restarts without running Setup. Its own userdata is preserved; failed file replacement restores backups. Updates need a writable program folder.
+Update downloads and temporary staging are kept beside the running executable under `userdata/temp/updates`, including portable installations. Settings, captured packets and saved fights are stored separately and are not update cleanup targets.
 Existing Zerafi DPS Monitor installations use one final migration installer to switch the executable and shortcuts to CatScratch. The installation identity and userdata stay the same; the old GitHub URL redirects to this repository.
 The main window's X exits the whole program, including event and boss windows.
 The show/hide shortcut only changes visibility.
