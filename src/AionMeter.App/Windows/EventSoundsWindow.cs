@@ -9,7 +9,7 @@ namespace AionMeter.App.Windows;
 
 public sealed class EventSoundsWindow : Window
 {
-    public EventSoundsWindow(TimerCards cards, Action<EventSoundPreference, double> preview)
+    public EventSoundsWindow(TimerCards cards, Action<EventSoundPreference, double> preview, Func<string?>? chooseFile = null)
     {
         AppIcon.Apply(this);
         Title = "CatScratch · " + UiText.Current.Localize("Event sounds"); Width = 580; Height = 700; MinWidth = 540; MinHeight = 400;
@@ -52,44 +52,69 @@ public sealed class EventSoundsWindow : Window
             var controls = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(20,5,0,0) };
             if (CustomEventAudio.IsCustom(preference.Sound)) preference.Sound = "Custom audio";
             var soundIds=new[] { "Chime", "Bell", "Ping", "Custom audio" };
-            var sound = new ComboBox { Width = 140, ItemsSource = soundIds.Select(UiText.Current.Localize).ToArray(), SelectedIndex = Array.IndexOf(soundIds,preference.Sound) };
+            var labels = new System.Collections.ObjectModel.ObservableCollection<string>(soundIds.Select(UiText.Current.Localize));
+            labels[3] = CustomSoundLabel(preference);
+            var sound = new ComboBox { Width = 160, ItemsSource = labels, SelectedIndex = Array.IndexOf(soundIds,preference.Sound), ToolTip = preference.FilePath };
             if (sound.SelectedIndex < 0) sound.SelectedIndex = 0;
-            sound.SelectionChanged += (_, _) => { if(sound.SelectedIndex>=0) { preference.Sound = soundIds[sound.SelectedIndex]; cards.Save(); } };
             controls.Children.Add(sound);
-            var choose = new Button { Content = UiText.Current.Localize("Choose audio…"), Margin = new Thickness(8,0,0,0), Padding = new Thickness(8,5,8,5), ToolTip = preference.FilePath ?? UiText.Current.Localize("Choose a local WAV or MP3 file (up to 10 seconds and 10 MB)") };
-            choose.Click += async (_, _) =>
+            var choose = new Button { Content = UiText.Current.Localize(HasCustomFile(preference) ? "Change audio…" : "Choose audio…"), Margin = new Thickness(8,0,0,0), Padding = new Thickness(8,5,8,5), ToolTip = preference.FilePath ?? UiText.Current.Localize("Choose a local WAV or MP3 file (up to 10 seconds and 10 MB)") };
+            bool choosing = false, updating = false;
+            async Task<bool> ChooseAsync()
             {
-                var picker = new Microsoft.Win32.OpenFileDialog { Filter = "Audio (*.wav;*.mp3)|*.wav;*.mp3|WAV (*.wav)|*.wav|MP3 (*.mp3)|*.mp3", CheckFileExists = true };
-                if (picker.ShowDialog(this) != true) return;
+                if (choosing) return false;
+                choosing = true; choose.IsEnabled = sound.IsEnabled = false;
                 try
                 {
-                    choose.IsEnabled = false;
-                    await CustomEventAudio.ValidateAsync(picker.FileName);
-                    preference.FilePath = picker.FileName; preference.Sound = "Custom audio"; sound.SelectedIndex = 3;
-                    choose.ToolTip = preference.FilePath; cards.Save();
+                    var picker = new Microsoft.Win32.OpenFileDialog { Filter = "Audio (*.wav;*.mp3)|*.wav;*.mp3|WAV (*.wav)|*.wav|MP3 (*.mp3)|*.mp3", CheckFileExists = true };
+                    var path = chooseFile is null ? (picker.ShowDialog(this) == true ? picker.FileName : null) : chooseFile();
+                    if (path is null) return false;
+                    await CustomEventAudio.ValidateAsync(path);
+                    preference.FilePath = path; preference.Sound = "Custom audio";
+                    updating = true;
+                    try { labels[3] = CustomSoundLabel(preference); sound.SelectedIndex = 3; }
+                    finally { updating = false; }
+                    choose.ToolTip = sound.ToolTip = preference.FilePath;
+                    choose.Content = UiText.Current.Localize("Change audio…"); cards.Save();
+                    return true;
                 }
-                catch (Exception error) when (error is IOException or UnauthorizedAccessException)
-                { System.Windows.MessageBox.Show(this, UiText.Current.Localize(error.Message), UiText.Current.Localize("Event sounds"), MessageBoxButton.OK, MessageBoxImage.Information); }
-                finally { choose.IsEnabled = true; }
+                catch (Exception error) when (error is IOException or UnauthorizedAccessException or InvalidOperationException or ArgumentException)
+                { MessageBox.Show(this, UiText.Current.Localize(error.Message), UiText.Current.Localize("Event sounds"), MessageBoxButton.OK, MessageBoxImage.Information); return false; }
+                finally { choosing = false; choose.IsEnabled = sound.IsEnabled = true; }
+            }
+            sound.SelectionChanged += async (_, _) =>
+            {
+                if (updating || sound.SelectedIndex < 0) return;
+                if (sound.SelectedIndex == 3 && !HasCustomFile(preference))
+                {
+                    if (!await ChooseAsync())
+                    {
+                        updating = true;
+                        try { sound.SelectedIndex = Math.Max(0, Array.IndexOf(soundIds, preference.Sound)); }
+                        finally { updating = false; }
+                    }
+                    return;
+                }
+                preference.Sound = soundIds[sound.SelectedIndex]; cards.Save();
             };
+            choose.Click += async (_, _) => await ChooseAsync();
             controls.Children.Add(choose);
             var test = new Button { Content = UiText.Current.Localize("Preview"), Margin = new Thickness(8,0,0,0), Padding = new Thickness(8,3,8,3) };
             test.Click += async (_, _) =>
             {
-                if (CustomEventAudio.IsCustom(preference.Sound) && (preference.FilePath is null || !File.Exists(preference.FilePath)))
-                    System.Windows.MessageBox.Show(this, UiText.Current.Localize("Choose an existing WAV or MP3 file first."), UiText.Current.Localize("Event sounds"), MessageBoxButton.OK, MessageBoxImage.Information);
-                else
+                if (choosing) return;
+                try
                 {
-                    try
+                    test.IsEnabled = false;
+                    if (CustomEventAudio.IsCustom(preference.Sound))
                     {
-                        test.IsEnabled = false;
-                        if(CustomEventAudio.IsCustom(preference.Sound)) await CustomEventAudio.ValidateAsync(preference.FilePath!);
-                        preview(preference,cards.Saved.SoundVolume);
+                        if (!HasCustomFile(preference) && !await ChooseAsync()) return;
+                        await CustomEventAudio.ValidateAsync(preference.FilePath!);
                     }
-                    catch(Exception error) when(error is IOException or UnauthorizedAccessException)
-                    { MessageBox.Show(this,UiText.Current.Localize(error.Message),UiText.Current.Localize("Event sounds"),MessageBoxButton.OK,MessageBoxImage.Information); }
-                    finally { test.IsEnabled = true; }
+                    preview(preference,cards.Saved.SoundVolume);
                 }
+                catch(Exception error) when(error is IOException or UnauthorizedAccessException or InvalidOperationException or ArgumentException)
+                { MessageBox.Show(this,UiText.Current.Localize(error.Message),UiText.Current.Localize("Event sounds"),MessageBoxButton.OK,MessageBoxImage.Information); }
+                finally { test.IsEnabled = true; }
             }; controls.Children.Add(test);
             box.Children.Add(controls);
         }
@@ -98,5 +123,8 @@ public sealed class EventSoundsWindow : Window
         Controls.DragAnywhere.Attach(this);
         Closed += (_, _) => cards.Save();
     }
+    internal static bool HasCustomFile(EventSoundPreference preference) => !string.IsNullOrWhiteSpace(preference.FilePath) && File.Exists(preference.FilePath);
+    internal static string CustomSoundLabel(EventSoundPreference preference) => string.IsNullOrWhiteSpace(preference.FilePath)
+        ? UiText.Current.Localize("Choose audio…") : Path.GetFileName(preference.FilePath);
     private static Brush Brush(string color) => (Brush)new BrushConverter().ConvertFromString(color)!;
 }

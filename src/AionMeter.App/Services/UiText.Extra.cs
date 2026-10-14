@@ -37,6 +37,7 @@ public sealed partial class UiText
     {
         ["Custom audio"]="Eigene Audiodatei",
         ["Choose audio…"]="Audiodatei wählen…",
+        ["Change audio…"]="Audiodatei ändern…",
         ["Custom audio: WAV or MP3, maximum 10 seconds and 10 MB."]="Eigene Audiodatei: WAV oder MP3, höchstens 10 Sekunden und 10 MB.",
         ["Choose a local WAV or MP3 file (up to 10 seconds and 10 MB)"]="Lokale WAV- oder MP3-Datei wählen (höchstens 10 Sekunden und 10 MB)",
         ["Choose an existing WAV or MP3 file first."]="Zuerst eine vorhandene WAV- oder MP3-Datei wählen.",

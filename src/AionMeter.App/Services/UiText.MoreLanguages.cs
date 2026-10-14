@@ -7,6 +7,7 @@ public sealed partial class UiText
     [
         ("Custom audio","Свой звук","Audio personnalisé"),
         ("Choose audio…","Выбрать звук…","Choisir un audio…"),
+        ("Change audio…","Изменить звук…","Changer l’audio…"),
         ("Custom audio: WAV or MP3, maximum 10 seconds and 10 MB.","Свой звук: WAV или MP3, максимум 10 секунд и 10 МБ.","Audio personnalisé : WAV ou MP3, 10 secondes et 10 Mo maximum."),
         ("Choose a local WAV or MP3 file (up to 10 seconds and 10 MB)","Выберите WAV или MP3 (до 10 секунд и 10 МБ)","Choisissez un WAV ou MP3 local (10 secondes et 10 Mo maximum)"),
         ("Choose an existing WAV or MP3 file first.","Сначала выберите существующий WAV или MP3.","Choisissez un fichier WAV ou MP3 existant."),

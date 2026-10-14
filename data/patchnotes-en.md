@@ -1,3 +1,10 @@
+## CatScratch v2.4.5
+
+- Open the file picker immediately when selecting custom audio without an existing file. Cancelling or rejecting the file preserves the previous sound selection.
+- Let Preview request a replacement when a saved custom file is missing, then validate and preview the selected WAV or MP3.
+- Display the custom audio filename in the sound dropdown, with its full path in the tooltip. Rename the file button to Change audio after selection.
+- Preserve legacy custom WAV preferences and the maximum of 10 seconds / 10 MB.
+
 ## CatScratch v2.4.4
 
 - Accept custom WAV and MP3 event sounds through the Windows audio decoder, including WAV encodings rejected by the previous PCM-only check.

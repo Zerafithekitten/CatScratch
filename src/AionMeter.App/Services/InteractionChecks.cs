@@ -282,7 +282,23 @@ internal static class InteractionChecks
             var bossShell = (System.Windows.Controls.Border)bossWindow.FindName("BossShell");
             Check(bossShell.Background is System.Windows.Media.SolidColorBrush bossBg && bossBg.Color.A == 255,
                 "Boss timers retain a solid background after click-through registration");
-            var soundWindow = new AionMeter.App.Windows.EventSoundsWindow(cards, (_, _) => { }); windows.Add(soundWindow);
+            var savedCustom = new EventSoundPreference { Sound = "Custom WAV", FilePath = Path.Combine(AppContext.BaseDirectory,"sounds","Chime.wav") };
+            cards.Saved.Sounds["shugo"] = savedCustom;
+            Check(Windows.EventSoundsWindow.HasCustomFile(savedCustom) && Windows.EventSoundsWindow.CustomSoundLabel(savedCustom)=="Chime.wav", "Custom sound displays its filename and recognizes an existing saved file");
+            Check(!Windows.EventSoundsWindow.HasCustomFile(new EventSoundPreference { Sound="Custom audio" }), "Custom selection without a file requests the picker instead of previewing an empty path");
+            var soundWindow = new AionMeter.App.Windows.EventSoundsWindow(cards, (_, _) => { }, () => null); windows.Add(soundWindow);
+            var soundRoot=(System.Windows.Controls.DockPanel)((System.Windows.Controls.Border)soundWindow.Content).Child;
+            var soundBody=(System.Windows.Controls.StackPanel)((System.Windows.Controls.ScrollViewer)soundRoot.Children[1]).Content;
+            var soundRow=(System.Windows.Controls.StackPanel)((System.Windows.Controls.Border)soundBody.Children[1]).Child;
+            var soundControls=(System.Windows.Controls.StackPanel)soundRow.Children[1];
+            Check(((System.Windows.Controls.ComboBox)soundControls.Children[0]).SelectedItem?.ToString()=="Chime.wav" && savedCustom.Sound=="Custom audio", "Sound window preserves legacy preference and renders the chosen filename in the dropdown");
+            Check(((System.Windows.Controls.Button)soundControls.Children[1]).Content?.ToString()=="Change audio…", "Selected custom audio has a change-file button");
+            var secondSoundRow=(System.Windows.Controls.StackPanel)((System.Windows.Controls.Border)soundBody.Children[2]).Child;
+            var secondSoundControls=(System.Windows.Controls.StackPanel)secondSoundRow.Children[1];
+            var secondSound=(System.Windows.Controls.ComboBox)secondSoundControls.Children[0];
+            var previousSound=cards.Saved.Sounds["rift"].Sound; var previousIndex=secondSound.SelectedIndex;
+            secondSound.SelectedIndex=3;
+            Check(secondSound.SelectedIndex==previousIndex && cards.Saved.Sounds["rift"].Sound==previousSound && cards.Saved.Sounds["rift"].FilePath is null,"Cancelling custom file selection restores the previous sound and never saves an empty custom preference");
             Check(soundWindow.Background is System.Windows.Media.SolidColorBrush soundsBg && soundsBg.Color.A == 255,
                 "Sound preferences remain opaque and interactive");
             Check(cards.Saved.Sounds.Count == 8 && !cards.Saved.Sounds.Values.Any(s => s.Enabled), "All automatic events and tracked bosses have disabled sound preferences");
