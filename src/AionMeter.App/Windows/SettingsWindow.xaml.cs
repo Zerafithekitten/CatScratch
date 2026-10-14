@@ -51,6 +51,14 @@ public partial class SettingsWindow : Window
     {
         _meter = meter;
         InitializeComponent();
+        // Keep explanatory text wrapped, while allowing horizontal scrolling at larger UI scales.
+        foreach (var tab in SettingsTabs.Items.OfType<TabItem>())
+            if (tab.Content is ScrollViewer viewer && viewer.Content is FrameworkElement content)
+            {
+                void FitContent() => content.Width = Math.Max(540, viewer.ActualWidth - viewer.Padding.Left - viewer.Padding.Right - 18);
+                viewer.Loaded += (_, _) => FitContent();
+                viewer.SizeChanged += (_, _) => FitContent();
+            }
         AppIcon.Apply(this);
         Controls.DragAnywhere.Attach(this);
         Load();
@@ -72,6 +80,14 @@ public partial class SettingsWindow : Window
     {
         var s = _meter.Settings;
         CompactModeCheck.IsChecked = s.CompactMode;
+        UiScaleLabel.Text=T.Localize("UI scale"); UiScaleValue.Value=Math.Clamp(s.UiScale,.75,1.5)*100;
+        StreamModeCheck.Content=T.Localize("Stream mode: hide player names");StreamModeCheck.IsChecked=s.StreamMode;
+        StreamModeHint.Text=T.Localize("Only displayed and copied player names are hidden. Local recordings and saved files keep their original data.");
+        AutomaticFightEndCheck.Content=T.Localize("Automatic fight end");AutomaticFightEndCheck.IsChecked=s.AutomaticFightEnd;
+        AutomaticFightEndHint.Text=T.Localize("After inactivity, keep the finished fight until the next fight. Healing and incoming damage count as activity.");
+        TestModeSection.Text=T.Localize("Test mode");
+        TestModeButton.Content=T.Localize(_meter.DemoRunning?"Stop test mode":"Start test mode");
+        TestModeHint.Text=T.Localize("Use sample fights and pet progress to arrange your modules. Test data is not saved.");
         WindowWidthText.Text = s.OverlayWidth.ToString("0");
         WindowHeightText.Text = s.OverlayHeight.ToString("0");
         WindowOpacityValue.Value = s.WindowOpacity;
@@ -125,9 +141,14 @@ public partial class SettingsWindow : Window
         LanguageBox.SelectedIndex = Array.IndexOf(UiText.Languages, UiText.Normalize(s.Language));
         Icons.IsChecked = s.DownloadIcons;
         CheckUpdates.IsChecked = s.CheckUpdates;
+        UpdateChannelLabel.Text = T.Localize("Update channel");
+        UpdateChannelBox.Items.Add(T.Localize("Stable · tested releases"));
+        UpdateChannelBox.Items.Add(T.Localize("Beta · early access"));
+        UpdateChannelBox.SelectedIndex = _meter.Updates.Channel == AionMeter.Core.Updates.UpdateChannel.Beta ? 1 : 0;
+        UpdateChannelHint.Text = T.Localize("Beta releases may contain unfinished features. Changing the channel never installs an update. Returning to Stable can install an older version; your settings and saved fights are kept.");
 
 
-        VersionText.Text = string.Format(Updater.IsInstalled ? T.VersionInstalled : T.VersionPortable, _meter.Updates.Current.ToString(3));
+        VersionText.Text = string.Format(Updater.IsInstalled ? T.VersionInstalled : T.VersionPortable, _meter.Updates.CurrentDisplay);
 
         CaptureState.Text = T.StatusPrefix + T.CaptureMessage(_meter.CaptureStatus.Message);
         var data = _meter.Data;
@@ -174,6 +195,8 @@ public partial class SettingsWindow : Window
 
         s.BarsRelativeToTop = BarsRelative.IsChecked == true;
         s.ShowBossPanel = ShowBoss.IsChecked == true;
+        s.UiScale=UiScaleValue.Value/100; s.StreamMode=StreamModeCheck.IsChecked==true;
+        s.AutomaticFightEnd=AutomaticFightEndCheck.IsChecked==true;
         s.ShowPersonalCombatModule = ShowPersonalCombatModule.IsChecked == true;
         s.ShowHealingDone = ShowHealingDone.IsChecked == true;
         s.ShowGear = ShowGear.IsChecked == true;
@@ -201,6 +224,7 @@ public partial class SettingsWindow : Window
         var language = (LanguageBox.SelectedItem as ComboBoxItem)?.Tag as string ?? "en";
         s.DownloadIcons = Icons.IsChecked == true;
         s.CheckUpdates = CheckUpdates.IsChecked == true;
+        SaveUpdateChannel();
         s.AutoInstallUpdates = false; // Legacy setting: installation now always requires explicit approval.
         s.HotkeyToggleOverlay = HkToggle.Text.Trim();
         s.HotkeyToggleAll = HkAll.Text.Trim();
@@ -215,9 +239,20 @@ public partial class SettingsWindow : Window
         if (captureChanged) _meter.RestartCapture();
         Close();
         AppHost.Current.OnSettingsChanged();
+        AppHost.Current.RefreshPresentation();
         if (language != UiText.Normalize(s.Language)) AppHost.Current.SetLanguage(language);
     }
 
+    private void UiScale_Changed(object sender, RoutedPropertyChangedEventArgs<double> e)
+    {
+        if(UiScaleText is not null)UiScaleText.Text=$"{e.NewValue:0}%";
+    }
+    private void TestMode_Click(object sender, RoutedEventArgs e)
+    {
+        AppHost.Current.ToggleTestMode();
+        TestModeSection.Text=T.Localize("Test mode");
+        TestModeButton.Content=T.Localize(_meter.DemoRunning?"Stop test mode":"Start test mode");
+    }
     private void Cancel_Click(object sender, RoutedEventArgs e) => Close();
 
     /// <summary>The overlay follows the slider at once, so the size can be judged on the real rows.</summary>
@@ -232,18 +267,23 @@ public partial class SettingsWindow : Window
     /// <summary>Asks GitHub right away; a newer version also opens the update window.</summary>
     private async void CheckNow_Click(object sender, RoutedEventArgs e)
     {
+        SaveUpdateChannel();
+        _meter.Settings.Save();
         CheckNowButton.IsEnabled = false;
         UpdateState.Visibility = Visibility.Visible;
         UpdateState.Text = T.UpdateChecking;
         var result = await AppHost.Current.CheckUpdatesNowAsync();
         UpdateState.Text = result switch
         {
-            UpdateCheckResult.Available => string.Format(T.UpdateFound, _meter.Updates.Latest!.Version.ToString(3)),
+            UpdateCheckResult.Available => string.Format(T.UpdateFound, _meter.Updates.Latest!.DisplayVersion),
             UpdateCheckResult.UpToDate => T.UpToDate,
             _ => string.Format(T.UpdateCheckFailed, _meter.Updates.LastError),
         };
         CheckNowButton.IsEnabled = true;
     }
+
+    private void SaveUpdateChannel() => _meter.Updates.SetChannel(UpdateChannelBox.SelectedIndex == 1
+        ? AionMeter.Core.Updates.UpdateChannel.Beta : AionMeter.Core.Updates.UpdateChannel.Stable);
 
     private static void Open(string path)
     {

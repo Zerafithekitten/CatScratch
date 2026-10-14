@@ -34,6 +34,7 @@ internal static class WindowClickThrough
         window.Background = Brushes.Transparent;
         if (opacity is not null) window.Opacity = Math.Clamp(opacity(), 0.4, 1);
         if (enabled()) window.ShowActivated = false;
+        WindowPresentation.Attach(window);
         Windows[window] = new() { Appearance = appearance };
         window.SourceInitialized += (_, _) => Apply(window, enabled());
         window.Closed += (_, _) => Windows.Remove(window);

@@ -10,7 +10,7 @@ internal static class DirectUpdate
     public static string Root => RootFor(AppContext.BaseDirectory);
     internal static string RootFor(string installation) => Path.Combine(Path.GetFullPath(installation), "userdata", "temp", "updates");
 
-    public static void Launch(string archive, Version version, string? checkResult = null)
+    public static void Launch(string archive, Version version, string? checkResult = null, ReleaseVersion? identity = null)
     {
         var stage = Path.Combine(Root, "stage-" + Guid.NewGuid().ToString("N"));
         var payload = Path.Combine(stage, "payload");
@@ -19,6 +19,8 @@ internal static class DirectUpdate
         var info = FileVersionInfo.GetVersionInfo(exe);
         if (!UpdateFeed.IsProductName(info.ProductName, AppInfo.Name) || UpdateFeed.ParseVersion(info.ProductVersion) != version)
             throw new InvalidDataException("The update's product or version does not match its release.");
+        if (identity is not null && ReleaseVersion.Parse(info.ProductVersion) != identity)
+            throw new InvalidDataException("The update's beta revision does not match its release.");
         var start = new ProcessStartInfo(exe) { UseShellExecute = false, WorkingDirectory = payload };
         foreach (var arg in new[] { "--apply-update", AppContext.BaseDirectory, "--parent", Environment.ProcessId.ToString() })
             start.ArgumentList.Add(arg);

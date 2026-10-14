@@ -7,6 +7,9 @@
 #ifndef AppVer
   #define AppVer "0.0.0"
 #endif
+#ifndef NumericVer
+  #define NumericVer AppVer
+#endif
 #ifndef PayloadDir
   #error Pass /DPayloadDir=<folder with the published program>
 #endif
@@ -26,6 +29,7 @@ AppPublisher={#AppName}
 AppPublisherURL=https://github.com/{#UpdateRepo}
 AppSupportURL=https://github.com/{#UpdateRepo}/issues
 AppUpdatesURL=https://github.com/{#UpdateRepo}/releases
+VersionInfoVersion={#NumericVer}
 VersionInfoDescription={#AppName} Setup
 ; Old meters validate this name for the migration update.
 VersionInfoProductName=Zerafi DPS Monitor

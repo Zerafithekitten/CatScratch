@@ -49,11 +49,14 @@ public static class SampleRenderer
     /// <param name="Backdrop">Behind the translucent overlay: game (a stand-in colour), dark (a navy gradient) or none (transparent).</param>
     /// <param name="RowSize">Overlay row size in percent (Settings → Overlay → Row size).</param>
     public sealed record Options(string Window = "overlay", int? Width = null, int? Height = null, string? Tab = null,
-        string Backdrop = "game", double Scale = 1.5, int RowSize = 100);
+        string Backdrop = "game", double Scale = 1.5, int RowSize = 100, double UiScale = 1, bool StreamMode = false, bool TestMode = false);
 
     public static void Render(string path, string language, Options o)
     {
+        WindowPresentation.SetScale(o.UiScale);StreamNames.Enabled=o.StreamMode;
         using var meter = CreateMeter(language, o.RowSize);
+        meter.Settings.UiScale=o.UiScale;meter.Settings.StreamMode=o.StreamMode;
+        if(o.TestMode)meter.StartDemo(animate:false);
         var start = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() - 20_500; // a fight that is still going
         var fight = new SampleFight(start, 20);
         if (o.Window is not ("party" or "room" or "personal-waiting" or "fight-menu-empty")) fight.FeedUntil(meter.Tracker, start + 20_000);
@@ -146,7 +149,7 @@ public static class SampleRenderer
                     host = new EventPreferencesWindow(cards, () => 480, _ => { }, _ => { }, () => { }) { Height=o.Height??680 };
                     refresh=()=>{}; break;
                 }
-                var hub = new TimerHubWindow(cards) { Width = o.Width ?? 480, Height = o.Height??144, ClockOverride = () => o.Window == "events-live" ? new DateTimeOffset(2026,10,13,14,0,30,TimeSpan.FromHours(2)) : new DateTimeOffset(2026, 10, 13, 13, 10, 0, TimeSpan.FromHours(2)) };
+                var hub = new TimerHubWindow(cards) { Width = o.Width ?? 480, Height = o.Height??144, ClockOverride = () => o.TestMode ? DateTimeOffset.UtcNow : o.Window == "events-live" ? new DateTimeOffset(2026,10,13,14,0,30,TimeSpan.FromHours(2)) : new DateTimeOffset(2026, 10, 13, 13, 10, 0, TimeSpan.FromHours(2)) };
                 WindowClickThrough.Attach(hub, () => o.Window == "events-locked");
                 host = hub;
                 refresh = hub.Reload;
@@ -224,7 +227,10 @@ public static class SampleRenderer
     /// </summary>
     public static void Animate(string folder, string language, Options o, double seconds, int fps)
     {
+        WindowPresentation.SetScale(o.UiScale);StreamNames.Enabled=o.StreamMode;
         using var meter = CreateMeter(language, o.RowSize);
+        meter.Settings.UiScale=o.UiScale;meter.Settings.StreamMode=o.StreamMode;
+        if(o.TestMode)meter.StartDemo(animate:false);
         WaitForPortraits(meter);
         var start = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() - 600_000;
         var fight = new SampleFight(start, seconds);

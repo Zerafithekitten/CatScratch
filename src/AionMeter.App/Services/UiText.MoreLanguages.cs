@@ -5,6 +5,21 @@ public sealed partial class UiText
     // Exact literals, not substitutions in player names, paths or protocol identifiers.
     private static readonly (string English,string Russian,string French)[] AdditionalTranslations =
     [
+        ("Update channel","Канал обновлений","Canal de mise à jour"),
+        ("Stable · tested releases","Stable · проверенные версии","Stable · versions testées"),
+        ("Beta · early access","Beta · ранний доступ","Beta · accès anticipé"),
+        ("Beta releases may contain unfinished features. Changing the channel never installs an update. Returning to Stable can install an older version; your settings and saved fights are kept.","Бета-версии могут содержать незавершённые функции. Смена канала не устанавливает обновление. Возврат на Stable может установить более старую версию; настройки и сохранённые бои сохраняются.","Les versions bêta peuvent contenir des fonctions inachevées. Changer de canal n’installe rien. Revenir à Stable peut installer une version antérieure ; vos paramètres et combats sauvegardés sont conservés."),
+        ("UI scale","Масштаб интерфейса","Échelle de l’interface"),
+        ("Test mode","Тестовый режим","Mode test"),
+        ("Test mode · sample data","Тестовый режим · примеры данных","Mode test · données de démonstration"),
+        ("Stream mode: hide player names","Режим стрима: скрыть имена игроков","Mode streaming : masquer les noms"),
+        ("Only displayed and copied player names are hidden. Local recordings and saved files keep their original data.","Скрываются только отображаемые и копируемые имена. Локальные записи сохраняют исходные данные.","Seuls les noms affichés et copiés sont masqués. Les enregistrements locaux conservent les données originales."),
+        ("Automatic fight end","Автоматическое завершение боя","Fin automatique du combat"),
+        ("After inactivity, keep the finished fight until the next fight. Healing and incoming damage count as activity.","После бездействия результат остаётся до следующего боя. Лечение и полученный урон считаются активностью.","Après inactivité, le résultat reste visible jusqu’au prochain combat. Les soins et dégâts reçus comptent comme activité."),
+        ("Start test mode","Запустить тестовый режим","Démarrer le mode test"),
+        ("Stop test mode","Остановить тестовый режим","Arrêter le mode test"),
+        ("Use sample fights and pet progress to arrange your modules. Test data is not saved.","Настройте модули на примерах боёв и прогресса питомцев. Тестовые данные не сохраняются.","Placez vos modules avec des combats et une progression de familiers de démonstration. Les données de test ne sont pas sauvegardées."),
+        ("Player {0}","Игрок {0}","Joueur {0}"),
         ("Custom audio","Свой звук","Audio personnalisé"),
         ("Choose audio…","Выбрать звук…","Choisir un audio…"),
         ("Change audio…","Изменить звук…","Changer l’audio…"),

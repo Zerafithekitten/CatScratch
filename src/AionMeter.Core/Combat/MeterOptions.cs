@@ -13,6 +13,7 @@ public sealed class MeterOptions
     public TargetMode TargetMode { get; set; } = TargetMode.BossOnly;
 
     /// <summary>End the segment after this long without outgoing damage (no boss alive).</summary>
+    public bool AutomaticFightEnd { get; set; } = true;
     public int IdleTimeoutMs { get; set; } = 10_000;
 
     /// <summary>Longer timeout while a boss is still alive — covers invulnerable phases and cut-scenes.</summary>

@@ -46,11 +46,20 @@ public sealed class TimerCards : IDisposable
     private readonly string _path = Path.Combine(AppSettings.AppDataDir, "timer-cards.json");
     private readonly Dictionary<string, TimerCardWindow> _windows = [];
     public State Saved { get; private set; } = new();
+    public bool TestMode => _meter.DemoRunning;
     private IReadOnlyList<EventStart> _nextEvents = [];
     private string? _scheduleKey;
     private DateTimeOffset _scheduleAt, _scheduleUntil;
     public IReadOnlyList<EventStart> NextEvents(DateTimeOffset now)
     {
+        if(TestMode)
+        {
+            var anchor=_meter.TestStartedAt;
+            if(now>anchor.AddMinutes(8))anchor=new DateTimeOffset(now.Year,now.Month,now.Day,now.Hour,now.Minute,0,now.Offset);
+            var examples=AutomaticEventSchedule.Catalog.Where(e=>Saved.SelectedEvents.Contains(e.Id)).Select((e,i)=>new EventStart(e.Id,e.Name,i==0?anchor.AddSeconds(-30):anchor.AddMinutes(5*(i+1))));
+            if(Saved.ShowAllWorldBosses)examples=examples.Concat(_meter.Timers.All().Where(b=>b.NextSpawn is not null).Select(b=>new EventStart($"boss:{b.ServerId}:{b.NpcCode}",_meter.Data.NpcName(b.NpcCode),b.NextSpawn!.Value)));
+            return examples.Where(e=>e.StartsAt>now.AddMinutes(-2) && e.StartsAt<=now.AddHours(1)).OrderBy(e=>e.StartsAt).ToArray();
+        }
         var key = Saved.EventRegion + ":" + Saved.ShowAllWorldBosses + ":" + string.Join('|', Saved.SelectedEvents);
         if (key == _scheduleKey && now >= _scheduleAt && now < _scheduleUntil) return _nextEvents;
         var selected = Saved.ShowAllWorldBosses

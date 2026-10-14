@@ -152,6 +152,7 @@ public sealed class Encounter
     public Guid Id { get; } = Guid.NewGuid();
     public required long StartMs { get; init; }
     public long LastDamageMs { get; set; }
+    public long LastActivityMs { get; set; }
     public long EndMs { get; set; }
     public bool IsActive => Reason == EncounterEndReason.None;
     public EncounterEndReason Reason { get; set; }

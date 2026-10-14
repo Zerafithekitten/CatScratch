@@ -54,7 +54,7 @@
       </Grid>
       <TabControl Grid.Row="1" TabStripPlacement="Left" Margin="14,0,14,0" Background="Transparent" BorderThickness="0" Name="SettingsTabs">
         <TabItem Header="{Binding Literal17, Source={x:Static s:UiText.Current}}" Padding="12,10">
-          <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="14,0,0,0">
+          <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Padding="14,0,0,0">
             <StackPanel>
               <Border Style="{StaticResource Section}">
                 <StackPanel>
@@ -89,6 +89,13 @@
                     <TextBlock x:Name="RowSizeText" VerticalAlignment="Center" Margin="10,0,0,0" />
                   </StackPanel>
                   <TextBlock Style="{StaticResource Hint}" Margin="190,2,0,0" Text="{Binding RowSizeHint, Source={x:Static s:UiText.Current}}" />
+                  <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
+                    <TextBlock x:Name="UiScaleLabel" Style="{StaticResource Label}" />
+                    <Slider x:Name="UiScaleValue" Style="{StaticResource GoldSlider}" Width="180" Minimum="75" Maximum="150" TickFrequency="5" IsSnapToTickEnabled="True" ValueChanged="UiScale_Changed" />
+                    <TextBlock x:Name="UiScaleText" VerticalAlignment="Center" Margin="10,0,0,0" />
+                  </StackPanel>
+                  <CheckBox x:Name="StreamModeCheck" Style="{StaticResource DarkCheck}" Margin="0,8,0,0" />
+                  <TextBlock x:Name="StreamModeHint" Style="{StaticResource Hint}" TextWrapping="Wrap" />
                   <CheckBox x:Name="CompactModeCheck" Content="{Binding Literal23, Source={x:Static s:UiText.Current}}" Style="{StaticResource DarkCheck}" Margin="0,10,0,0" />
                   <CheckBox x:Name="BarsRelative" Style="{StaticResource DarkCheck}" Content="{Binding BarsRelative, Source={x:Static s:UiText.Current}}" />
                   <TextBlock Style="{StaticResource Hint}" Text="{Binding BarsRelativeHint, Source={x:Static s:UiText.Current}}" />
@@ -114,7 +121,7 @@
           </ScrollViewer>
         </TabItem>
         <TabItem Header="{Binding Literal28, Source={x:Static s:UiText.Current}}" Padding="12,10">
-          <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="14,0,0,0">
+          <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Padding="14,0,0,0">
             <StackPanel>
               <Border Style="{StaticResource Section}">
                 <StackPanel>
@@ -138,6 +145,8 @@
               </Border>
               <Border Style="{StaticResource Section}">
                 <StackPanel>
+                  <CheckBox x:Name="AutomaticFightEndCheck" Style="{StaticResource DarkCheck}" Margin="0,0,0,6" />
+                  <TextBlock x:Name="AutomaticFightEndHint" Style="{StaticResource Hint}" TextWrapping="Wrap" Margin="0,0,0,12" />
                   <TextBlock Text="{Binding Literal10, Source={x:Static s:UiText.Current}}" Style="{StaticResource SectionLabel}" Margin="0,0,0,8" />
                   <CheckBox x:Name="ShowPersonalCombatModule" Style="{StaticResource DarkCheck}" Content="{Binding Literal29, Source={x:Static s:UiText.Current}}" />
                   <CheckBox x:Name="ShowHealingDone" Style="{StaticResource DarkCheck}" Content="{Binding Literal31, Source={x:Static s:UiText.Current}}" Margin="0,6,0,0" />
@@ -148,7 +157,7 @@
           </ScrollViewer>
         </TabItem>
         <TabItem Header="{Binding Literal33, Source={x:Static s:UiText.Current}}" Padding="12,10">
-          <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="14,0,0,0">
+          <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Padding="14,0,0,0">
             <StackPanel>
               <Border Style="{StaticResource Section}">
                 <StackPanel>
@@ -183,7 +192,7 @@
           </ScrollViewer>
         </TabItem>
         <TabItem Header="{Binding Literal34, Source={x:Static s:UiText.Current}}" Padding="12,10">
-          <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="14,0,0,0">
+          <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Padding="14,0,0,0">
             <StackPanel>
               <Border Style="{StaticResource Section}">
                 <StackPanel>
@@ -211,7 +220,7 @@
           </ScrollViewer>
         </TabItem>
         <TabItem Header="{Binding Literal37, Source={x:Static s:UiText.Current}}" Padding="12,10">
-          <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="14,0,0,0">
+          <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Padding="14,0,0,0">
             <StackPanel>
               <Border Style="{StaticResource Section}">
                 <StackPanel>
@@ -246,8 +255,15 @@
           </ScrollViewer>
         </TabItem>
         <TabItem Header="{Binding Literal38, Source={x:Static s:UiText.Current}}" Padding="12,10">
-          <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="14,0,0,0">
+          <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Padding="14,0,0,0">
             <StackPanel>
+              <Border Style="{StaticResource Section}">
+                <StackPanel>
+                  <TextBlock x:Name="TestModeSection" Style="{StaticResource SectionLabel}" Margin="0,0,0,8" />
+                  <TextBlock x:Name="TestModeHint" Style="{StaticResource Hint}" TextWrapping="Wrap" />
+                  <Button x:Name="TestModeButton" Style="{StaticResource GhostButton}" Click="TestMode_Click" HorizontalAlignment="Left" Margin="0,6,0,0" />
+                </StackPanel>
+              </Border>
               <Border Style="{StaticResource Section}">
                 <StackPanel>
                   <TextBlock Text="{Binding Literal39, Source={x:Static s:UiText.Current}}" Style="{StaticResource SectionLabel}" Margin="0,0,0,8" />
@@ -266,6 +282,9 @@
               <Border Style="{StaticResource Section}">
                 <StackPanel>
                   <TextBlock Text="{Binding SecUpdates, Source={x:Static s:UiText.Current}}" Style="{StaticResource SectionLabel}" Margin="0,0,0,8" />
+                  <TextBlock x:Name="UpdateChannelLabel" Style="{StaticResource Hint}" Margin="0,0,0,4" />
+                  <ComboBox x:Name="UpdateChannelBox" HorizontalAlignment="Left" MinWidth="180" Margin="0,0,0,6" />
+                  <TextBlock x:Name="UpdateChannelHint" Style="{StaticResource Hint}" />
                   <CheckBox x:Name="CheckUpdates" Style="{StaticResource DarkCheck}" Content="{Binding CheckUpdatesAuto, Source={x:Static s:UiText.Current}}" />
                   <TextBlock Style="{StaticResource Hint}" Text="{Binding UpdatesHint, Source={x:Static s:UiText.Current}}" />
                   <TextBlock Style="{StaticResource Hint}" Text="{Binding Literal40, Source={x:Static s:UiText.Current}}" />

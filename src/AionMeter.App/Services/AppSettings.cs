@@ -31,6 +31,9 @@ public sealed class AppSettings
     public double OverlayWidth { get; set; } = 420;
     public double OverlayHeight { get; set; } = 540;
     public bool CompactMode { get; set; } = true;
+    public double UiScale { get; set; } = 1;
+    public bool StreamMode { get; set; }
+    public bool AutomaticFightEnd { get; set; } = true;
     public double WindowOpacity { get; set; } = 0.88;
     public double BackgroundOpacity { get; set; } = 0.9;
     public bool Locked { get; set; }
@@ -84,6 +87,8 @@ public sealed class AppSettings
     // Updates
     /// <summary>Ask GitHub for a newer version shortly after start and every few hours.</summary>
     public bool CheckUpdates { get; set; } = false;
+    // Older copies have no preference: follow the installed build until explicitly selected.
+    public string? UpdateChannel { get; set; }
     /// <summary>Installed copies download a new version by themselves and install it at a quiet moment.</summary>
     public bool AutoInstallUpdates { get; set; } = false;
     public string UpdateSource { get; set; } = "";
@@ -194,6 +199,7 @@ public sealed class AppSettings
     public void ApplyTo(MeterOptions options)
     {
         options.TargetMode = TargetMode;
+        options.AutomaticFightEnd = AutomaticFightEnd;
         options.IdleTimeoutMs = Math.Clamp(IdleTimeoutSec, 3, 120) * 1000;
         options.BossIdleTimeoutMs = Math.Clamp(BossIdleTimeoutSec, 5, 300) * 1000;
     }

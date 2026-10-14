@@ -70,7 +70,7 @@ public sealed partial class UiText
     /// readable at a glance.
     /// </summary>
     public string PlayerLabel(string name, Core.Events.GameClass cls) =>
-        name.StartsWith('#') && ClassName(cls) is { Length: > 0 } c ? $"{c} {name}" : name;
+        StreamNames.Enabled ? StreamNames.Name(name) : name.StartsWith('#') && ClassName(cls) is { Length: > 0 } c ? $"{c} {name}" : name;
 
     /// <summary>A row of the ranking: a player, or the pseudo-row of pets whose owner is unknown.</summary>
     public string CombatantLabel(uint actorId, string name, Core.Events.GameClass cls) =>
@@ -200,7 +200,7 @@ public sealed partial class UiText
     public string TrayShow { get; init; } = "Show overlay";
     public string TrayHistory { get; init; } = "Fight history…";
     public string TraySettings { get; init; } = "Settings…";
-    public string TrayDemo { get; init; } = "Run demo fight";
+    public string TrayDemo { get; init; } = "Toggle test mode";
     public string TrayReplay { get; init; } = "Replay capture file…";
     public string TrayExit { get; init; } = "Exit";
     public string ClickThroughOn { get; init; } = "Click-through ON — the overlay ignores the mouse. {0} to turn it off.";
@@ -519,7 +519,7 @@ public sealed partial class UiText
         TrayShow = "Показать оверлей",
         TrayHistory = "История боёв…",
         TraySettings = "Настройки…",
-        TrayDemo = "Демо-бой",
+        TrayDemo = "Переключить тестовый режим",
         TrayReplay = "Воспроизвести запись…",
         TrayExit = "Выход",
         ClickThroughOn = "Клики сквозь оверлей ВКЛ — он не реагирует на мышь. {0} — выключить.",

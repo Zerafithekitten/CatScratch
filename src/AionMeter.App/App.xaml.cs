@@ -70,6 +70,7 @@ public partial class App : Application
     protected override void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);
+        if(e.Args.Any(a=>a.StartsWith("--check-",StringComparison.Ordinal) || a=="--render-sample"))WindowPresentation.Enabled=false;
         if (ArgValue(e.Args,"--clean-update") is { } cleanupStage)
         {
             try
@@ -140,6 +141,16 @@ public partial class App : Application
                 .RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Primitives.ButtonBase.ClickEvent)), DispatcherPriority.ApplicationIdle);
             return;
         }
+        if (ArgValue(e.Args,"--check-release250") is { } release250Result)
+        {
+            Log.Enabled=false;
+            Dispatcher.BeginInvoke(async () =>
+            {
+                try { await Release250Checks.RunAsync(release250Result); Shutdown(); }
+                catch(Exception ex) { File.WriteAllText(release250Result,ex.ToString()); Shutdown(1); }
+            });
+            return;
+        }
         if (ArgValue(e.Args,"--check-event-audio") is { } eventAudioResult)
         {
             Log.Enabled=false;
@@ -187,7 +198,9 @@ public partial class App : Application
                 ArgValue(e.Args, "--backdrop") ?? "game",
                 double.TryParse(ArgValue(e.Args, "--scale"), System.Globalization.NumberStyles.Float,
                     System.Globalization.CultureInfo.InvariantCulture, out var scale) ? scale : 1.5,
-                int.TryParse(ArgValue(e.Args, "--row-size"), out var rowSize) ? rowSize : 100);
+                int.TryParse(ArgValue(e.Args, "--row-size"), out var rowSize) ? rowSize : 100,
+                double.TryParse(ArgValue(e.Args,"--ui-scale"),System.Globalization.NumberStyles.Float,System.Globalization.CultureInfo.InvariantCulture,out var uiScale)?uiScale:1,
+                e.Args.Contains("--stream"),e.Args.Contains("--test-mode"));
             var language = ArgValue(e.Args, "--lang") ?? "en";
             if (double.TryParse(ArgValue(e.Args, "--animate"), System.Globalization.NumberStyles.Float,
                     System.Globalization.CultureInfo.InvariantCulture, out var seconds))
@@ -244,6 +257,8 @@ public partial class App : Application
             RecordDirectory = settings.RecordPackets ? Path.Combine(AppSettings.AppDataDir, "captures") : null,
         });
 
+        WindowPresentation.SetScale(settings.UiScale);
+        StreamNames.Enabled=settings.StreamMode;
         _meter = new MeterService(settings, factory);
         _timerCards = new TimerCards(_meter);
         Log.Info($"Started. Data: {_meter.Data.Skills.Count} skills, {_meter.Data.Npcs.Count} npcs.");
@@ -269,7 +284,7 @@ public partial class App : Application
             BossTimers: ShowBossTimers,
             Events: ShowTimerHub,
             Settings: ShowSettings,
-            Demo: () => _meter.StartDemo(),
+            Demo: ToggleTestMode,
             Replay: PickReplay,
             ToggleLanguage: ToggleLanguage,
             Update: () => ShowUpdate(),
@@ -297,7 +312,7 @@ public partial class App : Application
         Updater.CleanDownloads();
         if (e.Args.Contains("--updated")) // started by the installer after an in-app update
             Dispatcher.BeginInvoke(() => _tray?.ShowBalloon(AppInfo.Name,
-                string.Format(UiText.Current.UpdatedBalloon, _meter.Updates.Current.ToString(3))), DispatcherPriority.ApplicationIdle);
+                string.Format(UiText.Current.UpdatedBalloon, _meter.Updates.CurrentDisplay)), DispatcherPriority.ApplicationIdle);
 
         _timer = new DispatcherTimer(DispatcherPriority.Background) { Interval = TimeSpan.FromMilliseconds(200) };
         _timer.Tick += (_, _) => OnTick();
@@ -305,7 +320,7 @@ public partial class App : Application
         if(settings.ShowPetTrackerModule) TogglePetModule();
 
         // Developer switches: --demo, --replay <file.pcap> (instant), --open-last (breakdown of the newest fight).
-        if (e.Args.Contains("--demo")) _meter.StartDemo();
+        if (e.Args.Contains("--demo")) ToggleTestMode();
         if (ArgValue(e.Args, "--replay") is { } replay) _meter.Replay(replay);
         if (e.Args.Contains("--open-last"))
         {
@@ -552,6 +567,27 @@ public partial class App : Application
         if(reopenPets)TogglePetModule();
     }
 
+    public void ToggleTestMode()
+    {
+        var petsVisible=_petWindow?.IsVisible==true;
+        var bossWindow=_timersWindow;
+        var bossesVisible=bossWindow?.IsVisible==true;
+        var bossPosition=bossWindow is null ? (Left:0d,Top:0d,Width:780d,Height:640d) : (Left:bossWindow.Left,Top:bossWindow.Top,Width:bossWindow.Width,Height:bossWindow.Height);
+        _petWindow?.Close();_timersWindow?.Close();
+        if(_meter.DemoRunning)_meter.StopDemo();else _meter.StartDemo();
+        foreach(var w in _breakdowns.Values.ToList())w.Close();
+        _history?.Close();
+        if(petsVisible)TogglePetModule();
+        if(bossesVisible){ShowBossTimers();_timersWindow!.Left=bossPosition.Left;_timersWindow.Top=bossPosition.Top;_timersWindow.Width=bossPosition.Width;_timersWindow.Height=bossPosition.Height;}
+        _timerHub?.Reload();
+        _overlay.ShowLive();_overlay.Refresh();
+        if(_meter.DemoRunning && !_overlay.IsVisible)_overlay.Show();
+    }
+    public void RefreshPresentation()
+    {
+        foreach(var w in _breakdowns.Values.ToList())w.Close();
+        _history?.Reload();_overlay.OnLanguageChanged();
+    }
     public void ToggleLanguage() => SetLanguage(UiText.Languages[(Array.IndexOf(UiText.Languages, UiText.Current.Code) + 1) % UiText.Languages.Length]);
 
     public void ShowSavedInOverlay(Core.Storage.HistoryEntry entry)
@@ -616,6 +652,7 @@ public partial class App : Application
     /// <summary>Tray notification (and a chime) shortly before a tracked boss respawns.</summary>
     private void CheckBossAlerts()
     {
+        if(_meter.DemoRunning)return;
         var t = UiText.Current;
         foreach (var timer in _meter.Timers.TakeDueAlerts(DateTimeOffset.Now, _meter.Settings.BossAlertMinutes))
         {
@@ -633,6 +670,7 @@ public partial class App : Application
 
     private void CheckEventSounds()
     {
+        if(_meter.DemoRunning)return;
         if (_timerCards is not { } cards || cards.Saved.Sounds.Count == 0) return;
         var enabled = cards.Saved.Sounds.Where(p => p.Value.Enabled && cards.Saved.SelectedEvents.Contains(p.Key)).Select(p => p.Key);
         foreach (var due in _eventAlerts.TakeDue(DateTimeOffset.UtcNow, cards.Saved.EventRegion, enabled, cards.Saved.SoundLeadMinutes))
@@ -690,12 +728,12 @@ public partial class App : Application
         if (_shutdownStarted || Dispatcher.HasShutdownStarted) return;
         var updates = _meter.Updates;
         var available = updates.Available;
-        _tray?.SetUpdate(available?.Version.ToString(3));
+        _tray?.SetUpdate(available?.DisplayVersion);
         if (available is null || available.Version == _announcedUpdate) return;
         var t = UiText.Current;
         _announcedUpdate = available.Version;
         if (_checkingByHand) return; // the one who asked gets the update window instead
-        _tray?.ShowBalloon(t.UpdateTitle, string.Format(t.UpdateBalloon, available.Version.ToString(3)), () => ShowUpdate());
+        _tray?.ShowBalloon(t.UpdateTitle, string.Format(t.UpdateBalloon, available.DisplayVersion), () => ShowUpdate());
     }
 
     /// <summary>The update window for <paramref name="release"/>, by default the available update.</summary>

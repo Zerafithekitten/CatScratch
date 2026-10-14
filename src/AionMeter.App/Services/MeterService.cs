@@ -53,9 +53,9 @@ public sealed class MeterService : IDisposable
         settings.ApplyTo(Options);
         Options.PartyOnly = !settings.Transient;
         Options.MaxSegments = HistoryStore.MaxSavedFights;
-        Tracker = new CombatTracker(Data, Options);
+        _realTracker = new CombatTracker(Data, Options);
         History = new HistoryStore(Path.Combine(AppSettings.AppDataDir, "fights"));
-        Timers = new BossTimers(Path.Combine(AppSettings.AppDataDir, "boss-timers.json"), Data, DataDirectory, persistent: !settings.Transient);
+        _realTimers = new BossTimers(Path.Combine(AppSettings.AppDataDir, "boss-timers.json"), Data, DataDirectory, persistent: !settings.Transient);
         Updates = new Updater(settings);
         Tracker.EncounterFinished += OnEncounterFinished;
         // A recording's or the demo's bosses must not move the live respawn timers.
@@ -67,7 +67,7 @@ public sealed class MeterService : IDisposable
         {
             if (_replaying) return;
             Log.FieldBossList(list);
-            Timers.OnList(list);
+            _realTimers.OnList(list);
         };
         // Ranges only, no names: enough to see in a user's log whether the roster still reads right.
         Tracker.RosterReceived += roster =>
@@ -106,20 +106,26 @@ public sealed class MeterService : IDisposable
     public BossPortraits Portraits { get; }
     public MeterOptions Options { get; }
     public PartyPreview PartyPreview { get; } = new();
-    public CombatTracker Tracker { get; }
+    private readonly CombatTracker _realTracker;
+    private volatile CombatTracker? _testTracker;
+    private Core.Game.PetCollection? _testPets;
+    public CombatTracker Tracker => _testTracker ?? _realTracker;
     public Core.Events.LiveIdentity LiveIdentity { get; } = new();
     public HistoryStore History { get; }
-    public BossTimers Timers { get; }
+    private readonly BossTimers _realTimers;
+    private BossTimers? _testTimers;
+    public BossTimers Timers => _testTimers ?? _realTimers;
+    public DateTimeOffset TestStartedAt { get; private set; }
     /// <summary>New versions on GitHub; checks only run once the app calls <see cref="Updater.Start"/>.</summary>
     public Updater Updates { get; }
     public Func<GameData, IEventSource>? CaptureFactory { get; }
 
     public CaptureStatus CaptureStatus =>
-        _replay is { Status.State: CaptureState.Capturing } r ? r.Status
+        DemoRunning ? new CaptureStatus(CaptureState.Capturing,UiText.Current.Localize("Test mode · sample data")) : _replay is { Status.State: CaptureState.Capturing } r ? r.Status
         : _restarting ? new CaptureStatus(CaptureState.Starting, "Starting capture…")
         : _capture?.Status ?? new CaptureStatus(CaptureState.Stopped, "Capture not available");
 
-    public bool DemoRunning => _demo?.IsRunning == true;
+    public bool DemoRunning => _testTracker is not null;
     public double? LatencyMs => !_replaying && !DemoRunning && !_restarting && _capture is LiveCapture live
         ? live.Latency.Read(DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()) : null;
 
@@ -132,6 +138,7 @@ public sealed class MeterService : IDisposable
     /// </summary>
     public void Replay(string path)
     {
+        StopDemo();
         LiveIdentity.Reset(); PartyPreview.Reset(); Tracker.InvalidateParty();
         _replay?.Dispose();
         Tracker.Reset();
@@ -160,24 +167,25 @@ public sealed class MeterService : IDisposable
 
     private void ProcessLiveEvent(Core.Events.GameEvent value)
     {
-        var identity = !_replaying && !DemoRunning ? LiveIdentity.Observe(value) : null;
+        var identity = !_replaying ? LiveIdentity.Observe(value) : null;
         var resolved = value is Core.Events.SelfIdentifiedEvent && identity is not null ? identity : value;
-        if(!_replaying && !DemoRunning)
+        if(!_replaying)
         {
-            Pets.Observe(resolved);
+            _realPets.Observe(resolved);
             if(resolved is Core.Events.SelfIdentifiedEvent own)_petProgress?.Identity(own);
         }
-        if (!_replaying && !DemoRunning) PartyPreview.Observe(resolved);
-        Tracker.Process(resolved);
+        if (!_replaying) PartyPreview.Observe(resolved);
+        _realTracker.Process(resolved);
         if (value is Core.Events.PlayerSeenEvent && identity is not null)
         {
-            Tracker.Process(identity);
-            Pets.Observe(identity);
+            _realTracker.Process(identity);
+            _realPets.Observe(identity);
             _petProgress?.Identity(identity);
             PartyPreview.Observe(identity);
         }
     }
-    public Core.Game.PetCollection Pets {get;}=new();
+    private readonly Core.Game.PetCollection _realPets=new();
+    public Core.Game.PetCollection Pets => _testPets ?? _realPets;
     public void StartCapture()
     {
         lock (_captureGate)
@@ -190,7 +198,7 @@ public sealed class MeterService : IDisposable
                 _capture.EventDecoded += ProcessLiveEvent;
                 _capture.StatusChanged += status =>
                 {
-                    LiveIdentity.ObserveCaptureStatus(status, () => { PartyPreview.Reset(); Tracker.InvalidateParty(); });
+                    LiveIdentity.ObserveCaptureStatus(status, () => { PartyPreview.Reset(); _realTracker.InvalidateParty(); });
                 };
                 _capture.Start();
             }
@@ -222,7 +230,7 @@ public sealed class MeterService : IDisposable
         {
             previous?.Dispose();
             if (_exiting) return;
-            LiveIdentity.Suspend(); PartyPreview.Reset(); Tracker.InvalidateParty();
+            LiveIdentity.Suspend(); PartyPreview.Reset(); _realTracker.InvalidateParty();
             StartCapture();
         }
         finally
@@ -238,6 +246,7 @@ public sealed class MeterService : IDisposable
     /// </summary>
     public void Restart()
     {
+        if(DemoRunning){ _testTracker!.Reset(); StartDemoFight(); return; }
         _demo?.Dispose();
         Tracker.Reset();
         if (_replaying) return;
@@ -245,16 +254,46 @@ public sealed class MeterService : IDisposable
         Task.Run(RestartCapture); // closing the adapter can take a moment: not on the UI thread
     }
 
-    public void StartDemo(int seconds = 45)
+    private bool _animateTest;
+    public void StartDemo(int seconds = 45, bool animate = true)
     {
-        LiveIdentity.Reset(); PartyPreview.Reset(); Tracker.InvalidateParty();
+        if (_exiting || DemoRunning || _replaying) return;
+        _realTracker.Tick(DateTimeOffset.UtcNow.ToUnixTimeMilliseconds());
+        _testTracker = new CombatTracker(Data,new MeterOptions { PartyOnly=false });
+        _testPets = new();
+        TestStartedAt=DateTimeOffset.UtcNow;
+        _testTimers=new BossTimers(Path.Combine(AppSettings.AppDataDir,"test-boss-timers.json"),Data,DataDirectory,persistent:false);
+        _testTimers.SetCurrentServer(2305);
+        _testTimers.OnNotice(new Core.Combat.BossNotice(2400800,1110,"TEST",Core.Combat.BossNoticeKind.Killed,TestStartedAt.ToUnixTimeMilliseconds()-70000,ServerId:2305));
+        _testTimers.SetRespawn(2305,2400800,5);
+        var now=DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+        _testPets.Observe(new Core.Events.SelfIdentifiedEvent(now,1,"Test player",2305,Core.Events.GameClass.Cleric));
+        _testPets.Observe(new Core.Game.PetCollectionEvent(now,new Dictionary<int,Core.Game.PetState> { {1193,new(1193,1,11)},{1176,new(1176,3,0)},{1047,new(1047,2,41)} }));
+        foreach(var (actor,code) in new[] {(7u,2400455),(8u,2400707),(9u,2100453)})
+        { _testPets.Observe(new Core.Events.NpcSeenEvent(now,actor,code));_testPets.Observe(new Core.Events.DamageEvent(now,1,actor,17010000,100,Core.Events.HitFlags.None)); }
+        _animateTest=animate;
+        if(animate)StartDemoFight(seconds);
+    }
+    private void StartDemoFight(int seconds=45)
+    {
         _demo?.Dispose();
-        _demo = new DemoFightSource(Tracker.Process);
+        var tracker=_testTracker!;
+        _demo=new DemoFightSource(tracker.Process);
         _demo.Start(TimeSpan.FromSeconds(seconds));
+    }
+    public void StopDemo()
+    {
+        if(!DemoRunning)return;
+        _demo?.Dispose(); _demo=null;
+        _testTracker=null; _testPets=null;_testTimers=null;
+        _realTimers.SetCurrentServer(_realTracker.SelfServerId);
+        _realTracker.Tick(DateTimeOffset.UtcNow.ToUnixTimeMilliseconds());
     }
 
     public void Tick()
     {
+        if(_exiting)return;
+        if (DemoRunning && _animateTest && _demo?.IsRunning != true) StartDemoFight();
         // The wall clock means nothing to a recording's timestamps: idle checks wait until the replay is done.
         if (!_replaying) Tracker.Tick(DateTimeOffset.UtcNow.ToUnixTimeMilliseconds());
 
@@ -291,6 +330,8 @@ public sealed class MeterService : IDisposable
     public void ApplySettings()
     {
         Settings.ApplyTo(Options);
+        StreamNames.Enabled=Settings.StreamMode;
+        WindowPresentation.SetScale(Settings.UiScale);
         Icons.Enabled = Settings.DownloadIcons;
         Portraits.Enabled = Settings.DownloadIcons;
         Settings.Save();
@@ -364,10 +405,11 @@ public sealed class MeterService : IDisposable
     private readonly object _fightSaveGate = new();
     private FightRecord? _lastFinishedFight;
     private Guid? _lastSavedFight;
-    public bool CanSaveLastFight { get { lock (_fightSaveGate) return _lastFinishedFight is { } r && r.Summary.Id != _lastSavedFight; } }
+    public bool CanSaveLastFight { get { if(DemoRunning)return false; lock (_fightSaveGate) return _lastFinishedFight is { } r && r.Summary.Id != _lastSavedFight; } }
 
     public string? SaveLastFight()
     {
+        if(DemoRunning)return null;
         lock (_fightSaveGate)
             return _lastFinishedFight is { } r && r.Summary.Id != _lastSavedFight ? SaveFight(r) : null;
     }

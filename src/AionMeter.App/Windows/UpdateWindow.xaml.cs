@@ -28,8 +28,8 @@ public partial class UpdateWindow : Window
         Controls.DragAnywhere.Attach(this);
 
         var t = UiText.Current;
-        var current = updater.Current.ToString(3);
-        Headline.Text = string.Format(t.UpdateHeadline, release.Version.ToString(3));
+        var current = updater.CurrentDisplay;
+        Headline.Text = string.Format(t.UpdateHeadline, release.DisplayVersion);
         SubLine.Text = release.PublishedAt is { } at
             ? string.Format(t.UpdateReleased, current, FormatDate(at))
             : string.Format(t.UpdateYouHave, current);
@@ -68,7 +68,7 @@ public partial class UpdateWindow : Window
             var package = await _updater.DownloadPackageAsync(Release, progress, _download.Token);
             State.Text = t.UpdateStarting;
             Log.Info($"Updating to {Release.Tag} with {package}");
-            DirectUpdate.Launch(package, Release.Version);
+            DirectUpdate.Launch(package, Release.Version, identity: Release.Identity);
             AppHost.Current.ExitProgram();
         }
         catch (OperationCanceledException) when (_download.IsCancellationRequested)

@@ -58,7 +58,7 @@ public sealed class DemoFightSource : IDisposable
         {
             await Task.Delay(_rng.Next(30, 90), ct).ConfigureAwait(false);
             now = Now();
-            _sink(new PartyRosterEvent(now, party.Select(m => new PartyMemberInfo(m.Name, 2001, 50, 0, 0, m.Class)).ToArray()));
+            _sink(new PartyRosterEvent(now, party.Select(m => new PartyMemberInfo(m.Name, 2001, 50, 1900 + (int)(m.Id%5)*120, 45000+(int)(m.Id%5)*5000, m.Class)).ToArray()));
             var m = party[_rng.Next(party.Length)];
             var skill = m.Skills[Math.Min(m.Skills.Length - 1, (int)Math.Floor(Math.Pow(_rng.NextDouble(), 1.6) * m.Skills.Length))];
 
@@ -82,6 +82,12 @@ public sealed class DemoFightSource : IDisposable
             hp -= dmg;
             _sink(new DamageEvent(now, source, BossId, skill, dmg, flags, hits));
 
+            // Sample healing, including the own player, without touching the real tracker.
+            if (_rng.NextDouble()<0.15)
+            {
+                _sink(new HealEvent(now,party[0].Id,party[0].Id,16010000,_rng.Next(1000,9000),HitFlags.None));
+                _sink(new HealEvent(now,party[0].Id,party[1].Id,16010000,_rng.Next(2000,18000),HitFlags.None));
+            }
             // Boss swings back at the party now and then.
             if (_rng.NextDouble() < 0.1)
                 _sink(new DamageEvent(now, BossId, party[_rng.Next(2)].Id, 1, _rng.Next(800, 3000), HitFlags.None));

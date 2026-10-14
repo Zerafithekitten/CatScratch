@@ -24,7 +24,7 @@ public sealed class EventSoundsWindow : Window
         var close=new Button { Content="\uE711",Style=(Style)FindResource("IconButton"),Width=22,Height=22 }; close.Click+=(_,_)=>Close(); DockPanel.SetDock(close,Dock.Right); header.Children.Add(close);
         var caption=new StackPanel { Orientation=Orientation.Horizontal }; caption.Children.Add(new Image { Source=Icon,Width=20,Height=20,Margin=new Thickness(0,0,7,0) });
         caption.Children.Add(new TextBlock { Text=UiText.Current.Localize("Event sounds"),Foreground=Brush("#79E3CF"),FontSize=17,FontWeight=FontWeights.SemiBold }); header.Children.Add(caption);
-        var body=new StackPanel(); root.Children.Add(new ScrollViewer { Content=body,VerticalScrollBarVisibility=ScrollBarVisibility.Auto });
+        var body=new StackPanel(); root.Children.Add(new ScrollViewer { Content=body,VerticalScrollBarVisibility=ScrollBarVisibility.Auto,HorizontalScrollBarVisibility=ScrollBarVisibility.Auto });
         StackPanel Card(StackPanel parent)
         {
             var content=new StackPanel(); parent.Children.Add(new Border { Child=content,Background=Brush("#171E27"),BorderBrush=Brush("#364957"),BorderThickness=new Thickness(1),CornerRadius=new CornerRadius(7),Padding=new Thickness(12),Margin=new Thickness(0,0,0,10) }); return content;

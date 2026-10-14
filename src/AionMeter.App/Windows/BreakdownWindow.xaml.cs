@@ -152,7 +152,7 @@ public partial class BreakdownWindow : Window
 
     private void ShowDetail(EncounterSnapshot summary, CombatantDetail d)
     {
-        Title = $"{d.Name} — {summary.Title} · {AppInfo.Name}";
+        Title = $"{StreamNames.Name(d.Name)} — {summary.Title} · {AppInfo.Name}";
         HeaderGlyph.Class = d.Class;
         PlayerName.Text = T.CombatantLabel(d.ActorId, d.Name, d.Class);
         var server = d.ServerId != 0 ? $" · {_serverName(d.ServerId)} {GameData.RegionOf(d.ServerId)}".TrimEnd() : "";
@@ -193,9 +193,9 @@ public partial class BreakdownWindow : Window
         Rotation.SetData(d.Casts, _skillName, _icons.Get);
 
         // Party DPS timeline: the selected player filled, everyone else as thin class-coloured lines.
-        var series = new List<ChartSeries> { new(d.Name, d.PerSecond, ClassVisuals.ColorOf(d.Class), true) };
+        var series = new List<ChartSeries> { new(StreamNames.Name(d.Name), d.PerSecond, ClassVisuals.ColorOf(d.Class), true) };
         foreach (var other in _view.AllDetails().Where(o => o.ActorId != d.ActorId))
-            series.Add(new ChartSeries(other.Name, other.PerSecond, ClassVisuals.ColorOf(other.Class), false));
+            series.Add(new ChartSeries(StreamNames.Name(other.Name), other.PerSecond, ClassVisuals.ColorOf(other.Class), false));
         Chart.SetData(series);
     }
 

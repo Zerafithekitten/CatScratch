@@ -30,15 +30,33 @@ public sealed class Updater : IDisposable
     private DispatcherTimer? _timer;
     private Task<UpdateCheckResult>? _running;
 
-    public Updater(AppSettings settings)
+    public Updater(AppSettings settings) : this(settings, null) { }
+    internal Updater(AppSettings settings, UpdateFeed? feed)
     {
         _settings = settings;
         Current = UpdateFeed.Normalize(typeof(Updater).Assembly.GetName().Version ?? new Version(0, 0, 0));
-        _feed = new UpdateFeed($"CatScratch/{Current.ToString(3)}");
+        CurrentIdentity = ReleaseVersion.Parse(typeof(Updater).Assembly.GetCustomAttributes(typeof(System.Reflection.AssemblyInformationalVersionAttribute), false)
+            .Cast<System.Reflection.AssemblyInformationalVersionAttribute>().FirstOrDefault()?.InformationalVersion)
+            ?? new ReleaseVersion(Current, null);
+        _feed = feed ?? new UpdateFeed($"CatScratch/{Current.ToString(3)}");
     }
 
     /// <summary>This copy's version (major.minor.patch).</summary>
     public Version Current { get; }
+    public ReleaseVersion CurrentIdentity { get; }
+    public string CurrentDisplay => CurrentIdentity.Display;
+    public UpdateChannel Channel => Enum.TryParse<UpdateChannel>(_settings.UpdateChannel, true, out var c) && Enum.IsDefined(c) ? c : CurrentIdentity.Channel;
+    private int _channelRevision;
+    public void SetChannel(UpdateChannel channel)
+    {
+        var changed = Channel != channel;
+        _settings.UpdateChannel = channel.ToString();
+        if (!changed) return;
+        _channelRevision++; Latest = null; LastError = null; _settings.SkippedUpdate = null;
+        Changed?.Invoke();
+    }
+    private bool IsUpdate(ReleaseInfo release) => (Channel == UpdateChannel.Beta || release.Identity.Channel == UpdateChannel.Stable)
+        && ReleaseVersion.IsUpdate(release.Identity, CurrentIdentity, Channel);
 
     /// <summary>The newest release GitHub reported, newer or not; null before the first successful check.</summary>
     public ReleaseInfo? Latest { get; private set; }
@@ -47,7 +65,7 @@ public sealed class Updater : IDisposable
 
     /// <summary>A release newer than this copy, unless the user chose to skip that version.</summary>
     public ReleaseInfo? Available =>
-        Latest is { } r && r.Version > Current && r.Version.ToString(3) != _settings.SkippedUpdate ? r : null;
+        Latest is { } r && IsUpdate(r) && r.Tag != _settings.SkippedUpdate && r.DisplayVersion != _settings.SkippedUpdate ? r : null;
 
     /// <summary>True when this copy runs from the folder the installer put it in (it can update itself).</summary>
     public static bool IsInstalled { get; } = DetectInstalled();
@@ -71,8 +89,8 @@ public sealed class Updater : IDisposable
     /// <summary>Asks GitHub now. <see cref="UpdateCheckResult.Available"/> also for a skipped version (the user asked).</summary>
     public async Task<UpdateCheckResult> CheckAsync()
     {
-        if (_running is { } running) return await running; // a check is already on its way: share its answer
-        _running = RunCheckAsync();
+        if (_running is { } running) return await running;
+        _running = RunCurrentChannelAsync();
         try
         {
             return await _running;
@@ -83,18 +101,31 @@ public sealed class Updater : IDisposable
         }
     }
 
-    private async Task<UpdateCheckResult> RunCheckAsync()
+    private async Task<UpdateCheckResult> RunCurrentChannelAsync()
+    {
+        while (true)
+        {
+            var revision = _channelRevision;
+            var result = await RunCheckAsync(Channel, revision);
+            if (revision == _channelRevision) return result;
+        }
+    }
+
+    private async Task<UpdateCheckResult> RunCheckAsync(UpdateChannel channel, int revision)
     {
         try
         {
-            Latest = await _feed.GetLatestAsync();
+            var latest = await _feed.GetLatestAsync(channel);
+            if (revision != _channelRevision) return UpdateCheckResult.UpToDate;
+            Latest = latest;
             LastError = null;
             Log.Info($"Update check: newest release {Latest?.Tag ?? "none"}, this copy {Current.ToString(3)}.");
 
-            return Latest is { } r && r.Version > Current ? UpdateCheckResult.Available : UpdateCheckResult.UpToDate;
+            return Latest is { } r && IsUpdate(r) ? UpdateCheckResult.Available : UpdateCheckResult.UpToDate;
         }
         catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException or JsonException or InvalidOperationException)
         {
+            if (revision != _channelRevision) return UpdateCheckResult.UpToDate;
             LastError = ex is TaskCanceledException ? "timeout" : ex.Message;
             Log.Info($"Update check failed: {LastError}");
             return UpdateCheckResult.Failed;
@@ -108,7 +139,7 @@ public sealed class Updater : IDisposable
     /// <summary>Stop announcing this version; a newer one is announced again.</summary>
     public void Skip(ReleaseInfo release)
     {
-        _settings.SkippedUpdate = release.Version.ToString(3);
+        _settings.SkippedUpdate = release.Tag;
         _settings.Save();
         Changed?.Invoke();
     }
@@ -118,11 +149,18 @@ public sealed class Updater : IDisposable
     private readonly CancellationTokenSource _lifetime = new();
     public async Task<string> DownloadPackageAsync(ReleaseInfo release, IProgress<double>? progress, CancellationToken ct)
     {
+        var revision = _channelRevision;
+        if (!IsUpdate(release)) throw new InvalidOperationException("This release is not an update for the selected channel. Check for updates again.");
         if (release.Portable is not { Sha256.Length: 64 } package)
             throw new InvalidOperationException("This release has no verified update package.");
         using var linked = CancellationTokenSource.CreateLinkedTokenSource(ct, _lifetime.Token);
         await _downloadGate.WaitAsync(linked.Token);
-        try { return await _feed.DownloadAsync(package, DownloadFolder, progress, linked.Token); }
+        try
+        {
+            var file = await _feed.DownloadAsync(package, DownloadFolder, progress, linked.Token);
+            if (revision != _channelRevision) throw new InvalidOperationException("The update channel changed. Check for updates again.");
+            return file;
+        }
         finally { _downloadGate.Release(); }
     }
 

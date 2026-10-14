@@ -340,7 +340,7 @@ public sealed class OverlayViewModel : ObservableObject
     public Brush SelfPlaceForeground { get => _selfPlaceForeground; set => Set(ref _selfPlaceForeground, value); }
 
     public Guid? SegmentId { get; private set; }
-    public string Version { get; } = "v" + (typeof(OverlayViewModel).Assembly.GetName().Version?.ToString(3) ?? "0.1.0");
+    public string Version { get; } = "v" + (AionMeter.Core.Updates.ReleaseVersion.Parse(typeof(OverlayViewModel).Assembly.GetCustomAttributes(typeof(System.Reflection.AssemblyInformationalVersionAttribute), false).Cast<System.Reflection.AssemblyInformationalVersionAttribute>().FirstOrDefault()?.InformationalVersion)?.Display ?? "0.1.0");
 
     /// <summary>Gear score and combat power columns (Settings → Overlay).</summary>
     public bool ShowGear { get; set; } = true;
@@ -363,12 +363,12 @@ public sealed class OverlayViewModel : ObservableObject
         foreach (var m in members)
             Rows.Add(new RowViewModel
             {
-                Name = m.Name, Class = m.Class, IsSelf = m.Name == selfName,
+                Name = StreamNames.Name(m.Name), Class = m.Class, IsSelf = m.Name == selfName,
                 ShowGearScore = ShowGear, ShowCombatPower = ShowCombatPower,
                 GearScore = ShowGear && m.GearScore > 0 ? m.GearScore.ToString() : "",
                 CombatPower = ShowCombatPower && m.CombatPower > 0 ? Format.Grouped(m.CombatPower) : "",
                 Dps = "—", Damage = "—", Share = "", Fill = 1,
-                Tooltip = $"{m.Name} · {T.ClassName(m.Class)}\nGS {(m.GearScore > 0 ? m.GearScore.ToString() : "—")} · CP {(m.CombatPower > 0 ? Format.Grouped(m.CombatPower) : "—")}",
+                Tooltip = $"{StreamNames.Name(m.Name)} · {T.ClassName(m.Class)}\nGS {(m.GearScore > 0 ? m.GearScore.ToString() : "—")} · CP {(m.CombatPower > 0 ? Format.Grouped(m.CombatPower) : "—")}",
             });
         HasGear = Rows.Any(r => r.HasGearScore || r.HasCombatPower);
     }
@@ -428,7 +428,7 @@ public sealed class OverlayViewModel : ObservableObject
 
         var top = snap.Combatants.MaxBy(x => x.MaxHit);
         TopHit = top is { MaxHit: > 0 } ? Format.Grouped(top.MaxHit) : "";
-        TopHitBy = top is { MaxHit: > 0 } ? string.Format(T.TopHitBy, top.Name) : "";
+        TopHitBy = top is { MaxHit: > 0 } ? string.Format(T.TopHitBy, StreamNames.Name(top.Name)) : "";
         // The top line holds only the title: the biggest hit lives in its tooltip.
         TitleTip = (TopHit.Length > 0 ? $"{TopHitBy}: {TopHit}\n" : "") + T.TipScrollFights;
 
@@ -477,7 +477,7 @@ public sealed class OverlayViewModel : ObservableObject
             row.DamageTaken = Format.Compact(cb.DamageTaken);
             row.Share = Format.Share(cb.Share);
             row.Fill = relativeToTop ? (double)cb.Damage / best : cb.Share;
-            var heading = cb.IsUnknownSummons ? T.UnknownSummonsTip : $"#{i + 1} {cb.Name} · {T.ClassName(cb.Class)}";
+            var heading = cb.IsUnknownSummons ? T.UnknownSummonsTip : $"#{i + 1} {StreamNames.Name(cb.Name)} · {T.ClassName(cb.Class)}";
             row.Tooltip = $"{heading}\n" +
                           $"{T.RowDamage} {Format.Grouped(cb.Damage)} ({Format.Share(cb.Share)}) · DPS {Format.Compact(cb.Dps)}\n" +
                           $"{T.RowHits} {cb.Hits} · {T.RowCrit} {Format.Percent(cb.CritRate)} · {T.RowMax} {Format.Grouped(cb.MaxHit)}";

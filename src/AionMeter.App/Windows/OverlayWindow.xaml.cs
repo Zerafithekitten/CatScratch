@@ -39,7 +39,7 @@ public partial class OverlayWindow : Window, IDisplayAppearance
     /// <summary>The render tool's fight clock for animation frames (Unix ms); null = real time.</summary>
     internal static Func<long>? ClockOverride { get; set; }
 
-    public OverlayWindow(MeterService meter)
+    public OverlayWindow(MeterService meter, bool exitOnClose = true)
     {
         _meter = meter;
         _settings = meter.Settings;
@@ -51,7 +51,7 @@ public partial class OverlayWindow : Window, IDisplayAppearance
         CreatePersonalRows();
         WindowClickThrough.Attach(this, () => _settings.ClickThrough, () => _settings.WindowOpacity);
         MinWidth = 260;
-        Closing += (_, _) => AppHost.Current.ExitProgram();
+        Closing += (_, _) => { if (exitOnClose) AppHost.Current.ExitProgram(); };
 
         Left = _settings.OverlayLeft;
         Top = _settings.OverlayTop;
@@ -188,7 +188,7 @@ public partial class OverlayWindow : Window, IDisplayAppearance
         PersonalCollapseButton.Content = _settings.PersonalCombatCollapsed ? "\uE70D" : "\uE70E";
         PersonalCollapseButton.ToolTip = UiText.Current.Localize(_settings.PersonalCombatCollapsed ? "Expand personal combat" : "Collapse personal combat");
         var own = snapshot?.Combatants.FirstOrDefault(c => c.IsSelf);
-        PersonalName.Text = own?.Name ?? _meter.LiveIdentity.Current?.Name ?? "";
+        PersonalName.Text = StreamNames.Name(own?.Name ?? _meter.LiveIdentity.Current?.Name ?? "");
         _personalRows[0].Surface.Visibility = _personalRows[1].Surface.Visibility = _settings.ShowHealingDone ? Visibility.Visible : Visibility.Collapsed;
         _personalRows[0].Value.Text = own is null ? "—" : Format.Grouped(own.SelfHealing);
         _personalRows[1].Value.Text = own is null ? "—" : Format.Grouped(Math.Max(0,own.Healing-own.SelfHealing));
@@ -228,9 +228,9 @@ public partial class OverlayWindow : Window, IDisplayAppearance
             : !npcInstalled
             ? UiText.Current.Localize("Npcap is missing. Open the download page, install it yourself and restart the meter. Then teleport once in game.")
             : _meter.LiveIdentity.Current is { } identity
-            ? string.Format(UiText.Current.Localize(_meter.Tracker.PartyConfirmed ? "Party confirmed · {0}" : "Solo tracking · {0}"),identity.Name)
+            ? string.Format(UiText.Current.Localize(_meter.Tracker.PartyConfirmed ? "Party confirmed · {0}" : "Solo tracking · {0}"),StreamNames.Name(identity.Name))
             : _meter.LiveIdentity.KnownCharacter is { } known
-            ? string.Format(UiText.Current.Localize("Character recognized · {0}. Waiting for fresh actor data from the game…"),known.Name)
+            ? string.Format(UiText.Current.Localize("Character recognized · {0}. Waiting for fresh actor data from the game…"),StreamNames.Name(known.Name))
             : UiText.Current.Localize("Character not confirmed yet. Teleport once or change zones through a loading screen. Waiting for fresh game data…");
         IdentityStatusText.Foreground = _meter.LiveIdentity.Current is not null && !_meter.DemoRunning
             ? (Brush)FindResource("Green") : (Brush)FindResource("Amber");
@@ -239,6 +239,7 @@ public partial class OverlayWindow : Window, IDisplayAppearance
         SetupPanel.Visibility = _settings.CompactMode && (_settings.Transient || _meter.DemoRunning || _meter.LiveIdentity.ActorId is not null) ? Visibility.Collapsed : Visibility.Visible;
         if (_settings.ClickThrough) SetupPanel.Visibility = Visibility.Collapsed;
         Title = AppInfo.Name;
+        ShellTitle.Text = _meter.DemoRunning ? "CatScratch · TEST" : "CatScratch";
         _vm.ShowGear = _settings.ShowGear;
         _vm.ShowCombatPower = _settings.ShowCombatPower ?? _settings.ShowGear;
         // Looking at an old fight when a new pull starts: jump back to live so the fight is never missed.
@@ -295,7 +296,7 @@ public partial class OverlayWindow : Window, IDisplayAppearance
         _vm.SetLimit(_meter.Tracker.NextTimer(wall), wall);
         if (Environment.TickCount64 - _timersLabelAt >= 1_000) UpdateTimersLabel();
 
-        var status = _meter.DemoRunning ? new CaptureStatus(CaptureState.Capturing, "Demo fight running") : _meter.CaptureStatus;
+        var status = _meter.DemoRunning ? new CaptureStatus(CaptureState.Capturing, UiText.Current.Localize("Test mode · sample data")) : _meter.CaptureStatus;
         LatencyText.Text = _meter.LatencyMs is { } latency ? latency<1 ? "RTT <1 ms" : $"RTT {latency:0} ms" : "RTT —";
         // Names are only sent on a loading screen: players already around when the meter started show as #id.
         var unnamed = _vm.Rows.Any(r => r.Name.Contains('#')); // "Templar #10388": the server has not sent this name yet
@@ -337,7 +338,7 @@ public partial class OverlayWindow : Window, IDisplayAppearance
         if (show)
         {
             // Checking only announces availability; Update now is the only installation action.
-            UpdateBannerText.Text = string.Format(UiText.Current.UpdateBanner, available!.Version.ToString(3));
+            UpdateBannerText.Text = string.Format(UiText.Current.UpdateBanner, available!.DisplayVersion);
         }
     }
 

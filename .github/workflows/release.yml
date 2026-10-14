@@ -26,8 +26,10 @@ jobs:
           $tag = '${{ inputs.tag }}'
           if (-not $tag) { $tag = $env:GITHUB_REF_NAME }
           $version = $tag.TrimStart('v')
-          if ($version -notmatch '^\d+\.\d+\.\d+$') { throw 'Use a tag like v1.0.0' }
+          if ($version -notmatch '^\d+\.\d+\.\d+(-beta\.[1-9]\d*)?$') { throw 'Use v1.0.0 or v1.0.0-beta.1' }
           "APP_VERSION=$version" >> $env:GITHUB_ENV
+          "APP_NUMERIC_VERSION=$($version.Split('-')[0])" >> $env:GITHUB_ENV
+          "IS_BETA=$($version.Contains('-beta.'))" >> $env:GITHUB_ENV
           "RELEASE_TAG=$tag" >> $env:GITHUB_ENV
           dotnet test tests/AionMeter.Tests/AionMeter.Tests.csproj -c Release
           if ($LASTEXITCODE) { throw 'Tests failed' }
@@ -46,14 +48,14 @@ jobs:
       - name: Verify event panels and complete shutdown
         shell: pwsh
         run: |
-          foreach ($check in @('interaction', 'shutdown', 'performance', 'event-audio')) {
+          foreach ($check in @('interaction', 'shutdown', 'performance', 'event-audio', 'release250')) {
             $result = "$env:RUNNER_TEMP/meter-$check.txt"
             $process = Start-Process "$PWD/dist/payload/CatScratch.exe" -ArgumentList @("--check-$check",("`"$result`"")) -WindowStyle Hidden -PassThru
             if (-not $process.WaitForExit(20000)) { Stop-Process -Id $process.Id; throw "$check verification timed out" }
             Get-Content $result
             $process.Refresh()
             if ($process.ExitCode) { throw "$check verification failed" }
-            if ($check -in @('interaction', 'event-audio')) { $null = Get-Content $result -Raw | ConvertFrom-Json -ErrorAction Stop }
+            if ($check -in @('interaction', 'event-audio', 'release250')) { $null = Get-Content $result -Raw | ConvertFrom-Json -ErrorAction Stop }
           }
           # Diagnostics may create their own empty cache folders. Never include them in Setup.
           $payload = [IO.Path]::GetFullPath("$PWD/dist/payload").TrimEnd('\') + '\'
@@ -78,7 +80,7 @@ jobs:
       - name: Build installer
         shell: pwsh
         run: |
-          & $env:INNO_COMPILER /Qp "/DAppVer=$env:APP_VERSION" "/DUpdateRepo=$env:GITHUB_REPOSITORY" "/DPayloadDir=$PWD/dist/payload" "/O$PWD/dist" installer/CatScratch.iss
+          & $env:INNO_COMPILER /Qp "/DAppVer=$env:APP_VERSION" "/DNumericVer=$env:APP_NUMERIC_VERSION" "/DUpdateRepo=$env:GITHUB_REPOSITORY" "/DPayloadDir=$PWD/dist/payload" "/O$PWD/dist" installer/CatScratch.iss
           if ($LASTEXITCODE) { throw 'Installer build failed' }
           Copy-Item "dist/CatScratch-Setup-v$env:APP_VERSION.exe" dist/CatScratch-Setup.exe
           $setupInfo = [Diagnostics.FileVersionInfo]::GetVersionInfo("$PWD/dist/CatScratch-Setup.exe")
@@ -90,5 +92,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release create $env:RELEASE_TAG dist/CatScratch-Setup.exe dist/CatScratch-win-x64.zip dist/CatScratch-source.zip --verify-tag --generate-notes
+          $releaseArgs = @('release','create',$env:RELEASE_TAG,'dist/CatScratch-Setup.exe','dist/CatScratch-win-x64.zip','dist/CatScratch-source.zip','--verify-tag','--generate-notes')
+          if ($env:IS_BETA -eq 'True') { $releaseArgs += @('--prerelease','--latest=false') }
+          gh @releaseArgs
           if ($LASTEXITCODE) { throw 'Release publication failed' }

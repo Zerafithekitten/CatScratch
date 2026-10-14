@@ -35,6 +35,21 @@ public sealed partial class UiText
     }
     private static readonly Dictionary<string,string> ExtraGerman = new(StringComparer.Ordinal)
     {
+        ["Update channel"]="Update-Kanal",
+        ["Stable · tested releases"]="Stable · getestete Versionen",
+        ["Beta · early access"]="Beta · Vorabversionen",
+        ["Beta releases may contain unfinished features. Changing the channel never installs an update. Returning to Stable can install an older version; your settings and saved fights are kept."]="Beta-Versionen können unfertige Funktionen enthalten. Ein Kanalwechsel installiert kein Update. Bei der Rückkehr zu Stable kann eine ältere Version installiert werden; Einstellungen und gespeicherte Kämpfe bleiben erhalten.",
+        ["UI scale"]="UI-Skalierung",
+        ["Test mode"]="Testmodus",
+        ["Test mode · sample data"]="Testmodus · Beispieldaten",
+        ["Stream mode: hide player names"]="Stream-Modus: Spielernamen verbergen",
+        ["Only displayed and copied player names are hidden. Local recordings and saved files keep their original data."]="Nur angezeigte und kopierte Spielernamen werden verborgen. Lokale Mitschnitte und gespeicherte Dateien behalten ihre Originaldaten.",
+        ["Automatic fight end"]="Automatisches Kampfende",
+        ["After inactivity, keep the finished fight until the next fight. Healing and incoming damage count as activity."]="Nach Inaktivität bleibt der abgeschlossene Kampf bis zum nächsten Kampf sichtbar. Heilung und erlittenener Schaden zählen als Aktivität.",
+        ["Start test mode"]="Testmodus starten",
+        ["Stop test mode"]="Testmodus beenden",
+        ["Use sample fights and pet progress to arrange your modules. Test data is not saved."]="Ordne deine Module mit Beispielkämpfen und Pet-Fortschritt an. Testdaten werden nicht gespeichert.",
+        ["Player {0}"]="Spieler {0}",
         ["Custom audio"]="Eigene Audiodatei",
         ["Choose audio…"]="Audiodatei wählen…",
         ["Change audio…"]="Audiodatei ändern…",

@@ -304,6 +304,7 @@ public sealed class CombatTracker
                 var victim = GetCombatant(incomingFight, target);
                 victim.DamageTaken += d.Damage;
                 victim.HitsTaken++;
+                incomingFight.LastActivityMs = Math.Max(incomingFight.LastActivityMs,d.TimeMs);
             }
             return;
         }
@@ -339,6 +340,7 @@ public sealed class CombatTracker
         enc.TotalDamage += d.Damage;
         enc.DamageByTarget[target] = enc.DamageByTarget.GetValueOrDefault(target) + d.Damage;
         if (d.TimeMs > enc.LastDamageMs) enc.LastDamageMs = d.TimeMs;
+        enc.LastActivityMs = Math.Max(enc.LastActivityMs,d.TimeMs);
     }
 
     /// <summary>
@@ -354,7 +356,10 @@ public sealed class CombatTracker
         if (!InParty(actor)) return;
         if (actor == h.ActorId && _entities.IsSummon(actor)) return;
         if (_entities.IsKnownPlayer(actor) || (actor == h.ActorId && GameData.ClassFromSkill(h.SkillCode) != GameClass.Unknown))
+        {
             enc.Attackers.Add(actor);
+            enc.LastActivityMs=Math.Max(enc.LastActivityMs,h.TimeMs);
+        }
     }
 
     private void OnHeal(HealEvent h)
@@ -364,6 +369,7 @@ public sealed class CombatTracker
         if (h.Amount <= 0 || !IsLikelyPlayer(source) || !InParty(source)) return;
         var c = GetCombatant(enc, source);
         c.Healing += h.Amount;
+        enc.LastActivityMs = Math.Max(enc.LastActivityMs,h.TimeMs);
         if (_entities.ResolveOwner(h.TargetId) == source) c.SelfHealing += h.Amount;
     }
 
@@ -382,6 +388,7 @@ public sealed class CombatTracker
             NoticeBoss(npc, BossNoticeKind.Killed, e.TimeMs);
             _entities.NoteDeath(npc);
         }
+        var previousHp = npc.Hp;
         npc.Hp = e.CurrentHp;
         npc.HpAtMs = e.TimeMs;
         var max = Math.Max(e.MaxHp, Math.Max(npc.MaxHp, e.CurrentHp));
@@ -389,8 +396,10 @@ public sealed class CombatTracker
 
         if (_current is not { IsActive: true } enc) return;
 
+        if(e.CurrentHp==0 && FinishClearedTargets(e.TimeMs))return;
         if (enc.BossId is null && npc.IsBoss && enc.DamageByTarget.ContainsKey(e.ActorId)) SetBoss(enc, npc, e.TimeMs);
         if (enc.BossId != e.ActorId) return;
+        if(previousHp>=0 && previousHp!=e.CurrentHp)enc.LastActivityMs=Math.Max(enc.LastActivityMs,e.TimeMs);
 
         RefreshBoss(enc, npc);
         if (enc.BossRefHp < 0 && e.CurrentHp > 0) SetBossReference(enc, e.CurrentHp);
@@ -418,6 +427,7 @@ public sealed class CombatTracker
         }
         npc.Hp = 0;
         npc.HpAtMs = e.TimeMs;
+        if(FinishClearedTargets(e.TimeMs))return;
         if (_current is { IsActive: true } enc && enc.BossId == e.ActorId)
         {
             enc.BossHp = 0;
@@ -440,6 +450,13 @@ public sealed class CombatTracker
             _ => EncounterEndReason.Idle,
         };
         Finish(reason, reason == EncounterEndReason.Kill ? Math.Max(e.TimeMs, enc.LastDamageMs) : enc.LastDamageMs);
+    }
+
+    private bool FinishClearedTargets(long timeMs)
+    {
+        if(_current is not { IsActive:true, BossId:null } fight || fight.DamageByTarget.Count==0)return false;
+        if(!fight.DamageByTarget.Keys.All(id=>_entities.TryGetNpc(id,out var target) && target.Hp==0))return false;
+        Finish(EncounterEndReason.Kill,Math.Max(timeMs,Math.Max(fight.LastDamageMs,fight.LastActivityMs)));return true;
     }
 
     // ---------------------------------------------------------------- helpers
@@ -689,7 +706,8 @@ public sealed class CombatTracker
         if (_current is not { IsActive: true } enc) return;
         var bossAlive = enc.BossId is { } b && IsAlive(b);
         var timeout = bossAlive ? Options.BossIdleTimeoutMs : Options.IdleTimeoutMs;
-        if (nowMs - enc.LastDamageMs > timeout) Finish(EncounterEndReason.Idle, enc.LastDamageMs);
+        if (Options.AutomaticFightEnd && nowMs - Math.Max(enc.LastDamageMs,enc.LastActivityMs) > timeout)
+            Finish(EncounterEndReason.Idle, Math.Max(enc.LastDamageMs,enc.LastActivityMs));
     }
 
     private void Finish(EncounterEndReason reason, long endMs)

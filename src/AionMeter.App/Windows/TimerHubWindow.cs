@@ -65,6 +65,7 @@ public sealed class TimerHubWindow : Window, IDisplayAppearance
     }
     public void Reload()
     {
+        if(_header?.Children.OfType<TextBlock>().FirstOrDefault() is { } caption)caption.Text=UiText.Current.Localize("Upcoming events")+(_cards.TestMode?" · TEST":"");
         var now=ClockOverride?.Invoke()??DateTimeOffset.UtcNow;
         var events=_cards.NextEvents(now);
         var key=string.Join('|',events.Select(e=>$"{e.Id}:{e.StartsAt:O}"));

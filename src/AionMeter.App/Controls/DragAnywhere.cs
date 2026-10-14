@@ -33,7 +33,12 @@ public sealed class DragAnywhere
     public bool JustDragged { get; private set; }
 
     public static DragAnywhere Attach(Window window, Func<bool>? canDrag = null, Action? dropped = null) =>
-        new(window, canDrag, dropped);
+        Create(window, canDrag, dropped);
+    private static DragAnywhere Create(Window window, Func<bool>? canDrag, Action? dropped)
+    {
+        Services.WindowPresentation.Attach(window);
+        return new(window,canDrag,dropped);
+    }
 
     private void OnDown(object sender, MouseButtonEventArgs e)
     {

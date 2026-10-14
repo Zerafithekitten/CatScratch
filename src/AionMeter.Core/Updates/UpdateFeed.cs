@@ -12,7 +12,11 @@ public sealed record ReleaseInfo(
     string Notes,
     DateTimeOffset? PublishedAt,
     ReleaseAsset? Installer,
-    ReleaseAsset? Portable);
+    ReleaseAsset? Portable)
+{
+    public ReleaseVersion Identity => ReleaseVersion.Parse(Tag) ?? new(Version, null);
+    public string DisplayVersion => Identity.Display;
+}
 
 /// <summary>One file of a release. <see cref="Sha256"/> is GitHub's digest (lower-case hex) when it reports one.</summary>
 public sealed record ReleaseAsset(string Name, long Size, string Url, string? Sha256);
@@ -49,27 +53,32 @@ public sealed class UpdateFeed : IDisposable
     }
 
     /// <summary>The newest release, or null when the repository has none yet.</summary>
-    public async Task<ReleaseInfo?> GetLatestAsync(CancellationToken ct = default)
+    public Task<ReleaseInfo?> GetLatestAsync(CancellationToken ct = default) => GetLatestAsync(UpdateChannel.Stable, ct);
+
+    public async Task<ReleaseInfo?> GetLatestAsync(UpdateChannel channel, CancellationToken ct = default)
     {
         if (string.IsNullOrEmpty(_api)) throw new InvalidOperationException("No update repository configured for this build.");
         using var timeout = CancellationTokenSource.CreateLinkedTokenSource(ct);
         timeout.CancelAfter(ApiTimeout);
-        using var request = new HttpRequestMessage(HttpMethod.Get, _api);
+        using var request = new HttpRequestMessage(HttpMethod.Get, channel == UpdateChannel.Beta ? _api.Replace("/releases/latest", "/releases?per_page=100") : _api);
         request.Headers.Accept.ParseAdd("application/vnd.github+json");
         using var response = await _http.SendAsync(request, timeout.Token).ConfigureAwait(false);
         if (response.StatusCode == HttpStatusCode.NotFound) return null;
         response.EnsureSuccessStatusCode();
-        return Parse(await response.Content.ReadAsStringAsync(timeout.Token).ConfigureAwait(false));
+        var json = await response.Content.ReadAsStringAsync(timeout.Token).ConfigureAwait(false);
+        return channel == UpdateChannel.Beta ? ParseList(json) : Parse(json);
     }
 
     /// <summary>A GitHub "release" object; null for drafts, pre-releases and tags that are not a version.</summary>
-    public static ReleaseInfo? Parse(string json)
+    public static ReleaseInfo? Parse(string json, bool includeBeta = false)
     {
         using var doc = JsonDocument.Parse(json);
         var r = doc.RootElement;
-        if (Bool(r, "draft") || Bool(r, "prerelease")) return null;
+        if (Bool(r, "draft") || (!includeBeta && Bool(r, "prerelease"))) return null;
         var tag = Str(r, "tag_name");
-        if (ParseVersion(tag) is not { } version) return null;
+        if (ReleaseVersion.Parse(tag) is not { } identity) return null;
+        if ((!includeBeta && identity.Beta.HasValue) || Bool(r, "prerelease") != identity.Beta.HasValue) return null;
+        var version = identity.Version;
 
         ReleaseAsset? installer = null, portable = null;
         if (r.TryGetProperty("assets", out var assets) && assets.ValueKind == JsonValueKind.Array)
@@ -91,6 +100,13 @@ public sealed class UpdateFeed : IDisposable
         var page = Str(r, "html_url");
         return new ReleaseInfo(version, tag, page.Length > 0 ? page : ReleasesPage, Str(r, "body"),
             DateTimeOffset.TryParse(Str(r, "published_at"), out var at) ? at : null, installer, portable);
+    }
+
+    public static ReleaseInfo? ParseList(string json)
+    {
+        using var document = JsonDocument.Parse(json);
+        return document.RootElement.EnumerateArray().Select(r => Parse(r.GetRawText(), includeBeta: true))
+            .OfType<ReleaseInfo>().OrderByDescending(r => r.Identity).FirstOrDefault();
     }
 
     /// <summary>"v0.2.0", "0.2", "v1.0.3-beta" → 0.2.0, 0.2.0, 1.0.3; null when it is not a version.</summary>

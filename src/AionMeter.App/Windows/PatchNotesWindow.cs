@@ -45,7 +45,7 @@ public sealed class PatchNotesWindow : Window
         else
         {
             var path = Path.Combine(AppContext.BaseDirectory, "data", "patchnotes-en.md");
-            ShowNotes(File.Exists(path) ? File.ReadAllText(path) : "No bundled patch notes available.", "Installed version · " + updater.Current.ToString(3));
+            ShowNotes(File.Exists(path) ? File.ReadAllText(path) : "No bundled patch notes available.", "Installed version · " + updater.CurrentDisplay);
         }
         refresh.Click += async (_, _) =>
         {

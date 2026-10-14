@@ -37,7 +37,7 @@ public static class ChatCopy
         };
         yield return chat;
         if (player is { } id && playerName is not null)
-            yield return Item(string.Format(T.CopyPlayer, playerName), s => ChatLine.Player(s, id, T.Chat, Name));
+            yield return Item(string.Format(T.CopyPlayer, StreamNames.Name(playerName)), s => ChatLine.Player(s, id, T.Chat, Name));
         yield return Item(T.CopyParty, s => ChatLine.Party(s, T.Chat, Name));
         yield return Item(T.CopyTable, s => ChatLine.Table(s, T.Chat, Name));
 
