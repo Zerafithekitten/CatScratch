@@ -498,6 +498,8 @@ public partial class OverlayWindow : Window, IDisplayAppearance
     }
 
     // ------------------------------------------------------------ handlers
+    private void PersonalBests_Click(object sender, RoutedEventArgs e) => AppHost.Current.ShowPersonalBests();
+    private void LastPlayedWith_Click(object sender, RoutedEventArgs e) => AppHost.Current.ShowLastPlayedWith();
 
     private void Resize_DragDelta(object sender, DragDeltaEventArgs e)
     {
@@ -680,6 +682,9 @@ public partial class OverlayWindow : Window, IDisplayAppearance
         var bests = new MenuItem { Header = UiText.Current.Localize("Boss personal bests") };
         bests.Click += (_, _) => AppHost.Current.ShowPersonalBests();
         menu.Items.Add(bests);
+        var recent = new MenuItem { Header = UiText.Current.Localize("Last played with") };
+        recent.Click += (_, _) => AppHost.Current.ShowLastPlayedWith();
+        menu.Items.Add(recent);
         var history = new MenuItem { Header = string.Format(UiText.Current.AllSaved, total) };
         history.Click += (_, _) => AppHost.Current.ShowHistory();
         menu.Items.Add(history);
@@ -889,6 +894,7 @@ public partial class OverlayWindow : Window, IDisplayAppearance
         Grid.SetRow(FooterControls,narrow ? 1 : 0);
         Grid.SetColumn(FooterControls,narrow ? 0 : 1);
         Grid.SetColumnSpan(FooterControls,narrow ? 2 : 1);
+        Grid.SetColumnSpan(InstalledVersionText, narrow ? 1 : 2);
         FooterControls.HorizontalAlignment = HorizontalAlignment.Right;
         FooterControls.Margin = new Thickness(0,narrow ? 3 : 0,10,0);
         if (narrow)
@@ -903,7 +909,8 @@ public partial class OverlayWindow : Window, IDisplayAppearance
         else
         {
             var visibility = _settings.CompactMode ? Visibility.Collapsed : Visibility.Visible;
-            BossTimersLink.Visibility = DetailsLink.Visibility = HistoryLink.Visibility = FooterText.Visibility = visibility;
+            BossTimersLink.Visibility = FooterText.Visibility = visibility;
+            DetailsLink.Visibility = HistoryLink.Visibility = !_settings.CompactMode && Width >= 560 ? Visibility.Visible : Visibility.Collapsed;
             CompactTotal.Visibility = CompactHistory.Visibility = _settings.CompactMode ? Visibility.Visible : Visibility.Collapsed;
         }
     }

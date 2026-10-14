@@ -3,6 +3,7 @@ namespace AionMeter.App.Services;
 public sealed partial class UiText
 {
     public string BossPersonalBestsLabel => Localize("Boss personal bests");
+    public string LastPlayedWithLabel => Localize("Last played with");
     public string TogglePersonalLabel=>Localize("Show / hide personal combat");
     public string ToggleEventsLabel=>Localize("Show / hide upcoming events");
     public string TogglePetsLabel=>Localize("Show / hide pet tracker");

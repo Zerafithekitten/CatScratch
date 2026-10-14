@@ -6,9 +6,11 @@ A separate always-on-top Windows damage meter for AION 2 by Zerafithekitten.
 
 Latest stable version: **2.5.0**. English is the default; German, Russian and French are available in Settings.
 
-Beta: **2.5.1-beta.1**, with boss-only personal records, own death timestamps, healing done and damage taken, plus fixes for reconnects, packet buffering and incomplete fight history files. See the [patch notes](data/patchnotes-en.md).
+Beta: **2.5.1-beta.2**, with permanent boss personal bests, a trophy button and Last played with. See the [patch notes](data/patchnotes-en.md).
 
-Open **Statistics > Boss personal bests** or **Settings > General > Boss personal bests**. Records are local and independent of saved-fight retention. Best DPS, damage, hit and healing values require a confirmed real boss kill with a known starting HP baseline and damage only against that boss. Failed and stopped attempts still list observed own deaths, healing and damage taken. Test mode and recordings never create records. Missing packets can omit deaths; older saved fights have unknown death counts.
+Open the **trophy icon** in the DPS meter, **Statistics > Boss personal bests** or **Settings > General > Boss personal bests**. Browse and search all bundled real dungeon and world boss entries, even before a first kill. Each boss permanently retains six independent values per character/server/class: highest own DPS, damage, strongest hit and healing, plus fewest own deaths and least damage taken. Each value may come from a different qualifying kill. Equal or worse results never overwrite a record. There is no attempt-history limit because only best values and their achievement dates are stored. Previous beta records migrate automatically. Records require a confirmed real boss kill with a known starting HP baseline and damage only against that boss; test mode, recordings and incomplete fights do not count. Missing packets can omit deaths.
+
+**Last played with** opens from the player icon beside the trophy, the Statistics menu or Settings > General. It keeps confirmed group members' names and classes locally, separately for each own character, newest first. Each player has an individual **Copy name** button. Stream mode masks both displayed and copied names. Test mode and recordings do not populate the list.
 
 ## Update channels
 

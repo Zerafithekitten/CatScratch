@@ -105,17 +105,17 @@ public sealed class PersonalBestTests : IDisposable
         var store = new PersonalBestStore(Data());
         var first = Kill();
         var stats = store.Record(first)!;
-        Assert.Equal(1000, stats.BestDamage!.Damage);
-        Assert.Equal(1000, stats.BestDps!.Dps);
-        Assert.Equal(900, stats.BestHit!.MaxHit);
-        Assert.Equal(1, stats.Attempts);
+        Assert.Equal(1000, stats.BestDamage!.Value);
+        Assert.Equal(1000, stats.BestDps!.Value);
+        Assert.Equal(900, stats.BestHit!.Value);
+        Assert.Equal(0, stats.FewestDeaths!.Value);
         Assert.Null(store.Record(first));
         var same = Kill();
-        var again = store.Record(same)!;
+        Assert.Null(store.Record(same));
+        var again = Assert.Single(store.List());
         Assert.Equal(first.Summary.Id, again.BestDps!.FightId);
-        Assert.Equal(2, again.Attempts);
         var stronger = store.Record(Kill(damage: 1200))!;
-        Assert.Equal(1300, stronger.BestDamage!.Damage);
+        Assert.Equal(1300, stronger.BestDamage!.Value);
     }
 
     [Theory]
@@ -123,17 +123,15 @@ public sealed class PersonalBestTests : IDisposable
     [InlineData(EncounterEndReason.Idle)]
     [InlineData(EncounterEndReason.Manual)]
     [InlineData(EncounterEndReason.ZoneChange)]
-    public void Unsuccessful_attempts_keep_deaths_without_beating_records(EncounterEndReason reason)
+    public void Unsuccessful_attempts_do_not_create_any_permanent_values(EncounterEndReason reason)
     {
         var record = Kill();
         var own = record.Summary.Combatants[0] with { Deaths = 1 };
         record = record with { Summary = record.Summary with { Reason = reason, Combatants = [own] },
             Details = [record.Details[0] with { DeathOffsetsMs = [500] }] };
-        var stats = new PersonalBestStore(Data()).Record(record)!;
-        Assert.Equal(1, stats.Deaths);
-        Assert.Equal(0, stats.Kills);
-        Assert.Null(stats.BestDps);
-        Assert.Equal(new[] { 500 }, stats.RecentAttempts[0].DeathOffsetsMs);
+        var store = new PersonalBestStore(Data());
+        Assert.Null(store.Record(record));
+        Assert.Empty(store.List());
     }
 
     [Theory]
@@ -154,9 +152,9 @@ public sealed class PersonalBestTests : IDisposable
             "mixedDamage" => summary with { BossOnlyDamage = false },
             _ => summary,
         };
-        var stats = new PersonalBestStore(Data()).Record(record with { Summary = summary }, problem != "captureLoss")!;
-        Assert.Null(stats.BestDps);
-        Assert.Single(stats.RecentAttempts);
+        var store = new PersonalBestStore(Data());
+        Assert.Null(store.Record(record with { Summary = summary }, problem != "captureLoss"));
+        Assert.Empty(store.List());
     }
 
     [Fact]
@@ -168,11 +166,11 @@ public sealed class PersonalBestTests : IDisposable
         tracker.Process(new DeathEvent(1400, 500));
         var record = tracker.Record(null)!;
         Assert.False(record.Summary.BossOnlyDamage);
-        Assert.Null(new PersonalBestStore(Data()).Record(record)!.BestDps);
+        Assert.Null(new PersonalBestStore(Data()).Record(record));
     }
 
     [Fact]
-    public void Records_are_separate_per_character_server_class_and_map()
+    public void Records_are_separate_per_character_server_class_but_combine_same_boss_across_maps()
     {
         var store = new PersonalBestStore(Data());
         store.Record(Kill());
@@ -184,7 +182,7 @@ public sealed class PersonalBestTests : IDisposable
                 "class" => own with { Class = GameClass.Ranger }, _ => own };
             store.Record(r with { Summary = r.Summary with { Combatants = [own], MapId = variant == "map" ? 600002 : r.Summary.MapId } });
         }
-        Assert.Equal(5, store.List().Count);
+        Assert.Equal(4, store.List().Count);
     }
 
     [Fact]
@@ -199,36 +197,107 @@ public sealed class PersonalBestTests : IDisposable
         tracker.Process(new HealEvent(1600, 2, 1, 17010000, 90000, HitFlags.None));
         tracker.Process(new DeathEvent(1700, 500));
         var stats = new PersonalBestStore(Data()).Record(tracker.Record(null)!)!;
-        Assert.Equal(400, stats.BestHealing!.Healing);
-        Assert.Equal(400, stats.Healing);
-        Assert.Equal(180, stats.DamageTaken);
-        Assert.Equal(180, stats.RecentAttempts[0].DamageTaken);
+        Assert.Equal(400, stats.BestHealing!.Value);
+        Assert.Equal(180, stats.LeastDamageTaken!.Value);
         var r = Kill();
         var own = r.Summary.Combatants[0] with { Damage = 0, Dps = 0, MaxHit = 0, Healing = 700, DamageTaken = 90 };
         stats = new PersonalBestStore(Data()).Record(r with { Summary = r.Summary with { Combatants = [own] } })!;
-        Assert.Equal(700, stats.BestHealing!.Healing);
-        Assert.Null(stats.BestDps);
-        Assert.Null(stats.BestDamage);
-        Assert.Equal(90, stats.RecentAttempts[0].DamageTaken);
+        Assert.Equal(700, stats.BestHealing!.Value);
+        Assert.Equal(0, stats.BestDps!.Value);
+        Assert.Equal(0, stats.BestDamage!.Value);
+        Assert.Equal(90, stats.LeastDamageTaken!.Value);
     }
 
     [Fact]
-    public void Records_survive_restart_and_recent_history_retention()
+    public void Records_survive_restart_and_over_one_hundred_later_kills_without_history()
     {
         var path = Path.Combine(_directory, "records.json");
         var store = new PersonalBestStore(Data(), path);
         var best = Kill(damage: 50000);
         store.Record(best);
-        for (var i = 0; i < 14; i++)
+        for (var i = 0; i < 150; i++)
         {
             var r = Kill();
             store.Record(r with { Summary = r.Summary with { StartedAt = best.Summary.StartedAt.AddMinutes(i + 1) } });
         }
         var stats = Assert.Single(new PersonalBestStore(Data(), path).List());
-        Assert.Equal(15, stats.Attempts);
-        Assert.Equal(10, stats.RecentAttempts.Count);
         Assert.Equal(best.Summary.Id, stats.BestDps!.FightId);
-        Assert.DoesNotContain(stats.RecentAttempts, a => a.FightId == best.Summary.Id);
+        using var saved = JsonDocument.Parse(File.ReadAllText(path));
+        var item = Assert.Single(saved.RootElement.GetProperty("Records").EnumerateArray());
+        Assert.False(item.TryGetProperty("RecentAttempts", out _));
+        Assert.False(item.TryGetProperty("Attempts", out _));
+        Assert.False(item.TryGetProperty("Kills", out _));
+    }
+
+    [Fact]
+    public void Each_statistic_keeps_its_own_best_kill_and_zero_deaths_is_permanent()
+    {
+        FightRecord Values(double dps, long damage, long hit, long healing, int deaths, long taken)
+        {
+            var r = Kill(); var own = r.Summary.Combatants[0] with { Dps = dps, Damage = damage, MaxHit = hit, Healing = healing, Deaths = deaths, DamageTaken = taken };
+            return r with { Summary = r.Summary with { Combatants = [own] }, Details = [r.Details[0] with { DeathOffsetsMs = Enumerable.Range(1, deaths).Select(i => i * 100).ToArray() }] };
+        }
+        var store = new PersonalBestStore(Data(), Path.Combine(_directory, "records.json"));
+        var first = Values(1000, 2000, 500, 3000, 3, 100);
+        var second = Values(800, 4000, 450, 5000, 1, 250);
+        store.Record(first); var stats = store.Record(second)!;
+        Assert.Equal(first.Summary.Id, stats.BestDps!.FightId);
+        Assert.Equal(second.Summary.Id, stats.BestDamage!.FightId);
+        Assert.Equal(first.Summary.Id, stats.BestHit!.FightId);
+        Assert.Equal(second.Summary.Id, stats.BestHealing!.FightId);
+        Assert.Equal(1, stats.FewestDeaths!.Value);
+        Assert.Equal(100, stats.LeastDamageTaken!.Value);
+        store.Record(Values(1, 1, 1, 0, 0, 0));
+        Assert.Null(store.Record(Values(1, 1, 1, 0, 2, 50)));
+        stats = Assert.Single(new PersonalBestStore(Data(), Path.Combine(_directory, "records.json")).List());
+        Assert.Equal(0, stats.FewestDeaths!.Value);
+        Assert.Equal(0, stats.LeastDamageTaken!.Value);
+        Assert.Equal(5000, stats.BestHealing!.Value);
+    }
+
+    [Fact]
+    public void Every_known_boss_is_available_before_first_kill_and_more_than_ten_bosses_keep_records()
+    {
+        var data = Data();
+        foreach (var code in Enumerable.Range(1000, 40)) data.Npcs[code] = new(code, "Dungeon or world boss " + code, true, false);
+        var path = Path.Combine(_directory, "records.json");
+        var store = new PersonalBestStore(data, path);
+        Assert.Equal(41, store.Catalog().Count);
+        Assert.Empty(store.List());
+        foreach (var boss in store.Catalog())
+        {
+            var r = Kill();
+            store.Record(r with { Summary = r.Summary with { Boss = r.Summary.Boss! with { NpcCode = boss.Code, Name = boss.Name } } });
+        }
+        Assert.Equal(41, new PersonalBestStore(data, path).List().Count);
+        Assert.DoesNotContain(store.Catalog(), n => n.IsDummy || !n.IsBoss);
+    }
+
+    [Fact]
+    public void Beta_one_data_migrates_to_independent_values_and_discards_attempt_history()
+    {
+        Directory.CreateDirectory(_directory);
+        var path = Path.Combine(_directory, "records.json");
+        object Attempt(double dps, long damage, long healing, int deaths, long taken, bool eligible = true) => new
+        {
+            FightId = Guid.NewGuid(), StartedAt = DateTimeOffset.UtcNow, Dps = dps, Damage = damage, MaxHit = damage / 2,
+            DeathOffsetsMs = Enumerable.Range(1, deaths).Select(i => i * 100).ToArray(), EligibleForBest = eligible, Healing = healing, DamageTaken = taken,
+        };
+        var dpsBest = Attempt(2000, 1000, 100, 2, 500);
+        var healingBest = Attempt(800, 2000, 5000, 1, 400);
+        File.WriteAllText(path, JsonSerializer.Serialize(new[] { new
+        {
+            Character = "Own", ServerId = 2305, Class = GameClass.Cleric, BossCode = 900, MapId = 600001, BossName = "Boss",
+            BestDps = dpsBest, BestDamage = healingBest, BestHit = healingBest, BestHealing = healingBest,
+            RecentAttempts = new[] { Attempt(100, 500, 1000, 0, 50), Attempt(90000, 90000, 90000, 0, 0, false) },
+        } }));
+        var stats = Assert.Single(new PersonalBestStore(Data(), path).List());
+        Assert.Equal(2000, stats.BestDps!.Value);
+        Assert.Equal(5000, stats.BestHealing!.Value);
+        Assert.Equal(0, stats.FewestDeaths!.Value);
+        Assert.Equal(50, stats.LeastDamageTaken!.Value);
+        Assert.DoesNotContain("RecentAttempts", File.ReadAllText(path));
+        Assert.Equal(stats, Assert.Single(new PersonalBestStore(Data(), path).List()));
     }
 
     [Fact]

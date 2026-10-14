@@ -46,6 +46,7 @@ public partial class App : Application
     private DispatcherTimer? _timer;
     private HistoryWindow? _history;
     private PersonalBestsWindow? _personalBests;
+    private LastPlayedWithWindow? _lastPlayedWith;
     private SettingsWindow? _settingsWindow;
     private BossTimersWindow? _timersWindow;
     private TimerHubWindow? _timerHub;
@@ -565,6 +566,7 @@ public partial class App : Application
         foreach (var w in _breakdowns.Values.ToList()) w.Close();
         _history?.Close();
         _personalBests?.Close();
+        _lastPlayedWith?.Close();
         _timersWindow?.Close();
         _updateWindow?.Close();
         _soundWindow?.Close();
@@ -596,6 +598,7 @@ public partial class App : Application
     {
         foreach(var w in _breakdowns.Values.ToList())w.Close();
         _personalBests?.Reload();
+        _lastPlayedWith?.Reload();
         _history?.Reload();_overlay.OnLanguageChanged();
     }
     public void ToggleLanguage() => SetLanguage(UiText.Languages[(Array.IndexOf(UiText.Languages, UiText.Current.Code) + 1) % UiText.Languages.Length]);
@@ -626,6 +629,14 @@ public partial class App : Application
         _personalBests = new PersonalBestsWindow(_meter);
         _personalBests.Closed += (_, _) => _personalBests = null;
         _personalBests.Show();
+    }
+
+    public void ShowLastPlayedWith()
+    {
+        if (_lastPlayedWith is { IsLoaded: true }) { _lastPlayedWith.Reload(); Activate(_lastPlayedWith); return; }
+        _lastPlayedWith = new LastPlayedWithWindow(_meter);
+        _lastPlayedWith.Closed += (_, _) => _lastPlayedWith = null;
+        _lastPlayedWith.Show();
     }
 
     /// <summary>Hotkey: open the boss timers, or close them when they are already up.</summary>

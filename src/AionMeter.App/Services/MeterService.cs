@@ -35,7 +35,7 @@ public sealed class MeterService : IDisposable
     private DemoFightSource? _demo;
     private readonly PetProgressCache? _petProgress;
 
-    public MeterService(AppSettings settings, Func<GameData, IEventSource>? captureFactory, PersonalBestStore? personalBests = null)
+    public MeterService(AppSettings settings, Func<GameData, IEventSource>? captureFactory, PersonalBestStore? personalBests = null, LastPlayedWithStore? lastPlayedWith = null)
     {
         Settings = settings;
         if (!settings.Transient && !settings.ManualHistoryDefaultsApplied)
@@ -56,6 +56,7 @@ public sealed class MeterService : IDisposable
         _realTracker = new CombatTracker(Data, Options);
         History = new HistoryStore(Path.Combine(AppSettings.AppDataDir, "fights"));
         PersonalBests = personalBests ?? new PersonalBestStore(Data, settings.Transient ? null : Path.Combine(AppSettings.AppDataDir, "boss-personal-bests.json"));
+        LastPlayedWith = lastPlayedWith ?? new LastPlayedWithStore(settings.Transient ? null : Path.Combine(AppSettings.AppDataDir, "last-played-with.json"));
         _realTimers = new BossTimers(Path.Combine(AppSettings.AppDataDir, "boss-timers.json"), Data, DataDirectory, persistent: !settings.Transient);
         Updates = new Updater(settings);
         Tracker.EncounterFinished += OnEncounterFinished;
@@ -114,6 +115,7 @@ public sealed class MeterService : IDisposable
     public Core.Events.LiveIdentity LiveIdentity { get; } = new();
     public HistoryStore History { get; }
     public PersonalBestStore PersonalBests { get; }
+    public LastPlayedWithStore LastPlayedWith { get; }
     private readonly BossTimers _realTimers;
     private BossTimers? _testTimers;
     public BossTimers Timers => _testTimers ?? _realTimers;
@@ -141,6 +143,7 @@ public sealed class MeterService : IDisposable
     public void Replay(string path)
     {
         StopDemo();
+        LastPlayedWith.Reset();
         LiveIdentity.Reset(); PartyPreview.Reset(); Tracker.InvalidateParty();
         _replay?.Dispose();
         Tracker.Reset();
@@ -171,6 +174,12 @@ public sealed class MeterService : IDisposable
     {
         var identity = !_replaying ? LiveIdentity.Observe(value) : null;
         var resolved = value is Core.Events.SelfIdentifiedEvent && identity is not null ? identity : value;
+        if (!_replaying && !DemoRunning && !Settings.Transient)
+        {
+            try { LastPlayedWith.Observe(identity ?? resolved); }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+            { Log.Error("Saving recent group members failed", ex); }
+        }
         if(!_replaying)
         {
             _realPets.Observe(resolved);
@@ -200,7 +209,7 @@ public sealed class MeterService : IDisposable
                 _capture.EventDecoded += ProcessLiveEvent;
                 _capture.StatusChanged += status =>
                 {
-                    LiveIdentity.ObserveCaptureStatus(status, () => { PartyPreview.Reset(); _realTracker.InvalidateParty(); });
+                    LiveIdentity.ObserveCaptureStatus(status, () => { PartyPreview.Reset(); LastPlayedWith.Reset(); _realTracker.InvalidateParty(); });
                 };
                 _capture.Start();
             }
@@ -232,7 +241,7 @@ public sealed class MeterService : IDisposable
         {
             previous?.Dispose();
             if (_exiting) return;
-            LiveIdentity.Suspend(); PartyPreview.Reset(); _realTracker.InvalidateParty();
+            LiveIdentity.Suspend(); PartyPreview.Reset(); LastPlayedWith.Reset(); _realTracker.InvalidateParty();
             StartCapture();
         }
         finally

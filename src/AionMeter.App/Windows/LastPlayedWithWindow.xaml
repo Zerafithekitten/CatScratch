@@ -1,0 +1,32 @@
+<Window x:Class="AionMeter.App.Windows.LastPlayedWithWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:c="clr-namespace:AionMeter.App.Controls"
+        Title="CatScratch" Width="760" Height="600" MinWidth="620" MinHeight="420" WindowStyle="None" ResizeMode="CanResize" WindowStartupLocation="CenterScreen"
+        Background="#1B2027" Foreground="#EDF2F7" FontFamily="{StaticResource UiFont}" UseLayoutRounding="True" TextOptions.TextFormattingMode="Display">
+    <Window.Resources><ResourceDictionary><ResourceDictionary.MergedDictionaries><ResourceDictionary Source="../Theme/MeterTools.xaml"/></ResourceDictionary.MergedDictionaries></ResourceDictionary></Window.Resources>
+    <WindowChrome.WindowChrome><WindowChrome CaptionHeight="48" ResizeBorderThickness="6" GlassFrameThickness="0" CornerRadius="0"/></WindowChrome.WindowChrome>
+    <Border Background="{StaticResource Bg0}" BorderBrush="{StaticResource GoldDim}" BorderThickness="1" Padding="16">
+        <DockPanel>
+            <Grid DockPanel.Dock="Top" Margin="0,0,0,12">
+                <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="230"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center"><Image x:Name="PawIcon" Width="22" Height="22" Margin="0,0,10,0"/><TextBlock x:Name="Heading" FontSize="20" FontWeight="SemiBold" Foreground="{StaticResource Gold}" VerticalAlignment="Center"/></StackPanel>
+                <ComboBox x:Name="Characters" Grid.Column="1" Margin="10,0" SelectionChanged="Character_Changed" WindowChrome.IsHitTestVisibleInChrome="True"><ComboBox.ItemTemplate><DataTemplate><TextBlock Text="{Binding Label}" TextTrimming="CharacterEllipsis" MaxWidth="180"/></DataTemplate></ComboBox.ItemTemplate></ComboBox>
+                <Button Grid.Column="2" Style="{StaticResource IconButton}" Content="&#xE711;" Click="Close_Click" WindowChrome.IsHitTestVisibleInChrome="True"/>
+            </Grid>
+            <TextBlock x:Name="Explanation" DockPanel.Dock="Top" TextWrapping="Wrap" Foreground="{StaticResource TextMute}" FontSize="12" Margin="0,0,0,14"/>
+            <StackPanel DockPanel.Dock="Top" Margin="0,0,0,10"><TextBlock x:Name="SearchLabel" Foreground="{StaticResource TextMute}" Margin="0,0,0,5"/><TextBox x:Name="Search" TextChanged="Search_Changed"/></StackPanel>
+            <TextBlock x:Name="Status" DockPanel.Dock="Bottom" Foreground="{StaticResource Gold}" TextWrapping="Wrap" Margin="0,10,0,0"/>
+            <Grid>
+                <ListBox x:Name="Players" Background="{StaticResource Bg1}" Foreground="{StaticResource Text}" BorderThickness="0" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                    <ListBox.ItemTemplate><DataTemplate>
+                        <Grid Margin="10,9">
+                            <Grid.ColumnDefinitions><ColumnDefinition Width="32"/><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                            <c:ClassGlyph Class="{Binding Class}" Width="24" Height="24" VerticalAlignment="Center"/>
+                            <StackPanel Grid.Column="1" Margin="8,0,10,0"><TextBlock Text="{Binding Name}" FontSize="14" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"/><TextBlock Text="{Binding Meta}" FontSize="11" Foreground="{StaticResource TextMute}" TextWrapping="Wrap" Margin="0,4,0,0"/></StackPanel>
+                            <Button Grid.Column="2" Content="{Binding CopyLabel}" ToolTip="{Binding CopyLabel}" Click="Copy_Click" VerticalAlignment="Center" Padding="10,6"/>
+                        </Grid>
+                    </DataTemplate></ListBox.ItemTemplate>
+                </ListBox>
+                <TextBlock x:Name="Empty" TextWrapping="Wrap" Foreground="{StaticResource TextMute}" HorizontalAlignment="Center" VerticalAlignment="Center" MaxWidth="390" Margin="16"/>
+            </Grid>
+        </DockPanel>
+    </Border>
+</Window>

@@ -1,3 +1,9 @@
+## CatScratch v2.5.1-beta.2
+
+- Keep only permanent, independent best values for each dungeon and world boss. Fewer deaths and less damage taken are better; remove the ten-attempt view and add the complete bundled boss catalog.
+- Add a trophy shortcut in the DPS meter and a Last played with menu showing recent teammates' names and classes, with a copy-name button per player.
+- Match the DPS meter's style and preserve existing records, language support and Stream mode.
+
 ## CatScratch v2.5.1-beta.1
 
 - Add boss-only personal records for DPS, damage, strongest hit and healing, plus own deaths with timestamps and damage taken per attempt.

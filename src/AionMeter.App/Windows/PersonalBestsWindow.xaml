@@ -5,35 +5,7 @@
         WindowStyle="None" ResizeMode="CanResize" WindowStartupLocation="CenterScreen"
         Background="{StaticResource Bg0}" Foreground="{StaticResource Text}" FontFamily="{StaticResource UiFont}"
         UseLayoutRounding="True" TextOptions.TextFormattingMode="Display">
-    <Window.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="../Theme/MeterPreferences.xaml"/>
-            </ResourceDictionary.MergedDictionaries>
-            <SolidColorBrush x:Key="Bg0" Color="#1B2027"/>
-            <SolidColorBrush x:Key="Bg1" Color="#171E27"/>
-            <SolidColorBrush x:Key="Gold" Color="#79E3CF"/>
-            <SolidColorBrush x:Key="GoldDim" Color="#364957"/>
-            <SolidColorBrush x:Key="Text" Color="#EDF2F7"/>
-            <SolidColorBrush x:Key="TextDim" Color="#BCC9D6"/>
-            <SolidColorBrush x:Key="TextMute" Color="#A9B8C7"/>
-            <FontFamily x:Key="TitleFont">Segoe UI</FontFamily>
-            <Style TargetType="ListBoxItem">
-                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                <Setter Property="Template">
-                    <Setter.Value>
-                        <ControlTemplate TargetType="ListBoxItem">
-                            <Border x:Name="Surface" Background="Transparent" CornerRadius="6" Margin="4" BorderThickness="1" BorderBrush="Transparent"><ContentPresenter/></Border>
-                            <ControlTemplate.Triggers>
-                                <Trigger Property="IsSelected" Value="True"><Setter TargetName="Surface" Property="Background" Value="#202A35"/><Setter TargetName="Surface" Property="BorderBrush" Value="#79E3CF"/></Trigger>
-                                <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Surface" Property="Background" Value="#202A35"/></Trigger>
-                            </ControlTemplate.Triggers>
-                        </ControlTemplate>
-                    </Setter.Value>
-                </Setter>
-            </Style>
-        </ResourceDictionary>
-    </Window.Resources>
+    <Window.Resources><ResourceDictionary><ResourceDictionary.MergedDictionaries><ResourceDictionary Source="../Theme/MeterTools.xaml"/></ResourceDictionary.MergedDictionaries></ResourceDictionary></Window.Resources>
     <WindowChrome.WindowChrome>
         <WindowChrome CaptionHeight="48" ResizeBorderThickness="6" GlassFrameThickness="0" CornerRadius="0" />
     </WindowChrome.WindowChrome>
@@ -54,6 +26,12 @@
             <TextBlock x:Name="Explanation" DockPanel.Dock="Top" Foreground="{StaticResource TextMute}" TextWrapping="Wrap" Margin="0,0,0,14" FontSize="12"/>
             <Grid>
                 <Grid.ColumnDefinitions><ColumnDefinition Width="270"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                <DockPanel>
+                    <StackPanel DockPanel.Dock="Top" Margin="4,0,4,10">
+                        <TextBlock x:Name="SearchLabel" Foreground="{StaticResource TextMute}" Margin="0,0,0,5"/>
+                        <TextBox x:Name="Search" TextChanged="Search_Changed"/>
+                        <TextBlock x:Name="CatalogCount" Foreground="{StaticResource TextMute}" FontSize="11" TextWrapping="Wrap" Margin="0,7,0,0"/>
+                    </StackPanel>
                 <ListBox x:Name="Bosses" BorderThickness="0" Background="{StaticResource Bg1}" Foreground="{StaticResource Text}"
                          SelectionChanged="Boss_Changed" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
                     <ListBox.ItemTemplate>
@@ -65,26 +43,13 @@
                         </DataTemplate>
                     </ListBox.ItemTemplate>
                 </ListBox>
+                </DockPanel>
                 <ScrollViewer Grid.Column="1" Margin="18,0,0,0" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
                     <StackPanel>
                         <TextBlock x:Name="BossTitle" FontFamily="{StaticResource TitleFont}" FontSize="22" FontWeight="SemiBold" TextWrapping="Wrap"/>
                         <TextBlock x:Name="Totals" Foreground="{StaticResource TextDim}" TextWrapping="Wrap" Margin="0,6,0,14"/>
                         <UniformGrid x:Name="BestCards" Columns="2" Margin="0,0,0,10"/>
-                        <TextBlock x:Name="RecentHeading" FontSize="14" FontWeight="SemiBold" Margin="0,12,0,8"/>
-                        <ItemsControl x:Name="Attempts">
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <Border Background="{StaticResource Bg1}" BorderBrush="{StaticResource GoldDim}" BorderThickness="1" CornerRadius="6" Padding="12" Margin="0,0,0,8">
-                                        <StackPanel>
-                                            <TextBlock Text="{Binding Title}" FontWeight="SemiBold" TextWrapping="Wrap"/>
-                                            <TextBlock Text="{Binding Numbers}" Foreground="{StaticResource TextDim}" TextWrapping="Wrap" Margin="0,5,0,0"/>
-                                            <TextBlock Text="{Binding Deaths}" Foreground="{StaticResource TextMute}" TextWrapping="Wrap" Margin="0,5,0,0"/>
-                                            <TextBlock Text="{Binding Record}" Foreground="{StaticResource Green}" TextWrapping="Wrap" Margin="0,5,0,0"/>
-                                        </StackPanel>
-                                    </Border>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
+                        <TextBlock x:Name="RecordsHint" Foreground="{StaticResource TextMute}" TextWrapping="Wrap" FontSize="12" Margin="0,12,0,8"/>
                         <TextBlock x:Name="Empty" TextWrapping="Wrap" Foreground="{StaticResource TextMute}" Margin="0,12,0,0"/>
                     </StackPanel>
                 </ScrollViewer>

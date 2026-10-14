@@ -59,7 +59,7 @@ public static class SampleRenderer
         if(o.TestMode)meter.StartDemo(animate:false);
         var start = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() - 20_500; // a fight that is still going
         var fight = new SampleFight(start, 20);
-        if (o.Window is not ("party" or "room" or "personal-waiting" or "fight-menu-empty")) fight.FeedUntil(meter.Tracker, start + 20_000);
+        if (o.Window is not ("party" or "room" or "personal-waiting" or "fight-menu-empty" or "personal-bests" or "last-played-with")) fight.FeedUntil(meter.Tracker, start + 20_000);
         else
         {
             meter.PartyPreview.Observe(new SelfIdentifiedEvent(start, 1, "Sample self", 2305, Core.Events.GameClass.Cleric));
@@ -172,6 +172,12 @@ public static class SampleRenderer
                     { Width = o.Width ?? 920, Height = o.Height ?? 660 };
                 host = bests;
                 refresh = bests.Reload;
+                break;
+            case "last-played-with":
+                var players = new LastPlayedWithWindow(meter, BossRecordChecks.SamplePlayers())
+                    { Width = o.Width ?? 760, Height = o.Height ?? 600 };
+                host = players;
+                refresh = players.Reload;
                 break;
             case "timers":
             case "timers-locked":
