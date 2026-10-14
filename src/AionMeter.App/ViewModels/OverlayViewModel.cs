@@ -56,6 +56,8 @@ public sealed class RowViewModel : ObservableObject
     public string CompactGear => string.Join(" · ", new[] { ShowCombatPower ? $"CP {(HasCombatPower ? CombatPower : "—")}" : null, ShowGearScore ? $"GS {(HasGearScore ? GearScore : "—")}" : null }.Where(s => s is not null));
     public string Dps { get => _dps; set => Set(ref _dps, value); }
     public string Damage { get => _damage; set => Set(ref _damage, value); }
+    public string DamageTaken { get => _damageTaken; set => Set(ref _damageTaken,value); }
+    private string _damageTaken="—";
     public string Share { get => _share; set => Set(ref _share, value); }
     /// <summary>0..1 width of the coloured bar.</summary>
     public double Fill { get => _fill; set => Set(ref _fill, value); }
@@ -472,12 +474,14 @@ public sealed class OverlayViewModel : ObservableObject
             row.IsSelf = cb.IsSelf;
             row.Dps = Format.Compact(cb.Dps) + "/s";
             row.Damage = Format.Compact(cb.Damage);
+            row.DamageTaken = Format.Compact(cb.DamageTaken);
             row.Share = Format.Share(cb.Share);
             row.Fill = relativeToTop ? (double)cb.Damage / best : cb.Share;
             var heading = cb.IsUnknownSummons ? T.UnknownSummonsTip : $"#{i + 1} {cb.Name} · {T.ClassName(cb.Class)}";
             row.Tooltip = $"{heading}\n" +
                           $"{T.RowDamage} {Format.Grouped(cb.Damage)} ({Format.Share(cb.Share)}) · DPS {Format.Compact(cb.Dps)}\n" +
                           $"{T.RowHits} {cb.Hits} · {T.RowCrit} {Format.Percent(cb.CritRate)} · {T.RowMax} {Format.Grouped(cb.MaxHit)}";
+            row.Tooltip += $"\n{T.Localize("Damage taken")}: {Format.Grouped(cb.DamageTaken)}";
         }
         HasGear = Rows.Any(r => r.HasGearScore || r.HasCombatPower);
         SelfPlace = selfIndex >= 0 ? $"{selfIndex + 1} / {snap.PlayerCount}" : "";

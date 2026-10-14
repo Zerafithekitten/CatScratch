@@ -185,7 +185,10 @@
                                 <TextBlock Text="{Binding Dps}" FontSize="{DynamicResource CompactNumberFont}" FontWeight="SemiBold" Foreground="#EDF2F7" TextAlignment="Right"/>
                                 <TextBlock Text="{Binding Damage}" FontSize="{DynamicResource CompactSubFont}" Foreground="#ADBCCD" TextAlignment="Right"/>
                             </StackPanel>
-                            <TextBlock Grid.Column="2" Text="{Binding Share}" Foreground="#79E3DF" FontSize="{DynamicResource CompactNumberFont}" FontWeight="SemiBold" TextAlignment="Right" VerticalAlignment="Top" Margin="4,1,0,0"/>
+                            <StackPanel Grid.Column="2" VerticalAlignment="Center" Margin="4,0,0,0">
+                                <TextBlock Text="{Binding Share}" Foreground="#79E3DF" FontSize="{DynamicResource CompactNumberFont}" FontWeight="SemiBold" TextAlignment="Right"/>
+                                <TextBlock Text="{Binding DamageTaken}" Foreground="#FF8585" FontSize="{DynamicResource CompactSubFont}" FontWeight="SemiBold" TextAlignment="Right" ToolTip="{Binding DataContext.T.TipTaken, RelativeSource={RelativeSource AncestorType=Window}}"/>
+                            </StackPanel>
                         </Grid>
                         <Grid Grid.Row="1">
                             <Border CornerRadius="3" Background="#FF283540"/>
@@ -212,6 +215,7 @@
                 <Image x:Name="ShellPaw" Source="/Assets/app.ico" Width="22" Height="22" Margin="0,0,7,0"/>
                 <TextBlock x:Name="ShellTitle" Text="CatScratch" Foreground="#79E3CF" FontSize="16" FontWeight="Bold" VerticalAlignment="Center"/>
                             <Button x:Name="PersonalCombatButton" Style="{StaticResource ToolIcon}" Content="&#xE95E;" Click="PersonalCombat_Click" ToolTip="{Binding T.Literal0}" AutomationProperties.Name="{Binding T.Literal1}" Margin="4,0,0,0" />
+                            <Button x:Name="PetTrackerButton" Style="{StaticResource ToolIcon}" Click="PetTracker_Click" ToolTip="{Binding T.PetTrackerLabel}" Margin="2,0,0,0"><Image Source="/Assets/app.ico" Width="14" Height="14"/></Button>
 </StackPanel>
             <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
                 <TextBlock Text="{Binding Clock, StringFormat=⏱ {0}}" Foreground="#91A5A0" FontSize="9" Margin="4,0" ToolTip="{Binding T.Literal2}" VerticalAlignment="Center"/>
@@ -408,6 +412,7 @@
                         <TextBlock x:Name="FooterText" FontSize="11" Foreground="#A9B1C0" TextTrimming="CharacterEllipsis"
                                    Effect="{StaticResource TextShadow}" />
                     </StackPanel>
+                    <TextBlock x:Name="InstalledVersionText" Grid.Row="1" Text="{Binding Version}" FontSize="10.5" FontWeight="SemiBold" Foreground="#A9B8C7" Margin="0,3,0,0" VerticalAlignment="Bottom" Effect="{StaticResource TextShadow}"/>
                     <StackPanel x:Name="FooterControls" Grid.Column="1" Orientation="Horizontal" Margin="0,0,10,0">
                         <Button x:Name="CompactHistory" Style="{StaticResource ToolIcon}" Content="&#xE8A5;" Click="Segments_Click" ToolTip="{Binding T.Literal13}"/>
                         <Button Style="{StaticResource ToolIcon}" Content="&#xE8BD;" Click="Chat_Click" ToolTip="{Binding T.Literal14}"/>

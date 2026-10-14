@@ -26,6 +26,7 @@ public sealed class MeterService : IDisposable
         }
         CaptureFactory = captureFactory;
         Data = GameData.Load(DataDirectory, UiText.Normalize(settings.Language));
+        if(!settings.Transient)PetFarmCache.Restore(Pets);
         Icons = new SkillIcons(DataDirectory, settings.DownloadIcons);
         Portraits = new BossPortraits(DataDirectory, settings.DownloadIcons);
         Options = new MeterOptions();
@@ -141,13 +142,20 @@ public sealed class MeterService : IDisposable
     {
         var identity = !_replaying && !DemoRunning ? LiveIdentity.Observe(value) : null;
         var resolved = value is Core.Events.SelfIdentifiedEvent && identity is not null ? identity : value;
+        if(!_replaying && !DemoRunning) Pets.Observe(resolved);
         if (!_replaying && !DemoRunning) PartyPreview.Observe(resolved);
         Tracker.Process(resolved);
         if (value is Core.Events.PlayerSeenEvent && identity is not null)
         {
             Tracker.Process(identity);
+            Pets.Observe(identity);
             PartyPreview.Observe(identity);
         }
+    }
+    public Core.Game.PetCollection Pets {get;}=new();
+    public void EnablePetPositions(bool enabled)
+    {
+        lock(_captureGate)if(_capture is LiveCapture live)live.Pipeline.Parser.DecodePetPositions=enabled;
     }
 
     public void StartCapture()
@@ -158,6 +166,7 @@ public sealed class MeterService : IDisposable
             try
             {
                 _capture = CaptureFactory(Data);
+                if(_capture is LiveCapture live)live.Pipeline.Parser.DecodePetPositions=Settings.ShowPetTrackerModule;
                 _capture.EventDecoded += ProcessLiveEvent;
                 _capture.StatusChanged += status =>
                 {
@@ -408,6 +417,7 @@ public sealed class MeterService : IDisposable
             SaveNames();
         }
         Updates.Dispose();
+        if(!Settings.Transient)PetFarmCache.Save(Pets);
         Icons.Dispose();
         Portraits.Dispose();
     }

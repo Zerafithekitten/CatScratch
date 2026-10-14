@@ -1,0 +1,5426 @@
+[
+  {
+    "Id": 1047,
+    "Sources": [
+      {
+        "NpcCode": 2100453,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2100751,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      }
+    ],
+    "Names": {
+      "en": "Aberrant Armadon",
+      "fr": "Armadon variant",
+      "ru": "Подвид армадона",
+      "de": "Armadon-Abart"
+    },
+    "Genus": "Fera"
+  },
+  {
+    "Id": 1118,
+    "Sources": [
+      {
+        "NpcCode": 2000955,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      },
+      {
+        "NpcCode": 2100286,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2100550,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2400900,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      },
+      {
+        "NpcCode": 2400930,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      }
+    ],
+    "Names": {
+      "en": "Aberrant Bee",
+      "fr": "Abeille variante",
+      "ru": "Подвид осы",
+      "de": "Bienen-Abart"
+    },
+    "Genus": "Fera"
+  },
+  {
+    "Id": 1119,
+    "Sources": [
+      {
+        "NpcCode": 2000952,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      },
+      {
+        "NpcCode": 2100699,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2100821,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2100828,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2400907,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      }
+    ],
+    "Names": {
+      "en": "Aberrant Coradon",
+      "fr": "Coradon variant",
+      "ru": "Подвид корадона",
+      "de": "Coradon-Abart"
+    },
+    "Genus": "Fera"
+  },
+  {
+    "Id": 1021,
+    "Sources": [],
+    "Names": {
+      "en": "Aberrant Odyle Spider",
+      "fr": "Araignée à Od variante",
+      "ru": "Подвид эфирного паука",
+      "de": "Odspinnen-Abart"
+    },
+    "Genus": "Fera"
+  },
+  {
+    "Id": 1053,
+    "Sources": [
+      {
+        "NpcCode": 2100908,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2110512,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      }
+    ],
+    "Names": {
+      "en": "Aberrant Potcrab",
+      "fr": "Cancérid variant",
+      "ru": "Подвид крабрида",
+      "de": "Topfkrabben-Abart"
+    },
+    "Genus": "Fera"
+  },
+  {
+    "Id": 1089,
+    "Sources": [
+      {
+        "NpcCode": 2100710,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2600024,
+        "Zone": "Chaotic Lower Reshanta",
+        "Faction": "Other"
+      },
+      {
+        "NpcCode": 2600424,
+        "Zone": "",
+        "Faction": "Other"
+      },
+      {
+        "NpcCode": 2600535,
+        "Zone": "",
+        "Faction": "Other"
+      },
+      {
+        "NpcCode": 2600555,
+        "Zone": "",
+        "Faction": "Other"
+      }
+    ],
+    "Names": {
+      "en": "Aberrant Skama",
+      "fr": "Skama variant",
+      "ru": "Подвид скамы",
+      "de": "Skama-Abart"
+    },
+    "Genus": "Fera"
+  },
+  {
+    "Id": 1126,
+    "Sources": [
+      {
+        "NpcCode": 2100006,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2100145,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2100288,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2100793,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2100819,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2400936,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      }
+    ],
+    "Names": {
+      "en": "Aberrant Tog",
+      "fr": "Tog variant",
+      "ru": "Подвид тога",
+      "de": "Tog-Abart"
+    },
+    "Genus": "Fera"
+  },
+  {
+    "Id": 1125,
+    "Sources": [
+      {
+        "NpcCode": 2100558,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2400578,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      }
+    ],
+    "Names": {
+      "en": "Aberrant Zaif",
+      "fr": "Zaif variant",
+      "ru": "Подвид волка",
+      "de": "Zaif-Abart"
+    },
+    "Genus": "Fera"
+  },
+  {
+    "Id": 1193,
+    "Sources": [
+      {
+        "NpcCode": 2400455,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      }
+    ],
+    "Names": {
+      "en": "Addicted Shulak Cart Worker",
+      "fr": "Charretier Shulack intoxiqué",
+      "ru": "Одурманенный возчик шураков",
+      "de": "Vergifteter Kärrner (Shulak)"
+    },
+    "Genus": "Cogni"
+  },
+  {
+    "Id": 1207,
+    "Sources": [
+      {
+        "NpcCode": 2100143,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2100698,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2100714,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2101099,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2400221,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      },
+      {
+        "NpcCode": 2400415,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      },
+      {
+        "NpcCode": 2400825,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      },
+      {
+        "NpcCode": 2600027,
+        "Zone": "Chaotic Lower Reshanta",
+        "Faction": "Other"
+      },
+      {
+        "NpcCode": 2600071,
+        "Zone": "Chaotic Lower Reshanta",
+        "Faction": "Other"
+      },
+      {
+        "NpcCode": 2600427,
+        "Zone": "",
+        "Faction": "Other"
+      },
+      {
+        "NpcCode": 2600471,
+        "Zone": "",
+        "Faction": "Other"
+      },
+      {
+        "NpcCode": 2600571,
+        "Zone": "",
+        "Faction": "Other"
+      },
+      {
+        "NpcCode": 2600581,
+        "Zone": "",
+        "Faction": "Other"
+      }
+    ],
+    "Names": {
+      "en": "Agrint",
+      "fr": "Agrint",
+      "ru": "Агринт",
+      "de": "Agrint"
+    },
+    "Genus": "Natura"
+  },
+  {
+    "Id": 1038,
+    "Sources": [
+      {
+        "NpcCode": 2100144,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2100216,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2100609,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2100741,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2400567,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      },
+      {
+        "NpcCode": 2400568,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      }
+    ],
+    "Names": {
+      "en": "Airon",
+      "fr": "Airon",
+      "ru": "Хайк",
+      "de": "Airon"
+    },
+    "Genus": "Fera"
+  },
+  {
+    "Id": 1177,
+    "Sources": [],
+    "Names": {
+      "en": "Ancient Spirit",
+      "fr": "Esprit ancien",
+      "ru": "Древний дух",
+      "de": "Uralter Naturgeist"
+    },
+    "Genus": "Natura"
+  },
+  {
+    "Id": 1244,
+    "Sources": [],
+    "Names": {
+      "en": "Aristomeow"
+    },
+    "Genus": "Special"
+  },
+  {
+    "Id": 1046,
+    "Sources": [
+      {
+        "NpcCode": 2400002,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      },
+      {
+        "NpcCode": 2400249,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      }
+    ],
+    "Names": {
+      "en": "Armadon",
+      "fr": "Armadon",
+      "ru": "Армадон",
+      "de": "Armadon"
+    },
+    "Genus": "Fera"
+  },
+  {
+    "Id": 1208,
+    "Sources": [
+      {
+        "NpcCode": 2400750,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      }
+    ],
+    "Names": {
+      "en": "Ashen Agrint",
+      "fr": "Agrint cendré",
+      "ru": "Пепельный агринт",
+      "de": "Aschgrauer Agrint"
+    },
+    "Genus": "Natura"
+  },
+  {
+    "Id": 1198,
+    "Sources": [],
+    "Names": {
+      "en": "Ashen Basilisk",
+      "fr": "Basilic cendré",
+      "ru": "Пепельный василиск",
+      "de": "Aschgrauer Basilisk"
+    },
+    "Genus": "Fera"
+  },
+  {
+    "Id": 1135,
+    "Sources": [
+      {
+        "NpcCode": 2400248,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      }
+    ],
+    "Names": {
+      "en": "Ashen Dionae",
+      "fr": "Dionae cendré",
+      "ru": "Пепельная дионея",
+      "de": "Aschgrauer Dionae"
+    },
+    "Genus": "Natura"
+  },
+  {
+    "Id": 1132,
+    "Sources": [],
+    "Names": {
+      "en": "Ashen Lupyllini",
+      "fr": "Lupyllini cendré",
+      "ru": "Пепельный руфиллин",
+      "de": "Aschgraue Lupyllini"
+    },
+    "Genus": "Fera"
+  },
+  {
+    "Id": 1114,
+    "Sources": [
+      {
+        "NpcCode": 2100283,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2400230,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      }
+    ],
+    "Names": {
+      "en": "Ashen Spider",
+      "fr": "Araignée cendrée",
+      "ru": "Пепельный паук",
+      "de": "Aschgraue Spinne"
+    },
+    "Genus": "Fera"
+  },
+  {
+    "Id": 1040,
+    "Sources": [
+      {
+        "NpcCode": 2100950,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      }
+    ],
+    "Names": {
+      "en": "Aullaeu Shaman",
+      "fr": "Chaman Aullaeu",
+      "ru": "Колдун ауллау",
+      "de": "Schamane (Aulau)"
+    },
+    "Genus": "Cogni"
+  },
+  {
+    "Id": 1044,
+    "Sources": [],
+    "Names": {
+      "en": "Aultross's Doppelganger",
+      "fr": "Clone d'Aultross",
+      "ru": "Двойник Аултроса",
+      "de": "Aultross' Trugbild"
+    },
+    "Genus": "Cogni"
+  },
+  {
+    "Id": 1150,
+    "Sources": [],
+    "Names": {
+      "en": "Azure Baikron",
+      "fr": "Bykron indigo",
+      "ru": "Темно-синий байкрон",
+      "de": "Tiefblaumophad"
+    },
+    "Genus": "Special"
+  },
+  {
+    "Id": 1008,
+    "Sources": [
+      {
+        "NpcCode": 2100034,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      }
+    ],
+    "Names": {
+      "en": "Baby Odyle Spider",
+      "fr": "Jeune araignée à Od",
+      "ru": "Детеныш эфирного паука",
+      "de": "Odspinnling"
+    },
+    "Genus": "Fera"
+  },
+  {
+    "Id": 1243,
+    "Sources": [],
+    "Names": {
+      "en": "Babymeow"
+    },
+    "Genus": "Special"
+  },
+  {
+    "Id": 1149,
+    "Sources": [],
+    "Names": {
+      "en": "Baikron",
+      "fr": "Bykron",
+      "ru": "Байкрон",
+      "de": "Mophad"
+    },
+    "Genus": "Special"
+  },
+  {
+    "Id": 1163,
+    "Sources": [
+      {
+        "NpcCode": 2400240,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      }
+    ],
+    "Names": {
+      "en": "Basilisk",
+      "fr": "Basilic",
+      "ru": "Василиск",
+      "de": "Basilisk"
+    },
+    "Genus": "Fera"
+  },
+  {
+    "Id": 1065,
+    "Sources": [
+      {
+        "NpcCode": 2100183,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2400920,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      }
+    ],
+    "Names": {
+      "en": "Biruta",
+      "fr": "Biruta",
+      "ru": "Бирут",
+      "de": "Biruta"
+    },
+    "Genus": "Cogni"
+  },
+  {
+    "Id": 1105,
+    "Sources": [
+      {
+        "NpcCode": 2400919,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      }
+    ],
+    "Names": {
+      "en": "Biruta Herbalist",
+      "fr": "Herboriste Biruta",
+      "ru": "Травник бирутов",
+      "de": "Kräutersammler (Biruta)"
+    },
+    "Genus": "Cogni"
+  },
+  {
+    "Id": 1001,
+    "Sources": [],
+    "Names": {
+      "en": "Black Dragon",
+      "fr": "Dragon noir",
+      "ru": "Черный дракон",
+      "de": "Schwarzer Drache"
+    },
+    "Genus": "Special"
+  },
+  {
+    "Id": 1058,
+    "Sources": [
+      {
+        "NpcCode": 2300312,
+        "Zone": "",
+        "Faction": "Other"
+      },
+      {
+        "NpcCode": 2310312,
+        "Zone": "",
+        "Faction": "Other"
+      },
+      {
+        "NpcCode": 2320312,
+        "Zone": "",
+        "Faction": "Other"
+      }
+    ],
+    "Names": {
+      "en": "Black Smoke Murute",
+      "fr": "Murute de fumée noire",
+      "ru": "Мурт черного дыма",
+      "de": "Schwarzrauch Murute"
+    },
+    "Genus": "Natura"
+  },
+  {
+    "Id": 1214,
+    "Sources": [
+      {
+        "NpcCode": 2100460,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2100807,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2400708,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      },
+      {
+        "NpcCode": 2600069,
+        "Zone": "Chaotic Lower Reshanta",
+        "Faction": "Other"
+      },
+      {
+        "NpcCode": 2600469,
+        "Zone": "",
+        "Faction": "Other"
+      }
+    ],
+    "Names": {
+      "en": "Black Spirit",
+      "fr": "Esprit des ténèbres",
+      "ru": "Темный дух",
+      "de": "Dunkler Naturgeist"
+    },
+    "Genus": "Natura"
+  },
+  {
+    "Id": 1110,
+    "Sources": [
+      {
+        "NpcCode": 2100454,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2400471,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      },
+      {
+        "NpcCode": 2600051,
+        "Zone": "Chaotic Lower Reshanta",
+        "Faction": "Other"
+      },
+      {
+        "NpcCode": 2600451,
+        "Zone": "",
+        "Faction": "Other"
+      },
+      {
+        "NpcCode": 2600513,
+        "Zone": "",
+        "Faction": "Other"
+      },
+      {
+        "NpcCode": 2600575,
+        "Zone": "",
+        "Faction": "Other"
+      },
+      {
+        "NpcCode": 2600585,
+        "Zone": "",
+        "Faction": "Other"
+      }
+    ],
+    "Names": {
+      "en": "Blue Kalgolem",
+      "fr": "Kalgolem bleu",
+      "ru": "Лазурный калькельм",
+      "de": "Blauer Kalgolem"
+    },
+    "Genus": "Varian"
+  },
+  {
+    "Id": 1181,
+    "Sources": [
+      {
+        "NpcCode": 2000954,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      },
+      {
+        "NpcCode": 2100217,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2100303,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2100740,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2400375,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      },
+      {
+        "NpcCode": 2400914,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      }
+    ],
+    "Names": {
+      "en": "Brax",
+      "fr": "Brax",
+      "ru": "Бракс",
+      "de": "Brax"
+    },
+    "Genus": "Fera"
+  },
+  {
+    "Id": 1157,
+    "Sources": [
+      {
+        "NpcCode": 2400275,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      },
+      {
+        "NpcCode": 2400412,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      },
+      {
+        "NpcCode": 2400418,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      },
+      {
+        "NpcCode": 2600119,
+        "Zone": "",
+        "Faction": "Other"
+      }
+    ],
+    "Names": {
+      "en": "Cadaver Cleaner",
+      "fr": "Nettoyeur de cadavre",
+      "ru": "Падальщик",
+      "de": "Leichenfresser"
+    },
+    "Genus": "Varian"
+  },
+  {
+    "Id": 1071,
+    "Sources": [
+      {
+        "NpcCode": 2400018,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      }
+    ],
+    "Names": {
+      "en": "Cadaver Insectoid",
+      "fr": "Insecte de cadavre",
+      "ru": "Трупный инсектоид",
+      "de": "Leicheninsektoid"
+    },
+    "Genus": "Fera"
+  },
+  {
+    "Id": 1041,
+    "Sources": [
+      {
+        "NpcCode": 2100911,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      }
+    ],
+    "Names": {
+      "en": "Cave Bat",
+      "fr": "Chauve-souris de grotte",
+      "ru": "Пещерная летучая мышь",
+      "de": "Fledermaus (Höhle)"
+    },
+    "Genus": "Fera"
+  },
+  {
+    "Id": 1251,
+    "Sources": [],
+    "Names": {
+      "en": "Chickpea"
+    },
+    "Genus": "Special"
+  },
+  {
+    "Id": 1217,
+    "Sources": [
+      {
+        "NpcCode": 2400009,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      }
+    ],
+    "Names": {
+      "en": "Congealed Drana",
+      "fr": "Drana solidifié",
+      "ru": "Свернувшаяся драна",
+      "de": "Geronnenes Drana"
+    },
+    "Genus": "Varian"
+  },
+  {
+    "Id": 1062,
+    "Sources": [
+      {
+        "NpcCode": 2100025,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2100717,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2600023,
+        "Zone": "Chaotic Lower Reshanta",
+        "Faction": "Other"
+      },
+      {
+        "NpcCode": 2600423,
+        "Zone": "",
+        "Faction": "Other"
+      },
+      {
+        "NpcCode": 2600539,
+        "Zone": "",
+        "Faction": "Other"
+      },
+      {
+        "NpcCode": 2600559,
+        "Zone": "",
+        "Faction": "Other"
+      }
+    ],
+    "Names": {
+      "en": "Contaminated Slime",
+      "fr": "Slime contaminé",
+      "ru": "Зараженный слизень",
+      "de": "Verseuchter Schleim"
+    },
+    "Genus": "Varian"
+  },
+  {
+    "Id": 1057,
+    "Sources": [],
+    "Names": {
+      "en": "Coradon",
+      "fr": "Coradon",
+      "ru": "Корадон",
+      "de": "Coradon"
+    },
+    "Genus": "Fera"
+  },
+  {
+    "Id": 1022,
+    "Sources": [
+      {
+        "NpcCode": 2100215,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2100608,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2101083,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2400327,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      },
+      {
+        "NpcCode": 2400809,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      }
+    ],
+    "Names": {
+      "en": "Crasaur",
+      "fr": "Crasaur",
+      "ru": "Файни",
+      "de": "Crasaur"
+    },
+    "Genus": "Fera"
+  },
+  {
+    "Id": 1039,
+    "Sources": [
+      {
+        "NpcCode": 2100037,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2100150,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2100799,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      }
+    ],
+    "Names": {
+      "en": "Crestlich",
+      "fr": "Crestlich",
+      "ru": "Крестлич",
+      "de": "Crestlich"
+    },
+    "Genus": "Fera"
+  },
+  {
+    "Id": 1216,
+    "Sources": [
+      {
+        "NpcCode": 2100600,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2100656,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      }
+    ],
+    "Names": {
+      "en": "Dark Spirit",
+      "fr": "Esprit obscur",
+      "ru": "Дух мрака",
+      "de": "Schattengeist"
+    },
+    "Genus": "Varian"
+  },
+  {
+    "Id": 1202,
+    "Sources": [
+      {
+        "NpcCode": 2100747,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2400004,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      },
+      {
+        "NpcCode": 2400378,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      },
+      {
+        "NpcCode": 2400391,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      },
+      {
+        "NpcCode": 2400911,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      }
+    ],
+    "Names": {
+      "en": "Decomposed Lupyllini",
+      "fr": "Lupyllini décomposé",
+      "ru": "Гнилостный руфиллин",
+      "de": "Korrumpierte Lupyllini"
+    },
+    "Genus": "Cogni"
+  },
+  {
+    "Id": 1081,
+    "Sources": [],
+    "Names": {
+      "en": "Dionae",
+      "fr": "Dionae",
+      "ru": "Дионея",
+      "de": "Dionae"
+    },
+    "Genus": "Natura"
+  },
+  {
+    "Id": 1142,
+    "Sources": [
+      {
+        "NpcCode": 2400312,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      }
+    ],
+    "Names": {
+      "en": "Distorted Mutant",
+      "fr": "Mutant déformé",
+      "ru": "Искаженный мутант",
+      "de": "Deformierter Mutant"
+    },
+    "Genus": "Varian"
+  },
+  {
+    "Id": 1195,
+    "Sources": [
+      {
+        "NpcCode": 2100867,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2400746,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      }
+    ],
+    "Names": {
+      "en": "Dracuni Herbalist",
+      "fr": "Herboriste Dracuni",
+      "ru": "Травник дракуни",
+      "de": "Kräutersammler (Dracuni)"
+    },
+    "Genus": "Cogni"
+  },
+  {
+    "Id": 1056,
+    "Sources": [
+      {
+        "NpcCode": 2100866,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2101014,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2400143,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      },
+      {
+        "NpcCode": 2400162,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      },
+      {
+        "NpcCode": 2400382,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      },
+      {
+        "NpcCode": 2400658,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      }
+    ],
+    "Names": {
+      "en": "Drakan Probe",
+      "fr": "Sondeur Drakan",
+      "ru": "Детектор драканов",
+      "de": "Sonde (Drakan)"
+    },
+    "Genus": "Varian"
+  },
+  {
+    "Id": 1014,
+    "Sources": [
+      {
+        "NpcCode": 2101002,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2101009,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2400359,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      },
+      {
+        "NpcCode": 2400587,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      },
+      {
+        "NpcCode": 2400655,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      },
+      {
+        "NpcCode": 2600052,
+        "Zone": "Chaotic Lower Reshanta",
+        "Faction": "Other"
+      }
+    ],
+    "Names": {
+      "en": "Drakan Watchdog",
+      "fr": "Chien de garde Drakan",
+      "ru": "Сторожевой пес драканов",
+      "de": "Wachhund (Drakan)"
+    },
+    "Genus": "Fera"
+  },
+  {
+    "Id": 1184,
+    "Sources": [
+      {
+        "NpcCode": 2100872,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2400384,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      },
+      {
+        "NpcCode": 2400591,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      }
+    ],
+    "Names": {
+      "en": "Drakan Watcher",
+      "fr": "Veilleur Drakan",
+      "ru": "Дозорщик драканов",
+      "de": "Wächter (Drakan)"
+    },
+    "Genus": "Cogni"
+  },
+  {
+    "Id": 1148,
+    "Sources": [
+      {
+        "NpcCode": 2400014,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      }
+    ],
+    "Names": {
+      "en": "Drakana Kalgolem",
+      "fr": "Kalgolem Drakana",
+      "ru": "Калькельм драканы",
+      "de": "Drakana-Kalgolem"
+    },
+    "Genus": "Varian"
+  },
+  {
+    "Id": 1160,
+    "Sources": [],
+    "Names": {
+      "en": "Drana Contaminant",
+      "fr": "Contaminé au Drana",
+      "ru": "Зараженная сущность драны",
+      "de": "Dranakontaminant"
+    },
+    "Genus": "Varian"
+  },
+  {
+    "Id": 1179,
+    "Sources": [
+      {
+        "NpcCode": 2400001,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      }
+    ],
+    "Names": {
+      "en": "Drana Mutant",
+      "fr": "Mutant de Drana",
+      "ru": "Мутант драны",
+      "de": "Dranamutant"
+    },
+    "Genus": "Varian"
+  },
+  {
+    "Id": 1153,
+    "Sources": [
+      {
+        "NpcCode": 2101135,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2110503,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2400834,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      }
+    ],
+    "Names": {
+      "en": "Drana Mutant Brute",
+      "fr": "Brute mutante de Drana",
+      "ru": "Мутировавший громила драны",
+      "de": "Drana-Mutantenbrecher"
+    },
+    "Genus": "Varian"
+  },
+  {
+    "Id": 1174,
+    "Sources": [
+      {
+        "NpcCode": 2110505,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2400010,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      }
+    ],
+    "Names": {
+      "en": "Drana Predator",
+      "fr": "Prédateur de Drana",
+      "ru": "Хищник драны",
+      "de": "Dranaverschlinger"
+    },
+    "Genus": "Varian"
+  },
+  {
+    "Id": 1128,
+    "Sources": [
+      {
+        "NpcCode": 2400015,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      }
+    ],
+    "Names": {
+      "en": "Drana Slime",
+      "fr": "Slime de Drana",
+      "ru": "Слизень драны",
+      "de": "Dranaschleim"
+    },
+    "Genus": "Varian"
+  },
+  {
+    "Id": 1131,
+    "Sources": [
+      {
+        "NpcCode": 2110502,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      }
+    ],
+    "Names": {
+      "en": "Drana Spore",
+      "fr": "Spore de Drana",
+      "ru": "Спора драны",
+      "de": "Dranaspore"
+    },
+    "Genus": "Natura"
+  },
+  {
+    "Id": 1129,
+    "Sources": [
+      {
+        "NpcCode": 2110501,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      }
+    ],
+    "Names": {
+      "en": "Drana Swarm",
+      "fr": "Essaim de Drana",
+      "ru": "Сворм драны",
+      "de": "Dranaschwarm"
+    },
+    "Genus": "Varian"
+  },
+  {
+    "Id": 1147,
+    "Sources": [
+      {
+        "NpcCode": 2100901,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2400116,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      },
+      {
+        "NpcCode": 2400161,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      },
+      {
+        "NpcCode": 2400380,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      }
+    ],
+    "Names": {
+      "en": "Dratona",
+      "fr": "Dratona",
+      "ru": "Дратон",
+      "de": "Dratona"
+    },
+    "Genus": "Cogni"
+  },
+  {
+    "Id": 1185,
+    "Sources": [],
+    "Names": {
+      "en": "Dratona Tinkerer",
+      "fr": "Tâcheron Dratona",
+      "ru": "Подсобный рабочий дратонов",
+      "de": "Knecht (Dratona)"
+    },
+    "Genus": "Cogni"
+  },
+  {
+    "Id": 1102,
+    "Sources": [],
+    "Names": {
+      "en": "Dried Up Forest Guardian",
+      "fr": "Gardien de la forêt desséchée",
+      "ru": "Иссушенный хранитель леса",
+      "de": "Waldhüter (Verdorrter Wald)"
+    },
+    "Genus": "Natura"
+  },
+  {
+    "Id": 1210,
+    "Sources": [
+      {
+        "NpcCode": 2100179,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2600113,
+        "Zone": "",
+        "Faction": "Other"
+      },
+      {
+        "NpcCode": 2600143,
+        "Zone": "",
+        "Faction": "Other"
+      }
+    ],
+    "Names": {
+      "en": "Dry Leaf Agrint",
+      "fr": "Agrint à feuilles sèches",
+      "ru": "Сухолистный агринт",
+      "de": "Trockenblattagrint"
+    },
+    "Genus": "Natura"
+  },
+  {
+    "Id": 1173,
+    "Sources": [
+      {
+        "NpcCode": 2400613,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      }
+    ],
+    "Names": {
+      "en": "Duduka Trebuchet Worker",
+      "fr": "Catapulteur Duduka",
+      "ru": "Пращник дудуков",
+      "de": "Schleuderer (Duduka)"
+    },
+    "Genus": "Varian"
+  },
+  {
+    "Id": 1172,
+    "Sources": [
+      {
+        "NpcCode": 2400612,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      }
+    ],
+    "Names": {
+      "en": "Duduka Worker",
+      "fr": "Travailleur Duduka",
+      "ru": "Рабочий дудуков",
+      "de": "Arbeiter (Duduka)"
+    },
+    "Genus": "Varian"
+  },
+  {
+    "Id": 1196,
+    "Sources": [
+      {
+        "NpcCode": 2406035,
+        "Zone": "",
+        "Faction": "Other"
+      }
+    ],
+    "Names": {
+      "en": "Elite Dratona",
+      "fr": "Dratona d'élite",
+      "ru": "Элитный дратон",
+      "de": "Dratona (Elite)"
+    },
+    "Genus": "Cogni"
+  },
+  {
+    "Id": 1206,
+    "Sources": [
+      {
+        "NpcCode": 2100718,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      }
+    ],
+    "Names": {
+      "en": "Elite Guardite",
+      "fr": "Guardite d'élite",
+      "ru": "Элитный гардит",
+      "de": "Gardith (Elite)"
+    },
+    "Genus": "Varian"
+  },
+  {
+    "Id": 1099,
+    "Sources": [
+      {
+        "NpcCode": 2406071,
+        "Zone": "",
+        "Faction": "Other"
+      }
+    ],
+    "Names": {
+      "en": "Elite Karnif",
+      "fr": "Karnif d'élite",
+      "ru": "Элитный каллиф",
+      "de": "Karnif (Elite)"
+    },
+    "Genus": "Fera"
+  },
+  {
+    "Id": 1032,
+    "Sources": [],
+    "Names": {
+      "en": "Elite Keneire",
+      "fr": "Keneire d'élite",
+      "ru": "Элитный кенейр",
+      "de": "Keneire (Elite)"
+    },
+    "Genus": "Fera"
+  },
+  {
+    "Id": 1156,
+    "Sources": [
+      {
+        "NpcCode": 2100079,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      }
+    ],
+    "Names": {
+      "en": "Elite Klaw",
+      "fr": "Klaw d'élite",
+      "ru": "Элитный ньют",
+      "de": "Klaw (Elite)"
+    },
+    "Genus": "Cogni"
+  },
+  {
+    "Id": 1033,
+    "Sources": [
+      {
+        "NpcCode": 2100557,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2100569,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2400605,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      }
+    ],
+    "Names": {
+      "en": "Elite Manduri Fighter",
+      "fr": "Assaillant Manduri d'élite",
+      "ru": "Элитный задира мандури",
+      "de": "Mandurikämpfer (Elite)"
+    },
+    "Genus": "Cogni"
+  },
+  {
+    "Id": 1190,
+    "Sources": [],
+    "Names": {
+      "en": "Elite Poisonous Spore Fungen",
+      "fr": "Fungen à spores toxiques d'élite",
+      "ru": "Элитный ядовитый споровый фунгус",
+      "de": "Giftsporenfungen (Elite)"
+    },
+    "Genus": "Natura"
+  },
+  {
+    "Id": 1182,
+    "Sources": [],
+    "Names": {
+      "en": "Elite Soulless Corpse Gnat",
+      "fr": "Tipule cadavérique sans âme d'élite",
+      "ru": "Элитный бездушный трупный кровосос",
+      "de": "Seelenlose Leichenschnake (Elite)"
+    },
+    "Genus": "Varian"
+  },
+  {
+    "Id": 1043,
+    "Sources": [],
+    "Names": {
+      "en": "Elite Ursus",
+      "fr": "Ursus d'élite",
+      "ru": "Элитный урсус",
+      "de": "Ursus (Elite)"
+    },
+    "Genus": "Fera"
+  },
+  {
+    "Id": 1108,
+    "Sources": [
+      {
+        "NpcCode": 2100097,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      }
+    ],
+    "Names": {
+      "en": "Enhanced Krall Combatant",
+      "fr": "Combattant d'amélioration Krall",
+      "ru": "Усиленный борец краллов",
+      "de": "Verstärkter Kampfsoldat (Krall)"
+    },
+    "Genus": "Cogni"
+  },
+  {
+    "Id": 1109,
+    "Sources": [
+      {
+        "NpcCode": 2100072,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      }
+    ],
+    "Names": {
+      "en": "Enhanced Krall Sentry",
+      "fr": "Guet d'amélioration Krall",
+      "ru": "Усиленный пограничник краллов",
+      "de": "Verstärkter Wachsoldat (Krall)"
+    },
+    "Genus": "Cogni"
+  },
+  {
+    "Id": 1134,
+    "Sources": [
+      {
+        "NpcCode": 2400941,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      },
+      {
+        "NpcCode": 2600061,
+        "Zone": "Chaotic Lower Reshanta",
+        "Faction": "Other"
+      },
+      {
+        "NpcCode": 2600461,
+        "Zone": "",
+        "Faction": "Other"
+      }
+    ],
+    "Names": {
+      "en": "Eternal Coradon",
+      "fr": "Coradon de l'éternité",
+      "ru": "Корадон вечности",
+      "de": "Ewiger Coradon"
+    },
+    "Genus": "Fera"
+  },
+  {
+    "Id": 1218,
+    "Sources": [
+      {
+        "NpcCode": 2400478,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      }
+    ],
+    "Names": {
+      "en": "Faded Drana",
+      "fr": "Drana terne",
+      "ru": "Поблекший драна",
+      "de": "Verblasstes Drana"
+    },
+    "Genus": "Varian"
+  },
+  {
+    "Id": 1161,
+    "Sources": [
+      {
+        "NpcCode": 2400479,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      }
+    ],
+    "Names": {
+      "en": "Faded Floater",
+      "fr": "Flotteur terne",
+      "ru": "Поблекшая парящая сущность",
+      "de": "Verblasster Schweber"
+    },
+    "Genus": "Varian"
+  },
+  {
+    "Id": 1180,
+    "Sources": [
+      {
+        "NpcCode": 2400477,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      },
+      {
+        "NpcCode": 2600430,
+        "Zone": "",
+        "Faction": "Other"
+      },
+      {
+        "NpcCode": 2600505,
+        "Zone": "",
+        "Faction": "Other"
+      },
+      {
+        "NpcCode": 2600534,
+        "Zone": "",
+        "Faction": "Other"
+      },
+      {
+        "NpcCode": 2600540,
+        "Zone": "",
+        "Faction": "Other"
+      },
+      {
+        "NpcCode": 2600554,
+        "Zone": "",
+        "Faction": "Other"
+      },
+      {
+        "NpcCode": 2600560,
+        "Zone": "",
+        "Faction": "Other"
+      }
+    ],
+    "Names": {
+      "en": "Faded Mutant",
+      "fr": "Mutant terne",
+      "ru": "Поблекший мутант",
+      "de": "Verblasster Mutant"
+    },
+    "Genus": "Varian"
+  },
+  {
+    "Id": 1154,
+    "Sources": [
+      {
+        "NpcCode": 2400476,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      },
+      {
+        "NpcCode": 2600432,
+        "Zone": "",
+        "Faction": "Other"
+      },
+      {
+        "NpcCode": 2600541,
+        "Zone": "",
+        "Faction": "Other"
+      },
+      {
+        "NpcCode": 2600561,
+        "Zone": "",
+        "Faction": "Other"
+      }
+    ],
+    "Names": {
+      "en": "Faded Mutant Brute",
+      "fr": "Brute mutante terne",
+      "ru": "Поблекший мутировавший громила",
+      "de": "Verblasster Mutantenbrecher"
+    },
+    "Genus": "Varian"
+  },
+  {
+    "Id": 1175,
+    "Sources": [
+      {
+        "NpcCode": 2400480,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      }
+    ],
+    "Names": {
+      "en": "Faded Predator",
+      "fr": "Prédateur terne",
+      "ru": "Поблекший хищник",
+      "de": "Verblasster Verschlinger"
+    },
+    "Genus": "Varian"
+  },
+  {
+    "Id": 1199,
+    "Sources": [],
+    "Names": {
+      "en": "Flame Barghest",
+      "fr": "Balgest de flamme",
+      "ru": "Пламенный балгест",
+      "de": "Flammenbalgest"
+    },
+    "Genus": "Fera"
+  },
+  {
+    "Id": 1167,
+    "Sources": [],
+    "Names": {
+      "en": "Flame Stone Guardian Statue",
+      "fr": "Statue gardienne de Pierre de flamme",
+      "ru": "Охранная статуя пламенного камня",
+      "de": "Wächterstatue (Flammenstein)"
+    },
+    "Genus": "Varian"
+  },
+  {
+    "Id": 1247,
+    "Sources": [],
+    "Names": {
+      "en": "Fluffball Haechi"
+    },
+    "Genus": "Special"
+  },
+  {
+    "Id": 1133,
+    "Sources": [],
+    "Names": {
+      "en": "Forest Dionae",
+      "fr": "Dionae de la forêt",
+      "ru": "Дионея леса",
+      "de": "Dionae (Wald)"
+    },
+    "Genus": "Natura"
+  },
+  {
+    "Id": 1101,
+    "Sources": [
+      {
+        "NpcCode": 2100660,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2600103,
+        "Zone": "",
+        "Faction": "Other"
+      },
+      {
+        "NpcCode": 2600133,
+        "Zone": "",
+        "Faction": "Other"
+      },
+      {
+        "NpcCode": 2600454,
+        "Zone": "",
+        "Faction": "Other"
+      }
+    ],
+    "Names": {
+      "en": "Forest Guardian",
+      "fr": "Gardien de la forêt",
+      "ru": "Хранитель леса",
+      "de": "Waldhüter"
+    },
+    "Genus": "Natura"
+  },
+  {
+    "Id": 1140,
+    "Sources": [
+      {
+        "NpcCode": 2100350,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2400225,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      }
+    ],
+    "Names": {
+      "en": "Forest Monster",
+      "fr": "Monstre de la forêt",
+      "ru": "Чудовище леса",
+      "de": "Waldmonster"
+    },
+    "Genus": "Varian"
+  },
+  {
+    "Id": 1003,
+    "Sources": [
+      {
+        "NpcCode": 2100601,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2100662,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      }
+    ],
+    "Names": {
+      "en": "Forest Specter",
+      "fr": "Spectre de la forêt",
+      "ru": "Спектр леса",
+      "de": "Waldgeistwesen"
+    },
+    "Genus": "Natura"
+  },
+  {
+    "Id": 1048,
+    "Sources": [
+      {
+        "NpcCode": 2100022,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2100142,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2100555,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2100611,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2400337,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      }
+    ],
+    "Names": {
+      "en": "Forest Spirit",
+      "fr": "Esprit de la forêt",
+      "ru": "Дух леса",
+      "de": "Waldgeist"
+    },
+    "Genus": "Natura"
+  },
+  {
+    "Id": 1004,
+    "Sources": [
+      {
+        "NpcCode": 2100163,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2400254,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      },
+      {
+        "NpcCode": 2400414,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      }
+    ],
+    "Names": {
+      "en": "Fossa",
+      "fr": "Fossa",
+      "ru": "Фосса",
+      "de": "Fossa"
+    },
+    "Genus": "Fera"
+  },
+  {
+    "Id": 1225,
+    "Sources": [],
+    "Names": {
+      "en": "Frosty Snowman"
+    },
+    "Genus": "Special"
+  },
+  {
+    "Id": 1086,
+    "Sources": [
+      {
+        "NpcCode": 2100456,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      }
+    ],
+    "Names": {
+      "en": "Fungen",
+      "fr": "Fungen",
+      "ru": "Фунгус",
+      "de": "Fungen"
+    },
+    "Genus": "Natura"
+  },
+  {
+    "Id": 1012,
+    "Sources": [
+      {
+        "NpcCode": 2100041,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      }
+    ],
+    "Names": {
+      "en": "Fungie",
+      "fr": "Fungie",
+      "ru": "Фунги",
+      "de": "Fungie"
+    },
+    "Genus": "Natura"
+  },
+  {
+    "Id": 1191,
+    "Sources": [],
+    "Names": {
+      "en": "Furious Feruk",
+      "fr": "Feruk furieux",
+      "ru": "Бешеный Ферк",
+      "de": "Rasender Feruk"
+    },
+    "Genus": "Cogni"
+  },
+  {
+    "Id": 1146,
+    "Sources": [],
+    "Names": {
+      "en": "Gatekeeper Pinopi",
+      "fr": "Pinopi le gardien des portes",
+      "ru": "Привратник пинопи",
+      "de": "Torwächter Pinopi"
+    },
+    "Genus": "Varian"
+  },
+  {
+    "Id": 1059,
+    "Sources": [
+      {
+        "NpcCode": 2100551,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      }
+    ],
+    "Names": {
+      "en": "Giant Bee",
+      "fr": "Abeille géante",
+      "ru": "Шершень",
+      "de": "Königsbiene"
+    },
+    "Genus": "Fera"
+  },
+  {
+    "Id": 1034,
+    "Sources": [
+      {
+        "NpcCode": 2100015,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2100796,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2100987,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2100993,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2400341,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      },
+      {
+        "NpcCode": 2400466,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      }
+    ],
+    "Names": {
+      "en": "Giant Sparkie",
+      "fr": "Sparkie géant",
+      "ru": "Гигантский спарки",
+      "de": "Riesensparkie"
+    },
+    "Genus": "Fera"
+  },
+  {
+    "Id": 1250,
+    "Sources": [],
+    "Names": {
+      "en": "Glossy Pink Puppy"
+    },
+    "Genus": "Special"
+  },
+  {
+    "Id": 1152,
+    "Sources": [],
+    "Names": {
+      "en": "Golden Baikron",
+      "fr": "Bykron doré",
+      "ru": "Золотой байкрон",
+      "de": "Goldmophad"
+    },
+    "Genus": "Special"
+  },
+  {
+    "Id": 1055,
+    "Sources": [],
+    "Names": {
+      "en": "Grave Rat",
+      "fr": "Rat de tombe",
+      "ru": "Крыса гробницы",
+      "de": "Ratte (Grab)"
+    },
+    "Genus": "Fera"
+  },
+  {
+    "Id": 1050,
+    "Sources": [
+      {
+        "NpcCode": 2100650,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2101125,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2400307,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      }
+    ],
+    "Names": {
+      "en": "Gravi",
+      "fr": "Gravi",
+      "ru": "Грави",
+      "de": "Gravi"
+    },
+    "Genus": "Natura"
+  },
+  {
+    "Id": 1194,
+    "Sources": [
+      {
+        "NpcCode": 2100712,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      }
+    ],
+    "Names": {
+      "en": "Guardite",
+      "fr": "Guardite",
+      "ru": "Гардит",
+      "de": "Gardith"
+    },
+    "Genus": "Varian"
+  },
+  {
+    "Id": 1077,
+    "Sources": [
+      {
+        "NpcCode": 2300104,
+        "Zone": "",
+        "Faction": "Other"
+      },
+      {
+        "NpcCode": 2310104,
+        "Zone": "",
+        "Faction": "Other"
+      },
+      {
+        "NpcCode": 2320104,
+        "Zone": "",
+        "Faction": "Other"
+      }
+    ],
+    "Names": {
+      "en": "Harcon",
+      "fr": "Harcon",
+      "ru": "Харкон",
+      "de": "Harcon"
+    },
+    "Genus": "Varian"
+  },
+  {
+    "Id": 1223,
+    "Sources": [],
+    "Names": {
+      "en": "Infernal Steed"
+    },
+    "Genus": "Special"
+  },
+  {
+    "Id": 1165,
+    "Sources": [
+      {
+        "NpcCode": 2100653,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2101102,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2400823,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      }
+    ],
+    "Names": {
+      "en": "Intermediate Earth Spirit",
+      "fr": "Esprit de la terre intermédiaire",
+      "ru": "Опытный дух земли",
+      "de": "Mittlerer Erdgeist"
+    },
+    "Genus": "Natura"
+  },
+  {
+    "Id": 1187,
+    "Sources": [
+      {
+        "NpcCode": 2101100,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2400748,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      },
+      {
+        "NpcCode": 2400821,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      }
+    ],
+    "Names": {
+      "en": "Intermediate Fire Spirit",
+      "fr": "Esprit du feu intermédiaire",
+      "ru": "Опытный дух огня",
+      "de": "Mittlerer Feuergeist"
+    },
+    "Genus": "Natura"
+  },
+  {
+    "Id": 1169,
+    "Sources": [
+      {
+        "NpcCode": 2100657,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2101101,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2400738,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      },
+      {
+        "NpcCode": 2400822,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      }
+    ],
+    "Names": {
+      "en": "Intermediate Water Spirit",
+      "fr": "Esprit de l'eau intermédiaire",
+      "ru": "Опытный дух воды",
+      "de": "Mittlerer Wassergeist"
+    },
+    "Genus": "Natura"
+  },
+  {
+    "Id": 1094,
+    "Sources": [
+      {
+        "NpcCode": 2100658,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2101103,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2400824,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      }
+    ],
+    "Names": {
+      "en": "Intermediate Wind Spirit",
+      "fr": "Esprit du vent intermédiaire",
+      "ru": "Опытный дух воздуха",
+      "de": "Mittlerer Windgeist"
+    },
+    "Genus": "Natura"
+  },
+  {
+    "Id": 1015,
+    "Sources": [
+      {
+        "NpcCode": 2101021,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2400736,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      },
+      {
+        "NpcCode": 2400905,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      },
+      {
+        "NpcCode": 2400934,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      }
+    ],
+    "Names": {
+      "en": "Kailin",
+      "fr": "Kailin",
+      "ru": "Каилин",
+      "de": "Kailin"
+    },
+    "Genus": "Fera"
+  },
+  {
+    "Id": 1084,
+    "Sources": [
+      {
+        "NpcCode": 2100002,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2100700,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2400328,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      },
+      {
+        "NpcCode": 2600070,
+        "Zone": "Chaotic Lower Reshanta",
+        "Faction": "Other"
+      },
+      {
+        "NpcCode": 2600470,
+        "Zone": "",
+        "Faction": "Other"
+      }
+    ],
+    "Names": {
+      "en": "Kalgolem",
+      "fr": "Kalgolem",
+      "ru": "Калькельм",
+      "de": "Kalgolem"
+    },
+    "Genus": "Varian"
+  },
+  {
+    "Id": 1097,
+    "Sources": [
+      {
+        "NpcCode": 2100174,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2100348,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2100349,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2100742,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2100752,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2100802,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2100805,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      }
+    ],
+    "Names": {
+      "en": "Karnif",
+      "fr": "Karnif",
+      "ru": "Каллиф",
+      "de": "Karnif"
+    },
+    "Genus": "Fera"
+  },
+  {
+    "Id": 1009,
+    "Sources": [],
+    "Names": {
+      "en": "Kernon",
+      "fr": "Kernon",
+      "ru": "Кернон",
+      "de": "Kernon"
+    },
+    "Genus": "Fera"
+  },
+  {
+    "Id": 1162,
+    "Sources": [
+      {
+        "NpcCode": 2101075,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2101079,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2400801,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      }
+    ],
+    "Names": {
+      "en": "Kerubar",
+      "fr": "Kérubar",
+      "ru": "Керубим",
+      "de": "Kerubar"
+    },
+    "Genus": "Cogni"
+  },
+  {
+    "Id": 1170,
+    "Sources": [
+      {
+        "NpcCode": 2101076,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2101080,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2400802,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      }
+    ],
+    "Names": {
+      "en": "Kerubian",
+      "fr": "Kérubian",
+      "ru": "Керуб",
+      "de": "Kerubian"
+    },
+    "Genus": "Cogni"
+  },
+  {
+    "Id": 1171,
+    "Sources": [
+      {
+        "NpcCode": 2101077,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2400803,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      }
+    ],
+    "Names": {
+      "en": "Kerubiel",
+      "fr": "Kérubiel",
+      "ru": "Керубиэль",
+      "de": "Kerubiel"
+    },
+    "Genus": "Cogni"
+  },
+  {
+    "Id": 1005,
+    "Sources": [
+      {
+        "NpcCode": 2100078,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2600029,
+        "Zone": "Chaotic Lower Reshanta",
+        "Faction": "Other"
+      },
+      {
+        "NpcCode": 2600429,
+        "Zone": "",
+        "Faction": "Other"
+      },
+      {
+        "NpcCode": 2600504,
+        "Zone": "",
+        "Faction": "Other"
+      },
+      {
+        "NpcCode": 2600538,
+        "Zone": "",
+        "Faction": "Other"
+      },
+      {
+        "NpcCode": 2600558,
+        "Zone": "",
+        "Faction": "Other"
+      }
+    ],
+    "Names": {
+      "en": "Klaw",
+      "fr": "Klaw",
+      "ru": "Ньют",
+      "de": "Klaw"
+    },
+    "Genus": "Cogni"
+  },
+  {
+    "Id": 1029,
+    "Sources": [
+      {
+        "NpcCode": 2400313,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      },
+      {
+        "NpcCode": 2600002,
+        "Zone": "Chaotic Lower Reshanta",
+        "Faction": "Other"
+      },
+      {
+        "NpcCode": 2600012,
+        "Zone": "Chaotic Lower Reshanta",
+        "Faction": "Other"
+      },
+      {
+        "NpcCode": 2600402,
+        "Zone": "",
+        "Faction": "Other"
+      },
+      {
+        "NpcCode": 2600412,
+        "Zone": "",
+        "Faction": "Other"
+      }
+    ],
+    "Names": {
+      "en": "Klaw Scout",
+      "fr": "Éclaireur Klaw",
+      "ru": "Солдат-разведчик ньютов",
+      "de": "Aufklärer (Klaw)"
+    },
+    "Genus": "Cogni"
+  },
+  {
+    "Id": 1031,
+    "Sources": [
+      {
+        "NpcCode": 2100157,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      }
+    ],
+    "Names": {
+      "en": "Konutin Worker",
+      "fr": "Travailleur Konutin",
+      "ru": "Рабочий конути",
+      "de": "Arbeiter (Konutin)"
+    },
+    "Genus": "Natura"
+  },
+  {
+    "Id": 1002,
+    "Sources": [
+      {
+        "NpcCode": 2100075,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2100480,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2100914,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      }
+    ],
+    "Names": {
+      "en": "Krall Laborer",
+      "fr": "Ouvrier Krall",
+      "ru": "Каторжник краллов",
+      "de": "Fronarbeiter (Krall)"
+    },
+    "Genus": "Cogni"
+  },
+  {
+    "Id": 1026,
+    "Sources": [
+      {
+        "NpcCode": 2100073,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2100910,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2101005,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      }
+    ],
+    "Names": {
+      "en": "Krall Warrior",
+      "fr": "Guerrier Krall",
+      "ru": "Воин краллов",
+      "de": "Krieger (Krall)"
+    },
+    "Genus": "Cogni"
+  },
+  {
+    "Id": 1017,
+    "Sources": [
+      {
+        "NpcCode": 2100074,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2100855,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      }
+    ],
+    "Names": {
+      "en": "Krall Warshaman",
+      "fr": "Chaman Krall",
+      "ru": "Боевой шаман краллов",
+      "de": "Schamane (Krall)"
+    },
+    "Genus": "Cogni"
+  },
+  {
+    "Id": 1028,
+    "Sources": [],
+    "Names": {
+      "en": "Krao Mutant",
+      "fr": "Mutant Krao",
+      "ru": "Мутант крао",
+      "de": "Kraomutant"
+    },
+    "Genus": "Varian"
+  },
+  {
+    "Id": 1107,
+    "Sources": [],
+    "Names": {
+      "en": "Krao Seal Guardian",
+      "fr": "Gardien du sceau Krao",
+      "ru": "Хранитель печати крао",
+      "de": "Krao-Siegelhüter"
+    },
+    "Genus": "Varian"
+  },
+  {
+    "Id": 1068,
+    "Sources": [],
+    "Names": {
+      "en": "Krao Test Subject",
+      "fr": "Cobaye Krao",
+      "ru": "Подопытный крао",
+      "de": "Kraoversuchsobjekt"
+    },
+    "Genus": "Varian"
+  },
+  {
+    "Id": 1115,
+    "Sources": [
+      {
+        "NpcCode": 2101139,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2400833,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      }
+    ],
+    "Names": {
+      "en": "Kuru Overseer",
+      "fr": "Superviseur Kuru",
+      "ru": "Надзиратель куру",
+      "de": "Aufseher (Kuru)"
+    },
+    "Genus": "Cogni"
+  },
+  {
+    "Id": 1075,
+    "Sources": [
+      {
+        "NpcCode": 2100181,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2101134,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2101137,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2400832,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      }
+    ],
+    "Names": {
+      "en": "Kuru Tinkerer",
+      "fr": "Tâcheron Kuru",
+      "ru": "Подсобный рабочий куру",
+      "de": "Knecht (Kuru)"
+    },
+    "Genus": "Cogni"
+  },
+  {
+    "Id": 1074,
+    "Sources": [
+      {
+        "NpcCode": 2100180,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2100964,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2101133,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2101136,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2400831,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      }
+    ],
+    "Names": {
+      "en": "Kuru Worker",
+      "fr": "Travailleur Kuru",
+      "ru": "Рабочий куру",
+      "de": "Arbeiter (Kuru)"
+    },
+    "Genus": "Cogni"
+  },
+  {
+    "Id": 1052,
+    "Sources": [
+      {
+        "NpcCode": 2100285,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2100651,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2400342,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      }
+    ],
+    "Names": {
+      "en": "Large Leaf Gravi",
+      "fr": "Gravi à grandes feuilles",
+      "ru": "Крупнолистный грави",
+      "de": "Großblattgravi"
+    },
+    "Genus": "Natura"
+  },
+  {
+    "Id": 1164,
+    "Sources": [
+      {
+        "NpcCode": 2101089,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      }
+    ],
+    "Names": {
+      "en": "Lesser Earth Spirit",
+      "fr": "Esprit de la terre inférieur",
+      "ru": "Младший дух земли",
+      "de": "Geringer Erdgeist"
+    },
+    "Genus": "Natura"
+  },
+  {
+    "Id": 1213,
+    "Sources": [
+      {
+        "NpcCode": 2101087,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2400325,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      }
+    ],
+    "Names": {
+      "en": "Lesser Fire Spirit",
+      "fr": "Esprit du feu inférieur",
+      "ru": "Младший дух огня",
+      "de": "Geringer Feuergeist"
+    },
+    "Genus": "Natura"
+  },
+  {
+    "Id": 1168,
+    "Sources": [
+      {
+        "NpcCode": 2100231,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2101088,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      }
+    ],
+    "Names": {
+      "en": "Lesser Water Spirit",
+      "fr": "Esprit de l'eau inférieur",
+      "ru": "Младший дух воды",
+      "de": "Geringer Wassergeist"
+    },
+    "Genus": "Natura"
+  },
+  {
+    "Id": 1092,
+    "Sources": [
+      {
+        "NpcCode": 2100605,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2101096,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2400324,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      }
+    ],
+    "Names": {
+      "en": "Lesser Wind Spirit",
+      "fr": "Esprit du vent inférieur",
+      "ru": "Младший дух воздуха",
+      "de": "Geringer Windgeist"
+    },
+    "Genus": "Natura"
+  },
+  {
+    "Id": 1236,
+    "Sources": [],
+    "Names": {
+      "en": "Luminous Golden Unicorn"
+    },
+    "Genus": "Special"
+  },
+  {
+    "Id": 1036,
+    "Sources": [
+      {
+        "NpcCode": 2100746,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      }
+    ],
+    "Names": {
+      "en": "Lupyllini",
+      "fr": "Lupyllini",
+      "ru": "Руфиллин",
+      "de": "Lupyllini"
+    },
+    "Genus": "Fera"
+  },
+  {
+    "Id": 1051,
+    "Sources": [
+      {
+        "NpcCode": 2100659,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2101126,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2400329,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      },
+      {
+        "NpcCode": 2400731,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      }
+    ],
+    "Names": {
+      "en": "Magic Gravi",
+      "fr": "Gravi magique",
+      "ru": "Магический грави",
+      "de": "Magiegravi"
+    },
+    "Genus": "Natura"
+  },
+  {
+    "Id": 1037,
+    "Sources": [
+      {
+        "NpcCode": 2100151,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2100750,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      }
+    ],
+    "Names": {
+      "en": "Male Crestlich",
+      "fr": "Crestlich mâle",
+      "ru": "Крестлич (самец)",
+      "de": "Crestlichhahn"
+    },
+    "Genus": "Fera"
+  },
+  {
+    "Id": 1010,
+    "Sources": [
+      {
+        "NpcCode": 2110506,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2400617,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      }
+    ],
+    "Names": {
+      "en": "Manduri Fighter",
+      "fr": "Assaillant Manduri",
+      "ru": "Задира мандури",
+      "de": "Kämpfer (Manduri)"
+    },
+    "Genus": "Cogni"
+  },
+  {
+    "Id": 1104,
+    "Sources": [
+      {
+        "NpcCode": 2100816,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2110507,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2400615,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      }
+    ],
+    "Names": {
+      "en": "Manduri Trebuchet Worker",
+      "fr": "Frondeur Manduri",
+      "ru": "Метатель мандури",
+      "de": "Schleuderer (Manduri)"
+    },
+    "Genus": "Cogni"
+  },
+  {
+    "Id": 1141,
+    "Sources": [
+      {
+        "NpcCode": 2100021,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2600426,
+        "Zone": "",
+        "Faction": "Other"
+      },
+      {
+        "NpcCode": 2600502,
+        "Zone": "",
+        "Faction": "Other"
+      },
+      {
+        "NpcCode": 2600532,
+        "Zone": "",
+        "Faction": "Other"
+      },
+      {
+        "NpcCode": 2600552,
+        "Zone": "",
+        "Faction": "Other"
+      }
+    ],
+    "Names": {
+      "en": "Marsh Targon",
+      "fr": "Targon du marais",
+      "ru": "Болотный таргон",
+      "de": "Targon (Sümpfe)"
+    },
+    "Genus": "Varian"
+  },
+  {
+    "Id": 1098,
+    "Sources": [
+      {
+        "NpcCode": 2100070,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2100096,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2100130,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2100481,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2600004,
+        "Zone": "Chaotic Lower Reshanta",
+        "Faction": "Other"
+      },
+      {
+        "NpcCode": 2600014,
+        "Zone": "Chaotic Lower Reshanta",
+        "Faction": "Other"
+      },
+      {
+        "NpcCode": 2600404,
+        "Zone": "",
+        "Faction": "Other"
+      },
+      {
+        "NpcCode": 2600414,
+        "Zone": "",
+        "Faction": "Other"
+      },
+      {
+        "NpcCode": 2600482,
+        "Zone": "",
+        "Faction": "Other"
+      },
+      {
+        "NpcCode": 2600483,
+        "Zone": "",
+        "Faction": "Other"
+      },
+      {
+        "NpcCode": 2600492,
+        "Zone": "",
+        "Faction": "Other"
+      },
+      {
+        "NpcCode": 2600493,
+        "Zone": "",
+        "Faction": "Other"
+      }
+    ],
+    "Names": {
+      "en": "Modified Karnif",
+      "fr": "Karnif modifié",
+      "ru": "Модифицированный каллиф",
+      "de": "Modifizierter Karnif"
+    },
+    "Genus": "Fera"
+  },
+  {
+    "Id": 1201,
+    "Sources": [
+      {
+        "NpcCode": 2100815,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2101086,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2400814,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      }
+    ],
+    "Names": {
+      "en": "Modified Lupyllini",
+      "fr": "Lupyllini modifié",
+      "ru": "Модифицированный руфиллин",
+      "de": "Modifizierte Lupyllini"
+    },
+    "Genus": "Cogni"
+  },
+  {
+    "Id": 1242,
+    "Sources": [],
+    "Names": {
+      "en": "Moon"
+    },
+    "Genus": "Special"
+  },
+  {
+    "Id": 1176,
+    "Sources": [
+      {
+        "NpcCode": 2400707,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      },
+      {
+        "NpcCode": 2400481,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      }
+    ],
+    "Names": {
+      "en": "Mudthorn",
+      "fr": "Mudthorn",
+      "ru": "Вайолант",
+      "de": "Mudthorn"
+    },
+    "Genus": "Varian"
+  },
+  {
+    "Id": 1138,
+    "Sources": [],
+    "Names": {
+      "en": "Mumu Overseer",
+      "fr": "Superviseur Mumu",
+      "ru": "Надзиратель му-му",
+      "de": "Aufseher (Momo)"
+    },
+    "Genus": "Cogni"
+  },
+  {
+    "Id": 1054,
+    "Sources": [
+      {
+        "NpcCode": 2400350,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      },
+      {
+        "NpcCode": 2400570,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      },
+      {
+        "NpcCode": 2400606,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      }
+    ],
+    "Names": {
+      "en": "Mumu Warrior",
+      "fr": "Guerrier Mumu",
+      "ru": "Воин му-му",
+      "de": "Krieger (Momo)"
+    },
+    "Genus": "Cogni"
+  },
+  {
+    "Id": 1137,
+    "Sources": [
+      {
+        "NpcCode": 2400351,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      },
+      {
+        "NpcCode": 2400390,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      }
+    ],
+    "Names": {
+      "en": "Mumu Worker",
+      "fr": "Travailleur Mumu",
+      "ru": "Рабочий му-му",
+      "de": "Arbeiter (Momo)"
+    },
+    "Genus": "Cogni"
+  },
+  {
+    "Id": 1025,
+    "Sources": [
+      {
+        "NpcCode": 2100030,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2100663,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2100745,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2400744,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      }
+    ],
+    "Names": {
+      "en": "Mutated Aberrant Odyle Spider",
+      "fr": "Araignée à Od variante mutée",
+      "ru": "Мутировавший подвид эфирного паука",
+      "de": "Mutierte Odspinnen-Abart"
+    },
+    "Genus": "Fera"
+  },
+  {
+    "Id": 1130,
+    "Sources": [
+      {
+        "NpcCode": 2100554,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      }
+    ],
+    "Names": {
+      "en": "Mutated Cadaver Insectoid",
+      "fr": "Insecte de cadavre muté",
+      "ru": "Мутировавший трупный инсектоид",
+      "de": "Mutiertes Leicheninsektoid"
+    },
+    "Genus": "Fera"
+  },
+  {
+    "Id": 1144,
+    "Sources": [
+      {
+        "NpcCode": 2400214,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      },
+      {
+        "NpcCode": 2400751,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      }
+    ],
+    "Names": {
+      "en": "Mutated Forest Guardian",
+      "fr": "Gardien de la forêt muté",
+      "ru": "Мутировавший хранитель леса",
+      "de": "Waldhüter (Mutierter Wald)"
+    },
+    "Genus": "Natura"
+  },
+  {
+    "Id": 1049,
+    "Sources": [
+      {
+        "NpcCode": 2100711,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2100715,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2400061,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      }
+    ],
+    "Names": {
+      "en": "Mutated Forest Spirit",
+      "fr": "Esprit de la forêt muté",
+      "ru": "Мутировавший дух леса",
+      "de": "Mutierter Waldgeist"
+    },
+    "Genus": "Natura"
+  },
+  {
+    "Id": 1145,
+    "Sources": [],
+    "Names": {
+      "en": "Mutated Insectoid Valka",
+      "fr": "Valka mutant",
+      "ru": "Мутировавший жук Валка",
+      "de": "Valka-Insektoidmutant"
+    },
+    "Genus": "Fera"
+  },
+  {
+    "Id": 1143,
+    "Sources": [
+      {
+        "NpcCode": 2400217,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      }
+    ],
+    "Names": {
+      "en": "Mutated Ursus",
+      "fr": "Ursus muté",
+      "ru": "Мутировавший урсус",
+      "de": "Mutierter Ursus"
+    },
+    "Genus": "Fera"
+  },
+  {
+    "Id": 1200,
+    "Sources": [
+      {
+        "NpcCode": 2600042,
+        "Zone": "Chaotic Lower Reshanta",
+        "Faction": "Other"
+      },
+      {
+        "NpcCode": 2600442,
+        "Zone": "",
+        "Faction": "Other"
+      },
+      {
+        "NpcCode": 2600536,
+        "Zone": "",
+        "Faction": "Other"
+      },
+      {
+        "NpcCode": 2600556,
+        "Zone": "",
+        "Faction": "Other"
+      }
+    ],
+    "Names": {
+      "en": "Naga Elite Priest",
+      "fr": "Prêtre d'élite Naga",
+      "ru": "Элитный жрец нагов",
+      "de": "Elitepriester (Naga)"
+    },
+    "Genus": "Cogni"
+  },
+  {
+    "Id": 1030,
+    "Sources": [
+      {
+        "NpcCode": 2600036,
+        "Zone": "Chaotic Lower Reshanta",
+        "Faction": "Other"
+      },
+      {
+        "NpcCode": 2600041,
+        "Zone": "Chaotic Lower Reshanta",
+        "Faction": "Other"
+      },
+      {
+        "NpcCode": 2600436,
+        "Zone": "",
+        "Faction": "Other"
+      },
+      {
+        "NpcCode": 2600441,
+        "Zone": "",
+        "Faction": "Other"
+      },
+      {
+        "NpcCode": 2600537,
+        "Zone": "",
+        "Faction": "Other"
+      },
+      {
+        "NpcCode": 2600557,
+        "Zone": "",
+        "Faction": "Other"
+      }
+    ],
+    "Names": {
+      "en": "Nagarant Guardian Warrior",
+      "fr": "Guerrier gardien Nagarant",
+      "ru": "Охраняющий воин нагарратов",
+      "de": "Hüterkrieger (Nagarant)"
+    },
+    "Genus": "Cogni"
+  },
+  {
+    "Id": 1073,
+    "Sources": [
+      {
+        "NpcCode": 2100160,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2100744,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2600049,
+        "Zone": "Chaotic Lower Reshanta",
+        "Faction": "Other"
+      },
+      {
+        "NpcCode": 2600449,
+        "Zone": "",
+        "Faction": "Other"
+      },
+      {
+        "NpcCode": 2600511,
+        "Zone": "",
+        "Faction": "Other"
+      }
+    ],
+    "Names": {
+      "en": "Nepenthes",
+      "fr": "Nepenthes",
+      "ru": "Нефендес",
+      "de": "Nepenthes"
+    },
+    "Genus": "Natura"
+  },
+  {
+    "Id": 1064,
+    "Sources": [
+      {
+        "NpcCode": 2100854,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2400711,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      }
+    ],
+    "Names": {
+      "en": "Oculazen",
+      "fr": "Oculazen",
+      "ru": "Окулюс",
+      "de": "Oculazen"
+    },
+    "Genus": "Varian"
+  },
+  {
+    "Id": 1127,
+    "Sources": [
+      {
+        "NpcCode": 2400734,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      }
+    ],
+    "Names": {
+      "en": "Odyle Stone Spirit",
+      "fr": "Esprit de la pierre Od",
+      "ru": "Дух эфирного камня",
+      "de": "Odsteingeist"
+    },
+    "Genus": "Natura"
+  },
+  {
+    "Id": 1204,
+    "Sources": [],
+    "Names": {
+      "en": "Pagati",
+      "fr": "Pagati",
+      "ru": "Пагатти",
+      "de": "Pagati"
+    },
+    "Genus": "Special"
+  },
+  {
+    "Id": 1066,
+    "Sources": [
+      {
+        "NpcCode": 2000926,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      },
+      {
+        "NpcCode": 2000927,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      },
+      {
+        "NpcCode": 2000928,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      },
+      {
+        "NpcCode": 2000929,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      },
+      {
+        "NpcCode": 2000951,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      },
+      {
+        "NpcCode": 2100009,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2100220,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2100654,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2400594,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      },
+      {
+        "NpcCode": 2400903,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      },
+      {
+        "NpcCode": 2400938,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      },
+      {
+        "NpcCode": 2400940,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      },
+      {
+        "NpcCode": 2400947,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      }
+    ],
+    "Names": {
+      "en": "Papis",
+      "fr": "Papis",
+      "ru": "Папис",
+      "de": "Papis"
+    },
+    "Genus": "Fera"
+  },
+  {
+    "Id": 1159,
+    "Sources": [
+      {
+        "NpcCode": 2400473,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      }
+    ],
+    "Names": {
+      "en": "Parasite Swarm",
+      "fr": "Essaim parasitaire",
+      "ru": "Паразитический сворм",
+      "de": "Parasitenschwarm"
+    },
+    "Genus": "Varian"
+  },
+  {
+    "Id": 1246,
+    "Sources": [],
+    "Names": {
+      "en": "Pearlescent Butterfly Kite"
+    },
+    "Genus": "Special"
+  },
+  {
+    "Id": 1093,
+    "Sources": [
+      {
+        "NpcCode": 2300401,
+        "Zone": "",
+        "Faction": "Other"
+      },
+      {
+        "NpcCode": 2310401,
+        "Zone": "",
+        "Faction": "Other"
+      },
+      {
+        "NpcCode": 2320401,
+        "Zone": "",
+        "Faction": "Other"
+      }
+    ],
+    "Names": {
+      "en": "Phantasmal Lakshmi",
+      "fr": "Lakshmi onirique",
+      "ru": "Лакшми видения",
+      "de": "Phantom-Lakshmi"
+    },
+    "Genus": "Cogni"
+  },
+  {
+    "Id": 1087,
+    "Sources": [
+      {
+        "NpcCode": 2100953,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2100954,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      }
+    ],
+    "Names": {
+      "en": "Pino",
+      "fr": "Pino",
+      "ru": "Пино",
+      "de": "Pino"
+    },
+    "Genus": "Varian"
+  },
+  {
+    "Id": 1088,
+    "Sources": [
+      {
+        "NpcCode": 2100955,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      }
+    ],
+    "Names": {
+      "en": "Pino Worker",
+      "fr": "Travailleur Pino",
+      "ru": "Рабочий пино",
+      "de": "Arbeiter (Pino)"
+    },
+    "Genus": "Varian"
+  },
+  {
+    "Id": 1186,
+    "Sources": [
+      {
+        "NpcCode": 2400311,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      },
+      {
+        "NpcCode": 2400743,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      }
+    ],
+    "Names": {
+      "en": "Poison Blood",
+      "fr": "Sang toxique",
+      "ru": "Ядокров",
+      "de": "Giftblut"
+    },
+    "Genus": "Varian"
+  },
+  {
+    "Id": 1226,
+    "Sources": [],
+    "Names": {
+      "en": "Pom-Pom Hat Snowman"
+    },
+    "Genus": "Special"
+  },
+  {
+    "Id": 1007,
+    "Sources": [
+      {
+        "NpcCode": 2100032,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2100610,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2101098,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2400363,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      },
+      {
+        "NpcCode": 2400755,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      },
+      {
+        "NpcCode": 2400812,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      }
+    ],
+    "Names": {
+      "en": "Potcrab",
+      "fr": "Cancérid",
+      "ru": "Крабрид",
+      "de": "Topfkrabbe"
+    },
+    "Genus": "Fera"
+  },
+  {
+    "Id": 1215,
+    "Sources": [
+      {
+        "NpcCode": 2300403,
+        "Zone": "",
+        "Faction": "Other"
+      },
+      {
+        "NpcCode": 2310403,
+        "Zone": "",
+        "Faction": "Other"
+      },
+      {
+        "NpcCode": 2320403,
+        "Zone": "",
+        "Faction": "Other"
+      }
+    ],
+    "Names": {
+      "en": "Predator Saraswati",
+      "fr": "Saraswati le Prédateur",
+      "ru": "Хищница Сарасвати",
+      "de": "Verschlinger Saraswati"
+    },
+    "Genus": "Cogni"
+  },
+  {
+    "Id": 1103,
+    "Sources": [
+      {
+        "NpcCode": 2101278,
+        "Zone": "",
+        "Faction": "Other"
+      }
+    ],
+    "Names": {
+      "en": "Pretor Veil Administrator",
+      "fr": "Intendant du voile de Pretor",
+      "ru": "Управляющий покрова фрэлов",
+      "de": "Pretor-Schleierverwalter"
+    },
+    "Genus": "Cogni"
+  },
+  {
+    "Id": 1136,
+    "Sources": [
+      {
+        "NpcCode": 2000925,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      },
+      {
+        "NpcCode": 2110513,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2400056,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      },
+      {
+        "NpcCode": 2400735,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      },
+      {
+        "NpcCode": 2400813,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      },
+      {
+        "NpcCode": 2400949,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      }
+    ],
+    "Names": {
+      "en": "Rafflesia",
+      "fr": "Rafflesia",
+      "ru": "Рафлессия",
+      "de": "Rafflesia"
+    },
+    "Genus": "Natura"
+  },
+  {
+    "Id": 1224,
+    "Sources": [],
+    "Names": {
+      "en": "Red Horse Doll"
+    },
+    "Genus": "Special"
+  },
+  {
+    "Id": 1091,
+    "Sources": [
+      {
+        "NpcCode": 2300311,
+        "Zone": "",
+        "Faction": "Other"
+      },
+      {
+        "NpcCode": 2310311,
+        "Zone": "",
+        "Faction": "Other"
+      },
+      {
+        "NpcCode": 2320311,
+        "Zone": "",
+        "Faction": "Other"
+      }
+    ],
+    "Names": {
+      "en": "Red Spark Ignus",
+      "fr": "Ignus de flamme rouge",
+      "ru": "Игнус красного языка пламени",
+      "de": "Rotflamme Ignus"
+    },
+    "Genus": "Natura"
+  },
+  {
+    "Id": 1205,
+    "Sources": [],
+    "Names": {
+      "en": "Reindeer"
+    },
+    "Genus": "Special"
+  },
+  {
+    "Id": 1067,
+    "Sources": [
+      {
+        "NpcCode": 2100709,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2400470,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      }
+    ],
+    "Names": {
+      "en": "Scorpion",
+      "fr": "Scorpion",
+      "ru": "Скорпион",
+      "de": "Skorpion"
+    },
+    "Genus": "Fera"
+  },
+  {
+    "Id": 1080,
+    "Sources": [],
+    "Names": {
+      "en": "Sentinel K'nash",
+      "fr": "K'nash la sentinelle",
+      "ru": "Страж Кнаш",
+      "de": "Überwachungswaffe K'nash"
+    },
+    "Genus": "Cogni"
+  },
+  {
+    "Id": 1151,
+    "Sources": [],
+    "Names": {
+      "en": "Silver Baikron",
+      "fr": "Bykron argenté",
+      "ru": "Серебряный байкрон",
+      "de": "Silbermophad"
+    },
+    "Genus": "Special"
+  },
+  {
+    "Id": 1192,
+    "Sources": [
+      {
+        "NpcCode": 2300310,
+        "Zone": "",
+        "Faction": "Other"
+      },
+      {
+        "NpcCode": 2310310,
+        "Zone": "",
+        "Faction": "Other"
+      },
+      {
+        "NpcCode": 2320310,
+        "Zone": "",
+        "Faction": "Other"
+      },
+      {
+        "NpcCode": 2600003,
+        "Zone": "Chaotic Lower Reshanta",
+        "Faction": "Other"
+      },
+      {
+        "NpcCode": 2600013,
+        "Zone": "Chaotic Lower Reshanta",
+        "Faction": "Other"
+      },
+      {
+        "NpcCode": 2600403,
+        "Zone": "",
+        "Faction": "Other"
+      },
+      {
+        "NpcCode": 2600413,
+        "Zone": "",
+        "Faction": "Other"
+      },
+      {
+        "NpcCode": 2600481,
+        "Zone": "",
+        "Faction": "Other"
+      },
+      {
+        "NpcCode": 2600491,
+        "Zone": "",
+        "Faction": "Other"
+      }
+    ],
+    "Names": {
+      "en": "Silver Blade Rotan",
+      "fr": "Rotan à la lame d'argent",
+      "ru": "Серебряный рокан",
+      "de": "Silberklinge Rotan"
+    },
+    "Genus": "Varian"
+  },
+  {
+    "Id": 1035,
+    "Sources": [
+      {
+        "NpcCode": 2100031,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2100376,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2100907,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      }
+    ],
+    "Names": {
+      "en": "Skama",
+      "fr": "Skama",
+      "ru": "Скама",
+      "de": "Skama"
+    },
+    "Genus": "Fera"
+  },
+  {
+    "Id": 1211,
+    "Sources": [],
+    "Names": {
+      "en": "Sky Whale",
+      "fr": "Baleine céleste",
+      "ru": "Небесный кит",
+      "de": "Himmelswal"
+    },
+    "Genus": "Special"
+  },
+  {
+    "Id": 1011,
+    "Sources": [
+      {
+        "NpcCode": 2100047,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2100048,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2100182,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2100556,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2100607,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2100613,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2100832,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2101123,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2101124,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2101132,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2400163,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      },
+      {
+        "NpcCode": 2400945,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      }
+    ],
+    "Names": {
+      "en": "Skyray",
+      "fr": "Driton",
+      "ru": "Тритон",
+      "de": "Mantaris"
+    },
+    "Genus": "Fera"
+  },
+  {
+    "Id": 1061,
+    "Sources": [
+      {
+        "NpcCode": 2400320,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      }
+    ],
+    "Names": {
+      "en": "Slime",
+      "fr": "Slime",
+      "ru": "Слизень",
+      "de": "Schleim"
+    },
+    "Genus": "Varian"
+  },
+  {
+    "Id": 1016,
+    "Sources": [
+      {
+        "NpcCode": 2100165,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2100188,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2101097,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2400520,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      },
+      {
+        "NpcCode": 2400819,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      },
+      {
+        "NpcCode": 2400909,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      },
+      {
+        "NpcCode": 2400943,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      },
+      {
+        "NpcCode": 2600048,
+        "Zone": "Chaotic Lower Reshanta",
+        "Faction": "Other"
+      },
+      {
+        "NpcCode": 2600448,
+        "Zone": "",
+        "Faction": "Other"
+      },
+      {
+        "NpcCode": 2600576,
+        "Zone": "",
+        "Faction": "Other"
+      },
+      {
+        "NpcCode": 2600586,
+        "Zone": "",
+        "Faction": "Other"
+      }
+    ],
+    "Names": {
+      "en": "Slink",
+      "fr": "Slink",
+      "ru": "Чешуйница",
+      "de": "Slink"
+    },
+    "Genus": "Fera"
+  },
+  {
+    "Id": 1183,
+    "Sources": [
+      {
+        "NpcCode": 2400413,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      }
+    ],
+    "Names": {
+      "en": "Soulless Corpse Gnat",
+      "fr": "Tipule cadavérique sans âme",
+      "ru": "Бездушный трупный кровосос",
+      "de": "Seelenlose Leichenschnake"
+    },
+    "Genus": "Varian"
+  },
+  {
+    "Id": 1006,
+    "Sources": [
+      {
+        "NpcCode": 2100273,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2100305,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2100753,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2100795,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2100986,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2100992,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      }
+    ],
+    "Names": {
+      "en": "Sparkie",
+      "fr": "Sparkie",
+      "ru": "Спарки",
+      "de": "Sparkie"
+    },
+    "Genus": "Fera"
+  },
+  {
+    "Id": 1083,
+    "Sources": [
+      {
+        "NpcCode": 2600046,
+        "Zone": "Chaotic Lower Reshanta",
+        "Faction": "Other"
+      },
+      {
+        "NpcCode": 2600446,
+        "Zone": "",
+        "Faction": "Other"
+      },
+      {
+        "NpcCode": 2600578,
+        "Zone": "",
+        "Faction": "Other"
+      },
+      {
+        "NpcCode": 2600588,
+        "Zone": "",
+        "Faction": "Other"
+      }
+    ],
+    "Names": {
+      "en": "Spider",
+      "fr": "Araignée",
+      "ru": "Паук",
+      "de": "Spinne"
+    },
+    "Genus": "Fera"
+  },
+  {
+    "Id": 1178,
+    "Sources": [
+      {
+        "NpcCode": 2600066,
+        "Zone": "Chaotic Lower Reshanta",
+        "Faction": "Other"
+      },
+      {
+        "NpcCode": 2600466,
+        "Zone": "",
+        "Faction": "Other"
+      }
+    ],
+    "Names": {
+      "en": "Spirit King's Bodyguard Warrior",
+      "fr": "Guerrier de garde du Roi des esprits",
+      "ru": "Воин стражников короля духов",
+      "de": "Wachkrieger des Geisterfürsten"
+    },
+    "Genus": "Natura"
+  },
+  {
+    "Id": 1241,
+    "Sources": [],
+    "Names": {
+      "en": "Star"
+    },
+    "Genus": "Special"
+  },
+  {
+    "Id": 1060,
+    "Sources": [
+      {
+        "NpcCode": 2100033,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2100808,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2101082,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2400374,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      },
+      {
+        "NpcCode": 2400519,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      },
+      {
+        "NpcCode": 2400808,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      }
+    ],
+    "Names": {
+      "en": "Starturtle",
+      "fr": "Tortue étoilée",
+      "ru": "Панцирник",
+      "de": "Sternenschildkröte"
+    },
+    "Genus": "Fera"
+  },
+  {
+    "Id": 1069,
+    "Sources": [
+      {
+        "NpcCode": 2100812,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2400301,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      },
+      {
+        "NpcCode": 2600056,
+        "Zone": "Chaotic Lower Reshanta",
+        "Faction": "Other"
+      },
+      {
+        "NpcCode": 2600118,
+        "Zone": "",
+        "Faction": "Other"
+      },
+      {
+        "NpcCode": 2600128,
+        "Zone": "",
+        "Faction": "Other"
+      },
+      {
+        "NpcCode": 2600148,
+        "Zone": "",
+        "Faction": "Other"
+      }
+    ],
+    "Names": {
+      "en": "Stone Spirit",
+      "fr": "Esprit de la pierre",
+      "ru": "Дух камня",
+      "de": "Steingeist"
+    },
+    "Genus": "Natura"
+  },
+  {
+    "Id": 1166,
+    "Sources": [
+      {
+        "NpcCode": 2100667,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2400310,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      },
+      {
+        "NpcCode": 2400817,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      }
+    ],
+    "Names": {
+      "en": "Superior Earth Spirit",
+      "fr": "Esprit de la terre supérieur",
+      "ru": "Старший дух земли",
+      "de": "Großer Erdgeist"
+    },
+    "Genus": "Natura"
+  },
+  {
+    "Id": 1096,
+    "Sources": [
+      {
+        "NpcCode": 2100664,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2400303,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      },
+      {
+        "NpcCode": 2400749,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      },
+      {
+        "NpcCode": 2400815,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      }
+    ],
+    "Names": {
+      "en": "Superior Fire Spirit",
+      "fr": "Esprit du feu supérieur",
+      "ru": "Старший дух огня",
+      "de": "Großer Feuergeist"
+    },
+    "Genus": "Natura"
+  },
+  {
+    "Id": 1155,
+    "Sources": [
+      {
+        "NpcCode": 2100665,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2400306,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      },
+      {
+        "NpcCode": 2400739,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      },
+      {
+        "NpcCode": 2400816,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      }
+    ],
+    "Names": {
+      "en": "Superior Water Spirit",
+      "fr": "Esprit de l'eau supérieur",
+      "ru": "Старший дух воды",
+      "de": "Großer Wassergeist"
+    },
+    "Genus": "Natura"
+  },
+  {
+    "Id": 1095,
+    "Sources": [
+      {
+        "NpcCode": 2100666,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2400302,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      },
+      {
+        "NpcCode": 2400818,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      }
+    ],
+    "Names": {
+      "en": "Superior Wind Spirit",
+      "fr": "Esprit du vent supérieur",
+      "ru": "Старший дух воздуха",
+      "de": "Großer Windgeist"
+    },
+    "Genus": "Natura"
+  },
+  {
+    "Id": 1139,
+    "Sources": [],
+    "Names": {
+      "en": "Swamp Monster",
+      "fr": "Monstre du marais",
+      "ru": "Болотное чудовище",
+      "de": "Sumpfmonster"
+    },
+    "Genus": "Varian"
+  },
+  {
+    "Id": 1013,
+    "Sources": [
+      {
+        "NpcCode": 2400080,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      },
+      {
+        "NpcCode": 2400456,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      },
+      {
+        "NpcCode": 2600001,
+        "Zone": "Chaotic Lower Reshanta",
+        "Faction": "Other"
+      },
+      {
+        "NpcCode": 2600011,
+        "Zone": "Chaotic Lower Reshanta",
+        "Faction": "Other"
+      },
+      {
+        "NpcCode": 2600021,
+        "Zone": "Chaotic Lower Reshanta",
+        "Faction": "Other"
+      },
+      {
+        "NpcCode": 2600401,
+        "Zone": "",
+        "Faction": "Other"
+      },
+      {
+        "NpcCode": 2600411,
+        "Zone": "",
+        "Faction": "Other"
+      },
+      {
+        "NpcCode": 2600421,
+        "Zone": "",
+        "Faction": "Other"
+      }
+    ],
+    "Names": {
+      "en": "Swarm",
+      "fr": "Essaim",
+      "ru": "Сворм",
+      "de": "Schwarm"
+    },
+    "Genus": "Varian"
+  },
+  {
+    "Id": 1111,
+    "Sources": [],
+    "Names": {
+      "en": "Swift Lugi",
+      "fr": "Lugi vif",
+      "ru": "Проворный руги",
+      "de": "Flinker Lugi"
+    },
+    "Genus": "Special"
+  },
+  {
+    "Id": 1045,
+    "Sources": [
+      {
+        "NpcCode": 2100004,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2100023,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2100219,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2100472,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2100565,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2100743,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2400362,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      }
+    ],
+    "Names": {
+      "en": "Sylphen",
+      "fr": "Sylphène",
+      "ru": "Мюта",
+      "de": "Sylphen"
+    },
+    "Genus": "Fera"
+  },
+  {
+    "Id": 1203,
+    "Sources": [
+      {
+        "NpcCode": 2400257,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      },
+      {
+        "NpcCode": 2400503,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      }
+    ],
+    "Names": {
+      "en": "Tamed Karnif",
+      "fr": "Karnif apprivoisé",
+      "ru": "Прирученный каллиф",
+      "de": "Gezähmter Karnif"
+    },
+    "Genus": "Fera"
+  },
+  {
+    "Id": 1189,
+    "Sources": [
+      {
+        "NpcCode": 2100566,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2600102,
+        "Zone": "",
+        "Faction": "Other"
+      },
+      {
+        "NpcCode": 2600132,
+        "Zone": "",
+        "Faction": "Other"
+      },
+      {
+        "NpcCode": 2600452,
+        "Zone": "",
+        "Faction": "Other"
+      },
+      {
+        "NpcCode": 2600579,
+        "Zone": "",
+        "Faction": "Other"
+      },
+      {
+        "NpcCode": 2600589,
+        "Zone": "",
+        "Faction": "Other"
+      }
+    ],
+    "Names": {
+      "en": "Tamed Zaif",
+      "fr": "Zaif apprivoisé",
+      "ru": "Прирученный волк",
+      "de": "Gezähmter Zaif"
+    },
+    "Genus": "Fera"
+  },
+  {
+    "Id": 1106,
+    "Sources": [
+      {
+        "NpcCode": 2400564,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      },
+      {
+        "NpcCode": 2400583,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      },
+      {
+        "NpcCode": 2400611,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      }
+    ],
+    "Names": {
+      "en": "Tayga",
+      "fr": "Tayga",
+      "ru": "Рюкрог",
+      "de": "Tayga"
+    },
+    "Genus": "Fera"
+  },
+  {
+    "Id": 1209,
+    "Sources": [
+      {
+        "NpcCode": 2110508,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2400054,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      },
+      {
+        "NpcCode": 2600028,
+        "Zone": "Chaotic Lower Reshanta",
+        "Faction": "Other"
+      },
+      {
+        "NpcCode": 2600428,
+        "Zone": "",
+        "Faction": "Other"
+      },
+      {
+        "NpcCode": 2600503,
+        "Zone": "",
+        "Faction": "Other"
+      },
+      {
+        "NpcCode": 2600531,
+        "Zone": "",
+        "Faction": "Other"
+      },
+      {
+        "NpcCode": 2600551,
+        "Zone": "",
+        "Faction": "Other"
+      }
+    ],
+    "Names": {
+      "en": "Thin Agrint",
+      "fr": "Agrint squelettique",
+      "ru": "Истощенный агринт",
+      "de": "Kahler Agrint"
+    },
+    "Genus": "Natura"
+  },
+  {
+    "Id": 1072,
+    "Sources": [
+      {
+        "NpcCode": 2400912,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      }
+    ],
+    "Names": {
+      "en": "Tog",
+      "fr": "Tog",
+      "ru": "Тог",
+      "de": "Tog"
+    },
+    "Genus": "Fera"
+  },
+  {
+    "Id": 1100,
+    "Sources": [],
+    "Names": {
+      "en": "Ultimate Earth Spirit",
+      "fr": "Esprit de la terre exceptionnel",
+      "ru": "Превосходный дух земли",
+      "de": "Ultimativer Erdgeist"
+    },
+    "Genus": "Natura"
+  },
+  {
+    "Id": 1082,
+    "Sources": [],
+    "Names": {
+      "en": "Ultimate Fire Spirit",
+      "fr": "Esprit du feu exceptionnel",
+      "ru": "Превосходный дух огня",
+      "de": "Ultimativer Feuergeist"
+    },
+    "Genus": "Natura"
+  },
+  {
+    "Id": 1090,
+    "Sources": [],
+    "Names": {
+      "en": "Ultimate Water Spirit",
+      "fr": "Esprit de l'eau exceptionnel",
+      "ru": "Превосходный дух воды",
+      "de": "Ultimativer Wassergeist"
+    },
+    "Genus": "Natura"
+  },
+  {
+    "Id": 1079,
+    "Sources": [],
+    "Names": {
+      "en": "Ultimate Wind Spirit",
+      "fr": "Esprit du vent exceptionnel",
+      "ru": "Превосходный дух воздуха",
+      "de": "Ultimativer Windgeist"
+    },
+    "Genus": "Natura"
+  },
+  {
+    "Id": 1253,
+    "Sources": [],
+    "Names": {
+      "en": "Umbral Shadow Unicorn"
+    },
+    "Genus": "Special"
+  },
+  {
+    "Id": 1249,
+    "Sources": [],
+    "Names": {
+      "en": "Unicorn Plush"
+    },
+    "Genus": "Special"
+  },
+  {
+    "Id": 1117,
+    "Sources": [
+      {
+        "NpcCode": 2101023,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2110509,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2400319,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      },
+      {
+        "NpcCode": 2400745,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      },
+      {
+        "NpcCode": 2600045,
+        "Zone": "Chaotic Lower Reshanta",
+        "Faction": "Other"
+      }
+    ],
+    "Names": {
+      "en": "Unstable Spider",
+      "fr": "Araignée instable",
+      "ru": "Взбалмошный паук",
+      "de": "Instabile Spinne"
+    },
+    "Genus": "Fera"
+  },
+  {
+    "Id": 1042,
+    "Sources": [
+      {
+        "NpcCode": 2100172,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2100552,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2100560,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2100655,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2100817,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2400376,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      },
+      {
+        "NpcCode": 2400916,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      }
+    ],
+    "Names": {
+      "en": "Ursus",
+      "fr": "Ursus",
+      "ru": "Урсус",
+      "de": "Ursus"
+    },
+    "Genus": "Fera"
+  },
+  {
+    "Id": 1078,
+    "Sources": [],
+    "Names": {
+      "en": "Urugugu Brawler",
+      "fr": "Lutteur Urugugu",
+      "ru": "Храбрец ауругу",
+      "de": "Streiter (Urugugu)"
+    },
+    "Genus": "Cogni"
+  },
+  {
+    "Id": 1018,
+    "Sources": [
+      {
+        "NpcCode": 2400385,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      },
+      {
+        "NpcCode": 2400609,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      },
+      {
+        "NpcCode": 2600105,
+        "Zone": "",
+        "Faction": "Other"
+      },
+      {
+        "NpcCode": 2600135,
+        "Zone": "",
+        "Faction": "Other"
+      },
+      {
+        "NpcCode": 2600455,
+        "Zone": "",
+        "Faction": "Other"
+      },
+      {
+        "NpcCode": 2600515,
+        "Zone": "",
+        "Faction": "Other"
+      },
+      {
+        "NpcCode": 2600580,
+        "Zone": "",
+        "Faction": "Other"
+      },
+      {
+        "NpcCode": 2600590,
+        "Zone": "",
+        "Faction": "Other"
+      }
+    ],
+    "Names": {
+      "en": "Varg Berserker",
+      "fr": "Berserker Varg",
+      "ru": "Берсерк варгов",
+      "de": "Berserker (Varg)"
+    },
+    "Genus": "Cogni"
+  },
+  {
+    "Id": 1158,
+    "Sources": [],
+    "Names": {
+      "en": "Venomous Insect Sram",
+      "fr": "Sram insecte venimeux",
+      "ru": "Смертельно ядовитый жук Трам",
+      "de": "Todesgiftinsektoid Sram"
+    },
+    "Genus": "Fera"
+  },
+  {
+    "Id": 1063,
+    "Sources": [
+      {
+        "NpcCode": 2400364,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      }
+    ],
+    "Names": {
+      "en": "Vigilant Oculazen",
+      "fr": "Oculazen observateur",
+      "ru": "Наблюдающий окулюс",
+      "de": "Wachsamer Oculazen"
+    },
+    "Genus": "Varian"
+  },
+  {
+    "Id": 1188,
+    "Sources": [
+      {
+        "NpcCode": 2100583,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2400057,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      }
+    ],
+    "Names": {
+      "en": "Vivel",
+      "fr": "Vivel",
+      "ru": "Вивэль",
+      "de": "Vivel"
+    },
+    "Genus": "Fera"
+  },
+  {
+    "Id": 1112,
+    "Sources": [],
+    "Names": {
+      "en": "Wandering Merchant Lugi",
+      "fr": "Lugi du marchand itinérant",
+      "ru": "Бродячий торговец руги",
+      "de": "Wanderhändler-Lugi"
+    },
+    "Genus": "Special"
+  },
+  {
+    "Id": 1197,
+    "Sources": [
+      {
+        "NpcCode": 2100716,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      }
+    ],
+    "Names": {
+      "en": "Watcher Guardite",
+      "fr": "Guardite de surveillance",
+      "ru": "Наблюдающий гардит",
+      "de": "Wächter-Gardith"
+    },
+    "Genus": "Varian"
+  },
+  {
+    "Id": 1240,
+    "Sources": [],
+    "Names": {
+      "en": "White Bunny",
+      "fr": "Lapin blanc",
+      "ru": "Белый кролик",
+      "de": "Weißes Häschen"
+    },
+    "Genus": "Special"
+  },
+  {
+    "Id": 1113,
+    "Sources": [],
+    "Names": {
+      "en": "White Dragon",
+      "fr": "Dragon blanc",
+      "ru": "Белый дракон",
+      "de": "Weißer Drache"
+    },
+    "Genus": "Special"
+  },
+  {
+    "Id": 1027,
+    "Sources": [
+      {
+        "NpcCode": 2100612,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2100652,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2600026,
+        "Zone": "Chaotic Lower Reshanta",
+        "Faction": "Other"
+      }
+    ],
+    "Names": {
+      "en": "Withered Agrint",
+      "fr": "Agrint desséché",
+      "ru": "Иссохший агринт",
+      "de": "Dürrer Agrint"
+    },
+    "Genus": "Natura"
+  },
+  {
+    "Id": 1116,
+    "Sources": [
+      {
+        "NpcCode": 2000956,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      },
+      {
+        "NpcCode": 2000957,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      },
+      {
+        "NpcCode": 2400902,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      },
+      {
+        "NpcCode": 2400933,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      },
+      {
+        "NpcCode": 2400939,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      },
+      {
+        "NpcCode": 2400946,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      },
+      {
+        "NpcCode": 2400948,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      }
+    ],
+    "Names": {
+      "en": "Withered Branch Spider",
+      "fr": "Araignée des branches sèches",
+      "ru": "Паук сухой ветви",
+      "de": "Dürrastspinne"
+    },
+    "Genus": "Fera"
+  },
+  {
+    "Id": 1120,
+    "Sources": [
+      {
+        "NpcCode": 2101022,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2400737,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      },
+      {
+        "NpcCode": 2400906,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      },
+      {
+        "NpcCode": 2400935,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      }
+    ],
+    "Names": {
+      "en": "Young Kailin",
+      "fr": "Jeune Kailin",
+      "ru": "Малый каилин",
+      "de": "Kailinjunges"
+    },
+    "Genus": "Fera"
+  },
+  {
+    "Id": 1121,
+    "Sources": [
+      {
+        "NpcCode": 2100189,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2100473,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2400910,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      },
+      {
+        "NpcCode": 2400950,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      },
+      {
+        "NpcCode": 2600047,
+        "Zone": "Chaotic Lower Reshanta",
+        "Faction": "Other"
+      },
+      {
+        "NpcCode": 2600447,
+        "Zone": "",
+        "Faction": "Other"
+      }
+    ],
+    "Names": {
+      "en": "Young Slink",
+      "fr": "Jeune Slink",
+      "ru": "Малая чешуйница",
+      "de": "Slinkjunges"
+    },
+    "Genus": "Fera"
+  },
+  {
+    "Id": 1122,
+    "Sources": [],
+    "Names": {
+      "en": "Young Tog",
+      "fr": "Jeune Tog",
+      "ru": "Малый тог",
+      "de": "Togjunges"
+    },
+    "Genus": "Fera"
+  },
+  {
+    "Id": 1123,
+    "Sources": [
+      {
+        "NpcCode": 2100173,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2100818,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2400377,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      },
+      {
+        "NpcCode": 2400917,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      }
+    ],
+    "Names": {
+      "en": "Young Ursus",
+      "fr": "Jeune Ursus",
+      "ru": "Малый урсус",
+      "de": "Ursusjunges"
+    },
+    "Genus": "Fera"
+  },
+  {
+    "Id": 1124,
+    "Sources": [
+      {
+        "NpcCode": 2100573,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2100748,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2100797,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2100813,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      }
+    ],
+    "Names": {
+      "en": "Zaif",
+      "fr": "Zaif",
+      "ru": "Волк",
+      "de": "Zaif"
+    },
+    "Genus": "Fera"
+  },
+  {
+    "Id": 1219,
+    "Sources": [
+      {
+        "NpcCode": 2100458,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2101085,
+        "Zone": "Verteron",
+        "Faction": "Elyos"
+      },
+      {
+        "NpcCode": 2400811,
+        "Zone": "Altgard",
+        "Faction": "Asmodians"
+      },
+      {
+        "NpcCode": 2600050,
+        "Zone": "Chaotic Lower Reshanta",
+        "Faction": "Other"
+      },
+      {
+        "NpcCode": 2600450,
+        "Zone": "",
+        "Faction": "Other"
+      },
+      {
+        "NpcCode": 2600512,
+        "Zone": "",
+        "Faction": "Other"
+      },
+      {
+        "NpcCode": 2600574,
+        "Zone": "",
+        "Faction": "Other"
+      },
+      {
+        "NpcCode": 2600584,
+        "Zone": "",
+        "Faction": "Other"
+      }
+    ],
+    "Names": {
+      "en": "Zelophi",
+      "fr": "Zelophi",
+      "ru": "Зелофи",
+      "de": "Zelophi"
+    },
+    "Genus": "Natura"
+  }
+]

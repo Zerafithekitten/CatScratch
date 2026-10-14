@@ -36,6 +36,7 @@ public sealed class PacketParser
 
     /// <summary>Optional raw packet tap for the diagnostics dump.</summary>
     public Action<long, ushort, ReadOnlySpan<byte>>? Tap { get; set; }
+    public bool DecodePetPositions {get;set;}
 
     /// <summary>Diagnostics: every accepted damage record's raw header fields (layout, damage type, modifier byte, direction byte).</summary>
     public Action<DamageEvent, int, uint, byte, byte>? DamageTap { get; set; }
@@ -52,6 +53,32 @@ public sealed class PacketParser
                 break;
             case Opcodes.Damage:
                 ParseDamage(body);
+                break;
+            case 0x0090:
+                if(Game.PetPackets.Collection(TimeMs,body) is { } pets) Emit(pets);
+                break;
+            case 0x0D90:
+                if(Game.PetPackets.Souls(TimeMs,body) is { } souls) Emit(souls);
+                break;
+            case 0x1E56:
+                if(body.Length==65 && body[0]==1)
+                {
+                    var item=BinaryPrimitives.ReadInt32LittleEndian(body[37..]);var amount=BinaryPrimitives.ReadInt32LittleEndian(body[41..]);
+                    if(item is >=534660000 and <534661000 && amount is >0 and <=1000000)
+                        Emit(new Game.PetSoulDropEvent(TimeMs,BinaryPrimitives.ReadUInt32LittleEndian(body[29..]),item,amount));
+                }
+                break;
+            case 0x1C37:
+                if(DecodePetPositions)
+                {
+                    var positionAt=0;
+                    if(Wire.TryVarint(body,ref positionAt,out var actor) && positionAt<body.Length && body[positionAt++] is 4 or 5 && body.Length-positionAt==17)
+                    {
+                        var x=BinaryPrimitives.ReadSingleLittleEndian(body[positionAt..]);var y=BinaryPrimitives.ReadSingleLittleEndian(body[(positionAt+4)..]);var z=BinaryPrimitives.ReadSingleLittleEndian(body[(positionAt+8)..]);
+                        if(float.IsFinite(x)&&float.IsFinite(y)&&float.IsFinite(z)&&Math.Abs(x)<10000000&&Math.Abs(y)<10000000&&Math.Abs(z)<10000000)
+                            Emit(new Game.ActorPositionEvent(TimeMs,actor,x,y,z));
+                    }
+                }
                 break;
             case Opcodes.Cast:
                 ParseCast(body);

@@ -25,3 +25,9 @@ Formats AionMeter reads (every file is optional):
   metabot.gg/web/aion2/npcs/ without `.webp`; NPCs not listed are tried under their own code)
 
 Missing languages fall back to `en`.
+
+## Pet collection catalog
+
+`pets/catalog.json` contains factual pet IDs, localized proper names and genus labels adapted from the public [Gamers4Life pet database](https://gamers4.life/aion-2/database/en/pets/?tab=collection), checked 2026-10-14. Game names/data © NCSOFT. No site artwork, descriptive text, code or KR progression costs are included. Global progression is 5/25/75 souls through level 3, checked against captured Global collection/increment records and the [Mudthorn reference](https://wikily.gg/aion-2/pets/mudthorn). Initial farm-source mappings were checked against Global captures and that reference; other sources are learned conservatively from matched own soul loot.
+
+Pet monster-source IDs and matching open-Global-zone presence were checked against [Aion 2 Maps Global pet data](https://aion2maps.com/map/assets/pets.json) and its [Global map index](https://aion2maps.com/map/assets/maps/index.json), exported from Global patch 20 (2026-09-28), retrieved 2026-10-14. Only factual pet/NPC IDs and zone names were retained; no map artwork, spawn coordinates, descriptions or site code are bundled. Taiwan-only source lists are excluded. A blank zone means no verified open-world location, not an inferred location.

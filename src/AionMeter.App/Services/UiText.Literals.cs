@@ -2,6 +2,11 @@ namespace AionMeter.App.Services;
 
 public sealed partial class UiText
 {
+    public string TogglePersonalLabel=>Localize("Show / hide personal combat");
+    public string ToggleEventsLabel=>Localize("Show / hide upcoming events");
+    public string TogglePetsLabel=>Localize("Show / hide pet tracker");
+    public string ToggleAllWindowsLabel=>Localize("Show / hide all windows");
+    public string PetTrackerLabel=>Localize("Pet tracker");
     public string SettingLanguageLabel => Localize("Language");
     public string Literal0 => Localize("Show / hide personal combat");
     public string Literal1 => Localize("Toggle personal combat module");

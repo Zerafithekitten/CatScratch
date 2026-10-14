@@ -1,0 +1,138 @@
+using AionMeter.Core.Events;
+using AionMeter.Core.Protocol;
+
+namespace AionMeter.Core.Game;
+
+public sealed record PetState(int Id,int Level,int Souls)
+{
+    public int Needed(int goal)
+    {
+        goal=Math.Clamp(goal,1,3);
+        if(Level>=goal) return 0;
+        int[] costs=[5,25,75]; // Global: unlock, level 2, level 3; not KR's five-level progression.
+        var remaining=Math.Max(0,costs[Math.Clamp(Level,0,2)]-Souls);
+        for(var level=Level+1;level<goal;level++) remaining+=costs[level];
+        return remaining;
+    }
+}
+public sealed record PetCollectionEvent(long TimeMs,IReadOnlyDictionary<int,PetState> Pets):GameEvent(TimeMs);
+public sealed record PetSoulEvent(long TimeMs,IReadOnlyDictionary<int,int> Added):GameEvent(TimeMs);
+public sealed record PetSoulDropEvent(long TimeMs,uint NpcActorId,int ItemCode,int Amount):GameEvent(TimeMs);
+public sealed record ActorPositionEvent(long TimeMs,uint ActorId,float X,float Y,float Z):GameEvent(TimeMs);
+public sealed record ObservedPetFarm(int NpcCode,string Zone,string Faction);
+
+/// <summary>Server-to-client layouts verified against the Global 2026-10-14 collection and 10→11 soul capture.</summary>
+public static class PetPackets
+{
+    public static PetCollectionEvent? Collection(long time,ReadOnlySpan<byte> body)
+    {
+        var at=0;
+        if(!Wire.TryU32(body,ref at,out _) || !Wire.TryVarint(body,ref at,out var count) || count>4096) return null;
+        var pets=new Dictionary<int,PetState>();
+        for(var i=0;i<count;i++)
+        {
+            if(!Wire.TryU32(body,ref at,out var id) || !Wire.TryU32(body,ref at,out var form) || !Wire.TryU32(body,ref at,out var level)
+                || id is <1000 or >100000 || form is <1000 or >100000 || level>5 || pets.ContainsKey((int)id)) return null;
+            pets[(int)id]=new((int)id,(int)level,0);
+        }
+        if(!Wire.TryVarint(body,ref at,out var soulsCount) || soulsCount>4096) return null;
+        var seen=new HashSet<int>();
+        for(var i=0;i<soulsCount;i++)
+        {
+            if(!Wire.TryU32(body,ref at,out var id) || !Wire.TryU32(body,ref at,out var souls) || id is <1000 or >100000 || souls>1000000 || !seen.Add((int)id)) return null;
+            var existing=pets.GetValueOrDefault((int)id,new((int)id,0,0));
+            pets[(int)id]=existing with {Souls=(int)souls};
+        }
+        // Remaining fields describe genus option rolls; deliberately not interpreted as pet progress.
+        return new(time,pets);
+    }
+    public static PetSoulEvent? Souls(long time,ReadOnlySpan<byte> body)
+    {
+        var at=0;
+        if(!Wire.TryVarint(body,ref at,out var count) || count is 0 or >4096 || body.Length-at!=count*8) return null;
+        var entries=new Dictionary<int,int>();
+        for(var i=0;i<count;i++)
+        {
+            if(!Wire.TryU32(body,ref at,out var id) || !Wire.TryU32(body,ref at,out var value) || id is <1000 or >100000 || value is 0 or >1000000 || !entries.TryAdd((int)id,(int)value)) return null;
+        }
+        return new(time,entries);
+    }
+}
+
+/// <summary>Own session only. Deltas cannot invent a baseline; loading screens preserve a confirmed collection.</summary>
+public sealed class PetCollection
+{
+    private readonly object _gate=new();
+    private Dictionary<int,PetState> _pets=[];
+    private string _name="";
+    private PetCollectionEvent? _pending;
+    private uint _self;
+    private string _zone="";
+    private ActorPositionEvent? _position;
+    private readonly Dictionary<uint,NpcSeenEvent> _npcs=[];
+    private readonly HashSet<uint> _dead=[];
+    private readonly List<PetSoulDropEvent> _drops=[];
+    private readonly Dictionary<int,List<ObservedPetFarm>> _farms=[];
+    public long Revision {get;private set;}
+    public bool Confirmed {get;private set;}
+    public event Action? Changed;
+    public IReadOnlyList<PetState> Snapshot() {lock(_gate) return _pets.Values.ToArray();}
+    public IReadOnlyList<ObservedPetFarm> Farms(int pet) {lock(_gate) return _farms.TryGetValue(pet,out var sources)?sources.ToArray():[];}
+    public Dictionary<int,ObservedPetFarm[]> FarmCache() {lock(_gate)return _farms.ToDictionary(p=>p.Key,p=>p.Value.ToArray());}
+    public void RestoreFarms(IReadOnlyDictionary<int,ObservedPetFarm[]> sources)
+    {
+        lock(_gate)foreach(var (id,farms) in sources.Take(4096))
+            if(id is >=1000 and <=100000)_farms[id]=(farms??[]).Where(f=>f is not null && f.NpcCode>0 && f.Zone is {Length:<=200} && f.Faction is "Elyos" or "Asmodians" or "Other").Distinct().Take(32).ToList();
+    }
+    public (ActorPositionEvent? Own,IReadOnlyList<NpcSeenEvent> Npcs) Nearby() {lock(_gate)return(_position,_npcs.Where(n=>!_dead.Contains(n.Key)).Select(n=>n.Value).ToArray());}
+    public void Observe(GameEvent value)
+    {
+        var changed=false;
+        lock(_gate)
+        {
+            switch(value)
+            {
+                case SelfIdentifiedEvent self when self.Name.Length>0:
+                    if(_name.Length>0 && _name!=self.Name) {_pets.Clear();Confirmed=false;_pending=null;_position=null;_npcs.Clear();_dead.Clear();_drops.Clear();changed=true;}
+                    _name=self.Name;
+                    _self=self.ActorId;
+                    if(_pending is { } buffered){_pets=new(buffered.Pets);Confirmed=true;_pending=null;changed=true;}
+                    break;
+                case PetCollectionEvent full:
+                    if(_name.Length==0) {_pending=full;break;}
+                    _pets=new(full.Pets);Confirmed=true;changed=true;break;
+                case PetSoulEvent delta when Confirmed:
+                    foreach(var (id,amount) in delta.Added)
+                    {
+                        if(!_pets.ContainsKey(id) && _pets.Count>=4096)continue;
+                        // Full collection lists omit unowned pets with no souls; a verified delta creates level 0.
+                        var pet=_pets.GetValueOrDefault(id,new(id,0,0));
+                        var souls=(int)Math.Min(1000000,(long)pet.Souls+amount);var level=pet.Level;int[] costs=[5,25,75];
+                        while(level<3 && souls>=costs[level]){souls-=costs[level];level++;}
+                        _pets[id]=pet with {Level=level,Souls=level>=3?0:souls};
+                        var candidates=_drops.Where(d=>d.TimeMs<=delta.TimeMs && delta.TimeMs-d.TimeMs<1000 && d.Amount==amount).ToArray();
+                        if(delta.Added.Count==1 && candidates.Length==1 && _npcs.TryGetValue(candidates[0].NpcActorId,out var npc) && _zone.Length>0)
+                        {
+                            var farm=new ObservedPetFarm(npc.NpcCode,_zone,_zone=="Altgard"?"Asmodians":_zone=="Verteron"?"Elyos":"Other");
+                            if(!_farms.TryGetValue(id,out var sources))_farms[id]=sources=[];
+                            if(sources.Count<32 && !sources.Contains(farm))sources.Add(farm);
+                        }
+                    }
+                    changed=true;break;
+                case ZoneChangedEvent zone:_zone=zone.ZoneName;_position=null;_npcs.Clear();_dead.Clear();_drops.Clear();break;
+                case NpcSeenEvent npc:
+                    if(_npcs.Count>=4096 && !_npcs.ContainsKey(npc.ActorId)){var oldest=_npcs.MinBy(x=>x.Value.TimeMs).Key;_npcs.Remove(oldest);_dead.Remove(oldest);}
+                    _npcs[npc.ActorId]=npc;_dead.Remove(npc.ActorId);break;
+                case DeathEvent death:if(_npcs.ContainsKey(death.ActorId))_dead.Add(death.ActorId);break;
+                case ActorPositionEvent pose:
+                    if(pose.ActorId==_self)_position=pose;
+                    else if(_npcs.TryGetValue(pose.ActorId,out var entity))_npcs[pose.ActorId]=entity with {TimeMs=pose.TimeMs,X=pose.X,Y=pose.Y,Z=pose.Z};
+                    break;
+                case PetSoulDropEvent drop:
+                    _drops.RemoveAll(d=>drop.TimeMs-d.TimeMs>2000);if(_drops.Count<32)_drops.Add(drop);break;
+            }
+            if(changed) Revision++;
+        }
+        if(changed) Changed?.Invoke();
+    }
+}

@@ -1,3 +1,12 @@
+## CatScratch v2.4.0
+
+- Add a compact, separate Pet tracker with a paw button, collection/level goals, genus/faction/search filters and optional unlock/level-up sounds. Read confirmed own pet levels and soul increments passively; preserve progress across loading screens. Unlock pets with 5 souls, then require 25/75 more for levels 2/3.
+- Include confirmed Global monster-source mappings for 165 pets, with verified locations where available, observed source monsters and manual farming-reference links. Unknown sources/locations remain explicit; no map or radar is included.
+- Show damage taken in red beneath every player's contribution percentage. Keep Personal combat focused on self healing and healing of others.
+- Keep the installed version visible at the bottom left, including click-through mode.
+- Add separately configurable visibility shortcuts for each module and all windows together. Record combinations by pressing them in Settings. Default shortcuts are Shift+F5 through Shift+F12, away from letter keys; migrate old defaults once while retaining custom bindings.
+- Preserve window positions and open modules when hiding all windows, suppress automatic visibility while hidden, and keep event toggling independent of click-through mode.
+
 ## CatScratch v2.3.2
 
 - Stop opening extra event windows on double-click. Separate cards are available only through the explicit right-click action and now match the compact single-line layout.

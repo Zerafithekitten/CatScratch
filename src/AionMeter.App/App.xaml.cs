@@ -42,11 +42,13 @@ public partial class App : Application
     private OverlayWindow _overlay = null!;
     private TrayIcon? _tray;
     private HotkeyManager? _hotkeys;
+    private readonly WindowVisibilityGroup _windowVisibility=new();
     private DispatcherTimer? _timer;
     private HistoryWindow? _history;
     private SettingsWindow? _settingsWindow;
     private BossTimersWindow? _timersWindow;
     private TimerHubWindow? _timerHub;
+    private PetTrackerWindow? _petWindow;
     private TimerCards? _timerCards;
     private readonly Core.Events.EventAlerts _eventAlerts = new();
     private EventSoundPlayer? _eventSoundPlayer;
@@ -272,6 +274,7 @@ public partial class App : Application
         _timer = new DispatcherTimer(DispatcherPriority.Background) { Interval = TimeSpan.FromMilliseconds(200) };
         _timer.Tick += (_, _) => OnTick();
         _timer.Start();
+        if(settings.ShowPetTrackerModule) TogglePetModule();
 
         // Developer switches: --demo, --replay <file.pcap> (instant), --open-last (breakdown of the newest fight).
         if (e.Args.Contains("--demo")) _meter.StartDemo();
@@ -331,6 +334,7 @@ public partial class App : Application
             CheckBossAlerts();
             CheckEventSounds();
             CheckGameStart();
+            if(_petWindow?.IsVisible==true)_petWindow.RefreshNearby();
 
         }
     }
@@ -355,7 +359,7 @@ public partial class App : Application
         var engaged = fighting || party.Members.Count > 0;
         var now = Environment.TickCount64;
         if (engaged) _lastEngagedTick = now;
-        if (!s.AutoShow) return;
+        if (!s.AutoShow || _windowVisibility.Hidden) return;
 
         var canShow = fighting ? fight!.Value.Id != _suppressedFight
             : party.Members.Count > 0 && party.Revision != _suppressedPartyRevision;
@@ -375,7 +379,7 @@ public partial class App : Application
     /// <summary>Up without the user asking: goes away again after the usual idle time (Settings → Overlay).</summary>
     private void ShowByItself()
     {
-        if (_overlay.IsVisible) return;
+        if (_overlay.IsVisible || _windowVisibility.Hidden) return;
         _overlay.Show();
         _autoShown = true;
         _lastEngagedTick = Environment.TickCount64;
@@ -422,6 +426,7 @@ public partial class App : Application
         _hotkeys.UnregisterAll();
         var s = _meter.Settings;
         _hotkeys.Register(s.HotkeyToggleOverlay, () => SetOverlayVisible(!_overlay.IsVisible));
+        _hotkeys.Register(s.HotkeyToggleAll,()=>_windowVisibility.Toggle(Windows.Cast<Window>(),_overlay));
         _hotkeys.Register(s.HotkeyReset, RestartMeter);
         _overlay.ApplyHotkeyTips();
         if (!_hotkeys.Register(s.HotkeyClickThrough, ToggleClickThrough))
@@ -434,6 +439,9 @@ public partial class App : Application
                 "Hotkey registration failed", MessageBoxButton.OK, MessageBoxImage.Information));
         }
         _hotkeys.Register(s.HotkeyTimers, ToggleBossTimers);
+        _hotkeys.Register(s.HotkeyPersonal,_overlay.TogglePersonalCombat);
+        _hotkeys.Register(s.HotkeyEvents,ToggleEventModule);
+        _hotkeys.Register(s.HotkeyPets,TogglePetModule);
     }
 
     /// <summary>
@@ -452,6 +460,7 @@ public partial class App : Application
 
     public void SetOverlayVisible(bool visible)
     {
+        if(visible && _windowVisibility.Hidden)_windowVisibility.Restore();
         _autoShown = false; // the user decided: automatic hiding no longer applies
         if (visible)
         {
@@ -500,6 +509,8 @@ public partial class App : Application
     public void SetLanguage(string language)
     {
         _meter.SetLanguage(language);
+        var reopenPets=_petWindow?.IsVisible==true;
+        _petWindow?.Close();
         foreach (var w in _breakdowns.Values.ToList()) w.Close();
         _history?.Close();
         _timersWindow?.Close();
@@ -510,6 +521,7 @@ public partial class App : Application
         if (reopenEvents) ShowTimerHub();
         _tray?.ApplyTexts();
         _overlay.OnLanguageChanged();
+        if(reopenPets)TogglePetModule();
     }
 
     public void ToggleLanguage() => SetLanguage(UiText.Languages[(Array.IndexOf(UiText.Languages, UiText.Current.Code) + 1) % UiText.Languages.Length]);
@@ -552,17 +564,25 @@ public partial class App : Application
         WindowClickThrough.Attach(_timersWindow, () => _meter.Settings.ClickThrough, () => _meter.Settings.WindowOpacity);
         _timersWindow.Closed += (_, _) => _timersWindow = null;
         _timersWindow.Show();
+        _windowVisibility.Track(_timersWindow);
     }
 
-    public void ShowTimerHub()
+    private void ToggleEventModule()
+    {
+        if(_timerHub is {IsLoaded:true})_timerHub.Close();
+        else OpenTimerHub(false);
+    }
+    public void ShowTimerHub()=>OpenTimerHub(true);
+    private void OpenTimerHub(bool interactive)
     {
         // Opening the event controls is an explicit request to interact with the displays.
-        if (_meter.Settings.ClickThrough) ToggleClickThrough();
+        if (interactive && _meter.Settings.ClickThrough) ToggleClickThrough();
         if (_timerHub is { IsLoaded: true }) { Activate(_timerHub); return; }
         _timerHub = new TimerHubWindow(_timerCards!);
         WindowClickThrough.Attach(_timerHub, () => _meter.Settings.ClickThrough, () => _timerCards!.Saved.EventOpacity);
         _timerHub.Closed += (_, _) => _timerHub = null;
         _timerHub.Show();
+        _windowVisibility.Track(_timerHub);
     }
 
     /// <summary>Tray notification (and a chime) shortly before a tracked boss respawns.</summary>
@@ -605,6 +625,17 @@ public partial class App : Application
         _patchNotes = new PatchNotesWindow(_meter.Updates);
         _patchNotes.Closed += (_, _) => _patchNotes = null;
         _patchNotes.Show();
+    }
+    public void TogglePetModule()
+    {
+        if(_petWindow is not null){_petWindow.Close();return;}
+        _petWindow=new PetTrackerWindow(_meter);
+        _meter.EnablePetPositions(true);
+        _meter.Settings.ShowPetTrackerModule=true;_meter.Settings.Save();
+        WindowClickThrough.Attach(_petWindow,()=>_meter.Settings.ClickThrough,()=>_meter.Settings.WindowOpacity);
+        _petWindow.Closed+=(_,_)=>{_petWindow=null;if(!IsExiting){_meter.Settings.ShowPetTrackerModule=false;_meter.Settings.Save();}};
+        _petWindow.Show();
+        _windowVisibility.Track(_petWindow);
     }
 
     public void ShowSettings()

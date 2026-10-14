@@ -136,12 +136,14 @@ public partial class OverlayWindow : Window, IDisplayAppearance
     }
 
     /// <summary>Called by the app's UI timer (≈5 Hz).</summary>
-    private void PersonalCombat_Click(object sender, RoutedEventArgs e)
+    private void PersonalCombat_Click(object sender, RoutedEventArgs e)=>TogglePersonalCombat();
+    internal void TogglePersonalCombat()
     {
         _settings.ShowPersonalCombatModule = !_settings.ShowPersonalCombatModule;
         _settings.Save();
         Refresh();
     }
+    private void PetTracker_Click(object sender,RoutedEventArgs e)=>AppHost.Current.TogglePetModule();
 
     private static readonly Brush PersonalSurface = FrozenBrush("#D0171E27");
     private static readonly Brush PersonalLockedSurface = FrozenBrush("#B8101822");
@@ -171,7 +173,6 @@ public partial class OverlayWindow : Window, IDisplayAppearance
             Grid.SetColumn(value,3); grid.Children.Add(value);
             surface.Child = grid; PersonalMetrics.Children.Add(surface); _personalRows.Add((surface,value,text,label));
         }
-        Add("Damage taken", "#F2C25A", "M8,1 L14,4 L14,9 C14,13 8,16 8,16 C8,16 2,13 2,9 L2,4 Z");
         Add("Self healing", "#65DFA5", "M8,15 C8,15 1,10 1,5 C1,0 6,0 8,4 C10,0 15,0 15,5 C15,10 8,15 8,15 Z");
         Add("Healing others", "#75C8ED", "M8,15 C8,15 1,10 1,5 C1,0 6,0 8,4 C10,0 15,0 15,5 C15,10 8,15 8,15 Z M8,5 L8,11 M5,8 L11,8");
     }
@@ -188,11 +189,9 @@ public partial class OverlayWindow : Window, IDisplayAppearance
         PersonalCollapseButton.ToolTip = UiText.Current.Localize(_settings.PersonalCombatCollapsed ? "Expand personal combat" : "Collapse personal combat");
         var own = snapshot?.Combatants.FirstOrDefault(c => c.IsSelf);
         PersonalName.Text = own?.Name ?? _meter.LiveIdentity.Current?.Name ?? "";
-        _personalRows[0].Surface.Visibility = _settings.ShowDamageTaken ? Visibility.Visible : Visibility.Collapsed;
-        _personalRows[1].Surface.Visibility = _personalRows[2].Surface.Visibility = _settings.ShowHealingDone ? Visibility.Visible : Visibility.Collapsed;
-        _personalRows[0].Value.Text = own is null ? "—" : Format.Grouped(own.DamageTaken);
-        _personalRows[1].Value.Text = own is null ? "—" : Format.Grouped(own.SelfHealing);
-        _personalRows[2].Value.Text = own is null ? "—" : Format.Grouped(Math.Max(0,own.Healing-own.SelfHealing));
+        _personalRows[0].Surface.Visibility = _personalRows[1].Surface.Visibility = _settings.ShowHealingDone ? Visibility.Visible : Visibility.Collapsed;
+        _personalRows[0].Value.Text = own is null ? "—" : Format.Grouped(own.SelfHealing);
+        _personalRows[1].Value.Text = own is null ? "—" : Format.Grouped(Math.Max(0,own.Healing-own.SelfHealing));
     }
 
     private async void SaveLastFight_Click(object sender, RoutedEventArgs e)

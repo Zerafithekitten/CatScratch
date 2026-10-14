@@ -59,8 +59,14 @@ public sealed class AppSettings
     public bool ShowGear { get; set; } = true;
     public bool? ShowCombatPower { get; set; }
     public bool ShowPersonalCombatModule { get; set; }
+    public bool ShowPetTrackerModule {get;set;}
+    public int PetGoal {get;set;}
+    public bool PetNotify {get;set;}
+    public double PetModuleWidth {get;set;}=360;
+    public double PetModuleHeight {get;set;}=240;
+    public double PetModuleLeft {get;set;}=140;
+    public double PetModuleTop {get;set;}=140;
     public bool PersonalCombatCollapsed { get; set; }
-    public bool ShowDamageTaken { get; set; } = true;
     public bool ShowHealingDone { get; set; } = true;
     public double PersonalModuleLeft { get; set; } = 100;
     public double PersonalModuleTop { get; set; } = 100;
@@ -94,15 +100,33 @@ public sealed class AppSettings
     public string? CaptureDevice { get; set; }
 
     // Hotkeys (modifier+key, parsed by HotkeyManager)
-    public string HotkeyToggleOverlay { get; set; } = "Ctrl+Shift+D";
-    public string HotkeyReset { get; set; } = "Ctrl+Shift+R";
-    public string HotkeyClickThrough { get; set; } = "Ctrl+Shift+L";
-    public string HotkeyTimers { get; set; } = "Ctrl+Shift+T";
+    public string HotkeyToggleAll { get; set; } = "Shift+F10";
+    public string HotkeyToggleOverlay { get; set; } = "Shift+F5";
+    public string HotkeyReset { get; set; } = "Shift+F12";
+    public string HotkeyClickThrough { get; set; } = "Shift+F11";
+    public string HotkeyPersonal { get; set; } = "Shift+F6";
+    public string HotkeyEvents { get; set; } = "Shift+F7";
+    public string HotkeyPets { get; set; } = "Shift+F9";
+    public string HotkeyTimers { get; set; } = "Shift+F8";
 
     /// <summary>Bumped when the overlay layout changes enough that saved sizes no longer fit.</summary>
     public int LayoutVersion { get; set; } // 0 when missing from an older settings file; new installs get it in Load()
     private const int CurrentLayout = 7;
 
+    public int HotkeyDefaultsVersion {get;set;}
+    internal void MigrateHotkeys()
+    {
+        if(HotkeyDefaultsVersion>=1)return;
+        if(string.Equals(HotkeyToggleOverlay,"Ctrl+Shift+D",StringComparison.OrdinalIgnoreCase))HotkeyToggleOverlay="Shift+F5";
+        if(string.Equals(HotkeyPersonal,"Ctrl+Shift+C",StringComparison.OrdinalIgnoreCase))HotkeyPersonal="Shift+F6";
+        if(string.Equals(HotkeyEvents,"Ctrl+Shift+E",StringComparison.OrdinalIgnoreCase))HotkeyEvents="Shift+F7";
+        if(string.Equals(HotkeyTimers,"Ctrl+Shift+T",StringComparison.OrdinalIgnoreCase))HotkeyTimers="Shift+F8";
+        if(string.Equals(HotkeyPets,"Ctrl+Shift+P",StringComparison.OrdinalIgnoreCase))HotkeyPets="Shift+F9";
+        if(string.Equals(HotkeyToggleAll,"Ctrl+Shift+H",StringComparison.OrdinalIgnoreCase))HotkeyToggleAll="Shift+F10";
+        if(string.Equals(HotkeyClickThrough,"Ctrl+Shift+L",StringComparison.OrdinalIgnoreCase))HotkeyClickThrough="Shift+F11";
+        if(string.Equals(HotkeyReset,"Ctrl+Shift+R",StringComparison.OrdinalIgnoreCase))HotkeyReset="Shift+F12";
+        HotkeyDefaultsVersion=1;
+    }
     public static AppSettings Load()
     {
         try
@@ -141,6 +165,7 @@ public sealed class AppSettings
                     s.OverlayWidth = Math.Max(s.OverlayWidth, 380);
                     s.OverlayHeight = Math.Max(s.OverlayHeight, 540);
                 }
+                s.MigrateHotkeys();
                 s.LayoutVersion = CurrentLayout;
                 return s;
             }
@@ -148,7 +173,7 @@ public sealed class AppSettings
         catch (Exception ex) when (ex is IOException or JsonException)
         {
         }
-        return new AppSettings { LayoutVersion = CurrentLayout };
+        return new AppSettings { LayoutVersion = CurrentLayout, HotkeyDefaultsVersion=1 };
     }
 
     /// <summary>Throw-away settings (render tool): never written to disk.</summary>

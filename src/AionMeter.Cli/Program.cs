@@ -14,6 +14,8 @@ var data = GameData.Load(dataDir, langAt >= 0 && langAt + 1 < args.Length ? args
 
 return args.FirstOrDefault() switch
 {
+    "petscan" when args.Length > 1 => PetScan(args[1]),
+    "petverify" when args.Length > 2 => PetVerify(args[1],args[2]),
     "devices" => Devices(),
     "conns" => Connections(),
     "live" => Live(args.Skip(1).ToArray()),
@@ -587,6 +589,34 @@ void PrintFights(CombatTracker tracker)
     }
 }
 
+int PetScan(string path)
+{
+    var packets=new Dictionary<ushort,(int Count,int Max,long First,long Last)>();
+    using var replay=new PcapReplaySource(data,path,false);
+    replay.Pipeline.Parser.Tap=(time,op,body)=> {
+        var old=packets.GetValueOrDefault(op);
+        packets[op]=(old.Count+1,Math.Max(old.Max,body.Length),old.Count==0 ? time : old.First,time);
+    };
+    replay.RunToEnd();
+    foreach(var pair in packets.OrderBy(x=>x.Key))
+    {
+        var v=pair.Value;
+        Console.WriteLine($"{pair.Key:x4} count={v.Count} max={v.Max} first={DateTimeOffset.FromUnixTimeMilliseconds(v.First).ToLocalTime():HH:mm:ss} last={DateTimeOffset.FromUnixTimeMilliseconds(v.Last).ToLocalTime():HH:mm:ss}");
+    }
+    return 0;
+}
+int PetVerify(string baseline,string increment)
+{
+    var pets=new PetCollection();
+    foreach(var path in new[]{baseline,increment})
+    {
+        using var replay=new PcapReplaySource(data,path,false);
+        replay.Pipeline.Parser.DecodePetPositions=true; replay.EventDecoded+=pets.Observe;replay.RunToEnd();
+        var pet=pets.Snapshot().FirstOrDefault(p=>p.Id==1193);
+        Console.WriteLine($"Confirmed={pets.Confirmed} Pet1193={pet} Needed2={pet?.Needed(2)} OwnPosition={pets.Nearby().Own is not null} Npcs={pets.Nearby().Npcs.Count}");
+    }
+    return pets.Snapshot().FirstOrDefault(p=>p.Id==1193) is {Level:1,Souls:11}?0:1;
+}
 sealed class EventStats(GameData data)
 {
     private readonly Dictionary<string, int> _byType = new();

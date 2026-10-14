@@ -45,7 +45,7 @@ public partial class SettingsWindow : Window
         AppIcon.Apply(this);
         Controls.DragAnywhere.Attach(this);
         Load();
-        foreach (var field in new[] { HkToggle, HkReset, HkClick, HkTimers })
+        foreach (var field in new[] { HkToggle, HkAll, HkReset, HkClick, HkTimers, HkPersonal, HkEvents, HkPets })
         {
             field.IsReadOnly = true;
             field.ToolTip = UiText.Current.Localize("Click here and press your shortcut. Applied after saving.");
@@ -69,7 +69,6 @@ public partial class SettingsWindow : Window
         BarsRelative.IsChecked = s.BarsRelativeToTop;
         ShowBoss.IsChecked = s.ShowBossPanel;
         ShowPersonalCombatModule.IsChecked = s.ShowPersonalCombatModule;
-        ShowDamageTaken.IsChecked = s.ShowDamageTaken;
         ShowHealingDone.IsChecked = s.ShowHealingDone;
         ShowGear.IsChecked = s.ShowGear;
         ShowCombatPower.IsChecked = s.ShowCombatPower ?? s.ShowGear;
@@ -89,9 +88,13 @@ public partial class SettingsWindow : Window
         HistoryInfo.Text = string.Format(T.HistoryInfo, _meter.History.List().Count, _meter.History.Directory);
         Record.IsChecked = s.RecordPackets;
         HkToggle.Text = s.HotkeyToggleOverlay;
+        HkAll.Text = s.HotkeyToggleAll;
         HkReset.Text = s.HotkeyReset;
         HkClick.Text = s.HotkeyClickThrough;
         HkTimers.Text = s.HotkeyTimers;
+        HkPersonal.Text=s.HotkeyPersonal;
+        HkEvents.Text=s.HotkeyEvents;
+        HkPets.Text=s.HotkeyPets;
 
         _devices.Add((null, T.AdapterAuto));
         try
@@ -159,7 +162,6 @@ public partial class SettingsWindow : Window
         s.BarsRelativeToTop = BarsRelative.IsChecked == true;
         s.ShowBossPanel = ShowBoss.IsChecked == true;
         s.ShowPersonalCombatModule = ShowPersonalCombatModule.IsChecked == true;
-        s.ShowDamageTaken = ShowDamageTaken.IsChecked == true;
         s.ShowHealingDone = ShowHealingDone.IsChecked == true;
         s.ShowGear = ShowGear.IsChecked == true;
         s.ShowCombatPower = ShowCombatPower.IsChecked == true;
@@ -186,9 +188,13 @@ public partial class SettingsWindow : Window
         s.CheckUpdates = CheckUpdates.IsChecked == true;
         s.AutoInstallUpdates = false; // Legacy setting: installation now always requires explicit approval.
         s.HotkeyToggleOverlay = HkToggle.Text.Trim();
+        s.HotkeyToggleAll = HkAll.Text.Trim();
         s.HotkeyReset = HkReset.Text.Trim();
         s.HotkeyClickThrough = HkClick.Text.Trim();
         s.HotkeyTimers = HkTimers.Text.Trim();
+        s.HotkeyPersonal=HkPersonal.Text.Trim();
+        s.HotkeyEvents=HkEvents.Text.Trim();
+        s.HotkeyPets=HkPets.Text.Trim();
 
         _meter.ApplySettings();
         if (captureChanged) _meter.RestartCapture();

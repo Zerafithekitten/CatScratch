@@ -123,6 +123,26 @@ internal static class InteractionChecks
             for (var i = 0; i < 4; i++) { mode = !mode; WindowClickThrough.ApplyAll(mode); }
             Check(Style(first) == originals[0], "Repeated toggles preserve original styles");
             Check(!HotkeyManager.TryParse("+++", out _, out _), "Invalid hotkey text rejected");
+            var grouped=new WindowVisibilityGroup();
+            var placement=(first.Left,first.Top,first.Width,first.Height);
+            var hidden=Create();hidden.Hide();
+            var doomed=Create();
+            grouped.Toggle(windows,first);
+            Check(grouped.Hidden && windows.All(w=>!w.IsVisible),"All-window toggle hides the visible displays together");
+            var later=Create();grouped.Track(later);
+            Check(!later.IsVisible,"Newly enabled modules stay hidden while the all-window toggle is active");
+            doomed.Close();windows.Remove(doomed);
+            grouped.Restore();
+            Check(!grouped.Hidden && first.IsVisible && second.IsVisible && third.IsVisible && later.IsVisible && !hidden.IsVisible,"All-window toggle restores only previously visible windows and skips closed windows");
+            Check(placement==(first.Left,first.Top,first.Width,first.Height),"All-window visibility preserves window placement and size");
+            Check(HotkeyManager.TryParse(new AppSettings().HotkeyToggleAll,out _,out _),"Default all-window shortcut is a valid configurable key combination");
+            var defaults=new AppSettings();
+            var moduleKeys=new[]{defaults.HotkeyToggleOverlay,defaults.HotkeyPersonal,defaults.HotkeyEvents,defaults.HotkeyTimers,defaults.HotkeyPets,defaults.HotkeyToggleAll,defaults.HotkeyClickThrough,defaults.HotkeyReset};
+            Check(moduleKeys.Distinct().Count()==8 && moduleKeys.All(k=>k.StartsWith("Shift+F") && HotkeyManager.TryParse(k,out _,out _)),"Every default shortcut uses Shift and a distinct function key away from WASD");
+            var oldDefaults=new AppSettings {HotkeyToggleOverlay="Ctrl+Shift+D",HotkeyTimers="Ctrl+Shift+T",HotkeyPets="Alt+F9"};oldDefaults.MigrateHotkeys();
+            Check(oldDefaults.HotkeyToggleOverlay=="Shift+F5" && oldDefaults.HotkeyTimers=="Shift+F8" && oldDefaults.HotkeyPets=="Alt+F9","One-time hotkey migration updates old defaults and preserves custom combinations");
+            oldDefaults.HotkeyToggleOverlay="Ctrl+Shift+D";oldDefaults.MigrateHotkeys();
+            Check(oldDefaults.HotkeyToggleOverlay=="Ctrl+Shift+D","Hotkey migration does not override later user choices");
             var elevation = AdministratorStartup.StartInfo("C:\\Cat Scratch\\CatScratch.exe", ["--updated", "argument with spaces"]);
             Check(elevation.UseShellExecute && elevation.Verb == "runas" && elevation.ArgumentList.SequenceEqual(new[] { "--updated", "argument with spaces" }),
                 "Normal startup requests administrator elevation and preserves arguments");
@@ -236,6 +256,11 @@ internal static class InteractionChecks
             Check(eventPreferences.Background is System.Windows.Media.SolidColorBrush eventBg && eventBg.Color.A==255 && eventPreferences.Opacity==1,
                 "Event settings use a solid interactive meter-style surface");
             var settings=new AionMeter.App.Windows.SettingsWindow(meter); windows.Add(settings);
+            foreach(var (field,gesture) in new[]{("HkPersonal",meter.Settings.HotkeyPersonal),("HkEvents",meter.Settings.HotkeyEvents),("HkPets",meter.Settings.HotkeyPets)})
+            {
+                var box=(System.Windows.Controls.TextBox)settings.FindName(field);
+                Check(box.IsReadOnly && box.Text==gesture && HotkeyManager.TryParse(gesture,out _,out _),"Module shortcut can be recorded by pressing keys: "+field);
+            }
             Check(((System.Windows.Controls.TabControl)settings.FindName("SettingsTabs")).Items.Count==6 && ((System.Windows.Controls.TextBox)settings.FindName("HkClick")).IsReadOnly,
                 "Settings are organized into six categories while retaining recorded hotkeys");
             Check(activeOverlay.FindName("ViewMenuButton") is null,"Unused View button is removed from the DPS footer");
@@ -317,24 +342,30 @@ internal static class InteractionChecks
                 "All world bosses enables scheduled bosses while preserving the one-hour upcoming limit");
             Check(AionMeter.Core.Events.EventKinds.For("boss:2305:123") == "BOSS", "Live world-boss cards retain the boss color category");
             Check(activeOverlay.FindName("EventsButton") is null, "Unused meter Events button is removed");
+            meter.Settings.ShowPersonalCombatModule = false;
+            activeOverlay.TogglePersonalCombat();
+            Check(meter.Settings.ShowPersonalCombatModule,"Personal-combat shortcut enables its integrated section");
+            activeOverlay.TogglePersonalCombat();
+            Check(!meter.Settings.ShowPersonalCombatModule,"Personal-combat shortcut independently disables its section");
             meter.Settings.ShowPersonalCombatModule = true;
             meter.Tracker.Process(new AionMeter.Core.Events.DamageEvent(1_000_001,1,500,17010000,100,AionMeter.Core.Events.HitFlags.None));
             meter.Tracker.Process(new AionMeter.Core.Events.HealEvent(1_000_002,1,1,17010000,78500,AionMeter.Core.Events.HitFlags.None));
+            meter.Tracker.Process(new AionMeter.Core.Events.DamageEvent(1_000_003,500,1,2000000,42850,AionMeter.Core.Events.HitFlags.None));
             activeOverlay.Refresh();
+            Check(activeModel.Rows.First(r=>r.IsSelf).DamageTaken==Core.Format.Compact(42850),"The own player row displays received damage separately from outgoing damage");
             Check(activeModel.SegmentId!=segment,"A new fight replaces the finished fight automatically");
             var personalMetrics=(System.Windows.Controls.StackPanel)activeOverlay.FindName("PersonalMetrics");
-            var healingGrid=(System.Windows.Controls.Grid)((System.Windows.Controls.Border)personalMetrics.Children[1]).Child;
+            var healingGrid=(System.Windows.Controls.Grid)((System.Windows.Controls.Border)personalMetrics.Children[0]).Child;
             Check(healingGrid.Children.OfType<System.Windows.Controls.TextBlock>().Last().Text == "78,500",
                 "Integrated personal totals display received self healing for the shown fight");
-            foreach (var showTaken in new[] { true, false })
             foreach (var showHealing in new[] { true, false })
             {
-                meter.Settings.ShowDamageTaken=showTaken; meter.Settings.ShowHealingDone=showHealing;
+                meter.Settings.ShowHealingDone=showHealing;
                 activeOverlay.Refresh();
                 var metrics=(System.Windows.Controls.StackPanel)activeOverlay.FindName("PersonalMetrics");
-                Check(((System.Windows.Controls.Border)metrics.Children[0]).Visibility == (showTaken ? Visibility.Visible : Visibility.Collapsed) &&
+                Check(metrics.Children.Count==2 && ((System.Windows.Controls.Border)metrics.Children[0]).Visibility == (showHealing ? Visibility.Visible : Visibility.Collapsed) &&
                     ((System.Windows.Controls.Border)metrics.Children[1]).Visibility == (showHealing ? Visibility.Visible : Visibility.Collapsed),
-                    "Integrated personal damage and healing sections can be shown independently");
+                    "Personal combat contains only the two healing rows");
             }
             var collapse=(System.Windows.Controls.Button)activeOverlay.FindName("PersonalCollapseButton");
             collapse.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Button.ClickEvent));
@@ -352,6 +383,34 @@ internal static class InteractionChecks
                 "Unlocking restores integrated personal row surfaces");
             Check(activeOverlay.FindName("PersonalCombatButton") is System.Windows.Controls.Button,
                 "Personal module toggle is available beside the CatScratch title");
+            Check(activeOverlay.FindName("PetTrackerButton") is System.Windows.Controls.Button,"Separate Pet tracker has a meter button");
+            var versionText=(System.Windows.Controls.TextBlock)activeOverlay.FindName("InstalledVersionText");
+            activeOverlay.UpdateLayout();
+            Check(versionText.Text==activeModel.Version,"Footer shows the running assembly version");
+            activeOverlay.SetDisplayOnly(true);
+            Check(versionText.Visibility==Visibility.Visible,"Installed version remains visible in click-through mode");
+            activeOverlay.SetDisplayOnly(false);
+            meter.Settings.PetGoal=2;
+            var petCatalog=PetCatalog.Load(MeterService.DataDirectory);
+            Check(petCatalog.Count(p=>p.Sources.Length>0)==165,"Offline pet catalog includes 165 Global monster-source mappings");
+            Check(petCatalog.Single(p=>p.Id==1193).Sources.Any(f=>f.NpcCode==2400455 && f.Zone=="Altgard"),"Expanded farm data preserves the captured Shulak source");
+            Check(petCatalog.Single(p=>p.Id==1176).Sources.Any(f=>f.NpcCode==2400707 && f.Zone=="Altgard"),"Expanded farm data preserves the confirmed Mudthorn source");
+            Check(petCatalog.All(p=>p.Sources.All(f=>f.NpcCode>0 && f.Faction is "Elyos" or "Asmodians" or "Other")),"Pet farm IDs and faction values are valid");
+            var petWindow=new Windows.PetTrackerWindow(meter){Left=-30000,Top=-30000,ShowActivated=false};
+            windows.Add(petWindow);petWindow.Show();petWindow.Search("Shulak");
+            var petList=Descendants(petWindow).OfType<System.Windows.Controls.ListBox>().First();
+            Check(petList.Items.Count==0,"Pet tracker waits for a confirmed own baseline");
+            meter.Pets.Observe(new Core.Events.SelfIdentifiedEvent(1,1,"Sample self",2305,Core.Events.GameClass.Cleric));
+            meter.Pets.Observe(new Core.Game.PetCollectionEvent(2,new Dictionary<int,Core.Game.PetState>{{1193,new(1193,1,10)}}));
+            petWindow.Refresh();
+            Check(petList.Items.OfType<Windows.PetTrackerWindow.Row>().Single(x=>x.Definition.Id==1193).Progress=="10/25","Pet window renders the confirmed Global 10/25 baseline");
+            meter.Pets.Observe(new Core.Game.PetSoulEvent(3,new Dictionary<int,int>{{1193,1}}));petWindow.Refresh();
+            Check(petList.Items.OfType<Windows.PetTrackerWindow.Row>().Single(x=>x.Definition.Id==1193).Progress=="11/25","Pet window updates to 11/25 from the verified soul delta");
+            petWindow.SetDisplayOnly(true);
+            Check(((System.Windows.Controls.Border)petWindow.Content).Background==System.Windows.Media.Brushes.Transparent,"Locked Pet tracker hides its window background");
+            petWindow.SetDisplayOnly(false);
+            Check(((System.Windows.Controls.Border)petWindow.Content).Background!=System.Windows.Media.Brushes.Transparent,"Unlocking restores the themed Pet tracker surface");
+            petWindow.Close();
             foreach(var soundName in new[]{"Chime","Bell","Ping"})
             {
                 using var sound=File.OpenRead(Path.Combine(AppContext.BaseDirectory,"sounds",soundName+".wav"));
@@ -406,7 +465,7 @@ internal static class InteractionChecks
             AssetDownloadChecks.Run(output,Check);
             meter.SetLanguage("en"); activeOverlay.OnLanguageChanged();
             Check(((System.Windows.Controls.TextBlock)healingGrid.Children[2]).Text=="Self healing","Switching back to English restores the live labels");
-            meter.Settings.ShowDamageTaken=meter.Settings.ShowHealingDone=true;
+            meter.Settings.ShowHealingDone=true;
             using var legacyUpdater = new Updater(new AppSettings { Transient = true, AutoInstallUpdates = true });
             var release = new AionMeter.Core.Updates.ReleaseInfo(new Version(99, 0, 0), "v99.0.0",
                 "https://example.invalid/release", "Verification only", null, null,

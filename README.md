@@ -4,7 +4,7 @@ A separate always-on-top Windows damage meter for AION 2 by Zerafithekitten.
 
 [Download the latest release](https://github.com/Zerafithekitten/CatScratch/releases/latest) · [Patch notes](data/patchnotes-en.md) · [Report an issue](https://github.com/Zerafithekitten/CatScratch/issues)
 
-Latest published version: **2.3.2**. English is the default; German, Russian and French are available in Settings.
+Latest published version: **2.4.0**. English is the default; German, Russian and French are available in Settings.
 
 ## Preview
 
@@ -12,7 +12,7 @@ CatScratch UI rendered with sample data. Names and numbers are examples. The scr
 
 ### DPS meter and Personal combat
 
-<img src="docs/screenshots/meter.png" alt="CatScratch 2.1 DPS meter with integrated personal damage taken and healing" width="420" />
+<img src="docs/screenshots/meter.png" alt="CatScratch 2.4 DPS meter with party damage taken and personal healing" width="420" />
 
 ### Click-through mode
 
@@ -64,6 +64,27 @@ Available since 2.1.2. Saving fights is optional: press the save button after co
 
 </details>
 
+### Pet tracker and shortcuts
+
+Use the paw button beside the CatScratch title to toggle the compact Pet tracker. It shows confirmed own pet levels and soul counts, remaining souls for the selected goal, and known farm monsters/areas. Search, genus/faction filters and optional unlock/level-up sounds are behind its settings button. A fresh collection packet is required before counters are shown; change zones once if needed. The offline catalog includes confirmed Global monster-source mappings for 165 pets. Other sources remain unverified, and some locations are unknown. There is no map or radar.
+
+<img src="docs/screenshots/pet-tracker.png" alt="Compact Pet tracker with soul progress and a confirmed farm source" width="360" />
+
+All shortcuts can be recorded by pressing a combination in **Settings > Hotkeys**. Defaults:
+
+| Action | Shortcut |
+| --- | --- |
+| DPS meter | Shift+F5 |
+| Personal combat | Shift+F6 |
+| Upcoming events | Shift+F7 |
+| Boss timers | Shift+F8 |
+| Pet tracker | Shift+F9 |
+| All windows | Shift+F10 |
+| Click-through | Shift+F11 |
+| Restart meter | Shift+F12 |
+
+The all-window shortcut restores the same previously open windows and their positions. The installed version is always visible at the bottom left of the meter.
+
 ### Update improvements
 
 - Subtle dark backgrounds behind Personal combat rows in click-through mode for readability.
@@ -77,10 +98,10 @@ Select the language in **Settings > General > Language**. English remains the de
 
 | Language | Interface | Availability |
 | --- | --- | --- |
-| English | English | Current release (2.3.2) · default |
-| German | Deutsch | Current release (2.3.2) |
-| Russian | Русский | Current release (2.3.2) |
-| French | Français | Current release (2.3.2) |
+| English | English | Current release (2.4.0) · default |
+| German | Deutsch | Current release (2.4.0) |
+| Russian | Русский | Current release (2.4.0) |
+| French | Français | Current release (2.4.0) |
 
 Skill and monster names use the bundled language tables, with English as the fallback for missing names. Player names are preserved.
 
@@ -105,7 +126,7 @@ Use borderless windowed mode to keep the meter visible above the game.
 - Own damage while solo and confirmed current party members while grouped.
 - Class, name, DPS, damage, share, Combat Power and Gear Score.
 - Dark player rows with separate class-colored DPS bars, resizing, opacity and shortcuts recorded by pressing keys.
-- Integrated, collapsible Personal combat showing your damage taken, self healing and healing of others.
+- Damage taken in red on every player row; integrated, collapsible Personal combat for self healing and healing of others.
 - Click-through removes window frames while preserving damage, time and RTT.
 - Movable cards for all selected events and enabled world-boss timers within the next hour, with a pulsing border for two minutes after the start.
 - Separate observed boss timers; optional fight saving, retaining the last ten saved fights.
