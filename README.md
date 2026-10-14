@@ -10,7 +10,7 @@ Latest stable version: **2.5.0**. English is the default; German, Russian and Fr
 
 **Stable is v2.5.0.** Future updates are published to the `beta` branch and as GitHub prereleases first, unless explicitly promoted to Stable.
 
-Settings > General > Updates > **Update channel** offers, Stable and Beta choices. Beta builds are GitHub prereleases and will not replace the stable download. Checking or changing channels never downloads or installs a release; choose **Update now** to install it. Returning to Stable can install an older version while preserving settings and saved fights.
+Settings > General > Updates > **Update channel** offers Stable and Beta choices. Beta builds are GitHub prereleases and will not replace the stable download. Checking or changing channels never downloads or installs a release; choose **Update now** to install it. Returning to Stable can install an older version while preserving settings and saved fights.
 
 Update older installations to stable v2.5.0 to access the channel selector. A beta installation without an existing channel preference follows Beta; an explicitly saved preference is respected.
 
