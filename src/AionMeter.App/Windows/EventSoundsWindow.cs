@@ -50,6 +50,8 @@ public sealed class EventSoundsWindow : Window
             var enabled = new CheckBox { Content = $"{UiText.Current.Localize(item.Kind)} · {UiText.Current.Localize(item.Name)}", Foreground = EventPanelBrushes.ForKind(item.Kind), IsChecked = preference.Enabled };
             enabled.Click += (_, _) => { preference.Enabled = enabled.IsChecked == true; cards.Save(); }; box.Children.Add(enabled);
             var controls = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(20,5,0,0) };
+            var feedback = new TextBlock { Foreground=Brush("#F4A8A8"), TextWrapping=TextWrapping.Wrap, Margin=new Thickness(20,5,0,0), Visibility=Visibility.Collapsed };
+            void ShowError(Exception error) { Log.Error("Event audio selection or preview failed",error); feedback.Text=UiText.Current.Localize(error.Message); feedback.Visibility=Visibility.Visible; }
             if (CustomEventAudio.IsCustom(preference.Sound)) preference.Sound = "Custom audio";
             var soundIds=new[] { "Chime", "Bell", "Ping", "Custom audio" };
             var labels = new System.Collections.ObjectModel.ObservableCollection<string>(soundIds.Select(UiText.Current.Localize));
@@ -63,6 +65,7 @@ public sealed class EventSoundsWindow : Window
             {
                 if (choosing) return false;
                 choosing = true; choose.IsEnabled = sound.IsEnabled = false;
+                feedback.Visibility = Visibility.Collapsed;
                 try
                 {
                     var picker = new Microsoft.Win32.OpenFileDialog { Filter = "Audio (*.wav;*.mp3)|*.wav;*.mp3|WAV (*.wav)|*.wav|MP3 (*.mp3)|*.mp3", CheckFileExists = true };
@@ -77,8 +80,8 @@ public sealed class EventSoundsWindow : Window
                     choose.Content = UiText.Current.Localize("Change audio…"); cards.Save();
                     return true;
                 }
-                catch (Exception error) when (error is IOException or UnauthorizedAccessException or InvalidOperationException or ArgumentException)
-                { MessageBox.Show(this, UiText.Current.Localize(error.Message), UiText.Current.Localize("Event sounds"), MessageBoxButton.OK, MessageBoxImage.Information); return false; }
+                catch (Exception error) when (error is InvalidDataException or IOException or UnauthorizedAccessException or InvalidOperationException or ArgumentException)
+                { ShowError(error); return false; }
                 finally { choosing = false; choose.IsEnabled = sound.IsEnabled = true; }
             }
             sound.SelectionChanged += async (_, _) =>
@@ -105,6 +108,7 @@ public sealed class EventSoundsWindow : Window
                 try
                 {
                     test.IsEnabled = false;
+                    feedback.Visibility = Visibility.Collapsed;
                     if (CustomEventAudio.IsCustom(preference.Sound))
                     {
                         if (!HasCustomFile(preference) && !await ChooseAsync()) return;
@@ -112,11 +116,12 @@ public sealed class EventSoundsWindow : Window
                     }
                     preview(preference,cards.Saved.SoundVolume);
                 }
-                catch(Exception error) when(error is IOException or UnauthorizedAccessException or InvalidOperationException or ArgumentException)
-                { MessageBox.Show(this,UiText.Current.Localize(error.Message),UiText.Current.Localize("Event sounds"),MessageBoxButton.OK,MessageBoxImage.Information); }
+                catch(Exception error) when(error is InvalidDataException or IOException or UnauthorizedAccessException or InvalidOperationException or ArgumentException)
+                { ShowError(error); }
                 finally { test.IsEnabled = true; }
             }; controls.Children.Add(test);
             box.Children.Add(controls);
+            box.Children.Add(feedback);
         }
         body.Children.Add(new TextBlock { Text = UiText.Current.Localize("Tracked world bosses use the watched-boss and ‘Notify before respawn’ settings in Boss timers. Custom audio files must stay at their selected location."), Foreground=Brush("#A9B8C7"),TextWrapping = TextWrapping.Wrap, Margin = new Thickness(0,2,0,0) });
         Content = new Border { Child=root,Background=Background,BorderBrush=Brush("#607B827F"),BorderThickness=new Thickness(1),CornerRadius=new CornerRadius(10) };

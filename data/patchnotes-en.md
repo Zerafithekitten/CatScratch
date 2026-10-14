@@ -1,3 +1,10 @@
+## CatScratch v2.4.6
+
+- Handle custom-audio validation failures inside the event sound window instead of allowing InvalidDataException to escape the asynchronous selection callback.
+- Show red inline error messages under the affected event. Explain excessive duration with the measured seconds, missing or empty files, the 10 MB limit, unsupported formats and Windows decoder failures.
+- Keep the previous sound and filename after a rejected or cancelled selection. Preserve the 10-second limit.
+- Add end-to-end asynchronous sound selection, preview, rejection and cancellation checks to the release build.
+
 ## CatScratch v2.4.5
 
 - Open the file picker immediately when selecting custom audio without an existing file. Cancelling or rejecting the file preserves the previous sound selection.

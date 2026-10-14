@@ -140,6 +140,16 @@ public partial class App : Application
                 .RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Primitives.ButtonBase.ClickEvent)), DispatcherPriority.ApplicationIdle);
             return;
         }
+        if (ArgValue(e.Args,"--check-event-audio") is { } eventAudioResult)
+        {
+            Log.Enabled=false;
+            Dispatcher.BeginInvoke(async () =>
+            {
+                try { await EventAudioChecks.RunAsync(eventAudioResult); Shutdown(); }
+                catch(Exception ex) { File.WriteAllText(eventAudioResult,ex.ToString()); Shutdown(1); }
+            });
+            return;
+        }
         if (ArgValue(e.Args,"--check-audio") is { } audio && ArgValue(e.Args,"--output") is { } audioResult)
         {
             Log.Enabled=false;

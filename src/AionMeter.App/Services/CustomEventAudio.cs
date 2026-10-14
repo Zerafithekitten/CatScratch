@@ -10,9 +10,11 @@ internal static class CustomEventAudio
     public static Uri FileUri(string path)
     {
         var file = new FileInfo(path);
-        if (!file.Exists || file.Length is <= 0 or > 10_000_000 ||
-            !new[] { ".wav", ".mp3" }.Contains(file.Extension, StringComparer.OrdinalIgnoreCase))
-            throw new InvalidDataException("Choose a valid WAV or MP3 file, up to 10 seconds and 10 MB.");
+        if (!file.Exists) throw new InvalidDataException(UiText.Current.Localize("The selected audio file no longer exists. Choose it again."));
+        if (file.Length <= 0) throw new InvalidDataException(UiText.Current.Localize("The selected audio file is empty."));
+        if (file.Length > 10_000_000) throw new InvalidDataException(UiText.Current.Localize("The selected audio file exceeds 10 MB. Choose a smaller file."));
+        if (!new[] { ".wav", ".mp3" }.Contains(file.Extension, StringComparer.OrdinalIgnoreCase))
+            throw new InvalidDataException(UiText.Current.Localize("Unsupported audio format. Choose a WAV or MP3 file."));
         return new Uri(file.FullName);
     }
     public static bool AllowedDuration(Duration duration) => duration.HasTimeSpan &&
@@ -21,8 +23,9 @@ internal static class CustomEventAudio
     // WPF's decoder supports WAV encodings and MP3, including variable bit rates. No helper process is started.
     public static async Task ValidateAsync(string path)
     {
-        if (!AllowedDuration(new Duration(await DurationAsync(path))))
-            throw new InvalidDataException("Choose a valid WAV or MP3 file, up to 10 seconds and 10 MB.");
+        var duration = await DurationAsync(path);
+        if (!AllowedDuration(new Duration(duration)))
+            throw new InvalidDataException(string.Format(UiText.Current.Localize("This sound is {0:0.00} seconds long. Maximum: 10 seconds. Choose a shorter file."), duration.TotalSeconds));
     }
     internal static async Task<TimeSpan> DurationAsync(string path)
     {
@@ -36,7 +39,7 @@ internal static class CustomEventAudio
             player.Open(uri);
             var duration = await completion.Task.WaitAsync(TimeSpan.FromSeconds(5));
             if (duration <= TimeSpan.Zero)
-                throw new InvalidDataException("Choose a valid WAV or MP3 file, up to 10 seconds and 10 MB.");
+                throw new InvalidDataException(UiText.Current.Localize("Windows could not decode this audio file or determine its duration. Choose another WAV or MP3 file."));
             return duration;
         }
         catch (TimeoutException) { throw new InvalidDataException("The audio file could not be opened. Choose another WAV or MP3 file."); }

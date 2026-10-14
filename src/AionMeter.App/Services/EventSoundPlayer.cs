@@ -36,7 +36,7 @@ internal sealed class EventSoundPlayer : IDisposable
         if (CustomEventAudio.IsCustom(preference.Sound))
         {
             try { CustomEventAudio.FileUri(path); }
-            catch (Exception error) when (error is IOException or UnauthorizedAccessException)
+            catch (Exception error) when (error is InvalidDataException or IOException or UnauthorizedAccessException)
             { Log.Error("Custom event sound must be WAV or MP3, up to 10 seconds and 10 MB",error); return; }
         }
         if (preview) { _queue.Clear(); _player.Close(); _playing = false; }
@@ -56,7 +56,7 @@ internal sealed class EventSoundPlayer : IDisposable
             _player.Open(sound.File);
 
         }
-        catch (Exception error) when (error is IOException or UnauthorizedAccessException or InvalidOperationException or ArgumentException)
+        catch (Exception error) when (error is InvalidDataException or IOException or UnauthorizedAccessException or InvalidOperationException or ArgumentException)
         {
             Log.Error("Event sound could not start", error);
             _player.Close(); _playing = false; PlayNext();
