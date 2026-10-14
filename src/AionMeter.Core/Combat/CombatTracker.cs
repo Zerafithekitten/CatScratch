@@ -151,6 +151,7 @@ public sealed class CombatTracker
                             _pendingRosters.Add(pending);
                         }
                     }
+                    RebindCombatant(s.ActorId);
                     LinkSummonsCastBy(s.ActorId, s.Name);
                     selfName = s.Name;
                     break;
@@ -175,6 +176,7 @@ public sealed class CombatTracker
                         && (p.Name != _selfKey.Name || (p.ServerId > 0 && _selfKey.Server > 0 && p.ServerId != _selfKey.Server)))
                     { _freshSelf = false; ClearParty(); }
                     _entities.UpsertPlayer(p.ActorId, p.Name, p.ServerId, p.Class);
+                    RebindCombatant(p.ActorId);
                     LinkSummonsCastBy(p.ActorId, p.Name);
                     break;
                 case NpcSeenEvent n:
@@ -649,6 +651,16 @@ public sealed class CombatTracker
         _viewCleared = false;
     }
 
+    /// <summary>Respawn actor IDs are transient; keep one participant and its full totals within the same live fight.</summary>
+    private void RebindCombatant(uint actorId)
+    {
+        if(_current is not {IsActive:true} fight || !_entities.TryGetPlayer(actorId,out var player) || player.FromCache || player.ServerId<=0 || string.IsNullOrWhiteSpace(player.Name) || !InParty(actorId))return;
+        var previous=fight.Combatants.Values.Where(c=>c.ActorId!=actorId && c.Name==player.Name && c.ServerId==player.ServerId).ToArray();
+        if(previous.Length==0)return;
+        var current=GetCombatant(fight,actorId);
+        foreach(var old in previous){current.MergeFrom(old);fight.Combatants.Remove(old.ActorId);}
+        RefreshIdentity(current);
+    }
     private Combatant GetCombatant(Encounter enc, uint actorId)
     {
         if (enc.Combatants.TryGetValue(actorId, out var c)) return c;

@@ -140,6 +140,13 @@ public partial class App : Application
                 .RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Primitives.ButtonBase.ClickEvent)), DispatcherPriority.ApplicationIdle);
             return;
         }
+        if (ArgValue(e.Args,"--check-pet-cache") is { } recording && ArgValue(e.Args,"--output") is { } resultPath)
+        {
+            Log.Enabled=false;
+            try{PetProgressCache.CheckRecording(recording,resultPath);Shutdown();}
+            catch(Exception ex){File.WriteAllText(resultPath,ex.ToString());Shutdown(1);}
+            return;
+        }
         if (ArgValue(e.Args, "--check-interaction") is { } checkPath)
         {
             Log.Enabled = false;

@@ -47,6 +47,35 @@ public class PartyOnlyTests
         Assert.False(t.PartyConfirmed); Hit(t,2,420); Hit(t,11,421);
         Assert.Equal(100,t.Snapshot(null,430)!.TotalDamage);
     }
+    [Fact] public void RespawnedMemberKeepsDamageHealingAndTakenInTheSameLongBossFight()
+    {
+        var t=Setup();t.Process(new NpcSeenEvent(120,500,0,10_000_000));Hit(t,1,200);Hit(t,2,201);
+        t.Process(new HealEvent(202,2,2,11010000,50,HitFlags.None));
+        t.Process(new DamageEvent(203,500,2,2000000,25,HitFlags.None));
+        var id=t.Snapshot(null,204)!.Id;t.Process(new DeathEvent(300,2));
+        for(long time=1000;time<=121000;time+=1000){Hit(t,1,time);t.Tick(time);}
+        Assert.Equal(100,t.Snapshot(null,121001)!.Combatants.Single(c=>c.Name=="Mate").Damage);
+        Hit(t,12,121002); // an unproven replacement actor must not be accepted
+        t.Process(new PlayerSeenEvent(121003,12,"Mate",1001,GameClass.Gladiator));
+        var returned=t.Snapshot(null,121004)!;Assert.Equal(id,returned.Id);
+        var mate=Assert.Single(returned.Combatants,c=>c.Name=="Mate");Assert.Equal(12u,mate.ActorId);Assert.Equal(100,mate.Damage);
+        Hit(t,12,121005);mate=t.Snapshot(null,121006)!.Combatants.Single(c=>c.Name=="Mate");
+        Assert.Equal(200,mate.Damage);Assert.Equal(50,mate.Healing);Assert.Equal(25,mate.DamageTaken);
+    }
+    [Fact] public void SameNameFromAnotherServerCannotTakeOverARespawnedPartyMember()
+    {
+        var t=Setup();Hit(t,2);t.Process(new PlayerSeenEvent(300,12,"Mate",1002,GameClass.Gladiator));Hit(t,12,310);
+        var mate=Assert.Single(t.Snapshot(null,320)!.Combatants);Assert.Equal(2u,mate.ActorId);Assert.Equal(100,mate.Damage);
+    }
+    [Fact] public void RebindingLongFightTotalsDoesNotLoseHitsBeyondRotationHistoryLimit()
+    {
+        var old=new Combatant{ActorId=2};
+        for(var i=0;i<=Combatant.MaxCasts;i++)old.AddDamage(0,11010000,1,HitFlags.None);
+        old.AddDamage(1,11010001,100,HitFlags.Critical);var returned=new Combatant{ActorId=12};returned.MergeFrom(old);
+        Assert.Equal(Combatant.MaxCasts+101,returned.Total.Damage);Assert.Equal(Combatant.MaxCasts+2,returned.Total.Hits);
+        Assert.Equal(1,returned.Total.Crits);Assert.Equal(11010001,returned.MaxHitSkill);Assert.Equal(100,returned.Skills[11010001].Stats.Damage);
+        Assert.Equal(Combatant.MaxCasts,returned.Casts.Count);
+    }
     [Fact] public void SoloCountsOnlyFreshSelf() { var t=Setup(false); Hit(t,2); Hit(t,3); Hit(t,1); Assert.Equal(100,t.Snapshot(null,300)!.TotalDamage); }
     [Fact] public void SoloSurvivesTickAndCountsOwnPet()
     { var t=Setup(false); t.Process(new SummonSeenEvent(150,8,1,null,0)); Hit(t,8,40000); t.Tick(40001); Hit(t,1,40002); Assert.Equal(200,t.Snapshot(null,40003)!.TotalDamage); }

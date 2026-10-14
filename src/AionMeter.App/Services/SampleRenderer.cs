@@ -81,14 +81,22 @@ public static class SampleRenderer
         {
             case "pets":
             case "pets-locked":
+            case "pets-three":
+            case "pets-three-locked":
                 meter.Settings.PetGoal=2;
                 meter.Pets.Observe(new SelfIdentifiedEvent(start,1,"Sample",2305,GameClass.Cleric));
                 meter.Pets.Observe(new PetCollectionEvent(start,new Dictionary<int,PetState>{{1193,new(1193,1,11)},{1176,new(1176,3,0)}}));
                 meter.Pets.Observe(new NpcSeenEvent(start,7,2400455,X:11500,Y:21000));
                 meter.Pets.Observe(new DamageEvent(start,1,7,17010000,100,HitFlags.None));
+                if(o.Window.StartsWith("pets-three"))
+                {
+                    meter.Pets.Observe(new PetCollectionEvent(start,new Dictionary<int,PetState>{{1193,new(1193,1,11)},{1176,new(1176,3,0)},{1047,new(1047,2,41)}}));
+                    meter.Pets.Observe(new NpcSeenEvent(start,8,2400707));meter.Pets.Observe(new DamageEvent(start,1,8,17010000,100,HitFlags.None));
+                    meter.Pets.Observe(new NpcSeenEvent(start,9,2100453));meter.Pets.Observe(new DamageEvent(start,1,9,17010000,100,HitFlags.None));
+                }
                 var pets=new PetTrackerWindow(meter){Width=o.Width??300};
 
-                if(o.Window=="pets-locked")pets.SetDisplayOnly(true);
+                if(o.Window.EndsWith("locked"))pets.SetDisplayOnly(true);
                 host=pets;refresh=pets.Refresh;break;
             case "fight-menu":
             case "fight-menu-empty":

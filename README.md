@@ -4,7 +4,7 @@ A separate always-on-top Windows damage meter for AION 2 by Zerafithekitten.
 
 [Download the latest release](https://github.com/Zerafithekitten/CatScratch/releases/latest) · [Patch notes](data/patchnotes-en.md) · [Report an issue](https://github.com/Zerafithekitten/CatScratch/issues)
 
-Latest published version: **2.4.1**. English is the default; German, Russian and French are available in Settings.
+Latest published version: **2.4.2**. English is the default; German, Russian and French are available in Settings.
 
 ## Preview
 
@@ -66,7 +66,7 @@ Available since 2.1.2. Saving fights is optional: press the save button after co
 
 ### Pet tracker and shortcuts
 
-Use the paw button beside the CatScratch title to toggle the compact Pet tracker. Only personally attacked, confirmed pet-source monsters add a row: a paw symbol, pet name, soul count such as 11/25 and a thin progress bar toward the next level. Soul loot updates the count after the kill. Up to eight recent pets are retained; repeated hits do not add duplicate rows. Click-through hides the header and outer frame, leaving the compact rows visible. Optional unlock/level-up sounds remain behind the settings button. A fresh collection packet is required before counters are shown; change zones once if needed. The catalog includes confirmed Global monster-source mappings for 165 pets; unknown mappings remain explicit. No nearby scan, location, distance, map or radar is used.
+Use the paw button beside the CatScratch title to toggle the compact Pet tracker. Only personally attacked, confirmed pet-source monsters add a row: a paw symbol, pet name, soul count such as 11/25 and a thin progress bar toward the next level. Soul loot updates the count after the kill. The three most recently attacked pets are retained, newest first; maxed pets show MAX; repeated hits do not add duplicate rows. Click-through hides the header and outer frame, leaving the compact rows visible. Optional unlock/level-up sounds remain behind the settings button. Own progress is saved per character across restarts. A ~ prefix marks last-known counts until fresh login data arrives. If no saved baseline exists, log into the character once while CatScratch is running; opening an already cached pet menu does not necessarily resend the collection. Recent completed local recordings can recover a missing baseline. The catalog includes confirmed Global monster-source mappings for 165 pets; unknown mappings remain explicit. No nearby scan, location, distance, map or radar is used.
 
 <img src="docs/screenshots/pet-tracker.png" alt="Compact attacked-pet tracker with name, soul count and progress" width="300" />
 
@@ -100,10 +100,10 @@ Select the language in **Settings > General > Language**. English remains the de
 
 | Language | Interface | Availability |
 | --- | --- | --- |
-| English | English | Current release (2.4.1) · default |
-| German | Deutsch | Current release (2.4.1) |
-| Russian | Русский | Current release (2.4.1) |
-| French | Français | Current release (2.4.1) |
+| English | English | Current release (2.4.2) · default |
+| German | Deutsch | Current release (2.4.2) |
+| Russian | Русский | Current release (2.4.2) |
+| French | Français | Current release (2.4.2) |
 
 Skill and monster names use the bundled language tables, with English as the fallback for missing names. Player names are preserved.
 

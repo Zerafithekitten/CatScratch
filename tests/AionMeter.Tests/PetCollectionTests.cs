@@ -110,6 +110,25 @@ public class PetCollectionTests
         pets.Observe(new NpcSeenEvent(2,7,2400455));pets.Observe(new PetSoulDropEvent(3,7,534660209,1));pets.Observe(PetPackets.Souls(4,Delta)!);
         Assert.Equal(2400455,pets.Farms(1193).Single().NpcCode);Assert.Equal("",pets.Farms(1193).Single().Zone);
     }
+    [Fact] public void CachedProgressIsScopedToCharacterAndNeverReplacesFreshCounters()
+    {
+        var original=new PetCollection();original.Observe(Own());original.Observe(PetPackets.Collection(10,Baseline)!);
+        var saved=original.SavedProgress()!;var restored=new PetCollection();restored.Observe(Own());
+        Assert.False(restored.RestoreProgress(saved with {Name="Other"}));Assert.False(restored.RestoreProgress(saved with {ServerId=2201}));
+        Assert.True(restored.RestoreProgress(saved));Assert.True(restored.FromCache);Assert.Equal(10,restored.Snapshot().Single().Souls);
+        restored.Observe(PetPackets.Souls(11,Delta)!);Assert.Equal(11,restored.Snapshot().Single().Souls);Assert.True(restored.FromCache);
+        restored.Observe(PetPackets.Collection(12,Baseline)!);Assert.False(restored.FromCache);Assert.Equal(10,restored.Snapshot().Single().Souls);
+        Assert.False(restored.RestoreProgress(saved with {Pets=[new(1193,1,1)]}));
+    }
+    [Fact] public void CorruptCacheIsRejectedAndEqualTimestampDeltasStillAdvanceProgressVersion()
+    {
+        var pets=new PetCollection();pets.Observe(Own());
+        Assert.False(pets.RestoreProgress(new("Own",2305,1,[new(1193,-1,0)])));
+        Assert.False(pets.RestoreProgress(new("Own",2305,1,[new(1193,1,0),new(1193,1,0)])));
+        pets.Observe(PetPackets.Collection(10,Baseline)!);var version=pets.ProgressVersion;
+        pets.Observe(PetPackets.Souls(10,Delta)!);pets.Observe(PetPackets.Souls(10,Delta)!);
+        Assert.Equal(version+2,pets.ProgressVersion);Assert.Equal(12,pets.Snapshot().Single().Souls);
+    }
     [Fact] public void MovementDecodingIsOptInAndRejectsInvalidCoordinates()
     {
         var events=new List<GameEvent>();var parser=new PacketParser(GameData.Empty,events.Add);

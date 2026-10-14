@@ -3,6 +3,7 @@ using AionMeter.Core.Protocol;
 
 namespace AionMeter.Core.Game;
 
+public sealed record PetProgress(string Name,int ServerId,long TimeMs,PetState[] Pets);
 public sealed record PetState(int Id,int Level,int Souls)
 {
     public int Needed(int goal)
@@ -65,6 +66,23 @@ public sealed class PetCollection
     private readonly object _gate=new();
     private Dictionary<int,PetState> _pets=[];
     private string _name="";
+    private int _server;
+    private long _progressAt;
+    private long _progressVersion;
+    public long ProgressVersion {get{lock(_gate)return _progressVersion;}}
+    public bool FromCache {get;private set;}
+    public long ProgressTime {get{lock(_gate)return _progressAt;}}
+    public PetProgress? SavedProgress(){lock(_gate)return Confirmed && _name.Length>0?new(_name,_server,_progressAt,_pets.Values.ToArray()):null;}
+    public bool RestoreProgress(PetProgress cached)
+    {
+        if(cached.Pets is null || cached.Pets.Length>4096 || cached.TimeMs<=0 || cached.Pets.Any(p=>p is null || p.Id is <1000 or >100000 || p.Level is <0 or >3 || p.Souls is <0 or >1000000) || cached.Pets.Select(p=>p.Id).Distinct().Count()!=cached.Pets.Length)return false;
+        lock(_gate)
+        {
+            if(Confirmed || _name!=cached.Name || _server!=cached.ServerId)return false;
+            _pets=cached.Pets.ToDictionary(p=>p.Id);_progressAt=cached.TimeMs;_progressVersion++;Confirmed=true;FromCache=true;Revision++;
+        }
+        Changed?.Invoke();return true;
+    }
     private PetCollectionEvent? _pending;
     private uint _self;
     private uint _attacked;
@@ -107,15 +125,16 @@ public sealed class PetCollection
             switch(value)
             {
                 case SelfIdentifiedEvent self when self.Name.Length>0:
-                    if(_name.Length>0 && _name!=self.Name) {_pets.Clear();Confirmed=false;_pending=null;_position=null;_npcs.Clear();_dead.Clear();_drops.Clear();_attacked=0;_attackedCodes.Clear();changed=true;}
-                    _name=self.Name;
+                    if(_name.Length>0 && (_name!=self.Name || _server!=self.ServerId)) {_pets.Clear();Confirmed=false;FromCache=false;_progressAt=0;_progressVersion++;_pending=null;_position=null;_npcs.Clear();_dead.Clear();_drops.Clear();_attacked=0;_attackedCodes.Clear();changed=true;}
+                    _name=self.Name;_server=self.ServerId;
                     _self=self.ActorId;
-                    if(_pending is { } buffered){_pets=new(buffered.Pets);Confirmed=true;_pending=null;changed=true;}
+                    if(_pending is { } buffered){_pets=new(buffered.Pets);Confirmed=true;FromCache=false;_progressAt=buffered.TimeMs;_progressVersion++;_pending=null;changed=true;}
                     break;
                 case PetCollectionEvent full:
                     if(_name.Length==0) {_pending=full;break;}
-                    _pets=new(full.Pets);Confirmed=true;changed=true;break;
+                    _pets=new(full.Pets);Confirmed=true;FromCache=false;_progressAt=full.TimeMs;_progressVersion++;changed=true;break;
                 case PetSoulEvent delta when Confirmed:
+                    _progressAt=delta.TimeMs;_progressVersion++;
                     foreach(var (id,amount) in delta.Added)
                     {
                         if(!_pets.ContainsKey(id) && _pets.Count>=4096)continue;

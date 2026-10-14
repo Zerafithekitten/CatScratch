@@ -27,6 +27,11 @@ public sealed class HitStats
     public long Min = long.MaxValue;
     public long Max;
 
+    public void MergeFrom(HitStats other)
+    {
+        Hits+=other.Hits;Crits+=other.Crits;Back+=other.Back;Front+=other.Front;Perfect+=other.Perfect;Heavy+=other.Heavy;Multi+=other.Multi;
+        DotTicks+=other.DotTicks;Damage+=other.Damage;DotDamage+=other.DotDamage;Min=Math.Min(Min,other.Min);Max=Math.Max(Max,other.Max);
+    }
     public void Add(long damage, HitFlags flags)
     {
         Damage += damage;
@@ -98,24 +103,21 @@ public sealed class Combatant
     /// <summary>Folds a summon that was only identified after it already dealt damage into its owner.</summary>
     public void MergeFrom(Combatant other)
     {
-        foreach (var cast in other.Casts)
+        if(other.Total.Max>Total.Max)MaxHitSkill=other.MaxHitSkill;
+        Total.MergeFrom(other.Total);
+        foreach(var (code,otherSkill) in other.Skills)
         {
-            Total.Add(cast.Damage, cast.Flags);
-            if (!Skills.TryGetValue(cast.SkillCode, out var s))
-            {
-                s = new SkillStats { SkillCode = cast.SkillCode };
-                Skills[cast.SkillCode] = s;
-            }
-            s.Stats.Add(cast.Damage, cast.Flags);
-            if (Casts.Count < MaxCasts) Casts.Add(cast);
+            if(!Skills.TryGetValue(code,out var skill))Skills[code]=skill=new SkillStats{SkillCode=code};
+            skill.Stats.MergeFrom(otherSkill.Stats);
         }
+        foreach(var cast in other.Casts)if(Casts.Count<MaxCasts)Casts.Add(cast);
         Casts.Sort((a, b) => a.OffsetMs.CompareTo(b.OffsetMs));
         for (var i = 0; i < other.PerSecond.Count; i++)
         {
             while (PerSecond.Count <= i) PerSecond.Add(0);
             PerSecond[i] += other.PerSecond[i];
         }
-        if (other.Total.Max > Total.Max) MaxHitSkill = other.MaxHitSkill;
+
         DamageTaken += other.DamageTaken;
         HitsTaken += other.HitsTaken;
         Healing += other.Healing;

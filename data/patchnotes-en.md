@@ -1,3 +1,10 @@
+## CatScratch v2.4.2
+
+- Rebind a respawned player’s new actor ID to the same named/server-scoped participant in an active fight, preserving damage, healing, incoming damage and detailed skill statistics. Unknown actors and same-name foreign-server players cannot take over a party row.
+- Tighten pet-row padding and gaps. Show MAX and a full progress bar for maxed pets. Limit the compact tracker to the three most recently attacked pets, newest first.
+- Preserve last-known pet progress per character across restarts, with debounced atomic writes. Recover a missing baseline from recent completed own recordings; never overwrite a fresh server snapshot. Cached non-max counts carry a ~ marker and tooltip until current login data arrives.
+- Replace the old collection/change-zone warning with Attack a monster to see pet progress. If an attacked pet is known but its own collection baseline is unavailable, say that progress data has not arrived rather than inventing a count.
+
 ## CatScratch v2.4.1
 
 - Replace proximity-based pet discovery with compact progress for the own player’s attacked monster. Show only a paw symbol, pet name, confirmed soul count (such as 11/25) and a thin progress bar for the next level (5 to unlock, then 25/75). Track only personally attacked source species, bounded to eight recent pets. Retain progress after the kill so soul loot can update it; no location, distance, map or nearby scan is used.

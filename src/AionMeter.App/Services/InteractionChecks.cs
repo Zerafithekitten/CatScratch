@@ -400,6 +400,7 @@ internal static class InteractionChecks
             windows.Add(petWindow);petWindow.Show();
             var petList=Descendants(petWindow).OfType<System.Windows.Controls.ListBox>().First();
             Check(petList.Items.Count==0,"Pet tracker waits for a confirmed own baseline");
+            Check(Descendants(petWindow).OfType<System.Windows.Controls.TextBlock>().Any(t=>t.Text=="Attack a monster to see pet progress."),"Empty tracker shows the attack prompt instead of the outdated zone warning");
             meter.Pets.Observe(new Core.Events.SelfIdentifiedEvent(1,1,"Sample self",2305,Core.Events.GameClass.Cleric));
             meter.Pets.Observe(new Core.Game.PetCollectionEvent(2,new Dictionary<int,Core.Game.PetState>{{1193,new(1193,1,10)}}));
             meter.Pets.Observe(new Core.Events.NpcSeenEvent(2,7,2400455));
@@ -409,11 +410,27 @@ internal static class InteractionChecks
             meter.Pets.Observe(new Core.Game.PetSoulEvent(3,new Dictionary<int,int>{{1193,1}}));petWindow.Refresh();
             Check(petList.Items.OfType<Windows.PetTrackerWindow.Row>().Single(x=>x.Definition.Id==1193).Progress=="11/25","Pet window updates to 11/25 from the verified soul delta");
             Check(petList.Items.Count==1 && petList.Items.OfType<Windows.PetTrackerWindow.Row>().Single().Fill==11d/25,"Only the personally attacked pet is shown with exact next-level progress");
+            meter.Pets.Observe(new Core.Game.PetCollectionEvent(4,new Dictionary<int,Core.Game.PetState>{{1193,new(1193,1,11)},{1176,new(1176,3,0)},{1047,new(1047,1,3)},{1040,new(1040,1,2)}}));
+            foreach(var (actor,code) in new[]{(8u,2400707),(9u,2100453),(10u,2100950)})
+            {meter.Pets.Observe(new Core.Events.NpcSeenEvent(5,actor,code));meter.Pets.Observe(new Core.Events.DamageEvent(6,1,actor,17010000,100,Core.Events.HitFlags.None));}
+            petWindow.Refresh();
+            var latestPets=petList.Items.OfType<Windows.PetTrackerWindow.Row>().ToArray();
+            Check(latestPets.Length==3 && latestPets.Select(p=>p.Definition.Id).SequenceEqual(new[]{1040,1047,1176}),"Pet panel keeps only the three most recently attacked pets in order");
+            Check(latestPets.Single(p=>p.Definition.Id==1176).Progress=="MAX" && latestPets.Single(p=>p.Definition.Id==1176).Fill==1,"Maxed pets show MAX with a full progress bar");
             petWindow.SetDisplayOnly(true);
-            Check(petWindow.MinHeight==32,"Locked attacked-pet display can shrink to a single compact row");
+            Check(petWindow.MinHeight==26,"Locked attacked-pet display can shrink to a single compact row");
             Check(((System.Windows.Controls.Border)petWindow.Content).Background==System.Windows.Media.Brushes.Transparent,"Locked Pet tracker hides its window background");
             petWindow.SetDisplayOnly(false);
             Check(((System.Windows.Controls.Border)petWindow.Content).Background!=System.Windows.Media.Brushes.Transparent,"Unlocking restores the themed Pet tracker surface");
+            var cached=meter.Pets.SavedProgress()!;
+            meter.Pets.Observe(new Core.Events.SelfIdentifiedEvent(20,1,"Other",2305,Core.Events.GameClass.Cleric));
+            meter.Pets.Observe(new Core.Events.SelfIdentifiedEvent(21,1,cached.Name,cached.ServerId,Core.Events.GameClass.Cleric));
+            meter.Pets.RestoreProgress(cached);
+            meter.Pets.Observe(new Core.Events.NpcSeenEvent(22,7,2400455));meter.Pets.Observe(new Core.Events.DamageEvent(23,1,7,17010000,100,Core.Events.HitFlags.None));
+            petWindow.Refresh();
+            Check(petList.Items.OfType<Windows.PetTrackerWindow.Row>().Single().Progress=="~11/25","Restored counters are visibly marked last-known until fresh login data arrives");
+            meter.Pets.Observe(new Core.Game.PetCollectionEvent(24,new Dictionary<int,Core.Game.PetState>{{1193,new(1193,1,12)}}));petWindow.Refresh();
+            Check(petList.Items.OfType<Windows.PetTrackerWindow.Row>().Single().Progress=="12/25","Fresh login counters replace restored values and remove the cache marker");
             petWindow.Close();
             foreach(var soundName in new[]{"Chime","Bell","Ping"})
             {

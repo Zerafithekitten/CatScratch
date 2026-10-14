@@ -14,6 +14,7 @@ public sealed class MeterService : IDisposable
     private IEventSource? _capture;
     private IEventSource? _replay;
     private DemoFightSource? _demo;
+    private readonly PetProgressCache? _petProgress;
 
     public MeterService(AppSettings settings, Func<GameData, IEventSource>? captureFactory)
     {
@@ -26,7 +27,7 @@ public sealed class MeterService : IDisposable
         }
         CaptureFactory = captureFactory;
         Data = GameData.Load(DataDirectory, UiText.Normalize(settings.Language));
-        if(!settings.Transient)PetFarmCache.Restore(Pets);
+        if(!settings.Transient){PetFarmCache.Restore(Pets);_petProgress=new PetProgressCache(Pets,Data);}
         Icons = new SkillIcons(DataDirectory, settings.DownloadIcons);
         Portraits = new BossPortraits(DataDirectory, settings.DownloadIcons);
         Options = new MeterOptions();
@@ -142,13 +143,18 @@ public sealed class MeterService : IDisposable
     {
         var identity = !_replaying && !DemoRunning ? LiveIdentity.Observe(value) : null;
         var resolved = value is Core.Events.SelfIdentifiedEvent && identity is not null ? identity : value;
-        if(!_replaying && !DemoRunning) Pets.Observe(resolved);
+        if(!_replaying && !DemoRunning)
+        {
+            Pets.Observe(resolved);
+            if(resolved is Core.Events.SelfIdentifiedEvent own)_petProgress?.Identity(own);
+        }
         if (!_replaying && !DemoRunning) PartyPreview.Observe(resolved);
         Tracker.Process(resolved);
         if (value is Core.Events.PlayerSeenEvent && identity is not null)
         {
             Tracker.Process(identity);
             Pets.Observe(identity);
+            _petProgress?.Identity(identity);
             PartyPreview.Observe(identity);
         }
     }
@@ -412,6 +418,7 @@ public sealed class MeterService : IDisposable
             SaveNames();
         }
         Updates.Dispose();
+        _petProgress?.Dispose();
         if(!Settings.Transient)PetFarmCache.Save(Pets);
         Icons.Dispose();
         Portraits.Dispose();

@@ -38,6 +38,7 @@ public sealed class PcapReplaySource : IEventSource
 
     /// <summary>Synchronous replay (CLI / tests). Returns the number of packets read.</summary>
     public long RunToEnd() => Run(CancellationToken.None);
+    public long RunToEnd(CancellationToken token) => Run(token);
 
     private long Run(CancellationToken ct)
     {
