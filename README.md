@@ -4,17 +4,17 @@ A separate always-on-top Windows damage meter for AION 2 by Zerafithekitten.
 
 [Download the latest release](https://github.com/Zerafithekitten/CatScratch/releases/latest) · [Patch notes](data/patchnotes-en.md) · [Report an issue](https://github.com/Zerafithekitten/CatScratch/issues)
 
-Latest published version: **2.4.8**. English is the default; German, Russian and French are available in Settings.
+Latest stable version: **2.5.0**. English is the default; German, Russian and French are available in Settings.
 
 ## Update channels
 
-**Stable remains v2.4.8.** The next version is being prepared on the `beta` branch as **v2.5.0-beta.1** and has not been published yet.
+**Stable is v2.5.0.** Future updates are published to the `beta` branch and as GitHub prereleases first, unless explicitly promoted to Stable.
 
-The beta adds Settings > General > Updates > **Update channel**, with Stable and Beta choices. Beta builds will be GitHub prereleases and will not replace the stable download. Checking or changing channels never downloads or installs a release; choose **Update now** to install it. Returning to Stable can install an older version while preserving settings and saved fights.
+Settings > General > Updates > **Update channel** offers, Stable and Beta choices. Beta builds are GitHub prereleases and will not replace the stable download. Checking or changing channels never downloads or installs a release; choose **Update now** to install it. Returning to Stable can install an older version while preserving settings and saved fights.
 
-The current stable v2.4.8 does not contain the channel selector. When the first beta is published, install that beta once to access it. A beta installation without an existing channel preference follows Beta; an explicitly saved preference is respected.
+Update older installations to stable v2.5.0 to access the channel selector. A beta installation without an existing channel preference follows Beta; an explicitly saved preference is respected.
 
-The v2.5.0 beta includes an isolated test mode with sample fights and pet progress, UI scaling from 75% to 150%, monitor-bound window placement, a stream mode that replaces displayed and copied player names with Cat 1, Cat 2, Cat 3, and automatic fight-end detection. Recordings and saved files keep their original data; test fights cannot be saved as real fights.
+Version v2.5.0 includes an isolated test mode with sample fights and pet progress, UI scaling from 75% to 150%, monitor-bound window placement, a stream mode that replaces displayed and copied player names with Cat 1, Cat 2, Cat 3, and automatic fight-end detection. Recordings and saved files keep their original data; test fights cannot be saved as real fights.
 
 ## Preview
 

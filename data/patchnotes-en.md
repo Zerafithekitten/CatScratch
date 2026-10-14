@@ -1,6 +1,6 @@
-## CatScratch v2.5.0-beta.1
+## CatScratch v2.5.0
 
-- Add selectable Stable and Beta update channels in Settings > General. Stable remains v2.4.8; beta builds are prereleases and never replace the stable download. Checking or switching channels never installs a release. Updates require Update now; returning to Stable preserves settings and saved fights.
+- Add selectable Stable and Beta update channels in Settings > General. Stable advances to v2.5.0; beta builds are prereleases and never replace the stable download. Checking or switching channels never installs a release. Updates require Update now; returning to Stable preserves settings and saved fights.
 - Add a start/stop Test mode in Settings > General and the tray menu. Run sample fights with HP, damage, incoming damage and healing, plus sample pet progress, selected events and a separate boss timer. Test data stays in isolated trackers and cannot be saved as real fights; stopping restores the real character, party and collection state.
 - Add global UI scaling from 75% to 150% in Settings > Appearance. Scale text and icons independently of row size and preserve the saved window width.
 - Keep modules fully inside one monitor while dragging, resizing and restoring positions. Allow flush placement at screen edges; account for per-monitor DPI and negative monitor coordinates. Interactive dialogs stay within the desktop work area.
