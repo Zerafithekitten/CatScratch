@@ -137,6 +137,24 @@ internal static class InteractionChecks
             Check(placement==(first.Left,first.Top,first.Width,first.Height),"All-window visibility preserves window placement and size");
             Check(HotkeyManager.TryParse(new AppSettings().HotkeyToggleAll,out _,out _),"Default all-window shortcut is a valid configurable key combination");
             var defaults=new AppSettings();
+            using (var bossMeter = new MeterService(new AppSettings { Transient=true, DownloadIcons=false, CompactMode=true, ShowBossPanel=true }, null))
+            {
+                bossMeter.Tracker.Process(new Core.Events.SelfIdentifiedEvent(1,1,"HP sample",2305,Core.Events.GameClass.Cleric));
+                bossMeter.Tracker.Process(new Core.Events.NpcSeenEvent(2,500,2701250,90000000));
+                bossMeter.Tracker.Process(new Core.Events.DamageEvent(3,1,500,17010000,1000000,Core.Events.HitFlags.None));
+                bossMeter.Tracker.Process(new Core.Events.NpcHpEvent(4,500,89000000,90000000));
+                var bossOverlay = new Windows.OverlayWindow(bossMeter) { Left=-30000, Top=-30000, WindowStartupLocation=WindowStartupLocation.Manual, ShowInTaskbar=false, ShowActivated=false }; windows.Add(bossOverlay); bossOverlay.Show();
+                var bossModel = (ViewModels.OverlayViewModel)bossOverlay.DataContext;
+                var hpPanel = (System.Windows.Controls.Grid)bossOverlay.FindName("BossHpPanel");
+                foreach (var compact in new[] { true, false })
+                foreach (var clickThrough in new[] { false, true })
+                {
+                    bossMeter.Settings.CompactMode=compact;bossMeter.Settings.ClickThrough=clickThrough;bossMeter.Settings.ShowBossPanel=true;bossOverlay.Refresh();hpPanel.GetBindingExpression(UIElement.VisibilityProperty)?.UpdateTarget();
+                    Check(bossModel.HasBoss && hpPanel.Visibility==Visibility.Visible && Math.Abs(bossModel.BossHpFraction-89d/90)<0.001,"Boss HP remains visible when enabled: compact="+compact+", click-through="+clickThrough);
+                    bossMeter.Settings.ShowBossPanel=false;bossOverlay.Refresh();hpPanel.GetBindingExpression(UIElement.VisibilityProperty)?.UpdateTarget();
+                    Check(!bossModel.HasBoss && hpPanel.Visibility==Visibility.Collapsed,"Disabling boss HP hides only the HP panel");
+                }
+            }
             var moduleKeys=new[]{defaults.HotkeyToggleOverlay,defaults.HotkeyPersonal,defaults.HotkeyEvents,defaults.HotkeyTimers,defaults.HotkeyPets,defaults.HotkeyToggleAll,defaults.HotkeyClickThrough,defaults.HotkeyReset};
             Check(moduleKeys.Distinct().Count()==8 && moduleKeys.All(k=>k.StartsWith("Shift+F") && HotkeyManager.TryParse(k,out _,out _)),"Every default shortcut uses Shift and a distinct function key away from WASD");
             var oldDefaults=new AppSettings {HotkeyToggleOverlay="Ctrl+Shift+D",HotkeyTimers="Ctrl+Shift+T",HotkeyPets="Alt+F9"};oldDefaults.MigrateHotkeys();

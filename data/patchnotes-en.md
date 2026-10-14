@@ -1,3 +1,9 @@
+## CatScratch v2.4.8
+
+- Respect Show boss HP bar in compact mode. Remove the compact-layout override that hid the bar even when enabled.
+- Keep the existing slim HP bar visible in normal and click-through views when boss HP data is available. Turning the setting off still hides it; no missing HP values are invented.
+- Add regression checks for compact and normal views, click-through and the disabled setting. Refresh the meter previews on GitHub.
+
 ## CatScratch v2.4.7
 
 - Handle custom-audio validation failures inside the event sound window instead of allowing InvalidDataException to escape the asynchronous selection callback.

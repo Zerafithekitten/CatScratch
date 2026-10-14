@@ -290,7 +290,6 @@ public partial class OverlayWindow : Window, IDisplayAppearance
             foreach (var row in _vm.Rows) row.IsSelf = false;
         if (!_settings.ShowBossPanel) _vm.HasBoss = false;
         RefreshPersonal(_showingPartyPreview ? null : personalSnapshot);
-        if (_settings.CompactMode) _vm.HasBoss = false;
         // The instance's time limit (or the wait after entering), whatever fight is shown: it is about where you are now.
         var wall = ClockOverride?.Invoke() ?? DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
         _vm.SetLimit(_meter.Tracker.NextTimer(wall), wall);

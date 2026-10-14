@@ -4,7 +4,7 @@ A separate always-on-top Windows damage meter for AION 2 by Zerafithekitten.
 
 [Download the latest release](https://github.com/Zerafithekitten/CatScratch/releases/latest) · [Patch notes](data/patchnotes-en.md) · [Report an issue](https://github.com/Zerafithekitten/CatScratch/issues)
 
-Latest published version: **2.4.7**. English is the default; German, Russian and French are available in Settings.
+Latest published version: **2.4.8**. English is the default; German, Russian and French are available in Settings.
 
 ## Preview
 
@@ -12,7 +12,9 @@ CatScratch UI rendered with sample data. Names and numbers are examples. The scr
 
 ### DPS meter and Personal combat
 
-<img src="docs/screenshots/meter.png" alt="CatScratch 2.4.7 DPS meter with party damage taken and personal healing" width="420" />
+The optional boss HP bar works in compact and normal views, including click-through, when received HP data is available. Toggle it in Settings > Appearance.
+
+<img src="docs/screenshots/meter.png" alt="CatScratch 2.4.8 DPS meter with party damage taken and personal healing" width="420" />
 
 ### Click-through mode
 
@@ -109,10 +111,10 @@ Select the language in **Settings > General > Language**. English remains the de
 
 | Language | Interface | Availability |
 | --- | --- | --- |
-| English | English | Current release (2.4.7) · default |
-| German | Deutsch | Current release (2.4.7) |
-| Russian | Русский | Current release (2.4.7) |
-| French | Français | Current release (2.4.7) |
+| English | English | Current release (2.4.8) · default |
+| German | Deutsch | Current release (2.4.8) |
+| Russian | Русский | Current release (2.4.8) |
+| French | Français | Current release (2.4.8) |
 
 Skill and monster names use the bundled language tables, with English as the fallback for missing names. Player names are preserved.
 
