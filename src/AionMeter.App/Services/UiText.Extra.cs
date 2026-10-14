@@ -35,6 +35,14 @@ public sealed partial class UiText
     }
     private static readonly Dictionary<string,string> ExtraGerman = new(StringComparer.Ordinal)
     {
+        ["Custom audio"]="Eigene Audiodatei",
+        ["Choose audio…"]="Audiodatei wählen…",
+        ["Custom audio: WAV or MP3, maximum 10 seconds and 10 MB."]="Eigene Audiodatei: WAV oder MP3, höchstens 10 Sekunden und 10 MB.",
+        ["Choose a local WAV or MP3 file (up to 10 seconds and 10 MB)"]="Lokale WAV- oder MP3-Datei wählen (höchstens 10 Sekunden und 10 MB)",
+        ["Choose an existing WAV or MP3 file first."]="Zuerst eine vorhandene WAV- oder MP3-Datei wählen.",
+        ["Choose a valid WAV or MP3 file, up to 10 seconds and 10 MB."]="Wähle eine gültige WAV- oder MP3-Datei mit höchstens 10 Sekunden und 10 MB.",
+        ["The audio file could not be opened. Choose another WAV or MP3 file."]="Die Audiodatei konnte nicht geöffnet werden. Wähle eine andere WAV- oder MP3-Datei.",
+        ["Tracked world bosses use the watched-boss and ‘Notify before respawn’ settings in Boss timers. Custom audio files must stay at their selected location."]="Verfolgte Weltbosse verwenden die Beobachtungs- und Benachrichtigungseinstellungen der Boss-Timer. Eigene Audiodateien müssen am ausgewählten Ort bleiben.",
         ["Recent debug buffer (60 seconds / 32 MB, experimental)"]="Debug-Rückblick (60 Sekunden / 32 MB, experimentell)",
         ["Save recent debug"]="Debug-Rückblick speichern",
         ["Enable and save settings first. High traffic can shorten the recorded minute."]="Zuerst aktivieren und Einstellungen speichern. Viel Datenverkehr kann die aufgezeichnete Minute verkürzen.",

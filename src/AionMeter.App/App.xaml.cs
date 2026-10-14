@@ -140,6 +140,16 @@ public partial class App : Application
                 .RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Primitives.ButtonBase.ClickEvent)), DispatcherPriority.ApplicationIdle);
             return;
         }
+        if (ArgValue(e.Args,"--check-audio") is { } audio && ArgValue(e.Args,"--output") is { } audioResult)
+        {
+            Log.Enabled=false;
+            Dispatcher.BeginInvoke(async () =>
+            {
+                try { var duration=await CustomEventAudio.DurationAsync(audio); await CustomEventAudio.ValidateAsync(audio); File.WriteAllText(audioResult,"Accepted: "+duration.TotalSeconds); Shutdown(); }
+                catch(Exception ex) { File.WriteAllText(audioResult,ex.Message); Shutdown(1); }
+            });
+            return;
+        }
         if (ArgValue(e.Args,"--check-pet-cache") is { } recording && ArgValue(e.Args,"--output") is { } resultPath)
         {
             Log.Enabled=false;

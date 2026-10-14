@@ -5,6 +5,14 @@ public sealed partial class UiText
     // Exact literals, not substitutions in player names, paths or protocol identifiers.
     private static readonly (string English,string Russian,string French)[] AdditionalTranslations =
     [
+        ("Custom audio","Свой звук","Audio personnalisé"),
+        ("Choose audio…","Выбрать звук…","Choisir un audio…"),
+        ("Custom audio: WAV or MP3, maximum 10 seconds and 10 MB.","Свой звук: WAV или MP3, максимум 10 секунд и 10 МБ.","Audio personnalisé : WAV ou MP3, 10 secondes et 10 Mo maximum."),
+        ("Choose a local WAV or MP3 file (up to 10 seconds and 10 MB)","Выберите WAV или MP3 (до 10 секунд и 10 МБ)","Choisissez un WAV ou MP3 local (10 secondes et 10 Mo maximum)"),
+        ("Choose an existing WAV or MP3 file first.","Сначала выберите существующий WAV или MP3.","Choisissez un fichier WAV ou MP3 existant."),
+        ("Choose a valid WAV or MP3 file, up to 10 seconds and 10 MB.","Выберите корректный WAV или MP3 до 10 секунд и 10 МБ.","Choisissez un WAV ou MP3 valide de 10 secondes et 10 Mo maximum."),
+        ("The audio file could not be opened. Choose another WAV or MP3 file.","Не удалось открыть звук. Выберите другой WAV или MP3.","Impossible de lire le fichier. Choisissez un autre WAV ou MP3."),
+        ("Tracked world bosses use the watched-boss and ‘Notify before respawn’ settings in Boss timers. Custom audio files must stay at their selected location.","Боссы используют настройки таймеров боссов. Свои аудиофайлы должны оставаться в выбранной папке.","Les boss suivis utilisent les paramètres des minuteurs de boss. Les fichiers audio doivent rester à leur emplacement sélectionné."),
         ("Recent debug buffer (60 seconds / 32 MB, experimental)","Буфер отладки (60 секунд / 32 МБ, экспериментальный)","Tampon de débogage (60 secondes / 32 Mo, expérimental)"),
         ("Save recent debug","Сохранить последние пакеты","Enregistrer les derniers paquets"),
         ("Enable and save settings first. High traffic can shorten the recorded minute.","Сначала включите и сохраните настройки. Большой поток данных может сократить запись.","Activez puis enregistrez les paramètres. Un trafic élevé peut raccourcir la minute enregistrée."),

@@ -40,7 +40,7 @@ public sealed class EventSoundsWindow : Window
             SelectedIndex = Array.IndexOf(new[] {0,1,2,5,10}, cards.Saved.SoundLeadMinutes), Margin = new Thickness(0,6,0,12) };
         if (lead.SelectedIndex < 0) lead.SelectedIndex = 2;
         lead.SelectionChanged += (_, _) => { cards.Saved.SoundLeadMinutes = new[] {0,1,2,5,10}[lead.SelectedIndex]; cards.Save(); }; panel.Children.Add(lead);
-        panel.Children.Add(new TextBlock { Text=UiText.Current.Localize("Custom WAV: PCM or float, maximum 10 seconds and 10 MB."), Foreground=Brush("#A9B8C7"),FontSize=11,TextWrapping=TextWrapping.Wrap });
+        panel.Children.Add(new TextBlock { Text=UiText.Current.Localize("Custom audio: WAV or MP3, maximum 10 seconds and 10 MB."), Foreground=Brush("#A9B8C7"),FontSize=11,TextWrapping=TextWrapping.Wrap });
         foreach (var item in AutomaticEventSchedule.Catalog.Select(e => (Id: e.Id, Name: e.Name, Kind: EventKinds.For(e.Id)))
                      .Append((Id: "tracked-boss", Name: "Tracked world bosses", Kind: "BOSS")))
         {
@@ -50,46 +50,50 @@ public sealed class EventSoundsWindow : Window
             var enabled = new CheckBox { Content = $"{UiText.Current.Localize(item.Kind)} · {UiText.Current.Localize(item.Name)}", Foreground = EventPanelBrushes.ForKind(item.Kind), IsChecked = preference.Enabled };
             enabled.Click += (_, _) => { preference.Enabled = enabled.IsChecked == true; cards.Save(); }; box.Children.Add(enabled);
             var controls = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(20,5,0,0) };
-            var soundIds=new[] { "Chime", "Bell", "Ping", "Custom WAV" };
+            if (CustomEventAudio.IsCustom(preference.Sound)) preference.Sound = "Custom audio";
+            var soundIds=new[] { "Chime", "Bell", "Ping", "Custom audio" };
             var sound = new ComboBox { Width = 140, ItemsSource = soundIds.Select(UiText.Current.Localize).ToArray(), SelectedIndex = Array.IndexOf(soundIds,preference.Sound) };
             if (sound.SelectedIndex < 0) sound.SelectedIndex = 0;
             sound.SelectionChanged += (_, _) => { if(sound.SelectedIndex>=0) { preference.Sound = soundIds[sound.SelectedIndex]; cards.Save(); } };
             controls.Children.Add(sound);
-            var choose = new Button { Content = UiText.Current.Localize("Choose WAV…"), Margin = new Thickness(8,0,0,0), Padding = new Thickness(8,5,8,5), ToolTip = preference.FilePath ?? UiText.Current.Localize("Choose a local WAV file (up to 10 seconds and 10 MB)") };
-            choose.Click += (_, _) =>
+            var choose = new Button { Content = UiText.Current.Localize("Choose audio…"), Margin = new Thickness(8,0,0,0), Padding = new Thickness(8,5,8,5), ToolTip = preference.FilePath ?? UiText.Current.Localize("Choose a local WAV or MP3 file (up to 10 seconds and 10 MB)") };
+            choose.Click += async (_, _) =>
             {
-                var picker = new Microsoft.Win32.OpenFileDialog { Filter = "WAV audio (*.wav)|*.wav", CheckFileExists = true };
+                var picker = new Microsoft.Win32.OpenFileDialog { Filter = "Audio (*.wav;*.mp3)|*.wav;*.mp3|WAV (*.wav)|*.wav|MP3 (*.mp3)|*.mp3", CheckFileExists = true };
                 if (picker.ShowDialog(this) != true) return;
                 try
                 {
-                    using var stream = File.OpenRead(picker.FileName);
-                    Core.Audio.WaveSound.Validate(stream);
-                    preference.FilePath = picker.FileName; preference.Sound = "Custom WAV"; sound.SelectedIndex = 3;
+                    choose.IsEnabled = false;
+                    await CustomEventAudio.ValidateAsync(picker.FileName);
+                    preference.FilePath = picker.FileName; preference.Sound = "Custom audio"; sound.SelectedIndex = 3;
                     choose.ToolTip = preference.FilePath; cards.Save();
                 }
                 catch (Exception error) when (error is IOException or UnauthorizedAccessException)
                 { System.Windows.MessageBox.Show(this, UiText.Current.Localize(error.Message), UiText.Current.Localize("Event sounds"), MessageBoxButton.OK, MessageBoxImage.Information); }
+                finally { choose.IsEnabled = true; }
             };
             controls.Children.Add(choose);
             var test = new Button { Content = UiText.Current.Localize("Preview"), Margin = new Thickness(8,0,0,0), Padding = new Thickness(8,3,8,3) };
-            test.Click += (_, _) =>
+            test.Click += async (_, _) =>
             {
-                if (preference.Sound == "Custom WAV" && (preference.FilePath is null || !File.Exists(preference.FilePath)))
-                    System.Windows.MessageBox.Show(this, UiText.Current.Localize("Choose an existing WAV file first."), UiText.Current.Localize("Event sounds"), MessageBoxButton.OK, MessageBoxImage.Information);
+                if (CustomEventAudio.IsCustom(preference.Sound) && (preference.FilePath is null || !File.Exists(preference.FilePath)))
+                    System.Windows.MessageBox.Show(this, UiText.Current.Localize("Choose an existing WAV or MP3 file first."), UiText.Current.Localize("Event sounds"), MessageBoxButton.OK, MessageBoxImage.Information);
                 else
                 {
                     try
                     {
-                        if(preference.Sound=="Custom WAV") { using var stream=File.OpenRead(preference.FilePath!); Core.Audio.WaveSound.Validate(stream); }
+                        test.IsEnabled = false;
+                        if(CustomEventAudio.IsCustom(preference.Sound)) await CustomEventAudio.ValidateAsync(preference.FilePath!);
                         preview(preference,cards.Saved.SoundVolume);
                     }
                     catch(Exception error) when(error is IOException or UnauthorizedAccessException)
                     { MessageBox.Show(this,UiText.Current.Localize(error.Message),UiText.Current.Localize("Event sounds"),MessageBoxButton.OK,MessageBoxImage.Information); }
+                    finally { test.IsEnabled = true; }
                 }
             }; controls.Children.Add(test);
             box.Children.Add(controls);
         }
-        body.Children.Add(new TextBlock { Text = UiText.Current.Localize("Tracked world bosses use the watched-boss and ‘Notify before respawn’ settings in Boss timers. Custom WAV files must stay at their selected location."), Foreground=Brush("#A9B8C7"),TextWrapping = TextWrapping.Wrap, Margin = new Thickness(0,2,0,0) });
+        body.Children.Add(new TextBlock { Text = UiText.Current.Localize("Tracked world bosses use the watched-boss and ‘Notify before respawn’ settings in Boss timers. Custom audio files must stay at their selected location."), Foreground=Brush("#A9B8C7"),TextWrapping = TextWrapping.Wrap, Margin = new Thickness(0,2,0,0) });
         Content = new Border { Child=root,Background=Background,BorderBrush=Brush("#607B827F"),BorderThickness=new Thickness(1),CornerRadius=new CornerRadius(10) };
         Controls.DragAnywhere.Attach(this);
         Closed += (_, _) => cards.Save();

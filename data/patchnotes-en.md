@@ -1,3 +1,10 @@
+## CatScratch v2.4.4
+
+- Accept custom WAV and MP3 event sounds through the Windows audio decoder, including WAV encodings rejected by the previous PCM-only check.
+- Validate decoded duration when choosing or previewing custom audio. Keep the maximum at 10 seconds and 10 MB; reject invalid files and unknown durations.
+- Recheck queued files and wait for the decoder duration check before playback starts.
+- Preserve existing Custom WAV preferences and file paths. Update the file picker, labels and translations for WAV and MP3 support.
+
 ## CatScratch v2.4.3
 
 - Add an optional experimental recent-debug buffer alongside continuous packet recording. Enable it in Settings > Capture & data and save the settings.

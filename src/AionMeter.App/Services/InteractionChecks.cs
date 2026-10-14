@@ -432,6 +432,8 @@ internal static class InteractionChecks
             meter.Pets.Observe(new Core.Game.PetCollectionEvent(24,new Dictionary<int,Core.Game.PetState>{{1193,new(1193,1,12)}}));petWindow.Refresh();
             Check(petList.Items.OfType<Windows.PetTrackerWindow.Row>().Single().Progress=="12/25","Fresh login counters replace restored values and remove the cache marker");
             petWindow.Close();
+            Check(CustomEventAudio.IsCustom("Custom WAV") && CustomEventAudio.IsCustom("Custom audio"),"Legacy custom WAV preferences remain compatible with custom audio");
+            Check(CustomEventAudio.AllowedDuration(new Duration(TimeSpan.FromSeconds(10))) && !CustomEventAudio.AllowedDuration(new Duration(TimeSpan.FromSeconds(10.001))) && !CustomEventAudio.AllowedDuration(Duration.Automatic),"Audio duration gate accepts exactly ten seconds and rejects longer or unknown duration before playback");
             foreach(var soundName in new[]{"Chime","Bell","Ping"})
             {
                 using var sound=File.OpenRead(Path.Combine(AppContext.BaseDirectory,"sounds",soundName+".wav"));

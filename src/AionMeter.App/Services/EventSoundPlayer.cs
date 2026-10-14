@@ -21,22 +21,23 @@ internal sealed class EventSoundPlayer : IDisposable
         _player.MediaEnded += (_, _) => { _player.Close(); _playing = false; PlayNext(); };
         _player.MediaOpened += (_, _) =>
         {
-            if (_player.NaturalDuration.HasTimeSpan && _player.NaturalDuration.TimeSpan > TimeSpan.FromSeconds(Core.Audio.WaveSound.MaximumSeconds))
+            if (!CustomEventAudio.AllowedDuration(_player.NaturalDuration))
             { _player.Close(); _playing = false; PlayNext(); }
+            else _player.Play();
         };
         _player.MediaFailed += (_, e) => { Log.Error("Event sound could not be played", e.ErrorException); _player.Close(); _playing = false; PlayNext(); };
     }
     public void Play(EventSoundPreference preference, double volume, bool preview = false)
     {
         if (_disposed || !preview && !preference.Enabled) return;
-        var path = preference.Sound == "Custom WAV" ? preference.FilePath :
+        var path = CustomEventAudio.IsCustom(preference.Sound) ? preference.FilePath :
             Path.Combine(AppContext.BaseDirectory, "sounds", preference.Sound is "Bell" or "Ping" ? preference.Sound + ".wav" : "Chime.wav");
         if (path is null || !File.Exists(path)) { Log.Info("Configured event sound is missing."); return; }
-        if (preference.Sound == "Custom WAV")
+        if (CustomEventAudio.IsCustom(preference.Sound))
         {
-            try { using var stream=File.OpenRead(path); Core.Audio.WaveSound.Validate(stream); }
+            try { CustomEventAudio.FileUri(path); }
             catch (Exception error) when (error is IOException or UnauthorizedAccessException)
-            { Log.Error("Custom event sound must be a valid WAV no longer than 10 seconds",error); return; }
+            { Log.Error("Custom event sound must be WAV or MP3, up to 10 seconds and 10 MB",error); return; }
         }
         if (preview) { _queue.Clear(); _player.Close(); _playing = false; }
         if (_queue.Count >= 16) return;
@@ -50,10 +51,10 @@ internal sealed class EventSoundPlayer : IDisposable
         try
         {
             // Recheck queued files: an external editor may have replaced them since the reminder was queued.
-            using (var stream=File.OpenRead(sound.File.LocalPath)) Core.Audio.WaveSound.Validate(stream);
+            CustomEventAudio.FileUri(sound.File.LocalPath);
             _player.Volume = sound.Volume;
             _player.Open(sound.File);
-            _player.Play();
+
         }
         catch (Exception error) when (error is IOException or UnauthorizedAccessException or InvalidOperationException or ArgumentException)
         {
