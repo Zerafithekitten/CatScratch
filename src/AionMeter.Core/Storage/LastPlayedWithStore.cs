@@ -5,7 +5,8 @@ using AionMeter.Core.Events;
 namespace AionMeter.Core.Storage;
 
 public sealed record RecentTeammate(string Character, int CharacterServerId, GameClass CharacterClass,
-    string Name, int ServerId, GameClass Class, DateTimeOffset LastPlayedAt);
+    string Name, int ServerId, GameClass Class, DateTimeOffset LastPlayedAt,
+    int GearScore = 0, long CombatPower = 0);
 
 /// <summary>Only confirmed live group rosters add players. Names are local; repeated rosters do not rewrite the file.</summary>
 public sealed class LastPlayedWithStore
@@ -86,7 +87,9 @@ public sealed class LastPlayedWithStore
             var job = member.Class != GameClass.Unknown ? member.Class : old?.Class ?? GameClass.Unknown;
             var at = DateTimeOffset.FromUnixTimeMilliseconds(roster.TimeMs);
             var entry = new RecentTeammate(own.Name, own.ServerId, own.Class, member.Name, member.ServerId, job,
-                joined && (old is null || at > old.LastPlayedAt) ? at : old?.LastPlayedAt ?? at);
+                joined && (old is null || at > old.LastPlayedAt) ? at : old?.LastPlayedAt ?? at,
+                member.GearScore > 0 ? member.GearScore : old?.GearScore ?? 0,
+                member.CombatPower > 0 ? member.CombatPower : old?.CombatPower ?? 0);
             if (old == entry) continue;
             if (old is not null) next.Remove(old);
             next.Add(entry); changed = true;

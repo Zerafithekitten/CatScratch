@@ -155,8 +155,8 @@ internal static class InteractionChecks
                     Check(!bossModel.HasBoss && hpPanel.Visibility==Visibility.Collapsed,"Disabling boss HP hides only the HP panel");
                 }
             }
-            var moduleKeys=new[]{defaults.HotkeyToggleOverlay,defaults.HotkeyPersonal,defaults.HotkeyEvents,defaults.HotkeyTimers,defaults.HotkeyPets,defaults.HotkeyToggleAll,defaults.HotkeyClickThrough,defaults.HotkeyReset};
-            Check(moduleKeys.Distinct().Count()==8 && moduleKeys.All(k=>k.StartsWith("Shift+F") && HotkeyManager.TryParse(k,out _,out _)),"Every default shortcut uses Shift and a distinct function key away from WASD");
+            var moduleKeys=new[]{defaults.HotkeyToggleOverlay,defaults.HotkeyPersonal,defaults.HotkeyEvents,defaults.HotkeyTimers,defaults.HotkeyPets,defaults.HotkeyToggleAll,defaults.HotkeyClickThrough,defaults.HotkeyReset,defaults.HotkeyDeathRecap};
+            Check(moduleKeys.Distinct().Count()==9 && moduleKeys.All(k=>k.StartsWith("Shift+F") && HotkeyManager.TryParse(k,out _,out _)),"Every default shortcut uses Shift and a distinct function key away from WASD");
             var oldDefaults=new AppSettings {HotkeyToggleOverlay="Ctrl+Shift+D",HotkeyTimers="Ctrl+Shift+T",HotkeyPets="Alt+F9"};oldDefaults.MigrateHotkeys();
             Check(oldDefaults.HotkeyToggleOverlay=="Shift+F5" && oldDefaults.HotkeyTimers=="Shift+F8" && oldDefaults.HotkeyPets=="Alt+F9","One-time hotkey migration updates old defaults and preserves custom combinations");
             oldDefaults.HotkeyToggleOverlay="Ctrl+Shift+D";oldDefaults.MigrateHotkeys();
@@ -274,7 +274,7 @@ internal static class InteractionChecks
             Check(eventPreferences.Background is System.Windows.Media.SolidColorBrush eventBg && eventBg.Color.A==255 && eventPreferences.Opacity==1,
                 "Event settings use a solid interactive meter-style surface");
             var settings=new AionMeter.App.Windows.SettingsWindow(meter); windows.Add(settings);
-            foreach(var (field,gesture) in new[]{("HkPersonal",meter.Settings.HotkeyPersonal),("HkEvents",meter.Settings.HotkeyEvents),("HkPets",meter.Settings.HotkeyPets)})
+            foreach(var (field,gesture) in new[]{("HkPersonal",meter.Settings.HotkeyPersonal),("HkEvents",meter.Settings.HotkeyEvents),("HkPets",meter.Settings.HotkeyPets),("HkDeathRecap",meter.Settings.HotkeyDeathRecap)})
             {
                 var box=(System.Windows.Controls.TextBox)settings.FindName(field);
                 Check(box.IsReadOnly && box.Text==gesture && HotkeyManager.TryParse(gesture,out _,out _),"Module shortcut can be recorded by pressing keys: "+field);
@@ -531,9 +531,9 @@ internal static class InteractionChecks
             var updateWindow = new AionMeter.App.Windows.UpdateWindow(legacyUpdater, release, false); windows.Add(updateWindow);
             var updateButton = (System.Windows.Controls.Button)updateWindow.FindName("UpdateButton");
             var downloadBar = (System.Windows.Controls.ProgressBar)updateWindow.FindName("DownloadBar");
-            Check(updateButton.IsEnabled && Equals(updateButton.Content, UiText.Current.UpdateNow) &&
+            Check(updateButton.IsEnabled && Equals(updateButton.Content, UiText.Current.Localize("Prepare update")) &&
                 downloadBar.Visibility == Visibility.Collapsed,
-                "Available update waits for Update now without starting download, including legacy automatic-install settings");
+                "Update preview requires manual preparation and never restarts automatically, including legacy automatic-install settings");
             File.WriteAllText(output, JsonSerializer.Serialize(passed, new JsonSerializerOptions { WriteIndented = true }));
         }
         finally { foreach (var window in windows) window.Close(); }

@@ -16,7 +16,8 @@ public partial class LastPlayedWithWindow : Window
     private static UiText T => UiText.Current;
     private static string L(string value) => T.Localize(value);
     public sealed record OwnerChoice(string Name, int Server, string Label) { public override string ToString() => Label; }
-    public sealed record PlayerItem(string Name, GameClass Class, string Meta, string CopyLabel);
+    public sealed record PlayerItem(string Name, GameClass Class, string Meta, string CopyLabel,
+        string Stats);
     public LastPlayedWithWindow(MeterService meter, LastPlayedWithStore? store = null, Action<string>? copy = null)
     {
         _meter = meter; _store = store ?? meter.LastPlayedWith; _copy = copy ?? Clipboard.SetText;
@@ -49,7 +50,9 @@ public partial class LastPlayedWithWindow : Window
         var players = _store.List().Where(e => owner is not null && e.Character == owner.Name && e.CharacterServerId == owner.Server)
             .Select(e => new PlayerItem(StreamNames.Name(e.Name), e.Class,
                 (e.Class == GameClass.Unknown ? L("Unknown class") : T.ClassName(e.Class)) + " · " + ServerName(e.ServerId) + " · "
-                + e.LastPlayedAt.ToLocalTime().ToString("dd MMM yyyy HH:mm", T.Culture), L("Copy name")))
+                + e.LastPlayedAt.ToLocalTime().ToString("dd MMM yyyy HH:mm", T.Culture), L("Copy name"),
+                "CP  " + (e.CombatPower > 0 ? e.CombatPower.ToString("N0", T.Culture) : "—")
+                + " · GS  " + (e.GearScore > 0 ? e.GearScore.ToString("N0", T.Culture) : "—")))
             .Where(e => query.Length == 0 || e.Name.Contains(query, StringComparison.CurrentCultureIgnoreCase) || e.Meta.Contains(query, StringComparison.CurrentCultureIgnoreCase)).ToList();
         Players.ItemsSource = players;
         Empty.Text = players.Count == 0 ? L("No recent group members. Join a group while CatScratch is running.") : "";

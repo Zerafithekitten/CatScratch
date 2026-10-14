@@ -62,6 +62,7 @@ public sealed class AppSettings
     public bool ShowGear { get; set; } = true;
     public bool? ShowCombatPower { get; set; }
     public bool ShowPersonalCombatModule { get; set; }
+    public bool ShowDeathRecapModule { get; set; } = true;
     public bool ShowPetTrackerModule {get;set;}
     public int PetGoal {get;set;}
     public bool PetNotify {get;set;}
@@ -86,7 +87,8 @@ public sealed class AppSettings
 
     // Updates
     /// <summary>Ask GitHub for a newer version shortly after start and every few hours.</summary>
-    public bool CheckUpdates { get; set; } = false;
+    public bool CheckUpdates { get; set; } = true;
+    public bool BackgroundUpdateDefaultsApplied { get; set; }
     // Older copies have no preference: follow the installed build until explicitly selected.
     public string? UpdateChannel { get; set; }
     /// <summary>Installed copies download a new version by themselves and install it at a quiet moment.</summary>
@@ -111,6 +113,7 @@ public sealed class AppSettings
     public string HotkeyReset { get; set; } = "Shift+F12";
     public string HotkeyClickThrough { get; set; } = "Shift+F11";
     public string HotkeyPersonal { get; set; } = "Shift+F6";
+    public string HotkeyDeathRecap { get; set; } = "Shift+F4";
     public string HotkeyEvents { get; set; } = "Shift+F7";
     public string HotkeyPets { get; set; } = "Shift+F9";
     public string HotkeyTimers { get; set; } = "Shift+F8";

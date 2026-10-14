@@ -18,6 +18,11 @@ public sealed class UpdateCleanupTests
         try
         {
             UpdateCleanup.RemoveStage(updates,stage);
+            Assert.True(File.Exists(Path.Combine(stage,"backup","old.dll")));
+            UpdateCleanup.PruneOlderStages(updates,DateTime.UtcNow.AddMinutes(1));
+            Assert.True(Directory.Exists(stage));
+            File.WriteAllText(Path.Combine(stage,"started.txt"),"New version started successfully");
+            UpdateCleanup.RemoveStage(updates,stage);
             UpdateCleanup.RemoveDownload(updates,"CatScratch-win-x64.zip");
             Assert.False(Directory.Exists(stage));
             Assert.False(File.Exists(Path.Combine(updates,"CatScratch-win-x64.zip")));

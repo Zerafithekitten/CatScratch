@@ -17,11 +17,17 @@
             <Grid>
                 <ListBox x:Name="Players" Background="{StaticResource Bg1}" Foreground="{StaticResource Text}" BorderThickness="0" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
                     <ListBox.ItemTemplate><DataTemplate>
-                        <Grid Margin="10,9">
+                        <Grid Margin="8,5">
                             <Grid.ColumnDefinitions><ColumnDefinition Width="32"/><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
                             <c:ClassGlyph Class="{Binding Class}" Width="24" Height="24" VerticalAlignment="Center"/>
-                            <StackPanel Grid.Column="1" Margin="8,0,10,0"><TextBlock Text="{Binding Name}" FontSize="14" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"/><TextBlock Text="{Binding Meta}" FontSize="11" Foreground="{StaticResource TextMute}" TextWrapping="Wrap" Margin="0,4,0,0"/></StackPanel>
-                            <Button Grid.Column="2" Content="{Binding CopyLabel}" ToolTip="{Binding CopyLabel}" Click="Copy_Click" VerticalAlignment="Center" Padding="10,6"/>
+                            <StackPanel Grid.Column="1" Margin="6,0,8,0">
+                                <DockPanel LastChildFill="True">
+                                    <TextBlock DockPanel.Dock="Right" Text="{Binding Stats}" FontSize="11" Foreground="{StaticResource Gold}" VerticalAlignment="Center" Margin="10,0,0,0" ToolTip="{Binding Stats}"/>
+                                    <TextBlock Text="{Binding Name}" FontSize="13" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"/>
+                                </DockPanel>
+                                <TextBlock Text="{Binding Meta}" FontSize="10" Foreground="{StaticResource TextMute}" TextTrimming="CharacterEllipsis" Margin="0,2,0,0"/>
+                            </StackPanel>
+                            <Button Grid.Column="2" ToolTip="{Binding CopyLabel}" Click="Copy_Click" VerticalAlignment="Center" Padding="7,5" AutomationProperties.Name="{Binding CopyLabel}"><TextBlock Text="&#xE8C8;" FontFamily="Segoe MDL2 Assets" FontSize="12"/></Button>
                         </Grid>
                     </DataTemplate></ListBox.ItemTemplate>
                 </ListBox>

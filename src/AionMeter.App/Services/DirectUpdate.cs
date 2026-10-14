@@ -11,16 +11,37 @@ internal static class DirectUpdate
     internal static string RootFor(string installation) => Path.Combine(Path.GetFullPath(installation), "userdata", "temp", "updates");
 
     public static void Launch(string archive, Version version, string? checkResult = null, ReleaseVersion? identity = null)
+        => LaunchPrepared(Prepare(archive, version, identity), version, checkResult, identity);
+
+    internal static string Prepare(string archive, Version version, ReleaseVersion? identity = null)
     {
         var stage = Path.Combine(Root, "stage-" + Guid.NewGuid().ToString("N"));
         var payload = Path.Combine(stage, "payload");
-        UpdatePackage.Extract(archive, payload);
+        try
+        {
+            UpdatePackage.Extract(archive, payload);
+            ValidatePayload(payload, version, identity);
+            return stage;
+        }
+        catch { if (Directory.Exists(stage)) UpdateCleanup.RemoveStage(Root, stage); throw; }
+    }
+
+    private static void ValidatePayload(string payload, Version version, ReleaseVersion? identity)
+    {
         var exe = Path.Combine(payload, "CatScratch.exe");
         var info = FileVersionInfo.GetVersionInfo(exe);
         if (!UpdateFeed.IsProductName(info.ProductName, AppInfo.Name) || UpdateFeed.ParseVersion(info.ProductVersion) != version)
             throw new InvalidDataException("The update's product or version does not match its release.");
         if (identity is not null && ReleaseVersion.Parse(info.ProductVersion) != identity)
             throw new InvalidDataException("The update's beta revision does not match its release.");
+    }
+
+    internal static void LaunchPrepared(string stage, Version version, string? checkResult = null, ReleaseVersion? identity = null)
+    {
+        if (!UpdateCleanup.IsStage(Root, stage)) throw new InvalidDataException("Invalid prepared update path.");
+        var payload = Path.Combine(stage, "payload");
+        ValidatePayload(payload, version, identity);
+        var exe = Path.Combine(payload, "CatScratch.exe");
         var start = new ProcessStartInfo(exe) { UseShellExecute = false, WorkingDirectory = payload };
         foreach (var arg in new[] { "--apply-update", AppContext.BaseDirectory, "--parent", Environment.ProcessId.ToString() })
             start.ArgumentList.Add(arg);
@@ -71,8 +92,11 @@ internal static class DirectUpdate
                 "Details and backups: " + stage, AppInfo.Name, MessageBoxButton.OK, MessageBoxImage.Error);
         }
         var restart = new ProcessStartInfo(targetExe) { UseShellExecute = false, WorkingDirectory = target };
-        restart.ArgumentList.Add("--updated");
-        restart.ArgumentList.Add("--update-ready"); restart.ArgumentList.Add(stage);
+        if (!File.Exists(Path.Combine(stage, "failure.txt")))
+        {
+            restart.ArgumentList.Add("--updated");
+            restart.ArgumentList.Add("--update-ready"); restart.ArgumentList.Add(stage);
+        }
         if (checkResult is not null)
         {
             restart.ArgumentList.Add("--check-shutdown");
@@ -81,6 +105,8 @@ internal static class DirectUpdate
         using var restarted = Process.Start(restart) ?? throw new IOException("Could not restart CatScratch.");
         if (checkResult is not null && (!restarted.WaitForExit(20000) || restarted.ExitCode != 0))
             throw new IOException("Updated program verification failed.");
+        if (checkResult is not null && !File.Exists(Path.Combine(stage, "failure.txt")))
+            File.WriteAllText(Path.Combine(stage, "started.txt"), "Verified startup completed");
         if (checkResult is null)
         {
             var deadline = Stopwatch.StartNew();
@@ -98,7 +124,11 @@ internal static class DirectUpdate
 
     internal static void MarkReady(string stage)
     {
-        if (UpdateCleanup.IsStage(Root,stage)) File.WriteAllText(Path.Combine(stage,"started.txt"),"Startup completed");
+        if (!UpdateCleanup.IsStage(Root,stage) || File.Exists(Path.Combine(stage, "failure.txt"))) return;
+        var staged = FileVersionInfo.GetVersionInfo(Path.Combine(stage, "payload", "CatScratch.exe"));
+        var installed = FileVersionInfo.GetVersionInfo(Path.Combine(AppContext.BaseDirectory, "CatScratch.exe"));
+        if (ReleaseVersion.Parse(installed.ProductVersion) is not { } expected || ReleaseVersion.Parse(staged.ProductVersion) != expected) return;
+        File.WriteAllText(Path.Combine(stage,"started.txt"),"Startup completed");
     }
 
     internal static void Clean(string stage, int parentId)
@@ -115,7 +145,7 @@ internal static class DirectUpdate
             }
         }
         catch (ArgumentException) { }
-        if (File.Exists(Path.Combine(stage,"failure.txt"))) return;
+        if (File.Exists(Path.Combine(stage,"failure.txt")) || !File.Exists(Path.Combine(stage,"started.txt"))) return;
         var stageCreated = Directory.GetCreationTimeUtc(stage);
         for (var attempt = 0; ; attempt++)
         {
@@ -138,6 +168,8 @@ internal static class DirectUpdate
             var stagedExe = Path.Combine(stage,"payload","CatScratch.exe");
             if (!File.Exists(stagedExe) || UpdateFeed.ParseVersion(FileVersionInfo.GetVersionInfo(stagedExe).ProductVersion) !=
                 UpdateFeed.Normalize(typeof(App).Assembly.GetName().Version!)) continue;
+            MarkReady(stage);
+            if (!File.Exists(Path.Combine(stage, "started.txt"))) continue;
             var start = new ProcessStartInfo(Path.Combine(AppContext.BaseDirectory,"CatScratch.exe")) { UseShellExecute=false,CreateNoWindow=true,WorkingDirectory=AppContext.BaseDirectory };
             foreach (var arg in new[] { "--clean-update", stage, "--parent", "0" }) start.ArgumentList.Add(arg);
             using var cleaner = Process.Start(start);

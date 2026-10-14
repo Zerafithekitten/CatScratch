@@ -103,6 +103,13 @@ public partial class OverlayWindow : Window, IDisplayAppearance
 
     public nint Handle => _hwnd;
 
+    private void DeathRecap_Click(object sender, RoutedEventArgs e) => ToggleDeathRecap();
+    internal void ToggleDeathRecap()
+    {
+        _settings.ShowDeathRecapModule = !_settings.ShowDeathRecapModule;
+        _settings.Save(); Refresh();
+    }
+
     private bool _displayOnly;
     private Brush? _shellBackground, _shellBorder, _frameBorder;
     private System.Windows.Media.Effects.Effect? _frameEffect;
@@ -211,6 +218,10 @@ public partial class OverlayWindow : Window, IDisplayAppearance
     private (bool Gs, bool Cp) _partyGearVisibility;
     public void Refresh()
     {
+        DeathRecapButton.ToolTip = UiText.Current.Localize(_settings.ShowDeathRecapModule ? "Disable death recap" : "Enable death recap")
+            + " · " + _settings.HotkeyDeathRecap;
+        System.Windows.Automation.AutomationProperties.SetName(DeathRecapButton, UiText.Current.ToggleDeathRecapLabel);
+        DeathRecapButton.Foreground = _settings.ShowDeathRecapModule ? ClickableCursorBrush : Brushes.Gray;
         ApplyNarrowLayout();
         SaveLastFightButton.IsEnabled = _meter.CanSaveLastFight;
         SetDisplayOnly(_settings.ClickThrough);
@@ -327,29 +338,33 @@ public partial class OverlayWindow : Window, IDisplayAppearance
         Refresh();
     }
 
-    private Version? _bannerClosedFor; // the banner's ✕: hidden until a newer version comes out or the next start
+    private string? _bannerClosedFor;
 
     /// <summary>The green "Version 0.2.0 is out" banner above the footer, while an update is available (not skipped or closed).</summary>
     private void ShowUpdateBanner()
     {
         var available = _meter.Updates.Available;
-        var show = available is not null && available.Version != _bannerClosedFor;
+        var show = available is not null && available.Tag != _bannerClosedFor;
         UpdateBanner.Visibility = show ? Visibility.Visible : Visibility.Collapsed;
         if (show)
         {
-            // Checking only announces availability; Update now is the only installation action.
-            UpdateBannerText.Text = string.Format(UiText.Current.UpdateBanner, available!.DisplayVersion);
+            var t = UiText.Current;
+            UpdateBannerText.Text = t.Localize("New update available") + " · " + available!.DisplayVersion;
+            UpdateActionText.Text = _meter.Updates.IsReady(available) ? t.Localize("Restart to update") + " · " + t.Localize("Please restart")
+                : t.Localize(_meter.Updates.PreparationState ?? "Prepare update");
         }
     }
 
     private void Update_Click(object sender, RoutedEventArgs e)
     {
-        if (!_drag.JustDragged) AppHost.Current.ShowUpdate();
+        if (_drag.JustDragged) return;
+        if (_meter.Updates.Ready is { } ready && _meter.Updates.RestartPrepared(ready)) AppHost.Current.ExitProgram();
+        else AppHost.Current.ShowUpdate();
     }
 
     private void UpdateBannerClose_Click(object sender, RoutedEventArgs e)
     {
-        _bannerClosedFor = _meter.Updates.Available?.Version;
+        _bannerClosedFor = _meter.Updates.Available?.Tag;
         ShowUpdateBanner();
     }
 

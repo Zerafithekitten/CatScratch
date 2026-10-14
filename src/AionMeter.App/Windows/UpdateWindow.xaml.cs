@@ -17,7 +17,7 @@ public partial class UpdateWindow : Window
 {
     private readonly Updater _updater;
     private bool _canInstall;
-    private CancellationTokenSource? _download;
+    private bool _closed;
 
     public UpdateWindow(Updater updater, ReleaseInfo release, bool installed)
     {
@@ -35,8 +35,9 @@ public partial class UpdateWindow : Window
             : string.Format(t.UpdateYouHave, current);
         ShowNotes(release.Notes);
         _canInstall = release.Portable is { Sha256.Length: 64 };
-        UpdateButton.Content = _canInstall ? t.UpdateNow : t.UpdateOpenPage;
-        Hint.Text = _canInstall ? t.UpdateInstalledHint : t.UpdatePortableHint;
+        Hint.Text = _canInstall ? t.Localize("The update is prepared in the background. Restart when you are ready. Old files are removed after a successful start.") : t.UpdatePortableHint;
+        _updater.Changed += RefreshPreparation;
+        RefreshPreparation();
     }
 
     public ReleaseInfo Release { get; }
@@ -53,38 +54,29 @@ public partial class UpdateWindow : Window
             return;
         }
 
+        if (_updater.IsReady(Release))
+        {
+            if (_updater.RestartPrepared(Release)) AppHost.Current.ExitProgram();
+            else RefreshPreparation();
+            return;
+        }
+        UpdateButton.IsEnabled = false;
+        await _updater.PrepareAsync(Release);
+        if (!_closed) RefreshPreparation();
+    }
+
+    private void RefreshPreparation()
+    {
+        if (_closed) return;
         var t = UiText.Current;
-        UpdateButton.IsEnabled = SkipButton.IsEnabled = false;
-        DownloadBar.Visibility = State.Visibility = Visibility.Visible;
-        State.Text = string.Format(t.UpdateDownloading, 0);
-        _download = new CancellationTokenSource();
-        var progress = new Progress<double>(f =>
-        {
-            DownloadBar.Value = f;
-            State.Text = string.Format(t.UpdateDownloading, f * 100);
-        });
-        try
-        {
-            var package = await _updater.DownloadPackageAsync(Release, progress, _download.Token);
-            State.Text = t.UpdateStarting;
-            Log.Info($"Updating to {Release.Tag} with {package}");
-            DirectUpdate.Launch(package, Release.Version, identity: Release.Identity);
-            AppHost.Current.ExitProgram();
-        }
-        catch (OperationCanceledException) when (_download.IsCancellationRequested)
-        {
-            // the window was closed while downloading
-        }
-        catch (Exception ex) when (ex is HttpRequestException or IOException or InvalidDataException or InvalidOperationException
-                                       or OperationCanceledException or Win32Exception)
-        {
-            Log.Error("Update failed", ex);
-            State.Text = string.Format(t.UpdateFailed, ex is OperationCanceledException ? "timeout" : ex.Message);
-            DownloadBar.Visibility = Visibility.Collapsed;
-            _canInstall = false;
-            UpdateButton.Content = t.UpdateOpenPage;
-            UpdateButton.IsEnabled = SkipButton.IsEnabled = true;
-        }
+        var ready = _updater.IsReady(Release);
+        var busy = !ready && _updater.PreparationState is "Downloading update…" or "Preparing update…";
+        UpdateButton.Content = !_canInstall ? t.UpdateOpenPage : t.Localize(ready ? "Restart to update" : "Prepare update");
+        UpdateButton.IsEnabled = !busy;
+        DownloadBar.Visibility = busy ? Visibility.Visible : Visibility.Collapsed;
+        DownloadBar.Value = _updater.DownloadProgress;
+        State.Text = _updater.LastError ?? t.Localize(_updater.PreparationState ?? "");
+        State.Visibility = string.IsNullOrEmpty(State.Text) ? Visibility.Collapsed : Visibility.Visible;
     }
 
     private void Skip_Click(object sender, RoutedEventArgs e)
@@ -97,7 +89,7 @@ public partial class UpdateWindow : Window
 
     protected override void OnClosed(EventArgs e)
     {
-        _download?.Cancel();
+        _closed = true; _updater.Changed -= RefreshPreparation;
         base.OnClosed(e);
     }
 

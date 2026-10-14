@@ -179,6 +179,16 @@ public static class SampleRenderer
                 host = players;
                 refresh = players.Reload;
                 break;
+            case "death-recap":
+                var died = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+                var recap = new DeathRecapWindow(new(died, [
+                    new(died - 150, 100, "Ferocious Horn Nuakum", false, 1, "Heavy strike", 18420, HitFlags.Critical, 1),
+                    new(died - 1800, 101, "Cave guardian", false, 2, "Claw attack", 4820, HitFlags.None, 1),
+                    new(died - 4300, 100, "Ferocious Horn Nuakum", false, 3, "Flame burst", 9120, HitFlags.Dot, 3)
+                ], false));
+                host = recap;
+                refresh = () => { };
+                break;
             case "timers":
             case "timers-locked":
                 FeedTimers(meter);

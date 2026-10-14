@@ -1,3 +1,9 @@
+## CatScratch v2.5.1-beta.4
+
+- Add a compact death recap for the last 10 seconds of incoming damage. It appears on death and disappears after resurrection. Toggle it with the tombstone icon or a configurable hotkey (default Shift+F4).
+- Show last known CP and GS directly in compact Last played with rows, alongside individual copy-name buttons.
+- Check for updates every 10 minutes and prepare verified downloads in the background. Restart with one click when ready; remove old program files and update leftovers after successful startup.
+
 ## CatScratch v2.5.1-beta.3
 
 - Match the trophy icon's size and stroke weight to the other DPS meter toolbar icons.

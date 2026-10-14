@@ -51,6 +51,9 @@ public partial class App : Application
     private BossTimersWindow? _timersWindow;
     private TimerHubWindow? _timerHub;
     private PetTrackerWindow? _petWindow;
+    private DeathRecapWindow? _deathRecapWindow;
+    private long _deathRecapStamp;
+    private (string Language, bool Stream) _deathRecapAppearance;
     private TimerCards? _timerCards;
     private readonly Core.Events.EventAlerts _eventAlerts = new();
     private EventSoundPlayer? _eventSoundPlayer;
@@ -150,6 +153,16 @@ public partial class App : Application
             {
                 try { await Release250Checks.RunAsync(release250Result); Shutdown(); }
                 catch(Exception ex) { File.WriteAllText(release250Result,ex.ToString()); Shutdown(1); }
+            });
+            return;
+        }
+        if (ArgValue(e.Args, "--check-beta4") is { } beta4Result)
+        {
+            Log.Enabled = false;
+            Dispatcher.BeginInvoke(async () =>
+            {
+                try { await Beta4Checks.RunAsync(beta4Result); Shutdown(); }
+                catch (Exception error) { File.WriteAllText(beta4Result, error.ToString()); Shutdown(1); }
             });
             return;
         }
@@ -379,6 +392,7 @@ public partial class App : Application
     {
         _meter.Tick();
         UpdateAutoVisibility();
+        SyncDeathRecap();
         if (_overlay.IsVisible) _overlay.Refresh();
         if (++_ticks % 5 == 0)
         {
@@ -392,6 +406,29 @@ public partial class App : Application
     }
 
     // ------------------------------------------------------------ automatic show / hide
+
+    private void SyncDeathRecap()
+    {
+        var stamp = _meter.Tracker.DeathRecapAtMs;
+        if (!_meter.Settings.ShowDeathRecapModule || stamp == 0)
+        {
+            _deathRecapWindow?.Close(); _deathRecapWindow = null; _deathRecapStamp = 0;
+            return;
+        }
+        var appearance = (UiText.Current.Code, StreamNames.Enabled);
+        if (_deathRecapWindow is not null && stamp == _deathRecapStamp && appearance == _deathRecapAppearance) return;
+        var recap = _meter.Tracker.DeathRecap();
+        if (recap is null) return;
+        _deathRecapStamp = stamp; _deathRecapAppearance = appearance;
+        if (_deathRecapWindow is not null) { _deathRecapWindow.Reload(recap); return; }
+        var window = _deathRecapWindow = new DeathRecapWindow(recap);
+        var area = SystemParameters.WorkArea;
+        window.Left = Math.Clamp(_overlay.Left + _overlay.Width + 8, area.Left, Math.Max(area.Left, area.Right - window.Width));
+        window.Top = Math.Clamp(_overlay.Top, area.Top, Math.Max(area.Top, area.Bottom - 420));
+        WindowClickThrough.Attach(window, () => _meter.Settings.ClickThrough, () => _meter.Settings.WindowOpacity);
+        window.Closed += (_, _) => { if (_deathRecapWindow == window) _deathRecapWindow = null; };
+        window.Show(); _windowVisibility.Track(window);
+    }
 
     private bool _autoShown;           // the overlay is up because a fight brought it up, not the user
     private Guid? _suppressedFight;    // hidden by hand during this fight: do not pop it back until the next one
@@ -494,6 +531,7 @@ public partial class App : Application
         _hotkeys.Register(s.HotkeyPersonal,_overlay.TogglePersonalCombat);
         _hotkeys.Register(s.HotkeyEvents,ToggleEventModule);
         _hotkeys.Register(s.HotkeyPets,TogglePetModule);
+        _hotkeys.Register(s.HotkeyDeathRecap,_overlay.ToggleDeathRecap);
     }
 
     /// <summary>
@@ -748,7 +786,7 @@ public partial class App : Application
     // ------------------------------------------------------------ updates
 
     private UpdateWindow? _updateWindow;
-    private Version? _announcedUpdate;
+    private string? _announcedUpdate;
     private bool _checkingByHand;
 
     /// <summary>A check finished or a version was skipped: the tray item follows; a new version is announced once.</summary>
@@ -756,13 +794,13 @@ public partial class App : Application
     {
         if (_shutdownStarted || Dispatcher.HasShutdownStarted) return;
         var updates = _meter.Updates;
-        var available = updates.Available;
+        var available = updates.Ready;
         _tray?.SetUpdate(available?.DisplayVersion);
-        if (available is null || available.Version == _announcedUpdate) return;
+        if (available is null || available.Tag == _announcedUpdate) return;
         var t = UiText.Current;
-        _announcedUpdate = available.Version;
+        _announcedUpdate = available.Tag;
         if (_checkingByHand) return; // the one who asked gets the update window instead
-        _tray?.ShowBalloon(t.UpdateTitle, string.Format(t.UpdateBalloon, available.DisplayVersion), () => ShowUpdate());
+        _tray?.ShowBalloon(t.UpdateTitle, t.Localize("New update available") + " · " + available.DisplayVersion + ". " + t.Localize("Please restart"), () => ShowUpdate());
     }
 
     /// <summary>The update window for <paramref name="release"/>, by default the available update.</summary>
@@ -770,7 +808,7 @@ public partial class App : Application
     {
         release ??= _meter.Updates.Available;
         if (release is null) return;
-        if (_updateWindow is { IsLoaded: true } open && open.Release.Version == release.Version)
+        if (_updateWindow is { IsLoaded: true } open && open.Release.Tag == release.Tag)
         {
             Activate(open);
             return;

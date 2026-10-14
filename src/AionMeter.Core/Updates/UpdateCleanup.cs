@@ -15,6 +15,8 @@ public static class UpdateCleanup
     {
         if (!IsStage(root,stage)) throw new InvalidDataException("Cleanup path is outside the update directory.");
         if (!Directory.Exists(stage) || File.Exists(Path.Combine(stage,"failure.txt"))) return;
+        // A failed startup may leave no failure marker. Keep the previous program until startup is acknowledged.
+        if (Directory.Exists(Path.Combine(stage, "backup")) && !File.Exists(Path.Combine(stage, "started.txt"))) return;
         CheckLinks(stage);
         // Validate every descendant before deleting anything. Enumeration does not enter linked directories.
         var entries = new Stack<string>(); entries.Push(stage);
@@ -44,6 +46,7 @@ public static class UpdateCleanup
             if (!IsStage(root,stage) || Directory.GetCreationTimeUtc(stage) >= before) continue;
             try { RemoveStage(root,stage); }
             catch (IOException) { } // A locked or linked stage is retained; other safe stages can still be cleaned.
+            catch (InvalidDataException) { }
             catch (UnauthorizedAccessException) { }
         }
     }

@@ -38,6 +38,10 @@ public sealed class MeterService : IDisposable
     public MeterService(AppSettings settings, Func<GameData, IEventSource>? captureFactory, PersonalBestStore? personalBests = null, LastPlayedWithStore? lastPlayedWith = null)
     {
         Settings = settings;
+        if (!settings.Transient && !settings.BackgroundUpdateDefaultsApplied)
+        {
+            settings.CheckUpdates = true; settings.BackgroundUpdateDefaultsApplied = true; settings.Save();
+        }
         if (!settings.Transient && !settings.ManualHistoryDefaultsApplied)
         {
             settings.SaveHistory = false;
@@ -340,6 +344,7 @@ public sealed class MeterService : IDisposable
 
     public void ApplySettings()
     {
+        Updates.ApplyPreferences();
         Settings.ApplyTo(Options);
         StreamNames.Enabled=Settings.StreamMode;
         WindowPresentation.SetScale(Settings.UiScale);

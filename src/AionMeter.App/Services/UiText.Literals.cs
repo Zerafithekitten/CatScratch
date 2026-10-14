@@ -2,6 +2,9 @@ namespace AionMeter.App.Services;
 
 public sealed partial class UiText
 {
+    public string ToggleDeathRecapLabel => Localize("Enable / disable death recap");
+    public string BackgroundUpdatesLabel => Localize("Check and prepare updates automatically");
+    public string BackgroundUpdatesHint => Localize("Checks after startup and every 10 minutes. Downloads and prepares updates in the background. Restart only when you click Restart to update.");
     public string BossPersonalBestsLabel => Localize("Boss personal bests");
     public string LastPlayedWithLabel => Localize("Last played with");
     public string TogglePersonalLabel=>Localize("Show / hide personal combat");
@@ -50,5 +53,5 @@ public sealed partial class UiText
     public string Literal37 => Localize("Capture & data");
     public string Literal38 => Localize("General");
     public string Literal39 => Localize("LANGUAGE");
-    public string Literal40 => Localize("Updates are installed only after you press Update now.");
+    public string Literal40 => Localize("The update is prepared in the background. Restart when you are ready. Old files are removed after a successful start.");
 }

@@ -64,7 +64,7 @@ public partial class SettingsWindow : Window
         AppIcon.Apply(this);
         Controls.DragAnywhere.Attach(this);
         Load();
-        foreach (var field in new[] { HkToggle, HkAll, HkReset, HkClick, HkTimers, HkPersonal, HkEvents, HkPets })
+        foreach (var field in new[] { HkToggle, HkAll, HkReset, HkClick, HkTimers, HkPersonal, HkEvents, HkPets, HkDeathRecap })
         {
             field.IsReadOnly = true;
             field.ToolTip = UiText.Current.Localize("Click here and press your shortcut. Applied after saving.");
@@ -126,6 +126,7 @@ public partial class SettingsWindow : Window
         HkPersonal.Text=s.HotkeyPersonal;
         HkEvents.Text=s.HotkeyEvents;
         HkPets.Text=s.HotkeyPets;
+        HkDeathRecap.Text=s.HotkeyDeathRecap;
 
         _devices.Add((null, T.AdapterAuto));
         try
@@ -236,6 +237,7 @@ public partial class SettingsWindow : Window
         s.HotkeyPersonal=HkPersonal.Text.Trim();
         s.HotkeyEvents=HkEvents.Text.Trim();
         s.HotkeyPets=HkPets.Text.Trim();
+        s.HotkeyDeathRecap=HkDeathRecap.Text.Trim();
 
         _meter.ApplySettings();
         if (captureChanged) _meter.RestartCapture();

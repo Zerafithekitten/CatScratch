@@ -7,7 +7,7 @@ namespace AionMeter.Core.Combat;
 /// Turns the decoded event stream into fight segments. All mutation happens under one lock: the capture thread
 /// calls <see cref="Process"/>, the UI thread reads immutable snapshots.
 /// </summary>
-public sealed class CombatTracker
+public sealed partial class CombatTracker
 {
     private readonly object _gate = new();
     private readonly GameData _data;
@@ -24,7 +24,7 @@ public sealed class CombatTracker
     public bool PartyConfirmed { get { lock (_gate) return !Options.PartyOnly || (_freshSelf && _party.Count > 0 && _selfKey == _partyIdentity); } }
     public void InvalidateParty()
     {
-        lock (_gate) { _freshSelf = false; _pendingPartyRoster = null; ClearParty(); }
+        lock (_gate) { _freshSelf = false; _pendingPartyRoster = null; ClearParty(); ClearDeathRecap(); }
     }
     private void ClearParty()
     {
@@ -137,6 +137,7 @@ public sealed class CombatTracker
                         && s.ServerId > 0 && s.ServerId == _selfKey.Server
                         && (s.Class == GameClass.Unknown || _entities.Self?.Class is null or GameClass.Unknown || s.Class == _entities.Self.Class);
                     if (!sameSelf && !keepsGroup && !sameCharacter) ClearParty();
+                    if (!sameSelf && !sameCharacter) ClearDeathRecap();
                     if (!sameSelf) _selfKey = default;
                     _freshSelf = true;
                     if (!string.IsNullOrWhiteSpace(s.Name)) _selfKey = (s.Name, s.ServerId > 0 ? s.ServerId : _selfKey.Server);
@@ -235,6 +236,7 @@ public sealed class CombatTracker
                     _entities.OnZoneChanged(z.MapId, z.ZoneName);
                     break;
             }
+            ObserveDeathRecap(e);
         }
         FlushFinished();
         if (selfName is not null) SelfIdentified?.Invoke(selfName);

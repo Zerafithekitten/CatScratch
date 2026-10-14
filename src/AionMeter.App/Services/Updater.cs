@@ -22,7 +22,7 @@ public enum UpdateCheckResult
 public sealed class Updater : IDisposable
 {
     private static readonly TimeSpan FirstCheckDelay = TimeSpan.FromSeconds(20);
-    private static readonly TimeSpan CheckInterval = TimeSpan.FromHours(2);
+    private static readonly TimeSpan CheckInterval = TimeSpan.FromMinutes(10);
     private const string UninstallKey = @"Software\Microsoft\Windows\CurrentVersion\Uninstall\{BCF3CB47-B2BC-4F8D-964A-A94F061C81E2}_is1"; // AppId in installer/CatScratch.iss
 
     private readonly AppSettings _settings;
@@ -31,11 +31,11 @@ public sealed class Updater : IDisposable
     private Task<UpdateCheckResult>? _running;
 
     public Updater(AppSettings settings) : this(settings, null) { }
-    internal Updater(AppSettings settings, UpdateFeed? feed)
+    internal Updater(AppSettings settings, UpdateFeed? feed, ReleaseVersion? currentIdentity = null)
     {
         _settings = settings;
-        Current = UpdateFeed.Normalize(typeof(Updater).Assembly.GetName().Version ?? new Version(0, 0, 0));
-        CurrentIdentity = ReleaseVersion.Parse(typeof(Updater).Assembly.GetCustomAttributes(typeof(System.Reflection.AssemblyInformationalVersionAttribute), false)
+        Current = currentIdentity?.Version ?? UpdateFeed.Normalize(typeof(Updater).Assembly.GetName().Version ?? new Version(0, 0, 0));
+        CurrentIdentity = currentIdentity ?? ReleaseVersion.Parse(typeof(Updater).Assembly.GetCustomAttributes(typeof(System.Reflection.AssemblyInformationalVersionAttribute), false)
             .Cast<System.Reflection.AssemblyInformationalVersionAttribute>().FirstOrDefault()?.InformationalVersion)
             ?? new ReleaseVersion(Current, null);
         _feed = feed ?? new UpdateFeed($"CatScratch/{Current.ToString(3)}");
@@ -52,7 +52,7 @@ public sealed class Updater : IDisposable
         var changed = Channel != channel;
         _settings.UpdateChannel = channel.ToString();
         if (!changed) return;
-        _channelRevision++; Latest = null; LastError = null; _settings.SkippedUpdate = null;
+        _channelRevision++; CancelPreparation(); Latest = null; LastError = null; _settings.SkippedUpdate = null;
         Changed?.Invoke();
     }
     private bool IsUpdate(ReleaseInfo release) => (Channel == UpdateChannel.Beta || release.Identity.Channel == UpdateChannel.Stable)
@@ -119,6 +119,9 @@ public sealed class Updater : IDisposable
             if (revision != _channelRevision) return UpdateCheckResult.UpToDate;
             Latest = latest;
             LastError = null;
+            if (_preparedTag is not null && _preparedTag != latest?.Tag) CancelPreparation();
+            if (_settings.CheckUpdates && Available is { Portable.Sha256.Length: 64 } available)
+                _ = PrepareAsync(available);
             Log.Info($"Update check: newest release {Latest?.Tag ?? "none"}, this copy {Current.ToString(3)}.");
 
             return Latest is { } r && IsUpdate(r) ? UpdateCheckResult.Available : UpdateCheckResult.UpToDate;
@@ -140,6 +143,7 @@ public sealed class Updater : IDisposable
     public void Skip(ReleaseInfo release)
     {
         _settings.SkippedUpdate = release.Tag;
+        CancelPreparation();
         _settings.Save();
         Changed?.Invoke();
     }
@@ -147,6 +151,100 @@ public sealed class Updater : IDisposable
     /// <summary>Downloads the release's package to this installation's userdata/temp/updates folder, checked against GitHub's size and SHA-256.</summary>
     private readonly SemaphoreSlim _downloadGate = new(1, 1);
     private readonly CancellationTokenSource _lifetime = new();
+    private CancellationTokenSource? _preparationCancellation;
+    private Task<bool>? _preparation;
+    private string? _preparingTag, _preparedTag, _preparedStage;
+    private readonly SemaphoreSlim _prepareGate = new(1, 1);
+    public string? PreparationState { get; private set; }
+    public double DownloadProgress { get; private set; }
+    public bool IsReady(ReleaseInfo release) => _preparedTag == release.Tag && _preparedStage is not null && IsUpdate(release);
+    public ReleaseInfo? Ready => Available is { } release && IsReady(release) ? release : null;
+
+    public void ApplyPreferences() { if (!_settings.CheckUpdates) CancelPreparation(); }
+
+    private void CancelPreparation()
+    {
+        _preparationCancellation?.Cancel();
+        _preparingTag = null; _preparation = null;
+        var stage = _preparedStage;
+        _preparedTag = _preparedStage = null; PreparationState = null; DownloadProgress = 0;
+        if (stage is not null) _ = Task.Run(() =>
+        {
+            try { UpdateCleanup.RemoveStage(DirectUpdate.Root, stage); }
+            catch (Exception ex) when (ex is IOException or InvalidDataException or UnauthorizedAccessException) { Log.Error("Discarding prepared update failed", ex); }
+        });
+        Changed?.Invoke();
+    }
+
+    /// <summary>Downloads, verifies and extracts only. Live program files and the running meter are untouched.</summary>
+    public Task<bool> PrepareAsync(ReleaseInfo release)
+    {
+        if (IsReady(release)) return Task.FromResult(true);
+        if (_preparation is not null && _preparingTag == release.Tag) return _preparation;
+        CancelPreparation();
+        _preparingTag = release.Tag;
+        var cancel = _preparationCancellation = CancellationTokenSource.CreateLinkedTokenSource(_lifetime.Token);
+        return _preparation = PrepareCoreAsync(release, _channelRevision, cancel);
+    }
+
+    private async Task<bool> PrepareCoreAsync(ReleaseInfo release, int revision, CancellationTokenSource cancel)
+    {
+        string? stage = null;
+        var entered = false;
+        try
+        {
+            await _prepareGate.WaitAsync(cancel.Token); entered = true;
+            if (!IsUpdate(release)) throw new InvalidOperationException("This release is not an update for the selected channel.");
+            PreparationState = "Downloading update…"; LastError = null; Changed?.Invoke();
+            var progress = new Progress<double>(f =>
+            {
+                if (cancel.IsCancellationRequested || revision != _channelRevision) return;
+                DownloadProgress = f; Changed?.Invoke();
+            });
+            var archive = await DownloadPackageAsync(release, progress, cancel.Token);
+            cancel.Token.ThrowIfCancellationRequested();
+            PreparationState = "Preparing update…"; Changed?.Invoke();
+            stage = await Task.Run(() => DirectUpdate.Prepare(archive, release.Version, release.Identity), cancel.Token);
+            cancel.Token.ThrowIfCancellationRequested();
+            if (revision != _channelRevision) return false;
+            _preparedStage = stage; _preparedTag = release.Tag; stage = null;
+            PreparationState = "Update ready · please restart"; DownloadProgress = 1; Changed?.Invoke();
+            return true;
+        }
+        catch (OperationCanceledException) when (cancel.IsCancellationRequested) { return false; }
+        catch (Exception ex) when (ex is HttpRequestException or IOException or InvalidDataException or UnauthorizedAccessException or InvalidOperationException or OperationCanceledException)
+        {
+            if (!cancel.IsCancellationRequested && revision == _channelRevision)
+            {
+                LastError = ex.Message; PreparationState = "Update preparation failed"; Changed?.Invoke();
+                Log.Error("Preparing update failed", ex);
+            }
+            return false;
+        }
+        finally
+        {
+            if (stage is not null)
+            {
+                try { await Task.Run(() => UpdateCleanup.RemoveStage(DirectUpdate.Root, stage)); }
+                catch (Exception ex) when (ex is IOException or InvalidDataException or UnauthorizedAccessException) { Log.Error("Discarding incomplete update failed", ex); }
+            }
+            if (entered) _prepareGate.Release();
+            if (_preparationCancellation == cancel) { _preparation = null; _preparingTag = null; _preparationCancellation = null; }
+            cancel.Dispose();
+        }
+    }
+
+    private bool _launching;
+    public bool RestartPrepared(ReleaseInfo release)
+    {
+        if (_launching || !IsReady(release)) return false;
+        _launching = true;
+        try { DirectUpdate.LaunchPrepared(_preparedStage!, release.Version, identity: release.Identity); return true; }
+        catch (Exception ex) when (ex is IOException or InvalidDataException or UnauthorizedAccessException or InvalidOperationException or System.ComponentModel.Win32Exception)
+        {
+            _launching = false; CancelPreparation(); LastError = ex.Message; Changed?.Invoke(); Log.Error("Starting prepared update failed", ex); return false;
+        }
+    }
     public async Task<string> DownloadPackageAsync(ReleaseInfo release, IProgress<double>? progress, CancellationToken ct)
     {
         var revision = _channelRevision;
@@ -184,7 +282,8 @@ public sealed class Updater : IDisposable
         try
         {
             if (!Directory.Exists(DownloadFolder)) return;
-            foreach (var file in Directory.EnumerateFiles(DownloadFolder))
+            // Complete archives remain until successful startup acknowledges the update.
+            foreach (var file in Directory.EnumerateFiles(DownloadFolder, "*.part"))
                 if (DateTime.UtcNow - File.GetLastWriteTimeUtc(file) > TimeSpan.FromHours(1))
                     File.Delete(file);
             foreach (var stage in Directory.EnumerateDirectories(DownloadFolder, "stage-*"))
@@ -193,7 +292,7 @@ public sealed class Updater : IDisposable
                     (File.GetAttributes(stage) & FileAttributes.ReparsePoint) == 0)
                     UpdateCleanup.RemoveStage(DownloadFolder,stage);
         }
-        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        catch (Exception ex) when (ex is IOException or InvalidDataException or UnauthorizedAccessException)
         {
         }
     }
@@ -219,6 +318,8 @@ public sealed class Updater : IDisposable
     public void Dispose()
     {
         _timer?.Stop();
+        // Keep a launched stage: its helper owns cleanup after the new program acknowledges startup.
+        if (!_launching) CancelPreparation();
         _lifetime.Cancel();
         _feed.Dispose();
     }

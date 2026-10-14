@@ -61,7 +61,7 @@ internal static class BossRecordChecks
         return store;
     }
     private static PartyRosterEvent Roster(long at, string name = "Private Ranger") => new(at,
-        [new("Private character",2305,50,0,0,GameClass.Cleric),new(name,2305,50,0,0,GameClass.Ranger),new("Private Templar",2306,50,0,0,GameClass.Templar)]);
+        [new("Private character",2305,50,0,0,GameClass.Cleric),new(name,2305,50,1894,85471,GameClass.Ranger),new("Private Templar",2306,50,2130,91240,GameClass.Templar)]);
     private static IEnumerable<DependencyObject> Visuals(DependencyObject node)
     {
         for (var i = 0; i < System.Windows.Media.VisualTreeHelper.GetChildrenCount(node); i++)

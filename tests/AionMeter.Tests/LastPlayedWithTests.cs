@@ -67,6 +67,20 @@ public sealed class LastPlayedWithTests : IDisposable
         Assert.Equal(2, store.List().Select(e => e.Character).Distinct().Count());
     }
     [Fact]
+    public void Latest_positive_power_values_survive_missing_roster_data_and_restart()
+    {
+        var path = Path.Combine(_directory, "players.json");
+        var store = new LastPlayedWithStore(path); store.Observe(Own());
+        PartyRosterEvent WithStats(long time, int gs, long cp) => new(time,
+            [new("Own", 2305, 50, 0, 0, GameClass.Cleric), new("Friend", 2305, 50, gs, cp, GameClass.Ranger)]);
+        store.Observe(WithStats(2000, 3000, 45000));
+        store.Observe(WithStats(3000, 2800, 42000));
+        store.Observe(WithStats(4000, 0, 0));
+        var saved = Assert.Single(new LastPlayedWithStore(path).List());
+        Assert.Equal(2800, saved.GearScore); Assert.Equal(42000, saved.CombatPower);
+        Assert.Equal(DateTimeOffset.FromUnixTimeMilliseconds(2000), saved.LastPlayedAt);
+    }
+    [Fact]
     public void Corrupt_player_file_does_not_prevent_startup()
     {
         Directory.CreateDirectory(_directory); var path = Path.Combine(_directory, "players.json"); File.WriteAllText(path, "[null,{}]");
