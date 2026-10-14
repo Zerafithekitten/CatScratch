@@ -6,7 +6,7 @@ namespace AionMeter.Core.Audio;
 public static class WaveSound
 {
     public const int MaximumSeconds = 10;
-    public static TimeSpan Validate(Stream stream)
+    public static TimeSpan Validate(Stream stream, int maximumSeconds = MaximumSeconds)
     {
         static InvalidDataException Invalid() => new("Choose a valid PCM or float WAV file, up to 10 seconds and 10 MB.");
         if (!stream.CanSeek || stream.Length < 44 || stream.Length > 10_000_000) throw Invalid();
@@ -44,7 +44,7 @@ public static class WaveSound
                 else if (id == 0x61746164) samplesBytes += size;
                 stream.Position = next + (size & 1);
             }
-            if (!hasFormat || samplesBytes <= 0 || samplesBytes % alignment != 0 || samplesBytes > (long)rate * alignment * MaximumSeconds) throw Invalid();
+            if (!hasFormat || samplesBytes <= 0 || samplesBytes % alignment != 0 || samplesBytes > (long)rate * alignment * maximumSeconds) throw Invalid();
             return TimeSpan.FromSeconds(samplesBytes / (double)alignment / rate);
         }
         catch (EndOfStreamException) { throw Invalid(); }

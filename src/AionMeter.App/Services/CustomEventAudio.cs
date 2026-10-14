@@ -30,6 +30,11 @@ internal static class CustomEventAudio
     internal static async Task<TimeSpan> DurationAsync(string path)
     {
         var uri = FileUri(path);
+        if (Path.GetExtension(path).Equals(".wav", StringComparison.OrdinalIgnoreCase))
+        {
+            try { using var wave=File.OpenRead(path); return Core.Audio.WaveSound.Validate(wave, int.MaxValue); }
+            catch (InvalidDataException) { /* Other WAV encodings still use the Windows decoder. */ }
+        }
         var player = new MediaPlayer();
         var completion = new TaskCompletionSource<TimeSpan>();
         player.MediaOpened += (_, _) => completion.TrySetResult(player.NaturalDuration.HasTimeSpan ? player.NaturalDuration.TimeSpan : TimeSpan.Zero);

@@ -20,6 +20,12 @@ public sealed class WaveSoundTests
     { using var stream = Wave(samples,byteRate); Assert.Throws<InvalidDataException>(()=>WaveSound.Validate(stream)); }
     [Fact] public void Rejects_truncated_audio()
     { using var stream = Wave(100); stream.SetLength(stream.Length-2); Assert.Throws<InvalidDataException>(()=>WaveSound.Validate(stream)); }
+    [Fact] public void Measures_long_wave_for_specific_duration_error_without_relaxing_default_limit()
+    {
+        using var stream=Wave(88000);
+        Assert.Equal(TimeSpan.FromSeconds(11),WaveSound.Validate(stream,int.MaxValue));
+        Assert.Throws<InvalidDataException>(()=>WaveSound.Validate(stream));
+    }
     [Fact] public void Skips_metadata_chunks_and_measures_samples_instead_of_fact_duration()
     {
         using var original=Wave(8000); var bytes=original.ToArray();

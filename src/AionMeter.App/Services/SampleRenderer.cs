@@ -1,5 +1,6 @@
 using System.IO;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using AionMeter.App.Windows;
@@ -173,7 +174,20 @@ public static class SampleRenderer
                 refresh = timers.ReloadNow;
                 break;
             case "event-sounds":
-                host = new EventSoundsWindow(new TimerCards(meter, persistent: false), (_, _) => { }) { Height = o.Height ?? 650 };
+            case "event-sounds-error":
+                var soundCards = new TimerCards(meter, persistent: false);
+                soundCards.Saved.Sounds["shugo"] = new EventSoundPreference { Enabled=true, Sound="Custom audio", FilePath=Path.Combine(AppContext.BaseDirectory,"sounds","Chime.wav") };
+                var soundSample = new EventSoundsWindow(soundCards, (_, _) => { }) { Height = o.Height ?? 700 };
+                if (o.Window == "event-sounds-error")
+                {
+                    var soundRoot=(DockPanel)((Border)soundSample.Content).Child;
+                    var soundBody=(StackPanel)((ScrollViewer)soundRoot.Children[1]).Content;
+                    var soundRow=(StackPanel)((Border)soundBody.Children[1]).Child;
+                    var feedback=(TextBlock)soundRow.Children[2];
+                    feedback.Text=string.Format(UiText.Current.Localize("This sound is {0:0.00} seconds long. Maximum: 10 seconds. Choose a shorter file."),10.58);
+                    feedback.Visibility=Visibility.Visible;
+                }
+                host = soundSample;
                 refresh = () => { };
                 break;
             case "patchnotes":

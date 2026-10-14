@@ -4,7 +4,7 @@ A separate always-on-top Windows damage meter for AION 2 by Zerafithekitten.
 
 [Download the latest release](https://github.com/Zerafithekitten/CatScratch/releases/latest) · [Patch notes](data/patchnotes-en.md) · [Report an issue](https://github.com/Zerafithekitten/CatScratch/issues)
 
-Latest published version: **2.4.6**. English is the default; German, Russian and French are available in Settings.
+Latest published version: **2.4.7**. English is the default; German, Russian and French are available in Settings.
 
 ## Preview
 
@@ -12,7 +12,7 @@ CatScratch UI rendered with sample data. Names and numbers are examples. The scr
 
 ### DPS meter and Personal combat
 
-<img src="docs/screenshots/meter.png" alt="CatScratch 2.4 DPS meter with party damage taken and personal healing" width="420" />
+<img src="docs/screenshots/meter.png" alt="CatScratch 2.4.7 DPS meter with party damage taken and personal healing" width="420" />
 
 ### Click-through mode
 
@@ -42,7 +42,7 @@ Dark player cards, a separate summary row, teal tabs, clearer skill tables and a
 
 ### Compact fight selection and Patch notes
 
-Available since 2.1.2. Saving fights is optional: press the save button after combat. The picker switches between the live fight, current-session fights and the last ten saved fights.
+Saving fights is optional: press the save button after combat. The picker switches between the live fight, current-session fights and the last ten saved fights.
 
 <img src="docs/screenshots/fight-picker.png" alt="Compact CatScratch fight selection" width="340" />
 
@@ -54,13 +54,21 @@ Available since 2.1.2. Saving fights is optional: press the save button after co
 
 <img src="docs/screenshots/event-settings.png" alt="Event preferences" width="470" />
 
+Selected events within the next hour appear as single-line cards: event type, name and countdown. Started events remain visible for two minutes with a pulsing border.
+
 <img src="docs/screenshots/upcoming-events.png" alt="All selected events within the next hour" width="520" />
+
+<img src="docs/screenshots/upcoming-events-live.png" alt="Just-started events with highlighted borders" width="520" />
 
 <details><summary>Boss timers and optional event sounds</summary>
 
 <img src="docs/screenshots/boss-timers.png" alt="CatScratch boss timers" width="760" />
 
-<img src="docs/screenshots/event-sounds.png" alt="Optional per-event sounds with the ten-second custom WAV limit" width="580" />
+Custom sounds support WAV and MP3 (maximum **10 seconds / 10 MB**). Selecting custom audio opens the file picker, shows the chosen filename and keeps the previous sound if selection fails. Use **Change audio…** to replace it. Errors appear in red beneath the affected event, including the measured duration for long files.
+
+<img src="docs/screenshots/event-sounds.png" alt="Optional per-event WAV and MP3 sounds with the selected filename" width="580" />
+
+<img src="docs/screenshots/event-sounds-error.png" alt="Red inline error explaining that a selected sound exceeds ten seconds" width="580" />
 
 </details>
 
@@ -85,14 +93,15 @@ All shortcuts can be recorded by pressing a combination in **Settings > Hotkeys*
 
 The all-window shortcut restores the same previously open windows and their positions. The installed version is always visible at the bottom left of the meter.
 
-<img src="docs/screenshots/pet-tracker-click-through.png" alt="Pet tracker in click-through mode with only its compact row visible" width="300" />
+<img src="docs/screenshots/pet-tracker-click-through.png" alt="Pet tracker in click-through mode with three compact rows visible" width="300" />
 
-### Update improvements
+### Recent debug buffer (experimental)
 
-- Subtle dark backgrounds behind Personal combat rows in click-through mode for readability.
-- Remove the update's old staging copy, rollback backup and downloaded ZIP after the updated app starts successfully. Failed-update recovery files are retained.
+Enable **Recent debug buffer** in **Settings > Capture & data** and save. **Save recent debug** writes up to the previous 60 seconds to `userdata/captures` beside the running executable. The buffer is disabled by default and capped at 32 MB of accounted packet storage; high traffic can shorten the interval. Continuous recording remains available.
 
-Available in version 2.2.0.
+Only packets received while enabled are available. Export can temporarily retain a snapshot while capture continues, and a short recording can lack earlier protocol or character context. Captures can contain character names; keep them private. Nothing is uploaded automatically.
+
+<img src="docs/screenshots/capture-settings.png" alt="Capture settings with the optional 60-second recent debug buffer and export button" width="760" />
 
 ## Languages
 
@@ -100,10 +109,10 @@ Select the language in **Settings > General > Language**. English remains the de
 
 | Language | Interface | Availability |
 | --- | --- | --- |
-| English | English | Current release (2.4.6) · default |
-| German | Deutsch | Current release (2.4.6) |
-| Russian | Русский | Current release (2.4.6) |
-| French | Français | Current release (2.4.6) |
+| English | English | Current release (2.4.7) · default |
+| German | Deutsch | Current release (2.4.7) |
+| Russian | Русский | Current release (2.4.7) |
+| French | Français | Current release (2.4.7) |
 
 Skill and monster names use the bundled language tables, with English as the fallback for missing names. Player names are preserved.
 
@@ -133,10 +142,11 @@ Use borderless windowed mode to keep the meter visible above the game.
 - Movable cards for all selected events and enabled world-boss timers within the next hour, with a pulsing border for two minutes after the start.
 - Separate observed boss timers; optional fight saving, retaining the last ten saved fights.
 - Colored EVENT / PVP / BOSS badges and readable boss panels when locked.
-- Optional per-event sounds with preview, volume, reminder timing and custom PCM/float WAV files up to ten seconds.
+- Optional per-event sounds with preview, volume, reminder timing and custom WAV or MP3 files up to ten seconds and 10 MB. The selected filename is displayed; invalid files show a red error with the reason.
 - Patch notes available in the meter, including offline notes for the installed version.
 - English by default, selectable German, Russian and French in Settings > General > Language; patch notes remain English.
-- Verified GitHub updates for installed and portable copies.
+- Verified GitHub updates for installed and portable copies; old successful update staging and backups are removed.
+- Optional 60-second recent-debug buffer alongside continuous packet recording, with asynchronous PCAP export.
 
 Use the meter's **Check for updates** button, or Settings > General > Updates > Check now. Checking only checks; installation starts when you press **Update now**.
 CatScratch replaces its program files and restarts without running Setup. Its own userdata is preserved; failed file replacement restores backups. Updates need a writable program folder.
@@ -169,7 +179,3 @@ GPL-3.0, based on [cyberbadger6969/aion2-dps-meter](https://github.com/cyberbadg
 base revision 414de5c1d5f3d45ce35701bd25229c2dba736bb6.
 Keep LICENSE and data/NOTICE.md with redistributions. Full source accompanies releases.
 AION 2 belongs to NCSOFT.
-
-### Recent debug buffer (experimental)
-
-In Settings → Capture & data, enable Recent debug buffer and save. Save recent debug exports up to the previous 60 seconds to userdata/captures beside the running application. The buffer is disabled by default and capped at 32 MB of accounted packet storage; high traffic can shorten the interval. Continuous recording remains available. An export can temporarily retain its snapshot while capture continues. Only packets received while the buffer is enabled are available; a short recording may lack earlier protocol or character context.
