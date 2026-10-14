@@ -26,7 +26,8 @@ public sealed partial class CombatTracker
     // Shares the combat lock; this history is independent of fight filters, kills and idle timeouts.
     private void ObserveDeathRecap(GameEvent e)
     {
-        if (e is ZoneChangedEvent { IsTeleport: false }) { ClearDeathRecap(); return; }
+        // Respawning also reloads the SAME map. Keep the fight, but discard the previous life’s recap.
+        if (e is ZoneChangedEvent) { ClearDeathRecap(); return; }
         if (!_freshSelf || _entities.SelfId is not { } self || self == 0) return;
         if (_recapActor != self) { ClearDeathRecap(); _recapActor = self; }
         _recapClock = Math.Max(_recapClock, e.TimeMs);

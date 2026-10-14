@@ -935,7 +935,8 @@ public sealed class PacketParser
         if (end > 0) Emit(new BossTimeLimitEvent(TimeMs, id, end));
     }
 
-    /// <summary><c>entity varint, kind varint (2 = NPC, 1 = player), varint, varint, hp u64</c></summary>
+    /// <summary><c>entity varint, field kind varint (2 = HP), varint, varint, hp u64</c>.
+    /// Kind 2 reports HP for players AND NPCs; kind 1 carries other resource values, not player HP.</summary>
     private void ParseRemainHp(ReadOnlySpan<byte> b)
     {
         var o = 0;
@@ -946,7 +947,7 @@ public sealed class PacketParser
         Wire.TryU32(b, ref o, out var hi);
         var hp = (long)hi << 32 | lo;
         if (hp is < 0 or > 10_000_000_000) return;
-        Emit(new NpcHpEvent(TimeMs, id, hp, 0, IsNpc: true));
+        Emit(new NpcHpEvent(TimeMs, id, hp, 0, IsNpc: false));
     }
 
     /// <summary><c>actor varint, hp varint, hpMax varint</c> — sent for players and NPCs alike.</summary>

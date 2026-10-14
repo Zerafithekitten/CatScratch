@@ -2,6 +2,7 @@ using AionMeter.Core;
 using AionMeter.Core.Combat;
 using AionMeter.Core.Events;
 using AionMeter.Core.Game;
+using AionMeter.Core.Protocol;
 
 namespace AionMeter.Tests;
 
@@ -53,6 +54,44 @@ public class DeathRecapTests
         t.Process(new SelfIdentifiedEvent(2200, 2, "Alt", 2305, GameClass.Cleric)); Assert.Null(t.DeathRecap());
         t.Process(new DeathEvent(2300, 2)); Assert.NotNull(t.DeathRecap());
         t.InvalidateParty(); Assert.Null(t.DeathRecap()); t.Process(new DeathEvent(2400, 2)); Assert.Null(t.DeathRecap());
+    }
+    [Fact]
+    public void Remaining_player_hp_packet_closes_report_through_the_real_decoder()
+    {
+        var t = New();
+        t.Process(new SelfIdentifiedEvent(1300, 9492, "Own", 2305, GameClass.Cleric));
+        t.Process(new DamageEvent(2000, 10, 9492, 123, 100, HitFlags.None));
+        t.Process(new DeathEvent(2100, 9492)); Assert.NotNull(t.DeathRecap());
+        var parser = new PacketParser(GameData.Empty, t.Process) { TimeMs = 3000 };
+        parser.Handle(Opcodes.RemainHp, Wire.FromHex("944a01010304040200"));
+        Assert.NotNull(t.DeathRecap()); // Other resources do not prove that the dead player has HP.
+        parser.Handle(Opcodes.RemainHp, Wire.FromHex("944a020100812e000000000000"));
+        Assert.Null(t.DeathRecap());
+    }
+    [Fact]
+    public void Respawn_reload_of_same_map_clears_report_and_old_damage()
+    {
+        var t = New(); t.Process(new ZoneChangedEvent(1200, 1, "Dungeon", true));
+        t.Process(new SelfIdentifiedEvent(1300, 1, "Own", 2305, GameClass.Cleric));
+        t.Process(Hit(2000)); t.Process(new DeathEvent(2100, 1)); Assert.NotNull(t.DeathRecap());
+        t.Process(new ZoneChangedEvent(3000, 1, "Dungeon", true, IsTeleport: true));
+        Assert.Null(t.DeathRecap());
+        t.Process(Hit(3200, 50)); t.Process(new DeathEvent(3300, 1));
+        Assert.Equal(50, Assert.Single(t.DeathRecap()!.Hits).Damage);
+    }
+    [Fact]
+    public void Delayed_actions_dots_pet_and_foreign_actions_do_not_fake_a_resurrection()
+    {
+        var t = New(); t.Process(Hit(2000)); t.Process(new DeathEvent(2100, 1));
+        t.Process(new CastEvent(2000, 1, 10, 17010000));
+        t.Process(new DamageEvent(2200, 1, 10, 17010000, 100, HitFlags.Dot));
+        t.Process(new DamageEvent(2250, 1, 10, 17010000, 100, HitFlags.None)); // An airborne hit may land after death.
+        t.Process(new SummonSeenEvent(2300, 3, 1, null, 0));
+        t.Process(new CastEvent(2400, 3, 10, 17010000));
+        t.Process(new DamageEvent(2500, 3, 10, 17010000, 100, HitFlags.None));
+        t.Process(new CastEvent(2600, 2, 10, 17010000));
+        t.Process(new HealEvent(2700, 1, 1, 17010000, 100, HitFlags.None));
+        Assert.NotNull(t.DeathRecap());
     }
     [Fact]
     public void Buffer_is_bounded_and_reports_truncation()

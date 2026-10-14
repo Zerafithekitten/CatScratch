@@ -7,6 +7,19 @@ namespace AionMeter.Tests;
 
 public class ProtocolTests
 {
+    [Fact]
+    public void Remaining_hp_does_not_misclassify_player_as_npc()
+    {
+        // Minimal HP record from the reported death/respawn capture. No character name or connection data.
+        var events = Parse(Opcodes.RemainHp, "944a020100812e000000000000");
+        var hp = Assert.IsType<NpcHpEvent>(Assert.Single(events));
+        Assert.Equal(9492u, hp.ActorId); Assert.Equal(11905, hp.CurrentHp); Assert.False(hp.IsNpc);
+    }
+
+    [Fact]
+    public void Other_resource_values_are_not_mistaken_for_player_hp()
+        => Assert.Empty(Parse(Opcodes.RemainHp, "944a01010304040200"));
+
     private static List<GameEvent> Parse(ushort opcode, string hex, long timeMs = 1_000)
     {
         var events = new List<GameEvent>();

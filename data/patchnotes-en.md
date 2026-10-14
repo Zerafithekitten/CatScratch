@@ -1,3 +1,7 @@
+## CatScratch v2.5.1-beta.5
+
+- Fix death recap remaining visible after resurrection. Recognize player HP correctly and clear the recap when respawning on the same map.
+
 ## CatScratch v2.5.1-beta.4
 
 - Add a compact death recap for the last 10 seconds of incoming damage. It appears on death and disappears after resurrection. Toggle it with the tombstone icon or a configurable hotkey (default Shift+F4).
