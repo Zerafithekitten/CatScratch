@@ -1,3 +1,52 @@
+## CatScratch v2.5.1
+
+Stable release of the features and fixes tested through v2.5.1-beta.5. Changes below are relative to Stable v2.5.0.
+
+### Permanent personal boss bests
+
+- Add Boss personal bests for real dungeon bosses and world bosses. Open the view through the small trophy icon in the DPS meter, Statistics > Boss personal bests, or Settings > General > Boss personal bests.
+- Browse and search the complete bundled boss catalog, including bosses for which no personal record has been achieved yet. Records are separate for each character, server and class.
+- Permanently keep six independent personal bests per boss: highest DPS, most damage, strongest hit, most healing, fewest own deaths and least damage taken. Higher is better for the first four values; lower is better for deaths and incoming damage.
+- Each statistic can come from a different qualifying victory. Only an improved value replaces its previous record; equal or worse results leave it intact. Each record retains its achievement date.
+- Store best values independently of saved fight history. The ten-saved-fight limit does not apply to boss records, and restarting or updating CatScratch preserves them. Automatic fight saving is not required.
+- Require a confirmed boss kill, a known starting HP baseline, boss-only damage and usable own-character data. Test fights, recorded-capture playback and incomplete or unqualified attempts do not improve records. Observed capture loss also prevents a new record.
+- Migrate eligible records from the earlier beta attempt format to permanent independent best values. Add observed death counts and death timestamps to fight records; repeated death notifications do not count again until the player is confirmed alive. Older fight files with unknown death data remain readable without inventing missing deaths.
+
+### Last played with
+
+- Add a local recent-teammates view, available from the player icon beside the trophy, the Statistics menu and Settings > General. List confirmed group members newest first, excluding the own character and unrelated nearby players.
+- Keep the list separately for each own character/server and retain it across restarts. Repeated group appearances update an existing teammate instead of creating duplicates; there is no ten-player retention limit.
+- Show the player name, class, server and last-played time in compact rows. Display the last received CP and GS directly in the row, without expanding it or showing equipment slots.
+- Update CP and GS when new positive values arrive. Missing values do not erase known values. A dash means no usable value has been received; entries created before CP/GS storage cannot recover historical values that were never recorded.
+- Add an individual copy-name icon for every player, plus character selection and player search. Stream mode uses the same alias for the displayed name and the copied name. Test mode and recorded captures do not populate the persistent list.
+
+### Death recap and resurrection
+
+- Add a compact automatic death recap showing received damage from the ten seconds before the own character dies. Include each attacker, skill, damage amount and time before death, together with attacker totals and total incoming damage.
+- Keep the recap visible while dead and close it on fresh positive own HP or a map reload, including resurrection on the same map. Correct the HP packet classification that previously treated player HP as NPC-only data and left the recap on screen after revival. Decode HP inside batched stat updates as well, so resurrection without a map reload also dismisses the recap. Check complete batches before using their HP field; do not mistake unrelated resource values for health.
+- Add a small tombstone icon to enable or disable the module. Match its proportions and stroke weight to the existing toolbar icons. The enabled state is saved.
+- Add a configurable global shortcut for the module, default Shift+F4, under Settings > Hotkeys. Preserve the existing click-through and UI-scale behavior; attacker player names follow Stream mode.
+- Keep the recap in memory only. It does not survive restarting CatScratch. Show an explicit empty state when no incoming hits were received, and flag truncated hit history under unusually high traffic. Continuing DoT ticks, pet actions and unrelated players do not count as proof of resurrection.
+- Validate the resurrection corrections against two real recorded death/revival sequences, with and without a map reload, and add minimal packet regression tests. The third resurrection method has not yet been recorded or verified. Full recordings are not included in the release source.
+
+### Background updates and cleanup
+
+- Check the selected update channel shortly after startup and every ten minutes. Enable automatic checking and preparation by default, including a one-time migration for older settings; the option can be disabled under Settings > General > Updates.
+- Download available verified packages in the background and check their reported size, SHA-256, product name and exact release identity before marking them ready. Extract them while the current meter continues running; do not replace locked program files or restart automatically.
+- Show a compact update banner in the DPS meter. Once preparation completes, Restart to update applies the prepared package and restarts the meter after an explicit click. The update window also shows preparation progress and the restart action.
+- Share an in-progress preparation between automatic and manual checks to avoid duplicate downloads. Cancel stale preparation when changing channels, skipping a release or disabling automatic updates. Failed validation never produces a restart-ready package.
+- Remove old program backups, staged update files and the downloaded ZIP only after the new version successfully starts and acknowledges completion. Keep recovery backups if file replacement or startup fails. Preserve settings, saved fights, timers, boss bests and recent-player records.
+- Track announcements and dismissed banners by the exact release tag, so one beta revision does not accidentally suppress another. Stable 2.5.1 supersedes the 2.5.1 betas. On first starting the promoted Stable build, Beta subscribers automatically return to the Stable update channel, including older installations without release tracking. A later deliberate choice of Beta is preserved on normal restarts; each future Beta-to-Stable promotion performs the return again.
+
+### Reliability and presentation
+
+- Improve TCP reconnection handling when the game reuses connection endpoints. Process a closing packet's final data, release ended connections and prevent buffered data from a previous connection leaking into a new one.
+- Harden packet reassembly against sequence-number wraparound, duplicate or overlapping retransmissions, large sequence gaps and unchecked buffer growth. Continue using passive capture without terminating or controlling the game.
+- Handle incomplete, malformed or legacy fight-history files without preventing normal startup. Preserve compatibility with existing saved fights and the current ten-saved-fight retention policy.
+- Match the new views and controls to the DPS meter's compact dark surfaces, turquoise accents, class glyphs, Segoe UI text and purple paw branding. Reduce the trophy icon to the same visual scale as the other toolbar buttons.
+- Add English, German, Russian and French labels for the new controls and preserve Stream mode, configurable shortcuts and click-through behavior.
+- Pass 306 core tests plus the release checks for interaction, shutdown, performance, event audio, update channels, boss records, recent-player controls, background update preparation and the full update/restart/cleanup path.
+
 ## CatScratch v2.5.1-beta.5
 
 - Fix death recap remaining visible after resurrection. Recognize player HP correctly and clear the recap when respawning on the same map.

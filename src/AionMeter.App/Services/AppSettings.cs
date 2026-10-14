@@ -2,6 +2,7 @@ using System.IO;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using AionMeter.Core.Combat;
+using AionMeter.Core.Updates;
 
 namespace AionMeter.App.Services;
 
@@ -91,6 +92,17 @@ public sealed class AppSettings
     public bool BackgroundUpdateDefaultsApplied { get; set; }
     // Older copies have no preference: follow the installed build until explicitly selected.
     public string? UpdateChannel { get; set; }
+    public string? LastStartedRelease { get; set; }
+    /// <summary>Promoted Stable builds return Beta subscribers to Stable once per actual build transition.</summary>
+    internal bool ApplyReleaseTransition(ReleaseVersion current)
+    {
+        var previous = ReleaseVersion.Parse(LastStartedRelease);
+        var promoted = current.Channel == Core.Updates.UpdateChannel.Stable && previous != current
+            && Enum.TryParse<UpdateChannel>(UpdateChannel, true, out var selected) && selected == Core.Updates.UpdateChannel.Beta;
+        if (promoted) { UpdateChannel = Core.Updates.UpdateChannel.Stable.ToString(); SkippedUpdate = null; }
+        LastStartedRelease = current.Display;
+        return promoted;
+    }
     /// <summary>Installed copies download a new version by themselves and install it at a quiet moment.</summary>
     public bool AutoInstallUpdates { get; set; } = false;
     public string UpdateSource { get; set; } = "";

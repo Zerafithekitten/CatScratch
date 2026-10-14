@@ -282,6 +282,9 @@ public partial class App : Application
         WindowPresentation.SetScale(settings.UiScale);
         StreamNames.Enabled=settings.StreamMode;
         _meter = new MeterService(settings, factory);
+        if (settings.ApplyReleaseTransition(_meter.Updates.CurrentIdentity))
+            Log.Info("Stable release promotion: update channel changed from Beta to Stable.");
+        settings.Save();
         _timerCards = new TimerCards(_meter);
         Log.Info($"Started. Data: {_meter.Data.Skills.Count} skills, {_meter.Data.Npcs.Count} npcs.");
         _meter.StartCapture();

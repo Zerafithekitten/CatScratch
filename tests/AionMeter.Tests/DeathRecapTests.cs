@@ -69,6 +69,21 @@ public class DeathRecapTests
         Assert.Null(t.DeathRecap());
     }
     [Fact]
+    public void Batch_hp_closes_recap_without_map_load_and_allows_the_next_life()
+    {
+        var t = New();
+        t.Process(new SelfIdentifiedEvent(1300, 5958, "Own", 2305, GameClass.Cleric));
+        t.Process(new DamageEvent(2000, 10, 5958, 123, 100, HitFlags.None));
+        t.Process(new DeathEvent(2100, 5958)); Assert.NotNull(t.DeathRecap());
+        var parser = new PacketParser(GameData.Empty, t.Process) { TimeMs = 3000 };
+        parser.Handle(Opcodes.RemainHp, Wire.FromHex(
+            "c62e0306011c120000020000000003142b0200040000000005a086010006b00009000100d42e000000000000"));
+        Assert.Null(t.DeathRecap());
+        t.Process(new DamageEvent(3200, 10, 5958, 123, 50, HitFlags.None));
+        t.Process(new DeathEvent(3300, 5958));
+        Assert.Equal(50, Assert.Single(t.DeathRecap()!.Hits).Damage);
+    }
+    [Fact]
     public void Respawn_reload_of_same_map_clears_report_and_old_damage()
     {
         var t = New(); t.Process(new ZoneChangedEvent(1200, 1, "Dungeon", true));

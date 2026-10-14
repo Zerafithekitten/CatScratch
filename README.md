@@ -4,21 +4,25 @@ A separate always-on-top Windows damage meter for AION 2 by Zerafithekitten.
 
 [Download the latest release](https://github.com/Zerafithekitten/CatScratch/releases/latest) · [Patch notes](data/patchnotes-en.md) · [Report an issue](https://github.com/Zerafithekitten/CatScratch/issues)
 
-Latest stable version: **2.5.0**. English is the default; German, Russian and French are available in Settings.
+Latest stable version: **2.5.1**. English is the default; German, Russian and French are available in Settings.
 
-Beta: **2.5.1-beta.3**, with permanent boss personal bests, a trophy button and Last played with. See the [patch notes](data/patchnotes-en.md).
+Stable 2.5.1 includes the features tested through **2.5.1-beta.5**: permanent boss personal bests, compact recent-player stats, death recap and background update preparation. See the [detailed patch notes](data/patchnotes-en.md).
 
 Open the **trophy icon** in the DPS meter, **Statistics > Boss personal bests** or **Settings > General > Boss personal bests**. Browse and search all bundled real dungeon and world boss entries, even before a first kill. Each boss permanently retains six independent values per character/server/class: highest own DPS, damage, strongest hit and healing, plus fewest own deaths and least damage taken. Each value may come from a different qualifying kill. Equal or worse results never overwrite a record. There is no attempt-history limit because only best values and their achievement dates are stored. Previous beta records migrate automatically. Records require a confirmed real boss kill with a known starting HP baseline and damage only against that boss; test mode, recordings and incomplete fights do not count. Missing packets can omit deaths.
 
-**Last played with** opens from the player icon beside the trophy, the Statistics menu or Settings > General. It keeps confirmed group members' names and classes locally, separately for each own character, newest first. Each player has an individual **Copy name** button. Stream mode masks both displayed and copied names. Test mode and recordings do not populate the list.
+**Last played with** opens from the player icon beside the trophy, the Statistics menu or Settings > General. It keeps confirmed group members' names, classes and last received CP/GS locally, separately for each own character, newest first. Values appear directly in compact rows; each player has an individual copy-name icon. Missing CP/GS remain dashes until received; old entries cannot reconstruct values that were never recorded. Stream mode masks both displayed and copied names. Test mode and recordings do not populate the list.
+
+**Death recap** opens automatically on death and lists received hits from the previous ten seconds, including attackers, skills, damage and time before death. It closes after confirmed positive own HP or a map reload, including respawning on the same map. Use the small tombstone icon to enable or disable it, or **Shift+F4** by default. Change the shortcut in Settings > Hotkeys. The recap is temporary and does not persist after restarting the meter.
 
 ## Update channels
 
-**Stable is v2.5.0.** Future updates are published to the `beta` branch and as GitHub prereleases first, unless explicitly promoted to Stable.
+**Stable is v2.5.1.** Future updates are published to the `beta` branch and as GitHub prereleases first, unless explicitly promoted to Stable.
 
-Settings > General > Updates > **Update channel** offers Stable and Beta choices. Beta builds are GitHub prereleases and will not replace the stable download. Checking or changing channels never downloads or installs a release; choose **Update now** to install it. Returning to Stable can install an older version while preserving settings and saved fights.
+Settings > General > Updates > **Update channel** offers Stable and Beta choices. Beta builds are GitHub prereleases and will not replace the stable download. Automatic checks run shortly after startup and every ten minutes, then download, verify and extract an available update in the background. The meter offers **Restart to update** when preparation finishes. Replacing running program files and restarting require your click. Old program backups, the prepared payload and downloaded ZIP are removed only after the new version successfully starts; recovery backups remain on failure. Settings, saved fights, boss bests and recent-player records are preserved.
 
-Update older installations to stable v2.5.0 to access the channel selector. A beta installation without an existing channel preference follows Beta; an explicitly saved preference is respected.
+Automatic checking and preparation are enabled by default and once when migrating an older installation; you can disable them in Settings > General > Updates. Stable 2.5.1 sorts after all 2.5.1 betas, so Beta.5 installations receive this final release too. When a Beta installation first starts the promoted Stable build, its saved update channel automatically returns to Stable. Selecting Beta again afterward is respected across normal restarts. Returning to Stable can otherwise install an older version.
+
+Update older installations to stable v2.5.1 to access the channel selector. A beta build without an existing channel preference follows Beta; a promoted Stable build returns Beta subscribers to Stable as described above.
 
 Version v2.5.0 includes an isolated test mode with sample fights and pet progress, UI scaling from 75% to 150%, monitor-bound window placement, a stream mode that replaces displayed and copied player names with Cat 1, Cat 2, Cat 3, and automatic fight-end detection. Recordings and saved files keep their original data; test fights cannot be saved as real fights.
 

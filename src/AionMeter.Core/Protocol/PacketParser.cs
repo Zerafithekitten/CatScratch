@@ -936,12 +936,29 @@ public sealed class PacketParser
     }
 
     /// <summary><c>entity varint, field kind varint (2 = HP), varint, varint, hp u64</c>.
-    /// Kind 2 reports HP for players AND NPCs; kind 1 carries other resource values, not player HP.</summary>
+    /// Kind 2 reports HP for players AND NPCs; kind 1 carries other resource values, not player HP.
+    /// Kind 3 is a batch: count varint, then stat id varint + value u32; stat 1 is current HP.</summary>
     private void ParseRemainHp(ReadOnlySpan<byte> b)
     {
         var o = 0;
         if (!Wire.TryVarint(b, ref o, out var id) || !IsEntityId(id)) return;
-        if (!Wire.TryVarint(b, ref o, out var kind) || kind != 2) return;
+        if (!Wire.TryVarint(b, ref o, out var kind)) return;
+        if (kind == 3)
+        {
+            if (!Wire.TryVarint(b, ref o, out var count) || count is < 1 or > 32) return;
+            var fields = new HashSet<uint>();
+            long currentHp = -1;
+            for (var i = 0; i < count; i++)
+            {
+                if (!Wire.TryVarint(b, ref o, out var stat) || stat == 0 || !fields.Add(stat)
+                    || !Wire.TryU32(b, ref o, out var value)) return;
+                if (stat == 1) currentHp = value;
+            }
+            // Validate the complete batch before emitting. Other resources and optional trailing maxima are not HP.
+            if (currentHp >= 0) Emit(new NpcHpEvent(TimeMs, id, currentHp, 0, IsNpc: false));
+            return;
+        }
+        if (kind != 2) return;
         if (!Wire.TryVarint(b, ref o, out _) || !Wire.TryVarint(b, ref o, out _)) return;
         if (!Wire.TryU32(b, ref o, out var lo)) return;
         Wire.TryU32(b, ref o, out var hi);

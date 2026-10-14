@@ -44,6 +44,19 @@ internal static class Beta4Checks
     {
         var checks = new List<string>();
         void Check(bool ok, string text) { if (!ok) throw new InvalidOperationException(text); checks.Add(text); }
+        var final = ReleaseVersion.Parse("2.5.1")!;
+        var promoted = new AppSettings { Transient = true, UpdateChannel = "Beta", LastStartedRelease = "2.5.1-beta.5", SkippedUpdate = "v2.5.1-beta.4" };
+        Check(promoted.ApplyReleaseTransition(final) && promoted.UpdateChannel == "Stable" && promoted.SkippedUpdate is null, "Promoting Beta to Stable automatically moves the saved update channel to Stable");
+        promoted.UpdateChannel = "Beta";
+        var restarted = JsonSerializer.Deserialize<AppSettings>(JsonSerializer.Serialize(promoted))!;
+        Check(!restarted.ApplyReleaseTransition(final) && restarted.UpdateChannel == "Beta", "A deliberate later Beta selection survives settings persistence and normal Stable restarts");
+        var legacy = new AppSettings { Transient = true, UpdateChannel = "beta" };
+        Check(legacy.ApplyReleaseTransition(final) && legacy.UpdateChannel == "Stable", "Older Beta installations without release tracking migrate to Stable on their first promoted start");
+        var beta = new AppSettings { Transient = true, UpdateChannel = "Beta", LastStartedRelease = "2.5.1" };
+        Check(!beta.ApplyReleaseTransition(ReleaseVersion.Parse("2.5.2-beta.1")!) && beta.UpdateChannel == "Beta", "Starting a new Beta build keeps the Beta subscription");
+        Check(beta.ApplyReleaseTransition(ReleaseVersion.Parse("2.5.2")!) && beta.UpdateChannel == "Stable", "The next promoted Stable version moves Beta subscribers back again");
+        var optedStable = new AppSettings { Transient = true, UpdateChannel = "Stable", LastStartedRelease = "2.5.1-beta.5", SkippedUpdate = "keep" };
+        Check(!optedStable.ApplyReleaseTransition(final) && optedStable.UpdateChannel == "Stable" && optedStable.SkippedUpdate == "keep", "Existing Stable subscriptions are preserved without clearing unrelated skip preferences");
         var language = UiText.Current.Code; var stream = StreamNames.Enabled;
         using var meter = new MeterService(new AppSettings { Transient = true, DownloadIcons = false }, null);
         var overlay = new OverlayWindow(meter, false);

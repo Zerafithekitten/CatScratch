@@ -114,11 +114,16 @@ NPC and boss data are read for the requested timers.
 This is not a statement of publisher approval.
 Settings and statistics are stored in userdata inside the program folder.
 Installed and portable copies use GitHub releases from Zerafithekitten/CatScratch.
-Automatic checking and installation can be disabled in Settings.
-Updates download a verified package, close all windows, replace program files and restart without Setup. Userdata is preserved. Existing Zerafi DPS Monitor installations use one final migration installer.
+Automatic update checking and preparation can be disabled in Settings.
+Updates are checked every ten minutes and verified packages are prepared in the background.
+Restart to update applies the package only after your click. Userdata is preserved.
+Old program backups and update files are deleted only after successful startup.
+When a Beta is promoted, starting its Stable release returns the update channel to Stable.
+Selecting Beta again is remembered until another promoted Stable version is installed.
+Existing Zerafi DPS Monitor installations use one final migration installer.
 
 VALIDATION
-Release build completed. 148 combat/storage/schedule/latency/update/reminder tests passed. Compact meter and event previews were visually checked.
+Release build completed. 306 combat/storage/protocol/schedule/latency/update/reminder tests passed. Compact meter and event previews were visually checked.
 Own-window click-through, restoration and repeated toggles passed native checks.
 System-wide hotkey registration is blocked in the protected test environment
 (Windows error 5). Actual hotkey operation and clicks passing into the game still

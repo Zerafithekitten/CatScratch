@@ -20,6 +20,24 @@ public class ProtocolTests
     public void Other_resource_values_are_not_mistaken_for_player_hp()
         => Assert.Empty(Parse(Opcodes.RemainHp, "944a01010304040200"));
 
+    [Fact]
+    public void Batched_resurrection_stats_report_current_hp_instead_of_other_resources()
+    {
+        // Stat fields only, from the second resurrection capture. The trailing maximum is separate from current HP.
+        var hp = Assert.IsType<NpcHpEvent>(Assert.Single(Parse(Opcodes.RemainHp,
+            "c62e0306011c120000020000000003142b0200040000000005a086010006b00009000100d42e000000000000")));
+        Assert.Equal(5958u, hp.ActorId); Assert.Equal(4636, hp.CurrentHp); Assert.False(hp.IsNpc);
+    }
+
+    [Theory]
+    [InlineData("01030103142b0200")] // Resource field only; no HP.
+    [InlineData("010302016400000002")] // HP followed by a truncated field: do not emit partial data.
+    [InlineData("010302016400000001c8000000")] // Duplicate field.
+    [InlineData("010300")] // Empty batch.
+    [InlineData("010321")] // Excessive count.
+    public void Invalid_or_non_hp_stat_batches_do_not_emit_health(string packet)
+        => Assert.Empty(Parse(Opcodes.RemainHp, packet));
+
     private static List<GameEvent> Parse(ushort opcode, string hex, long timeMs = 1_000)
     {
         var events = new List<GameEvent>();
