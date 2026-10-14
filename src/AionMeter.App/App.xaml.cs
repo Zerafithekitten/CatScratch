@@ -334,7 +334,7 @@ public partial class App : Application
             CheckBossAlerts();
             CheckEventSounds();
             CheckGameStart();
-            if(_petWindow?.IsVisible==true)_petWindow.RefreshNearby();
+
 
         }
     }
@@ -630,7 +630,7 @@ public partial class App : Application
     {
         if(_petWindow is not null){_petWindow.Close();return;}
         _petWindow=new PetTrackerWindow(_meter);
-        _meter.EnablePetPositions(true);
+
         _meter.Settings.ShowPetTrackerModule=true;_meter.Settings.Save();
         WindowClickThrough.Attach(_petWindow,()=>_meter.Settings.ClickThrough,()=>_meter.Settings.WindowOpacity);
         _petWindow.Closed+=(_,_)=>{_petWindow=null;if(!IsExiting){_meter.Settings.ShowPetTrackerModule=false;_meter.Settings.Save();}};

@@ -85,9 +85,9 @@ public static class SampleRenderer
                 meter.Pets.Observe(new SelfIdentifiedEvent(start,1,"Sample",2305,GameClass.Cleric));
                 meter.Pets.Observe(new PetCollectionEvent(start,new Dictionary<int,PetState>{{1193,new(1193,1,11)},{1176,new(1176,3,0)}}));
                 meter.Pets.Observe(new NpcSeenEvent(start,7,2400455,X:11500,Y:21000));
-                meter.Pets.Observe(new ActorPositionEvent(start,1,10000,20000,0));
-                var pets=new PetTrackerWindow(meter){Width=o.Width??360,Height=o.Height??240};
-                pets.Search("Shulak");pets.SelectPet(1193);
+                meter.Pets.Observe(new DamageEvent(start,1,7,17010000,100,HitFlags.None));
+                var pets=new PetTrackerWindow(meter){Width=o.Width??300};
+
                 if(o.Window=="pets-locked")pets.SetDisplayOnly(true);
                 host=pets;refresh=pets.Refresh;break;
             case "fight-menu":
@@ -260,6 +260,11 @@ public static class SampleRenderer
         refresh();
         var root = rootOverride ?? host.Content as FrameworkElement;
         if (root is null) return;
+        if(double.IsNaN(host.Height))
+        {
+            root.Measure(new Size(host.Width,double.PositiveInfinity));
+            host.Height=Math.Clamp(Math.Ceiling(root.DesiredSize.Height),host.MinHeight,double.IsFinite(host.MaxHeight)?host.MaxHeight:1200);
+        }
         root.Measure(new Size(host.Width, host.Height));
         root.Arrange(new Rect(0, 0, host.Width, host.Height));
         root.UpdateLayout();

@@ -4,7 +4,7 @@ A separate always-on-top Windows damage meter for AION 2 by Zerafithekitten.
 
 [Download the latest release](https://github.com/Zerafithekitten/CatScratch/releases/latest) · [Patch notes](data/patchnotes-en.md) · [Report an issue](https://github.com/Zerafithekitten/CatScratch/issues)
 
-Latest published version: **2.4.0**. English is the default; German, Russian and French are available in Settings.
+Latest published version: **2.4.1**. English is the default; German, Russian and French are available in Settings.
 
 ## Preview
 
@@ -66,9 +66,9 @@ Available since 2.1.2. Saving fights is optional: press the save button after co
 
 ### Pet tracker and shortcuts
 
-Use the paw button beside the CatScratch title to toggle the compact Pet tracker. It shows confirmed own pet levels and soul counts, remaining souls for the selected goal, and known farm monsters/areas. Search, genus/faction filters and optional unlock/level-up sounds are behind its settings button. A fresh collection packet is required before counters are shown; change zones once if needed. The offline catalog includes confirmed Global monster-source mappings for 165 pets. Other sources remain unverified, and some locations are unknown. There is no map or radar.
+Use the paw button beside the CatScratch title to toggle the compact Pet tracker. Only personally attacked, confirmed pet-source monsters add a row: a paw symbol, pet name, soul count such as 11/25 and a thin progress bar toward the next level. Soul loot updates the count after the kill. Up to eight recent pets are retained; repeated hits do not add duplicate rows. Click-through hides the header and outer frame, leaving the compact rows visible. Optional unlock/level-up sounds remain behind the settings button. A fresh collection packet is required before counters are shown; change zones once if needed. The catalog includes confirmed Global monster-source mappings for 165 pets; unknown mappings remain explicit. No nearby scan, location, distance, map or radar is used.
 
-<img src="docs/screenshots/pet-tracker.png" alt="Compact Pet tracker with soul progress and a confirmed farm source" width="360" />
+<img src="docs/screenshots/pet-tracker.png" alt="Compact attacked-pet tracker with name, soul count and progress" width="300" />
 
 All shortcuts can be recorded by pressing a combination in **Settings > Hotkeys**. Defaults:
 
@@ -85,6 +85,8 @@ All shortcuts can be recorded by pressing a combination in **Settings > Hotkeys*
 
 The all-window shortcut restores the same previously open windows and their positions. The installed version is always visible at the bottom left of the meter.
 
+<img src="docs/screenshots/pet-tracker-click-through.png" alt="Pet tracker in click-through mode with only its compact row visible" width="300" />
+
 ### Update improvements
 
 - Subtle dark backgrounds behind Personal combat rows in click-through mode for readability.
@@ -98,10 +100,10 @@ Select the language in **Settings > General > Language**. English remains the de
 
 | Language | Interface | Availability |
 | --- | --- | --- |
-| English | English | Current release (2.4.0) · default |
-| German | Deutsch | Current release (2.4.0) |
-| Russian | Русский | Current release (2.4.0) |
-| French | Français | Current release (2.4.0) |
+| English | English | Current release (2.4.1) · default |
+| German | Deutsch | Current release (2.4.1) |
+| Russian | Русский | Current release (2.4.1) |
+| French | Français | Current release (2.4.1) |
 
 Skill and monster names use the bundled language tables, with English as the fallback for missing names. Player names are preserved.
 

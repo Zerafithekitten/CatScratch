@@ -607,13 +607,13 @@ int PetScan(string path)
 }
 int PetVerify(string baseline,string increment)
 {
-    var pets=new PetCollection();
+    var pets=new PetCollection();var identity=new LiveIdentity();
     foreach(var path in new[]{baseline,increment})
     {
         using var replay=new PcapReplaySource(data,path,false);
-        replay.Pipeline.Parser.DecodePetPositions=true; replay.EventDecoded+=pets.Observe;replay.RunToEnd();
+        replay.EventDecoded+=e=>{var own=identity.Observe(e);pets.Observe(e is SelfIdentifiedEvent && own is not null?own:e);if(e is PlayerSeenEvent && own is not null)pets.Observe(own);};replay.RunToEnd();
         var pet=pets.Snapshot().FirstOrDefault(p=>p.Id==1193);
-        Console.WriteLine($"Confirmed={pets.Confirmed} Pet1193={pet} Needed2={pet?.Needed(2)} OwnPosition={pets.Nearby().Own is not null} Npcs={pets.Nearby().Npcs.Count}");
+        Console.WriteLine($"Confirmed={pets.Confirmed} Pet1193={pet} Needed2={pet?.Needed(2)} AttackedNpcCodes={string.Join(",",pets.AttackedNpcCodes())}");
     }
     return pets.Snapshot().FirstOrDefault(p=>p.Id==1193) is {Level:1,Souls:11}?0:1;
 }

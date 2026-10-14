@@ -67,7 +67,21 @@ public sealed class PetCollection
     private string _name="";
     private PetCollectionEvent? _pending;
     private uint _self;
-    private string _zone="";
+    private uint _attacked;
+    private readonly List<int> _attackedCodes=[];
+    public int[] AttackedNpcCodes(){lock(_gate)return _attackedCodes.ToArray();}
+    private bool RememberAttack(uint id)
+    {
+        var changed=_attacked!=id;_attacked=id;
+        if(_npcs.TryGetValue(id,out var npc) && (_attackedCodes.Count==0 || _attackedCodes[0]!=npc.NpcCode))
+        {
+            _attackedCodes.Remove(npc.NpcCode);_attackedCodes.Insert(0,npc.NpcCode);
+            if(_attackedCodes.Count>16)_attackedCodes.RemoveAt(16);changed=true;
+        }
+        return changed;
+    }
+    public uint AttackedTargetId {get{lock(_gate)return _attacked;}}
+    public int AttackedNpcCode {get{lock(_gate)return _npcs.TryGetValue(_attacked,out var npc)?npc.NpcCode:0;}}
     private ActorPositionEvent? _position;
     private readonly Dictionary<uint,NpcSeenEvent> _npcs=[];
     private readonly HashSet<uint> _dead=[];
@@ -93,7 +107,7 @@ public sealed class PetCollection
             switch(value)
             {
                 case SelfIdentifiedEvent self when self.Name.Length>0:
-                    if(_name.Length>0 && _name!=self.Name) {_pets.Clear();Confirmed=false;_pending=null;_position=null;_npcs.Clear();_dead.Clear();_drops.Clear();changed=true;}
+                    if(_name.Length>0 && _name!=self.Name) {_pets.Clear();Confirmed=false;_pending=null;_position=null;_npcs.Clear();_dead.Clear();_drops.Clear();_attacked=0;_attackedCodes.Clear();changed=true;}
                     _name=self.Name;
                     _self=self.ActorId;
                     if(_pending is { } buffered){_pets=new(buffered.Pets);Confirmed=true;_pending=null;changed=true;}
@@ -111,18 +125,22 @@ public sealed class PetCollection
                         while(level<3 && souls>=costs[level]){souls-=costs[level];level++;}
                         _pets[id]=pet with {Level=level,Souls=level>=3?0:souls};
                         var candidates=_drops.Where(d=>d.TimeMs<=delta.TimeMs && delta.TimeMs-d.TimeMs<1000 && d.Amount==amount).ToArray();
-                        if(delta.Added.Count==1 && candidates.Length==1 && _npcs.TryGetValue(candidates[0].NpcActorId,out var npc) && _zone.Length>0)
+                        if(delta.Added.Count==1 && candidates.Length==1 && _npcs.TryGetValue(candidates[0].NpcActorId,out var npc))
                         {
-                            var farm=new ObservedPetFarm(npc.NpcCode,_zone,_zone=="Altgard"?"Asmodians":_zone=="Verteron"?"Elyos":"Other");
+                            var farm=new ObservedPetFarm(npc.NpcCode,"","Other");
                             if(!_farms.TryGetValue(id,out var sources))_farms[id]=sources=[];
                             if(sources.Count<32 && !sources.Contains(farm))sources.Add(farm);
                         }
                     }
                     changed=true;break;
-                case ZoneChangedEvent zone:_zone=zone.ZoneName;_position=null;_npcs.Clear();_dead.Clear();_drops.Clear();break;
+                case ZoneChangedEvent:_position=null;_npcs.Clear();_dead.Clear();_drops.Clear();changed=_attacked!=0;_attacked=0;break;
                 case NpcSeenEvent npc:
                     if(_npcs.Count>=4096 && !_npcs.ContainsKey(npc.ActorId)){var oldest=_npcs.MinBy(x=>x.Value.TimeMs).Key;_npcs.Remove(oldest);_dead.Remove(oldest);}
-                    _npcs[npc.ActorId]=npc;_dead.Remove(npc.ActorId);break;
+                    _npcs[npc.ActorId]=npc;_dead.Remove(npc.ActorId);if(npc.ActorId==_attacked)changed=RememberAttack(npc.ActorId);break;
+                case DamageEvent hit when _self!=0 && hit.SourceId==_self && hit.TargetId!=_self:
+                    changed=RememberAttack(hit.TargetId);break;
+                case HitNoticeEvent hit when _self!=0 && hit.ActorId==_self && hit.TargetId!=_self:
+                    if(_attacked!=hit.TargetId){_attacked=hit.TargetId;changed=true;}break;
                 case DeathEvent death:if(_npcs.ContainsKey(death.ActorId))_dead.Add(death.ActorId);break;
                 case ActorPositionEvent pose:
                     if(pose.ActorId==_self)_position=pose;

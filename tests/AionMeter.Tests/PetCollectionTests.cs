@@ -72,6 +72,44 @@ public class PetCollectionTests
         Assert.Equal(2400455,tracker.Farms(1193).Single().NpcCode);
         tracker.Observe(new DeathEvent(13,7));Assert.Empty(tracker.Nearby().Npcs);
     }
+    [Fact] public void OwnAttackTracksSpeciesWithoutAnyLocationDataAndIgnoresNearbyAndOtherHits()
+    {
+        var pets=new PetCollection();pets.Observe(Own());
+        pets.Observe(new NpcSeenEvent(2,7,2400455));pets.Observe(new NpcSeenEvent(2,8,2400707));
+        Assert.Empty(pets.AttackedNpcCodes());
+        pets.Observe(new DamageEvent(3,99,7,1,100,HitFlags.None));Assert.Empty(pets.AttackedNpcCodes());
+        pets.Observe(new DamageEvent(4,1,7,1,100,HitFlags.None));Assert.Equal(new[]{2400455},pets.AttackedNpcCodes());
+        pets.Observe(new DamageEvent(5,1,8,1,100,HitFlags.None));Assert.Equal(new[]{2400707,2400455},pets.AttackedNpcCodes());
+    }
+    [Fact] public void LateNpcIdentityResolvesAnOwnAttackAndRepeatedHitsDoNotRedraw()
+    {
+        var pets=new PetCollection();pets.Observe(Own());pets.Observe(new DamageEvent(2,1,7,1,100,HitFlags.None));
+        Assert.Empty(pets.AttackedNpcCodes());pets.Observe(new NpcSeenEvent(3,7,2400455));Assert.Equal(2400455,pets.AttackedNpcCode);
+        Assert.Equal(new[]{2400455},pets.AttackedNpcCodes());var revision=pets.Revision;
+        pets.Observe(new DamageEvent(4,1,7,1,100,HitFlags.None));Assert.Equal(revision,pets.Revision);
+    }
+    [Fact] public void KillAndLoadingKeepAttackedPetProgressButCharacterChangeClearsIt()
+    {
+        var pets=new PetCollection();pets.Observe(Own());pets.Observe(PetPackets.Collection(1,Baseline)!);
+        pets.Observe(new NpcSeenEvent(2,7,2400455));pets.Observe(new DamageEvent(3,1,7,1,100,HitFlags.None));
+        pets.Observe(new DeathEvent(4,7));pets.Observe(PetPackets.Souls(5,Delta)!);
+        Assert.Equal(new[]{2400455},pets.AttackedNpcCodes());Assert.Equal(11,pets.Snapshot().Single().Souls);
+        pets.Observe(new ZoneChangedEvent(6,0,"",false));Assert.Equal(new[]{2400455},pets.AttackedNpcCodes());
+        pets.Observe(Own("Other"));Assert.Empty(pets.AttackedNpcCodes());
+    }
+    [Fact] public void AttackedSpeciesAreBoundedAndDeduplicated()
+    {
+        var pets=new PetCollection();pets.Observe(Own());
+        for(uint i=2;i<40;i++){pets.Observe(new NpcSeenEvent(i,i,(int)i+2400000));pets.Observe(new DamageEvent(i,1,i,1,100,HitFlags.None));}
+        Assert.Equal(16,pets.AttackedNpcCodes().Length);Assert.Equal(2400039,pets.AttackedNpcCodes()[0]);
+        pets.Observe(new DamageEvent(41,1,39,1,100,HitFlags.None));Assert.Equal(16,pets.AttackedNpcCodes().Length);
+    }
+    [Fact] public void UniqueSoulLootLearnsSourceWithoutAZone()
+    {
+        var pets=new PetCollection();pets.Observe(Own());pets.Observe(PetPackets.Collection(1,Baseline)!);
+        pets.Observe(new NpcSeenEvent(2,7,2400455));pets.Observe(new PetSoulDropEvent(3,7,534660209,1));pets.Observe(PetPackets.Souls(4,Delta)!);
+        Assert.Equal(2400455,pets.Farms(1193).Single().NpcCode);Assert.Equal("",pets.Farms(1193).Single().Zone);
+    }
     [Fact] public void MovementDecodingIsOptInAndRejectsInvalidCoordinates()
     {
         var events=new List<GameEvent>();var parser=new PacketParser(GameData.Empty,events.Add);

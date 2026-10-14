@@ -62,8 +62,8 @@ public sealed class AppSettings
     public bool ShowPetTrackerModule {get;set;}
     public int PetGoal {get;set;}
     public bool PetNotify {get;set;}
-    public double PetModuleWidth {get;set;}=360;
-    public double PetModuleHeight {get;set;}=240;
+    public double PetModuleWidth {get;set;}=300;
+    public double PetModuleHeight {get;set;}=100;
     public double PetModuleLeft {get;set;}=140;
     public double PetModuleTop {get;set;}=140;
     public bool PersonalCombatCollapsed { get; set; }

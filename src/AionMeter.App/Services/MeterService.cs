@@ -153,11 +153,6 @@ public sealed class MeterService : IDisposable
         }
     }
     public Core.Game.PetCollection Pets {get;}=new();
-    public void EnablePetPositions(bool enabled)
-    {
-        lock(_captureGate)if(_capture is LiveCapture live)live.Pipeline.Parser.DecodePetPositions=enabled;
-    }
-
     public void StartCapture()
     {
         lock (_captureGate)
@@ -166,7 +161,7 @@ public sealed class MeterService : IDisposable
             try
             {
                 _capture = CaptureFactory(Data);
-                if(_capture is LiveCapture live)live.Pipeline.Parser.DecodePetPositions=Settings.ShowPetTrackerModule;
+
                 _capture.EventDecoded += ProcessLiveEvent;
                 _capture.StatusChanged += status =>
                 {

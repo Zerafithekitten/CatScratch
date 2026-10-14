@@ -43,6 +43,8 @@ public sealed partial class UiText
         ["Show / hide upcoming events"] = "Anstehende Events ein-/ausblenden",
         ["Show / hide pet tracker"] = "Pet-Tracker ein-/ausblenden",
         ["Show / hide all windows"] = "Alle Fenster ein-/ausblenden",
+        ["Attack a pet source to track its souls."] = "Greife einen Pet-Farmgegner an, um die Seelen anzuzeigen.",
+        ["No confirmed pet for this target."] = "Für diesen Gegner ist kein Pet bestätigt.",
         ["Pet tracker"]="Pet-Tracker",["Automatic phases"]="Automatische Phasen",["Collect every pet"]="Alle Pets sammeln",["Every pet to level 2"]="Alle Pets auf Stufe 2",["Every pet to level 3"]="Alle Pets auf Stufe 3",["All genera"]="Alle Gattungen",["Search pets"]="Pets suchen",["Show needed pets only"]="Nur benötigte Pets anzeigen",["Open farming source"]="Farmquelle öffnen",["Waiting for pet collection data. Change zones once if needed."]="Warte auf Pet-Sammlungsdaten. Falls nötig einmal das Gebiet wechseln.",["Collected"]="Gesammelt",["Goal"]="Ziel",["Max level"]="Maximalstufe",["Select a pet and open its farming source."]="Pet auswählen und Farmquelle öffnen.",["{0} souls left"]="{0} Seelen fehlen",
         ["All factions"]="Alle Fraktionen",["Elyos"]="Elyos",["Asmodians"]="Asmodier",["Sound on collection / level up"]="Ton bei Freischaltung / Stufenaufstieg",["No confirmed pet sources nearby."]="Keine bestätigten Pet-Farmquellen in der Nähe.",["Nearby"]="In der Nähe",["You"]="Du",
         ["FEEDBACK"]="FEEDBACK", ["Report a bug / request a feature"]="Bug melden / Wunsch einreichen",

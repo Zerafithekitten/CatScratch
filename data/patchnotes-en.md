@@ -1,3 +1,8 @@
+## CatScratch v2.4.1
+
+- Replace proximity-based pet discovery with compact progress for the own player’s attacked monster. Show only a paw symbol, pet name, confirmed soul count (such as 11/25) and a thin progress bar for the next level (5 to unlock, then 25/75). Track only personally attacked source species, bounded to eight recent pets. Retain progress after the kill so soul loot can update it; no location, distance, map or nearby scan is used.
+- Rename the meter shortcut to Show / hide DPS meter.
+
 ## CatScratch v2.4.0
 
 - Add a compact, separate Pet tracker with a paw button, collection/level goals, genus/faction/search filters and optional unlock/level-up sounds. Read confirmed own pet levels and soul increments passively; preserve progress across loading screens. Unlock pets with 5 souls, then require 25/75 more for levels 2/3.

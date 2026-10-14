@@ -337,7 +337,7 @@ public sealed partial class UiText
         "Install it from npcap.com with the default options (ExitLag and other ping boosters work with them too), then start the meter again.\n\n" +
         "Open the download page now?";
     public string SecHotkeys { get; init; } = "HOTKEYS";
-    public string HkToggle { get; init; } = "Show / hide overlay";
+    public string HkToggle { get; init; } = "Show / hide DPS meter";
     public string HkReset { get; init; } = "Restart meter";
     public string HkClick { get; init; } = "Click-through";
     public string HotkeysHint { get; init; } = "Click a field and press your shortcut. Applied after saving.";
@@ -667,7 +667,7 @@ public sealed partial class UiText
             "Установите его с npcap.com с настройками по умолчанию (с ними работают и ExitLag, и другие ускорители пинга), затем запустите метр снова.\n\n" +
             "Открыть страницу загрузки?",
         SecHotkeys = "ГОРЯЧИЕ КЛАВИШИ",
-        HkToggle = "Показать / скрыть оверлей",
+        HkToggle = "Показать / скрыть DPS-метр",
         HkReset = "Перезапустить метр",
         HkClick = "Клики сквозь оверлей",
         HotkeysHint = "Нажмите поле и нужное сочетание клавиш. Применяется после сохранения.",
