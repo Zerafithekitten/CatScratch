@@ -220,6 +220,7 @@ public partial class App : Application
         Func<Core.Game.GameData, IEventSource> factory = data => new LiveCapture(data, new LiveCaptureOptions
         {
             DeviceName = settings.CaptureDevice,
+            RecentDebugEnabled = settings.RecentDebugEnabled,
             RecordDirectory = settings.RecordPackets ? Path.Combine(AppSettings.AppDataDir, "captures") : null,
         });
 

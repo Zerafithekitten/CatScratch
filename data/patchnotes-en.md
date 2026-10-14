@@ -1,3 +1,10 @@
+## CatScratch v2.4.3
+
+- Add an optional experimental recent-debug buffer alongside continuous packet recording. Enable it in Settings > Capture & data and save the settings.
+- Retain up to 60 seconds of passively received packets with a 32 MB accounting limit. High traffic can shorten the retained interval; disabling the buffer clears its history.
+- Save recent debug exports asynchronously as PCAP files under userdata/captures beside the running application. No file is created until export; exports are serialized to avoid overlapping saves.
+- Keep the buffer disabled by default and translate its controls into German, Russian and French. This remains passive: no game data is modified and no packets are sent.
+
 ## CatScratch v2.4.2
 
 - Rebind a respawned player’s new actor ID to the same named/server-scoped participant in an active fight, preserving damage, healing, incoming damage and detailed skill statistics. Unknown actors and same-name foreign-server players cannot take over a party row.

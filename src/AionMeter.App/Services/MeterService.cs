@@ -12,6 +12,25 @@ namespace AionMeter.App.Services;
 public sealed class MeterService : IDisposable
 {
     private IEventSource? _capture;
+    private readonly SemaphoreSlim _recentSave = new(1, 1);
+    public void SetRecentDebug(bool enabled)
+    {
+        lock (_captureGate) if (_capture is LiveCapture live) live.RecentPackets.Enabled = enabled;
+    }
+    public async Task<string> SaveRecentDebugAsync()
+    {
+        if (!await _recentSave.WaitAsync(0)) throw new InvalidOperationException("A debug export is already running.");
+        try
+        {
+            RecentPacketBuffer buffer;
+            lock (_captureGate) buffer = (_capture as LiveCapture)?.RecentPackets ?? throw new InvalidOperationException("Live capture is not available.");
+            var directory = Path.Combine(AppSettings.AppDataDir, "captures");
+            var path = Path.Combine(directory, $"recent_{DateTime.Now:yyyyMMdd_HHmmss}_{Guid.NewGuid():N}.pcap");
+            await Task.Run(() => { Directory.CreateDirectory(directory); buffer.Save(path); });
+            return path;
+        }
+        finally { _recentSave.Release(); }
+    }
     private IEventSource? _replay;
     private DemoFightSource? _demo;
     private readonly PetProgressCache? _petProgress;

@@ -5,6 +5,11 @@ public sealed partial class UiText
     // Exact literals, not substitutions in player names, paths or protocol identifiers.
     private static readonly (string English,string Russian,string French)[] AdditionalTranslations =
     [
+        ("Recent debug buffer (60 seconds / 32 MB, experimental)","Буфер отладки (60 секунд / 32 МБ, экспериментальный)","Tampon de débogage (60 secondes / 32 Mo, expérimental)"),
+        ("Save recent debug","Сохранить последние пакеты","Enregistrer les derniers paquets"),
+        ("Enable and save settings first. High traffic can shorten the recorded minute.","Сначала включите и сохраните настройки. Большой поток данных может сократить запись.","Activez puis enregistrez les paramètres. Un trafic élevé peut raccourcir la minute enregistrée."),
+        ("No recent packets available.","Нет недавних пакетов.","Aucun paquet récent disponible."),
+        ("Live capture is not available.","Захват недоступен.","La capture en direct est indisponible."),
         ("All factions","Все фракции","Toutes les factions"), ("Elyos","Элийцы","Élyséens"), ("Asmodians","Асмодиане","Asmodiens"), ("Sound on collection / level up","Звук при открытии / повышении уровня","Son au déblocage / changement de niveau"), ("No confirmed pet sources nearby.","Поблизости нет подтверждённых источников душ.","Aucune source d'âmes confirmée à proximité."), ("Nearby","Поблизости","À proximité"), ("You","Вы","Vous"),
         ("Could not open the browser.", "Не удалось открыть браузер.", "Impossible d’ouvrir le navigateur."),
         ("Show / hide upcoming events", "Показать / скрыть ближайшие события", "Afficher / masquer les événements à venir"),

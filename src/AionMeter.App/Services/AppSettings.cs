@@ -97,6 +97,7 @@ public sealed class AppSettings
     /// <summary>For <see cref="HistoryMode.BossesAndLong"/>: non-boss fights shorter than this are not saved.</summary>
     public int HistoryMinSeconds { get; set; } = 20;
     public bool RecordPackets { get; set; }
+    public bool RecentDebugEnabled { get; set; }
     public string? CaptureDevice { get; set; }
 
     // Hotkeys (modifier+key, parsed by HotkeyManager)

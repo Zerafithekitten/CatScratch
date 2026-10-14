@@ -4,7 +4,7 @@ A separate always-on-top Windows damage meter for AION 2 by Zerafithekitten.
 
 [Download the latest release](https://github.com/Zerafithekitten/CatScratch/releases/latest) · [Patch notes](data/patchnotes-en.md) · [Report an issue](https://github.com/Zerafithekitten/CatScratch/issues)
 
-Latest published version: **2.4.2**. English is the default; German, Russian and French are available in Settings.
+Latest published version: **2.4.3**. English is the default; German, Russian and French are available in Settings.
 
 ## Preview
 
@@ -100,10 +100,10 @@ Select the language in **Settings > General > Language**. English remains the de
 
 | Language | Interface | Availability |
 | --- | --- | --- |
-| English | English | Current release (2.4.2) · default |
-| German | Deutsch | Current release (2.4.2) |
-| Russian | Русский | Current release (2.4.2) |
-| French | Français | Current release (2.4.2) |
+| English | English | Current release (2.4.3) · default |
+| German | Deutsch | Current release (2.4.3) |
+| Russian | Русский | Current release (2.4.3) |
+| French | Français | Current release (2.4.3) |
 
 Skill and monster names use the bundled language tables, with English as the fallback for missing names. Player names are preserved.
 
@@ -169,3 +169,7 @@ GPL-3.0, based on [cyberbadger6969/aion2-dps-meter](https://github.com/cyberbadg
 base revision 414de5c1d5f3d45ce35701bd25229c2dba736bb6.
 Keep LICENSE and data/NOTICE.md with redistributions. Full source accompanies releases.
 AION 2 belongs to NCSOFT.
+
+### Recent debug buffer (experimental)
+
+In Settings → Capture & data, enable Recent debug buffer and save. Save recent debug exports up to the previous 60 seconds to userdata/captures beside the running application. The buffer is disabled by default and capped at 32 MB of accounted packet storage; high traffic can shorten the interval. Continuous recording remains available. An export can temporarily retain its snapshot while capture continues. Only packets received while the buffer is enabled are available; a short recording may lack earlier protocol or character context.

@@ -35,6 +35,11 @@ public sealed partial class UiText
     }
     private static readonly Dictionary<string,string> ExtraGerman = new(StringComparer.Ordinal)
     {
+        ["Recent debug buffer (60 seconds / 32 MB, experimental)"]="Debug-Rückblick (60 Sekunden / 32 MB, experimentell)",
+        ["Save recent debug"]="Debug-Rückblick speichern",
+        ["Enable and save settings first. High traffic can shorten the recorded minute."]="Zuerst aktivieren und Einstellungen speichern. Viel Datenverkehr kann die aufgezeichnete Minute verkürzen.",
+        ["No recent packets available."]="Keine aktuellen Pakete verfügbar.",
+        ["Live capture is not available."]="Live-Erfassung ist nicht verfügbar.",
         ["Copy line {0} of {1}"]="Zeile {0} von {1} kopieren", ["Started · {0} ago"]="Gestartet · vor {0}",
         ["Toggle click-through"]="Durchklicken umschalten",
         ["Double-click to open a separate window."]="Doppelklicken, um ein eigenes Fenster zu öffnen.",

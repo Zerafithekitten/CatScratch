@@ -14,6 +14,7 @@ public sealed class LiveCaptureOptions
 
     /// <summary>When set, every captured game packet is also written to a .pcap file in this folder.</summary>
     public string? RecordDirectory { get; set; }
+    public bool RecentDebugEnabled { get; set; }
 }
 
 /// <summary>
@@ -38,6 +39,7 @@ public sealed class LiveCapture : IEventSource
     public LiveCapture(GameData data, LiveCaptureOptions options)
     {
         _options = options;
+        RecentPackets.Enabled = options.RecentDebugEnabled;
         _pipeline = new PacketPipeline(data, OnEvent) { LockThreshold = 3 };
         _pipeline.FlowLocked += Latency.TrackServerFlow;
     }
@@ -48,6 +50,7 @@ public sealed class LiveCapture : IEventSource
     public CaptureStatus Status => _status;
     public PacketPipeline Pipeline => _pipeline;
     public PassiveLatency Latency { get; } = new();
+    public RecentPacketBuffer RecentPackets { get; } = new();
     public string? RecordingPath { get; private set; }
 
     /// <summary>Npcap's capture library is on this PC (its own folder, or System32 in WinPcap-compatible mode).</summary>
@@ -105,6 +108,7 @@ public sealed class LiveCapture : IEventSource
     {
         Stop();
         _cts?.Dispose();
+        RecentPackets.Clear();
     }
 
     private async Task MonitorLoop(CancellationToken ct)
@@ -275,6 +279,7 @@ public sealed class LiveCapture : IEventSource
     {
         var raw = e.GetPacket();
         Interlocked.Increment(ref _packets);
+        RecentPackets.Add((uint)raw.Timeval.Seconds, (uint)raw.Timeval.MicroSeconds, (uint)raw.LinkLayerType, raw.Data);
         try
         {
             _writer?.Write(raw);

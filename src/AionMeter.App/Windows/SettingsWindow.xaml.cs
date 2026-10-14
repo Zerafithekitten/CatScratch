@@ -28,6 +28,15 @@ public partial class SettingsWindow : Window
         }
     }
 
+    private async void SaveRecentDebug_Click(object sender, RoutedEventArgs e)
+    {
+        SaveRecentDebug.IsEnabled = false;
+        _meter.SetRecentDebug(RecentDebug.IsChecked == true);
+        try { RecentDebugResult.Text = await _meter.SaveRecentDebugAsync(); }
+        catch (Exception ex) { RecentDebugResult.Text = T.Localize(ex.Message); }
+        finally { SaveRecentDebug.IsEnabled = true; }
+    }
+
     private void PatchNotes_Click(object sender, RoutedEventArgs e) => AppHost.Current.ShowPatchNotes();
     private void Report_Click(object sender, RoutedEventArgs e)
     {
@@ -87,6 +96,10 @@ public partial class SettingsWindow : Window
         HistoryMin.Text = s.HistoryMinSeconds.ToString();
         HistoryInfo.Text = string.Format(T.HistoryInfo, _meter.History.List().Count, _meter.History.Directory);
         Record.IsChecked = s.RecordPackets;
+        RecentDebug.IsChecked = s.RecentDebugEnabled;
+        RecentDebug.Content = T.Localize("Recent debug buffer (60 seconds / 32 MB, experimental)");
+        SaveRecentDebug.Content = T.Localize("Save recent debug");
+        RecentDebugResult.Text = T.Localize("Enable and save settings first. High traffic can shorten the recorded minute.");
         HkToggle.Text = s.HotkeyToggleOverlay;
         HkAll.Text = s.HotkeyToggleAll;
         HkReset.Text = s.HotkeyReset;
@@ -182,6 +195,8 @@ public partial class SettingsWindow : Window
         if (device != s.CaptureDevice || (Record.IsChecked == true) != s.RecordPackets) captureChanged = true;
         s.CaptureDevice = device;
         s.RecordPackets = Record.IsChecked == true;
+        s.RecentDebugEnabled = RecentDebug.IsChecked == true;
+        _meter.SetRecentDebug(s.RecentDebugEnabled);
 
         var language = (LanguageBox.SelectedItem as ComboBoxItem)?.Tag as string ?? "en";
         s.DownloadIcons = Icons.IsChecked == true;
