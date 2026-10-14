@@ -6,7 +6,7 @@ A separate always-on-top Windows damage meter for AION 2 by Zerafithekitten.
 
 Latest stable version: **2.5.0**. English is the default; German, Russian and French are available in Settings.
 
-Beta: **2.5.1-beta.2**, with permanent boss personal bests, a trophy button and Last played with. See the [patch notes](data/patchnotes-en.md).
+Beta: **2.5.1-beta.3**, with permanent boss personal bests, a trophy button and Last played with. See the [patch notes](data/patchnotes-en.md).
 
 Open the **trophy icon** in the DPS meter, **Statistics > Boss personal bests** or **Settings > General > Boss personal bests**. Browse and search all bundled real dungeon and world boss entries, even before a first kill. Each boss permanently retains six independent values per character/server/class: highest own DPS, damage, strongest hit and healing, plus fewest own deaths and least damage taken. Each value may come from a different qualifying kill. Equal or worse results never overwrite a record. There is no attempt-history limit because only best values and their achievement dates are stored. Previous beta records migrate automatically. Records require a confirmed real boss kill with a known starting HP baseline and damage only against that boss; test mode, recordings and incomplete fights do not count. Missing packets can omit deaths.
 

@@ -1,3 +1,7 @@
+## CatScratch v2.5.1-beta.3
+
+- Match the trophy icon's size and stroke weight to the other DPS meter toolbar icons.
+
 ## CatScratch v2.5.1-beta.2
 
 - Keep only permanent, independent best values for each dungeon and world boss. Fewer deaths and less damage taken are better; remove the ten-attempt view and add the complete bundled boss catalog.
