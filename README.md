@@ -6,6 +6,10 @@ A separate always-on-top Windows damage meter for AION 2 by Zerafithekitten.
 
 Latest stable version: **2.5.0**. English is the default; German, Russian and French are available in Settings.
 
+Beta: **2.5.1-beta.1**, with boss-only personal records, own death timestamps, healing done and damage taken, plus fixes for reconnects, packet buffering and incomplete fight history files. See the [patch notes](data/patchnotes-en.md).
+
+Open **Statistics > Boss personal bests** or **Settings > General > Boss personal bests**. Records are local and independent of saved-fight retention. Best DPS, damage, hit and healing values require a confirmed real boss kill with a known starting HP baseline and damage only against that boss. Failed and stopped attempts still list observed own deaths, healing and damage taken. Test mode and recordings never create records. Missing packets can omit deaths; older saved fights have unknown death counts.
+
 ## Update channels
 
 **Stable is v2.5.0.** Future updates are published to the `beta` branch and as GitHub prereleases first, unless explicitly promoted to Stable.

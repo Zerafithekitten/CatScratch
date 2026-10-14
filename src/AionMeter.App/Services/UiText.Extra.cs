@@ -35,6 +35,21 @@ public sealed partial class UiText
     }
     private static readonly Dictionary<string,string> ExtraGerman = new(StringComparer.Ordinal)
     {
+        ["Boss personal bests"]="Persönliche Bossrekorde",
+        ["Most healing"]="Höchste Heilung",
+        ["Healing done"]="Verursachte Heilung",
+        ["Only real bosses. Records require a confirmed kill, a known starting HP baseline and boss-only damage. Deaths are observed deaths of your own character; missing packets may omit deaths. Data stays on this PC."]="Nur echte Bosse. Rekorde erfordern einen bestätigten Kill, bekannte Start-HP und ausschließlich Bossschaden. Gezählt werden beobachtete Tode deines Charakters; fehlende Pakete können Tode auslassen. Die Daten bleiben auf diesem PC.",
+        ["Recent boss attempts · last 10"]="Letzte Bossversuche · maximal 10",
+        ["No boss attempts yet. Finish a live boss fight to begin."]="Noch keine Bossversuche. Schließe einen echten Bosskampf ab, um zu beginnen.",
+        ["{0} attempts · {1} kills · {2} own deaths"]="{0} Versuche · {1} Kills · {2} eigene Tode",
+        ["Best DPS"]="Bester DPS",
+        ["Most damage"]="Höchster Schaden",
+        ["Strongest hit"]="Stärkster Treffer",
+        ["Own deaths: {0}"]="Eigene Tode: {0}",
+        ["Listed attempt · not eligible for a record"]="Erfasster Versuch · kein gültiger Rekordkampf",
+        ["No qualifying kill yet"]="Noch kein gültiger Kill",
+        ["Stopped"]="Beendet",
+        ["Zone changed"]="Gebiet gewechselt",
         ["Update channel"]="Update-Kanal",
         ["Stable · tested releases"]="Stable · getestete Versionen",
         ["Beta · early access"]="Beta · Vorabversionen",

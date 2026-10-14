@@ -45,6 +45,7 @@ public partial class App : Application
     private readonly WindowVisibilityGroup _windowVisibility=new();
     private DispatcherTimer? _timer;
     private HistoryWindow? _history;
+    private PersonalBestsWindow? _personalBests;
     private SettingsWindow? _settingsWindow;
     private BossTimersWindow? _timersWindow;
     private TimerHubWindow? _timerHub;
@@ -149,6 +150,13 @@ public partial class App : Application
                 try { await Release250Checks.RunAsync(release250Result); Shutdown(); }
                 catch(Exception ex) { File.WriteAllText(release250Result,ex.ToString()); Shutdown(1); }
             });
+            return;
+        }
+        if (ArgValue(e.Args, "--check-boss-records") is { } bossRecordsResult)
+        {
+            Log.Enabled = false;
+            try { BossRecordChecks.Run(bossRecordsResult); Shutdown(); }
+            catch (Exception error) { File.WriteAllText(bossRecordsResult, error.ToString()); Shutdown(1); }
             return;
         }
         if (ArgValue(e.Args,"--check-event-audio") is { } eventAudioResult)
@@ -556,6 +564,7 @@ public partial class App : Application
         _petWindow?.Close();
         foreach (var w in _breakdowns.Values.ToList()) w.Close();
         _history?.Close();
+        _personalBests?.Close();
         _timersWindow?.Close();
         _updateWindow?.Close();
         _soundWindow?.Close();
@@ -586,6 +595,7 @@ public partial class App : Application
     public void RefreshPresentation()
     {
         foreach(var w in _breakdowns.Values.ToList())w.Close();
+        _personalBests?.Reload();
         _history?.Reload();_overlay.OnLanguageChanged();
     }
     public void ToggleLanguage() => SetLanguage(UiText.Languages[(Array.IndexOf(UiText.Languages, UiText.Current.Code) + 1) % UiText.Languages.Length]);
@@ -608,6 +618,14 @@ public partial class App : Application
         // Fight history is an interactive tool, independent of meter locking and opacity.
         _history.Closed += (_, _) => _history = null;
         _history.Show();
+    }
+
+    public void ShowPersonalBests()
+    {
+        if (_personalBests is { IsLoaded: true }) { _personalBests.Reload(); Activate(_personalBests); return; }
+        _personalBests = new PersonalBestsWindow(_meter);
+        _personalBests.Closed += (_, _) => _personalBests = null;
+        _personalBests.Show();
     }
 
     /// <summary>Hotkey: open the boss timers, or close them when they are already up.</summary>

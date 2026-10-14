@@ -133,7 +133,10 @@ public sealed class CombatTracker
                         && (s.Class == GameClass.Unknown || _entities.Self?.Class is null or GameClass.Unknown || s.Class == _entities.Self.Class);
                     var keepsGroup = _party.Count > 0 && (string.IsNullOrWhiteSpace(s.Name) ||
                         (s.Name == _partyIdentity.Name && s.ServerId == _partyIdentity.Server));
-                    if (!sameSelf && !keepsGroup) ClearParty();
+                    var sameCharacter = _freshSelf && !string.IsNullOrWhiteSpace(s.Name) && s.Name == _selfKey.Name
+                        && s.ServerId > 0 && s.ServerId == _selfKey.Server
+                        && (s.Class == GameClass.Unknown || _entities.Self?.Class is null or GameClass.Unknown || s.Class == _entities.Self.Class);
+                    if (!sameSelf && !keepsGroup && !sameCharacter) ClearParty();
                     if (!sameSelf) _selfKey = default;
                     _freshSelf = true;
                     if (!string.IsNullOrWhiteSpace(s.Name)) _selfKey = (s.Name, s.ServerId > 0 ? s.ServerId : _selfKey.Server);
@@ -327,6 +330,7 @@ public sealed class CombatTracker
         if (npc.IsBoss && (enc.BossId is null || !IsAlive(enc.BossId.Value))) SetBoss(enc, npc, d.TimeMs);
 
         var c = GetCombatant(enc, source);
+        if (source == d.SourceId && (d.Flags & HitFlags.Dot) == 0) c.IsDead = false;
         if (c.Class == GameClass.Unknown && (d.Flags & HitFlags.Dot) == 0)
             c.Class = GameData.ClassFromSkill(d.SkillCode);
 
@@ -375,6 +379,8 @@ public sealed class CombatTracker
 
     private void OnNpcHp(NpcHpEvent e)
     {
+        if (!e.IsNpc && e.CurrentHp > 0 && _current is { IsActive: true } active
+            && active.Combatants.TryGetValue(e.ActorId, out var player)) player.IsDead = false;
         if (_entities.IsPlayerLike(e.ActorId)) return;
         // HP/MP updates are sent for players too: only trust them for entities already known to be NPCs.
         if (!e.IsNpc && !_entities.IsKnownNpc(e.ActorId)) return;
@@ -418,6 +424,19 @@ public sealed class CombatTracker
 
     private void OnDeath(DeathEvent e)
     {
+        if (_entities.IsKnownPlayer(e.ActorId))
+        {
+            if (!e.AlreadyDead && InParty(e.ActorId) && _current is { IsActive: true } fight
+                && e.TimeMs >= fight.StartMs)
+            {
+                var player = GetCombatant(fight, e.ActorId);
+                var offset = (int)Math.Clamp(e.TimeMs - fight.StartMs, 0, int.MaxValue);
+                if (!player.IsDead && (player.DeathOffsetsMs.Count == 0 || offset > player.DeathOffsetsMs[^1]))
+                    player.DeathOffsetsMs.Add(offset);
+                player.IsDead = true;
+            }
+            return;
+        }
         EndBossLimit(e.ActorId);
         if (!_entities.TryGetNpc(e.ActorId, out var npc)) return;
         if (npc.Hp != 0)
@@ -553,6 +572,8 @@ public sealed class CombatTracker
     /// </summary>
     private void OnCast(CastEvent c)
     {
+        if (_current is { IsActive: true } fight && fight.Combatants.TryGetValue(c.ActorId, out var caster))
+            caster.IsDead = false;
         if (Options.PartyOnly) return;
         if (_entities.TryGetUnowned(c.ActorId, out var entity))
         {
@@ -664,7 +685,7 @@ public sealed class CombatTracker
 
     private void StartEncounter(long timeMs)
     {
-        _current = new Encounter { StartMs = timeMs, LastDamageMs = timeMs, Zone = _entities.ZoneName };
+        _current = new Encounter { StartMs = timeMs, LastDamageMs = timeMs, Zone = _entities.ZoneName, MapId = _entities.MapId };
         _viewCleared = false;
     }
 
@@ -874,7 +895,7 @@ public sealed class CombatTracker
                 c.ActorId, c.Name, c.Class, c.IsSelf,
                 t.Damage, t.Damage / seconds, (double)t.Damage / total,
                 t.Hits, t.Hits > 0 ? (double)t.Crits / t.Hits : 0,
-                t.Max, c.DamageTaken, c.ServerId, c.GearScore, c.CombatPower, c.Healing, c.SelfHealing));
+                t.Max, c.DamageTaken, c.ServerId, c.GearScore, c.CombatPower, c.Healing, c.SelfHealing, c.DeathOffsetsMs.Count));
         }
         rows.Sort((a, b) => b.Damage.CompareTo(a.Damage));
         // Pets without a known owner are not a player: list them last so they never take a place in the ranking.
@@ -900,7 +921,9 @@ public sealed class CombatTracker
         return new EncounterSnapshot(
             enc.Id, Title(enc), enc.Zone, ToTime(enc.StartMs), enc.ClockMs(nowMs), combatMs, enc.IsActive, enc.Reason,
             enc.TotalDamage, enc.TotalDamage / seconds, boss, rows, MainTargetCode(enc),
-            enc.Attackers.Count + rows.Count(r => !r.IsUnknownSummons && !enc.Attackers.Contains(r.ActorId)));
+            enc.Attackers.Count + rows.Count(r => !r.IsUnknownSummons && !enc.Attackers.Contains(r.ActorId)),
+            enc.MapId, enc.BossRefHp > 0 && enc.BossMaxHpKnown && boss?.Uncounted == 0,
+            enc.BossId is { } onlyBoss && enc.DamageByTarget.Count == 1 && enc.DamageByTarget.ContainsKey(onlyBoss));
     }
 
     private CombatantDetail BuildDetail(Encounter enc, Combatant c, int maxCasts)
@@ -931,7 +954,7 @@ public sealed class CombatTracker
         var casts = c.Casts.Count <= maxCasts ? c.Casts.ToArray() : c.Casts.GetRange(0, maxCasts).ToArray();
         return new CombatantDetail(
             c.ActorId, c.Name, c.Class, c.IsSelf, t.Damage, t.Damage / seconds, (double)t.Damage / Math.Max(1, enc.TotalDamage),
-            enc.CombatMs, c.DamageTaken, c.HitsTaken, quality, skills, c.PerSecond.ToArray(), casts, c.ServerId, c.GearScore, c.CombatPower, c.Healing, c.SelfHealing);
+            enc.CombatMs, c.DamageTaken, c.HitsTaken, quality, skills, c.PerSecond.ToArray(), casts, c.ServerId, c.GearScore, c.CombatPower, c.Healing, c.SelfHealing, c.DeathOffsetsMs.ToArray());
     }
 
     private FightRecord BuildRecord(Encounter enc)

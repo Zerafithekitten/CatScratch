@@ -9,7 +9,7 @@ with installer, portable ZIP and full source. Packet captures and userdata are i
 
 The workflow compiles its own GitHub repository name into the update feed.
 Local builds default to Zerafithekitten/CatScratch; the workflow uses its own repository.
-Installed and portable copies check GitHub after startup and every two hours. Verified ZIP updates are applied during an idle period, without Setup. Settings can disable this behavior. Userdata is preserved and a failed file replacement restores backups.
+Installed and portable copies can check GitHub for updates. Stable and Beta are separate selectable channels. Installation always requires Update now; checking or changing channels never installs an update. Verified ZIP updates preserve userdata, and a failed file replacement restores backups. Beta uploads are authorized; stable publication requires explicit owner approval. See RELEASE-POLICY.md.
 
 The custom installer uses a separate app name, installer ID and instance locks.
 It does not update an installation of the original upstream meter.

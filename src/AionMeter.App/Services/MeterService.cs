@@ -35,7 +35,7 @@ public sealed class MeterService : IDisposable
     private DemoFightSource? _demo;
     private readonly PetProgressCache? _petProgress;
 
-    public MeterService(AppSettings settings, Func<GameData, IEventSource>? captureFactory)
+    public MeterService(AppSettings settings, Func<GameData, IEventSource>? captureFactory, PersonalBestStore? personalBests = null)
     {
         Settings = settings;
         if (!settings.Transient && !settings.ManualHistoryDefaultsApplied)
@@ -55,6 +55,7 @@ public sealed class MeterService : IDisposable
         Options.MaxSegments = HistoryStore.MaxSavedFights;
         _realTracker = new CombatTracker(Data, Options);
         History = new HistoryStore(Path.Combine(AppSettings.AppDataDir, "fights"));
+        PersonalBests = personalBests ?? new PersonalBestStore(Data, settings.Transient ? null : Path.Combine(AppSettings.AppDataDir, "boss-personal-bests.json"));
         _realTimers = new BossTimers(Path.Combine(AppSettings.AppDataDir, "boss-timers.json"), Data, DataDirectory, persistent: !settings.Transient);
         Updates = new Updater(settings);
         Tracker.EncounterFinished += OnEncounterFinished;
@@ -112,6 +113,7 @@ public sealed class MeterService : IDisposable
     public CombatTracker Tracker => _testTracker ?? _realTracker;
     public Core.Events.LiveIdentity LiveIdentity { get; } = new();
     public HistoryStore History { get; }
+    public PersonalBestStore PersonalBests { get; }
     private readonly BossTimers _realTimers;
     private BossTimers? _testTimers;
     public BossTimers Timers => _testTimers ?? _realTimers;
@@ -436,6 +438,15 @@ public sealed class MeterService : IDisposable
 
     private void OnEncounterFinished(FightRecord record)
     {
+        if (!_replaying && !DemoRunning && !Settings.Transient)
+        {
+            CaptureHealth? health;
+            lock (_captureGate) health = (_capture as LiveCapture)?.Health();
+            var clean = health is null || (health.Value.Dropped == 0 && health.Value.Gaps == 0);
+            try { PersonalBests.Record(record, clean); }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+            { Log.Error("Saving personal boss records failed", ex); }
+        }
         LogBossFight(record.Summary);
         if (!_replaying && !DemoRunning)
             lock (_fightSaveGate) _lastFinishedFight = record;

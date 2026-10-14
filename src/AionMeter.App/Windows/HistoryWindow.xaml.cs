@@ -150,6 +150,11 @@ public partial class HistoryWindow : Window
         DetailPortrait.Source = item.Portrait;
         DetailMeta.Text = $"{s.StartedAt.ToString("dd MMM yyyy HH:mm", T.Culture)} · {Format.ClockPrecise(s.CombatMs)} · " +
                           $"{Format.Compact(s.TotalDamage)} {T.DamageWord} · {Format.Compact(s.PartyDps)}/s {T.Party} · {ReasonText(s.Reason)}";
+        if (s.Boss is not null)
+        {
+            var own = s.Combatants.FirstOrDefault(c => c.IsSelf);
+            DetailMeta.Text += " · " + string.Format(T.Localize("Own deaths: {0}"), own?.Deaths?.ToString(T.Culture) ?? "—");
+        }
         var vm = new OverlayViewModel();
         vm.Apply(s, 50, relativeToTop: true);
         Party.ItemsSource = vm.Rows;

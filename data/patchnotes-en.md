@@ -1,3 +1,10 @@
+## CatScratch v2.5.1-beta.1
+
+- Add boss-only personal records for DPS, damage, strongest hit and healing, plus own deaths with timestamps and damage taken per attempt.
+- Open Boss personal bests from Statistics or Settings > General. Records stay local and separate for each character; test fights and recordings do not count.
+- Improve reconnect handling, packet buffering and revival tracking. Fix startup problems caused by incomplete fight history files.
+- Beta preview; Stable remains v2.5.0.
+
 ## CatScratch v2.5.0
 
 - Add selectable Stable and Beta update channels in Settings > General. Stable advances to v2.5.0; beta builds are prereleases and never replace the stable download. Checking or switching channels never installs a release. Updates require Update now; returning to Stable preserves settings and saved fights.

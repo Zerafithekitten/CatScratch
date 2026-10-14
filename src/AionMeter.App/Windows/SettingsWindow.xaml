@@ -301,6 +301,7 @@
                   <TextBlock Text="{Binding ReportTitle, Source={x:Static s:UiText.Current}}" Style="{StaticResource SectionLabel}" Margin="0,0,0,8" />
                   <TextBlock Text="{Binding ReportHint, Source={x:Static s:UiText.Current}}" Style="{StaticResource Hint}" />
                   <Button x:Name="ReportButton" Style="{StaticResource GhostButton}" Content="{Binding ReportButton, Source={x:Static s:UiText.Current}}" Click="Report_Click" HorizontalAlignment="Left" Margin="0,8,0,0" />
+                  <Button x:Name="PersonalBestsButton" Style="{StaticResource GhostButton}" Content="{Binding BossPersonalBestsLabel, Source={x:Static s:UiText.Current}}" Click="PersonalBests_Click" HorizontalAlignment="Left" Margin="0,8,0,0" />
                 </StackPanel>
               </Border>
             </StackPanel>

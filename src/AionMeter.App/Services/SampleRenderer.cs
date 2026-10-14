@@ -167,6 +167,12 @@ public static class SampleRenderer
                 host = history;
                 refresh = history.Reload;
                 break;
+            case "personal-bests":
+                var bests = new PersonalBestsWindow(meter, BossRecordChecks.Sample(meter.Data))
+                    { Width = o.Width ?? 920, Height = o.Height ?? 660 };
+                host = bests;
+                refresh = bests.Reload;
+                break;
             case "timers":
             case "timers-locked":
                 FeedTimers(meter);

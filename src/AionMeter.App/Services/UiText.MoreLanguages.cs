@@ -5,6 +5,21 @@ public sealed partial class UiText
     // Exact literals, not substitutions in player names, paths or protocol identifiers.
     private static readonly (string English,string Russian,string French)[] AdditionalTranslations =
     [
+        ("Boss personal bests","Личные рекорды боссов","Records personnels des boss"),
+        ("Most healing","Максимальное исцеление","Soins maximums"),
+        ("Healing done","Выполненное исцеление","Soins prodigués"),
+        ("Only real bosses. Records require a confirmed kill, a known starting HP baseline and boss-only damage. Deaths are observed deaths of your own character; missing packets may omit deaths. Data stays on this PC.","Только настоящие боссы. Для рекорда нужны подтверждённое убийство, известные начальные HP и урон только по боссу. Учитываются наблюдаемые смерти вашего персонажа; потерянные пакеты могут пропустить смерти. Данные остаются на этом ПК.","Uniquement les vrais boss. Un record exige une victoire confirmée, des PV initiaux connus et des dégâts uniquement au boss. Les morts observées de votre personnage sont comptées ; des paquets manquants peuvent en omettre. Les données restent sur ce PC."),
+        ("Recent boss attempts · last 10","Последние попытки · до 10","Tentatives récentes · 10 dernières"),
+        ("No boss attempts yet. Finish a live boss fight to begin.","Пока нет попыток. Завершите настоящий бой с боссом.","Aucune tentative. Terminez un combat réel contre un boss pour commencer."),
+        ("{0} attempts · {1} kills · {2} own deaths","{0} попыток · {1} убийств · {2} своих смертей","{0} tentatives · {1} victoires · {2} morts personnelles"),
+        ("Best DPS","Лучший DPS","Meilleur DPS"),
+        ("Most damage","Максимальный урон","Dégâts maximums"),
+        ("Strongest hit","Сильнейший удар","Coup le plus puissant"),
+        ("Own deaths: {0}","Свои смерти: {0}","Morts personnelles : {0}"),
+        ("Listed attempt · not eligible for a record","Учтённая попытка · не подходит для рекорда","Tentative enregistrée · non admissible au record"),
+        ("No qualifying kill yet","Пока нет подходящего убийства","Aucune victoire admissible"),
+        ("Stopped","Остановлено","Arrêté"),
+        ("Zone changed","Смена зоны","Zone changée"),
         ("Update channel","Канал обновлений","Canal de mise à jour"),
         ("Stable · tested releases","Stable · проверенные версии","Stable · versions testées"),
         ("Beta · early access","Beta · ранний доступ","Beta · accès anticipé"),

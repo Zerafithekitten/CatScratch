@@ -48,14 +48,14 @@ jobs:
       - name: Verify event panels and complete shutdown
         shell: pwsh
         run: |
-          foreach ($check in @('interaction', 'shutdown', 'performance', 'event-audio', 'release250')) {
+          foreach ($check in @('interaction', 'shutdown', 'performance', 'event-audio', 'release250', 'boss-records')) {
             $result = "$env:RUNNER_TEMP/meter-$check.txt"
             $process = Start-Process "$PWD/dist/payload/CatScratch.exe" -ArgumentList @("--check-$check",("`"$result`"")) -WindowStyle Hidden -PassThru
             if (-not $process.WaitForExit(20000)) { Stop-Process -Id $process.Id; throw "$check verification timed out" }
             Get-Content $result
             $process.Refresh()
             if ($process.ExitCode) { throw "$check verification failed" }
-            if ($check -in @('interaction', 'event-audio', 'release250')) { $null = Get-Content $result -Raw | ConvertFrom-Json -ErrorAction Stop }
+            if ($check -in @('interaction', 'event-audio', 'release250', 'boss-records')) { $null = Get-Content $result -Raw | ConvertFrom-Json -ErrorAction Stop }
           }
           # Diagnostics may create their own empty cache folders. Never include them in Setup.
           $payload = [IO.Path]::GetFullPath("$PWD/dist/payload").TrimEnd('\') + '\'
@@ -92,7 +92,13 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          $releaseArgs = @('release','create',$env:RELEASE_TAG,'dist/CatScratch-Setup.exe','dist/CatScratch-win-x64.zip','dist/CatScratch-source.zip','--verify-tag','--generate-notes')
+          $notes = Get-Content data/patchnotes-en.md -Raw
+          $heading = [regex]::Escape("## CatScratch $env:RELEASE_TAG")
+          $section = [regex]::Match($notes, "(?ms)^$heading\s*\r?\n(.*?)(?=^## |\z)")
+          if (-not $section.Success -or -not $section.Groups[1].Value.Trim()) { throw 'Patch notes for this release are missing' }
+          $notesFile = Join-Path $env:RUNNER_TEMP 'release-notes.md'
+          Set-Content -LiteralPath $notesFile -Value $section.Groups[1].Value.Trim() -Encoding utf8
+          $releaseArgs = @('release','create',$env:RELEASE_TAG,'dist/CatScratch-Setup.exe','dist/CatScratch-win-x64.zip','dist/CatScratch-source.zip','--verify-tag','--notes-file',$notesFile)
           if ($env:IS_BETA -eq 'True') { $releaseArgs += @('--prerelease','--latest=false') }
           gh @releaseArgs
           if ($LASTEXITCODE) { throw 'Release publication failed' }

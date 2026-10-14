@@ -21,6 +21,43 @@ public sealed class HistoryTests : IDisposable
     }
 
     [Fact]
+    public void Incomplete_index_entries_and_fight_files_do_not_prevent_startup()
+    {
+        var store = new HistoryStore(_dir);
+        store.Save(Fight("Berk", 10, true, 1));
+        File.AppendAllText(Path.Combine(_dir, "index.jsonl"), "\n{}\n{\"FileName\":null}\n");
+        File.WriteAllText(Path.Combine(_dir, "incomplete.json"), "{}");
+        File.WriteAllText(Path.Combine(_dir, "missing-players.json"), "{\"Summary\":{\"Combatants\":null}}");
+        var reopened = new HistoryStore(_dir);
+        Assert.Equal("Berk", Assert.Single(reopened.List()).Title);
+        Assert.Null(reopened.Load(Path.Combine(_dir, "incomplete.json")));
+        Assert.Null(reopened.Load(Path.Combine(_dir, "missing-players.json")));
+    }
+
+    [Fact]
+    public void Relative_history_directory_supports_delete_without_stale_index_entries()
+    {
+        var store = new HistoryStore(Path.GetRelativePath(Environment.CurrentDirectory, _dir));
+        var path = store.Save(Fight("Berk", 10, true, 1));
+        store.Delete(path);
+        Assert.Empty(store.List());
+        Assert.Empty(new HistoryStore(_dir).List());
+    }
+
+    [Fact]
+    public void Delete_does_not_remove_untracked_files_in_history_directory()
+    {
+        var store = new HistoryStore(_dir);
+        store.Save(Fight("Berk", 10, true, 1));
+        var unrelated = Path.Combine(_dir, "notes.txt");
+        File.WriteAllText(unrelated, "keep");
+        store.Delete(unrelated);
+        store.Delete(Path.Combine(_dir, "index.jsonl"));
+        Assert.True(File.Exists(unrelated));
+        Assert.Single(new HistoryStore(_dir).List());
+    }
+
+    [Fact]
     public void Only_ten_newest_fights_and_index_entries_remain()
     {
         var store = new HistoryStore(_dir);

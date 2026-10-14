@@ -59,17 +59,22 @@ public sealed class PacketPipeline
             flow = new Flow(key);
             _flows[key] = flow;
         }
-        flow.LastSeenMs = timeMs;
-
         if (syn)
         {
+            // A reused endpoint tuple is a new stream; retransmitted SYNs retain their buffer.
+            if (flow.SynNext != seq + 1)
+            {
+                flow = new Flow(key);
+                _flows[key] = flow;
+            }
             flow.SynNext = seq + 1;
-            return;
+            seq++; // SYN consumes a sequence number, including when carrying payload.
         }
-        if (finOrRst && payload.IsEmpty)
+        flow.LastSeenMs = timeMs;
+        if (finOrRst)
         {
-            if (!flow.IsGame) _flows.Remove(key);
-            return;
+            // Still process a FIN's final payload through the local flow reference.
+            _flows.Remove(key);
         }
         if (payload.IsEmpty || flow.IsTls) return;
 

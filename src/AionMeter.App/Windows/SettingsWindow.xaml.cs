@@ -11,6 +11,7 @@ namespace AionMeter.App.Windows;
 
 public partial class SettingsWindow : Window
 {
+    private void PersonalBests_Click(object sender, RoutedEventArgs e) => AppHost.Current.ShowPersonalBests();
     private void DeleteSavedFights_Click(object sender, RoutedEventArgs e)
     {
         var count = _meter.History.List().Count;

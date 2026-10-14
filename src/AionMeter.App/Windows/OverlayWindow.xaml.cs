@@ -677,6 +677,9 @@ public partial class OverlayWindow : Window, IDisplayAppearance
 
         menu.Items.Add(new Separator());
         var total = _meter.History.List().Count;
+        var bests = new MenuItem { Header = UiText.Current.Localize("Boss personal bests") };
+        bests.Click += (_, _) => AppHost.Current.ShowPersonalBests();
+        menu.Items.Add(bests);
         var history = new MenuItem { Header = string.Format(UiText.Current.AllSaved, total) };
         history.Click += (_, _) => AppHost.Current.ShowHistory();
         menu.Items.Add(history);

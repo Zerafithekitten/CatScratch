@@ -93,6 +93,8 @@ public sealed class Combatant
     public int HitsTaken { get; set; }
     public long Healing { get; set; }
     public long SelfHealing { get; set; }
+    public List<int> DeathOffsetsMs { get; } = new();
+    public bool IsDead { get; set; }
 
     public long FirstHitMs { get; set; }
     public long LastHitMs { get; set; }
@@ -122,6 +124,9 @@ public sealed class Combatant
         HitsTaken += other.HitsTaken;
         Healing += other.Healing;
         SelfHealing += other.SelfHealing;
+        foreach (var offset in other.DeathOffsetsMs)
+            if (!DeathOffsetsMs.Contains(offset)) DeathOffsetsMs.Add(offset);
+        DeathOffsetsMs.Sort();
         if (FirstHitMs == 0 || (other.FirstHitMs != 0 && other.FirstHitMs < FirstHitMs)) FirstHitMs = other.FirstHitMs;
         LastHitMs = Math.Max(LastHitMs, other.LastHitMs);
     }
@@ -157,6 +162,7 @@ public sealed class Encounter
     public bool IsActive => Reason == EncounterEndReason.None;
     public EncounterEndReason Reason { get; set; }
     public string? Zone { get; set; }
+    public int MapId { get; set; }
 
     public uint? BossId { get; set; }
     public int BossCode { get; set; }

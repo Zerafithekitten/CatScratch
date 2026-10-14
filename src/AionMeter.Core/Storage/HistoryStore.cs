@@ -82,7 +82,10 @@ public sealed class HistoryStore
     {
         try
         {
-            return JsonSerializer.Deserialize<FightRecord>(File.ReadAllText(path), Json);
+            var record = JsonSerializer.Deserialize<FightRecord>(File.ReadAllText(path), Json);
+            return record is { Summary: { Title: not null, Combatants: not null }, Details: not null }
+                && record.Summary.Combatants.All(c => c is not null)
+                && record.Details.All(c => c is not null) ? record : null;
         }
         catch (Exception ex) when (ex is IOException or JsonException or UnauthorizedAccessException)
         {
@@ -100,11 +103,11 @@ public sealed class HistoryStore
     public void Delete(string path)
     {
         var full = System.IO.Path.GetFullPath(path);
-        if (System.IO.Path.GetDirectoryName(full) != System.IO.Path.GetFullPath(Directory).TrimEnd('\\')) return;
-        if (File.Exists(full)) File.Delete(full);
         lock (_gate)
         {
-            _entries.RemoveAll(e => string.Equals(e.Path, full, StringComparison.OrdinalIgnoreCase));
+            if (!_entries.Any(e => string.Equals(System.IO.Path.GetFullPath(e.Path), full, StringComparison.OrdinalIgnoreCase))) return;
+            if (File.Exists(full)) File.Delete(full);
+            _entries.RemoveAll(e => string.Equals(System.IO.Path.GetFullPath(e.Path), full, StringComparison.OrdinalIgnoreCase));
             WriteIndex();
         }
         Changed?.Invoke();
@@ -138,7 +141,8 @@ public sealed class HistoryStore
                 if (string.IsNullOrWhiteSpace(line)) continue;
                 try
                 {
-                    if (JsonSerializer.Deserialize<HistoryEntry>(line, Json) is { } e) byName[e.FileName] = e;
+                    if (JsonSerializer.Deserialize<HistoryEntry>(line, Json) is { FileName.Length: > 0, Title: not null } e)
+                        byName[e.FileName] = e;
                 }
                 catch (JsonException)
                 {

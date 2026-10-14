@@ -32,7 +32,8 @@ public sealed record CombatantSnapshot(
     int GearScore = 0,
     long CombatPower = 0,
     long Healing = 0,
-    long SelfHealing = 0)
+    long SelfHealing = 0,
+    int? Deaths = null)
 {
     /// <summary>The "summons, owner unknown" pseudo-row (see <see cref="Combatant.UnknownSummonsId"/>).</summary>
     [System.Text.Json.Serialization.JsonIgnore]
@@ -53,7 +54,10 @@ public sealed record EncounterSnapshot(
     BossSnapshot? Boss,
     IReadOnlyList<CombatantSnapshot> Combatants,
     int TargetCode = 0,
-    int Attackers = 0)
+    int Attackers = 0,
+    int MapId = 0,
+    bool BossStartObserved = false,
+    bool BossOnlyDamage = false)
 {
     /// <summary>Players who took part (the unknown-summons row is not one).</summary>
     [System.Text.Json.Serialization.JsonIgnore]
@@ -144,7 +148,8 @@ public sealed record CombatantDetail(
     int GearScore = 0,
     long CombatPower = 0,
     long Healing = 0,
-    long SelfHealing = 0);
+    long SelfHealing = 0,
+    IReadOnlyList<int>? DeathOffsetsMs = null);
 
 public sealed record SegmentInfo(Guid Id, string Title, DateTimeOffset StartedAt, long CombatMs, bool IsActive, EncounterEndReason Reason, long TotalDamage);
 

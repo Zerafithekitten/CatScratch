@@ -31,6 +31,8 @@ public sealed class TcpReassembler
     /// <summary>Anchor the stream at a known sequence number (ISN + 1 after a SYN).</summary>
     public void Start(uint nextSeq)
     {
+        _pending.Clear();
+        _pendingBytes = 0;
         _next = nextSeq;
         _started = true;
     }
@@ -43,12 +45,13 @@ public sealed class TcpReassembler
         var diff = (int)(seq - _next);
         if (diff < 0)
         {
-            if (-diff >= payload.Length)
+            var overlap = -(long)diff;
+            if (overlap >= payload.Length)
             {
                 Duplicates++;
                 return;
             }
-            payload = payload[-diff..];
+            payload = payload[(int)overlap..];
             seq = _next;
             diff = 0;
         }
@@ -62,7 +65,17 @@ public sealed class TcpReassembler
         {
             OutOfOrder++;
             var length = payload.Length;
-            if (!_pending.Exists(p => p.Seq == seq && p.Data.Length >= length))
+            var existing = _pending.FindIndex(p => p.Seq == seq);
+            if (existing >= 0)
+            {
+                var previous = _pending[existing];
+                if (previous.Data.Length < length)
+                {
+                    _pending[existing] = (seq, payload.ToArray(), previous.TimeMs);
+                    _pendingBytes += length - previous.Data.Length;
+                }
+            }
+            else
             {
                 _pending.Add((seq, payload.ToArray(), timeMs));
                 _pendingBytes += payload.Length;
@@ -108,7 +121,8 @@ public sealed class TcpReassembler
 
                 _pending.RemoveAt(i);
                 _pendingBytes -= data.Length;
-                if (-diff < data.Length) Deliver(-diff == 0 ? data : data[-diff..]);
+                var overlap = -(long)diff;
+                if (overlap < data.Length) Deliver(overlap == 0 ? data : data[(int)overlap..]);
                 else Duplicates++;
                 progressed = true;
                 break;
