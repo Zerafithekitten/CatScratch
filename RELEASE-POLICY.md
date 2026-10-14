@@ -1,6 +1,8 @@
 # Release policy
 
-Stable is v2.5.1. The project owner explicitly approved promoting the tested v2.5.1-beta.5 feature set to the Stable branch and release on 2026-10-14, with detailed patch notes covering all changes since v2.5.0. On 2026-10-15, the owner supplied the second resurrection capture and explicitly requested fixing that method before continuing this Stable promotion.
+Stable is v2.5.2. On 2026-10-15 the owner explicitly approved a Stable hotfix removing the duplicate Boss personal bests and Last played with entries from Statistics. Publish its hotfix notes together with the complete v2.5.1 patch notes.
+
+For v2.5.1, the project owner explicitly approved promoting the tested v2.5.1-beta.5 feature set on 2026-10-14, with detailed patch notes covering all changes since v2.5.0. On 2026-10-15, the owner supplied the second resurrection capture and explicitly requested fixing that method before completing that Stable promotion.
 
 On 2026-10-15 the owner also requested that Beta users automatically return to the Stable update channel when a Beta is promoted. Apply that change when the promoted Stable build starts; preserve a deliberate later Beta selection during ordinary restarts. Preparing updates still never restarts the meter automatically.
 

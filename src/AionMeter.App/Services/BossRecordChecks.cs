@@ -167,7 +167,9 @@ internal static class BossRecordChecks
             var overlay = new OverlayWindow(displayMeter, exitOnClose: false);
             try
             {
-                Check(overlay.CreateFightMenu(overlay).Items.OfType<MenuItem>().Any(m => Equals(m.Header, "Boss personal bests")), "Statistics menu exposes boss personal records");
+                Check(!overlay.CreateFightMenu(overlay).Items.OfType<MenuItem>().Any(m =>
+                    Equals(m.Header, "Boss personal bests") || Equals(m.Header, "Last played with")),
+                    "Statistics menu keeps fight selection without duplicating the dedicated boss-record and recent-player buttons");
                 Check(overlay.FindName("BossRecordsButton") is Button trophy && trophy.Content is System.Windows.Shapes.Path, "DPS meter has its own trophy button for permanent boss records");
                 Check(overlay.FindName("LastPlayedButton") is Button, "DPS meter has a direct recent-teammates button");
                 overlay.Width = 260; overlay.Refresh(); overlay.UpdateLayout();
