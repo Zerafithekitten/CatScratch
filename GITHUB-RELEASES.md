@@ -9,7 +9,7 @@ with installer, portable ZIP and full source. Packet captures and userdata are i
 
 The workflow compiles its own GitHub repository name into the update feed.
 Local builds default to Zerafithekitten/CatScratch; the workflow uses its own repository.
-Installed and portable copies check GitHub shortly after startup and every ten minutes when automatic updates are enabled. Stable and Beta are separate selectable channels. Verified ZIP packages download and extract in the background; replacing live files and restarting require Restart to update. Userdata is preserved. Backups, staged files and the downloaded ZIP are removed only after successful startup; failed updates retain recovery files. Beta uploads are authorized; stable publication requires explicit owner approval. Stable v2.5.1 was explicitly approved. See RELEASE-POLICY.md.
+Installed and portable copies check GitHub shortly after startup and every ten minutes when automatic updates are enabled. Stable and Beta are separate selectable channels. Verified ZIP packages download and extract in the background; replacing live files and restarting require Restart to update. Userdata is preserved. Backups, staged files and the downloaded ZIP are removed only after successful startup; failed updates retain recovery files. Beta uploads are authorized; stable publication requires explicit owner approval. Stable v2.5.4 promotion was explicitly approved on 2026-10-15. See RELEASE-POLICY.md.
 
 The custom installer uses a separate app name, installer ID and instance locks.
 It does not update an installation of the original upstream meter.

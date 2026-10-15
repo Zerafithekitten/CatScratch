@@ -1,3 +1,40 @@
+## CatScratch v2.5.4
+
+### Separate Started events module
+- Started entries leave Upcoming events and appear exclusively in the new movable Started events module. While an occurrence is active, later occurrences of the same event are also hidden from Upcoming.
+- Normal events show **Open!** with a three-minute countdown. Spacetime Rift shows **Open!** with a ten-minute countdown. Bosses show **Spawned** for two minutes without a countdown. Expired entries disappear automatically.
+- Open Started events with the small clock button in the Upcoming header. Drag its header or cards to position it; its close button closes only that module.
+- Both modules save position and open state independently, follow the compact meter styling and support click-through, event opacity and show/hide-all controls.
+- Detached event cards use the same durations. Labels and help text are available in English, German, Russian and French.
+
+### Group-search roster fixes
+- Empty slots at the start or in the middle of a roster no longer hide the members after them. Later arrivals can fill those slots while other members remain visible.
+- Confirmed leave notifications clear the roster even if the initial roster was missed. Invalid leave messages do not clear a valid group.
+- These fixes were checked against supplied local recordings; private captures and player data are not included in the release.
+
+### Reliable CP and GS identity
+- Cached CP/GS are associated with name and server together. Same-named characters on different servers no longer share cached values, including after restarting.
+- Reusing a player identifier for a different character clears stale gear and power values instead of showing them for the new character.
+- Announcements with an unknown server no longer remove another confirmed character with the same name.
+- Cache loading handles null, malformed and unreadable data more safely and filters invalid player records.
+
+### Updates fully prepared before notification
+- The update notice, notification and Restart to update button appear only after downloading, verifying and extracting the package successfully in the background.
+- Clicking **Restart to update** applies the prepared package and restarts CatScratch. Restarting remains an explicit user action; failed verification or cancelled preparation does not show a ready notice.
+- Automatic checks remain shortly after startup and every ten minutes when enabled. Manual checks remain available in Settings and the tray menu.
+- Userdata is preserved. Backups, staging files and the archive are removed only after successful startup of the updated program; failed updates retain recovery files.
+- When this promoted Stable build starts, Beta users automatically return to the Stable update channel. The displayed version is **v2.5.4**, without a beta suffix. A later manual Beta selection persists until the next Stable transition.
+
+### Faster startup and ten patchnotes versions
+- Game-data loading avoids unnecessary JSON copies. Local repeated-load measurements showed about 59% fewer allocations; this describes data loading rather than total cold-start time.
+- Optional restored windows and checks are deferred until the first meter display. Redundant settings writes and synchronous download cleanup were reduced.
+- Patch notes now show the ten newest releases in a scrollable sidebar on the left, with a clickable contents overview and detailed explanations per version.
+- Each version shows its own changes without repeating older cumulative notes. Bundled history works offline; Refresh from GitHub updates notes for the selected channel.
+
+### Release verification
+- 334 automated core tests cover roster gaps, character identity, cache handling, event lifetime boundaries, release history and existing functionality.
+- Before publication, the release pipeline also checks window interactions, shutdown, performance, event audio, boss records, background update preparation and direct-update userdata preservation.
+
 ## CatScratch v2.5.4-beta.4
 
 ### Started events module

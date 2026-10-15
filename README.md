@@ -2,12 +2,12 @@
 
 A separate, always-on-top Windows DPS meter for **AION 2**, by Zerafithekitten. Track your own fights and confirmed party members in a compact dark interface with turquoise accents and purple paw branding.
 
-[Download Stable](https://github.com/Zerafithekitten/CatScratch/releases/latest) · [Download Beta](https://github.com/Zerafithekitten/CatScratch/releases/tag/v2.5.4-beta.4) · [Release history](https://github.com/Zerafithekitten/CatScratch/releases) · [Report a bug / request a feature](https://github.com/Zerafithekitten/CatScratch/issues/new/choose)
+[Download Stable](https://github.com/Zerafithekitten/CatScratch/releases/latest) · [Previous Beta (promoted)](https://github.com/Zerafithekitten/CatScratch/releases/tag/v2.5.4-beta.4) · [Release history](https://github.com/Zerafithekitten/CatScratch/releases) · [Report a bug / request a feature](https://github.com/Zerafithekitten/CatScratch/issues/new/choose)
 
 | Channel | Current version | What it includes |
 | --- | --- | --- |
-| **Stable** | **[v2.5.3](https://github.com/Zerafithekitten/CatScratch/releases/tag/v2.5.3)** | Boss personal bests, recent teammates, death recap, background updates and five patchnotes tabs on the left. |
-| **Beta** | **[v2.5.4-beta.4](https://github.com/Zerafithekitten/CatScratch/releases/tag/v2.5.4-beta.4)** | Everything in Stable, plus the separate **Started events** module, group-search fixes, more reliable CP/GS identity and cache handling, improved startup, ready-only update notices and **ten** patchnotes tabs. |
+| **Stable** | **[v2.5.4](https://github.com/Zerafithekitten/CatScratch/releases/tag/v2.5.4)** | Boss personal bests, recent teammates, death recap, background updates, separate Started events, improved group-search handling and ten patchnotes tabs on the left. |
+| **Beta** | **[v2.5.4-beta.4](https://github.com/Zerafithekitten/CatScratch/releases/tag/v2.5.4-beta.4)** | Promoted to **v2.5.4 Stable**. Use the Stable download for the current version. |
 
 English is the default. German, Russian and French are also available. Screenshots use synthetic sample data; names and numbers are examples. Event-module previews show **v2.5.4-beta.4**.
 
@@ -64,7 +64,7 @@ Open a player's fight details for DPS, skills, accuracy, rotation and defense, w
 
 Before combat, the live meter can show the confirmed group-search room's members with their names, classes, CP and GS. No damage is required. An active fight takes priority, and completed fight results remain available through Statistics.
 
-**Beta improvements:** empty slots in the middle of a room no longer hide the players after them. New arrivals fill those slots without discarding the remaining members. Confirmed leave notifications clear the group even if the packet reader missed an earlier roster. CP/GS are kept separate for same-named characters on different servers, including after cache reloads.
+**Group-search reliability:** empty slots in the middle of a room no longer hide the players after them. New arrivals fill those slots without discarding the remaining members. Confirmed leave notifications clear the group even if the packet reader missed an earlier roster. CP/GS are kept separate for same-named characters on different servers, including after cache reloads.
 
 <img src="docs/screenshots/group-room.png" alt="Group-search room overview with names, classes, CP and GS before combat" width="420" />
 
@@ -143,7 +143,7 @@ The bundled catalog contains confirmed Global monster-source mappings for 165 pe
 
 Selected events and enabled world-boss timers within the next hour appear as compact movable cards. Both modules restore their own positions and open states.
 
-**Beta: Upcoming and Started are separate.** At the start, an entry leaves Upcoming and moves into the movable **Started events** module. Open that module with the small clock button in the Upcoming header; drag its header or cards to place it, and use its X to close it. Click-through and show/hide all windows work for both modules.
+**Upcoming and Started are separate.** At the start, an entry leaves Upcoming and moves into the movable **Started events** module. Open that module with the small clock button in the Upcoming header; drag its header or cards to place it, and use its X to close it. Click-through and show/hide all windows work for both modules.
 
 | Started entry | Text | Visibility |
 | --- | --- | --- |
@@ -151,7 +151,7 @@ Selected events and enabled world-boss timers within the next hour appear as com
 | Spacetime Rift | **Open!** + remaining countdown | 10 minutes |
 | Boss | **Spawned**, no countdown | 2 minutes |
 
-Expired entries disappear automatically. While an event is active, a later recurrence with the same name is held out of Upcoming; its next start returns after the active entry expires. Stable v2.5.3 still uses the previous combined display and two-minute started period.
+Expired entries disappear automatically. While an event is active, a later recurrence with the same name is held out of Upcoming; its next start returns after the active entry expires.
 
 <img src="docs/screenshots/started-events.png" alt="Separate movable Started events module with Open countdowns" width="520" />
 
@@ -175,19 +175,19 @@ Choose **Stable** or **Beta** in **Settings > General > Updates**. Stable is the
 
 With automatic updates enabled, CatScratch checks shortly after startup and **every ten minutes**. It downloads, verifies and extracts an available update in the background while the current meter keeps running.
 
-**In v2.5.4-beta.4**, the meter message, restart button and notification appear **only after the update is fully prepared**. There is no download step left for the user: click **Restart to update** to apply the prepared files and restart. CatScratch does not restart automatically. Stable already supports background preparation, but can show its meter banner before preparation finishes.
+**In v2.5.4**, the meter message, restart button and notification appear **only after the update is fully prepared**. There is no download step left for the user: click **Restart to update** to apply the prepared files and restart. CatScratch does not restart automatically.
 
 After a successful new startup, the old backup, staged payload and downloaded ZIP are removed. Failed updates retain recovery files. Settings, saved fights, personal bests, recent players and captures are preserved. Update staging stays under `userdata/temp/updates`; a writable program folder is required.
 
 When a Beta is promoted and its Stable build starts, Beta subscribers automatically return to the Stable update channel. A later deliberate switch back to Beta is respected until the next Stable transition.
 
-Use **Check now** in Settings or **Check for updates** in the tray menu for a manual check. Automatic checking and preparation can be disabled in Settings. Beta also reduces data-loading allocations and moves optional startup work behind the first meter display.
+Use **Check now** in Settings or **Check for updates** in the tray menu for a manual check. Automatic checking and preparation can be disabled in Settings. CatScratch also reduces data-loading allocations and moves optional startup work behind the first meter display.
 
 ## Patchnotes
 
-Open **Patch notes** from the meter or Settings. Versions are listed **on the left**, newest first. Each version shows only its own changes, with an **clickable contents overview** above detailed explanations. Repeated older notes in cumulative release bodies are omitted from that version's view.
+Open **Patch notes** from the meter or Settings. Versions are listed **on the left**, newest first. Each version shows only its own changes, with a **clickable contents overview** above detailed explanations. Repeated older notes in cumulative release bodies are omitted from that version's view.
 
-**Beta shows the last ten versions; Stable v2.5.3 shows five.** The version sidebar is scrollable in Beta when space is limited. Stable shows Stable releases; the Beta channel also includes beta versions. Bundled notes work offline; **Refresh from GitHub** updates the history.
+**The last ten versions are available.** The version sidebar is scrollable when space is limited. Stable shows Stable releases; the Beta channel also includes beta versions. Bundled notes work offline; **Refresh from GitHub** updates the history.
 
 <img src="docs/screenshots/patch-notes.png" alt="Ten patchnotes versions in a left sidebar with clickable contents and individual release notes" width="580" />
 
