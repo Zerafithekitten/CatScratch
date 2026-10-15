@@ -14,7 +14,7 @@ namespace AionMeter.App.Windows;
 public sealed class PatchNotesWindow : Window
 {
     private readonly StackPanel _notes = new();
-    private readonly StackPanel _tabs = new() { Width = 112, Margin = new Thickness(0,0,10,0) };
+    private readonly StackPanel _tabs = new();
     private readonly ScrollViewer _scroll = new() { VerticalScrollBarVisibility = ScrollBarVisibility.Auto };
     private IReadOnlyList<ReleaseNotePage> _pages = [];
     internal IReadOnlyList<string> ReleaseTabs => _pages.Select(p => p.Tag).ToArray();
@@ -47,7 +47,9 @@ public sealed class PatchNotesWindow : Window
         var refresh = new Button { Content = "Refresh from GitHub", HorizontalAlignment = HorizontalAlignment.Left, Padding = new Thickness(10,5,10,5), Margin = new Thickness(0,12,0,0) };
         header.Children.Add(refresh); header.Children.Add(_state);
         var body = new DockPanel();
-        DockPanel.SetDock(_tabs, Dock.Left); body.Children.Add(_tabs); root.Children.Add(body);
+        var sidebar = new ScrollViewer { Content = _tabs, Width = 122, Margin = new Thickness(0,0,10,0),
+            VerticalScrollBarVisibility = ScrollBarVisibility.Auto, HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled };
+        DockPanel.SetDock(sidebar, Dock.Left); body.Children.Add(sidebar); root.Children.Add(body);
         _scroll.Content = _notes;
         body.Children.Add(new Border { Background = new SolidColorBrush(Color.FromRgb(23,30,39)), BorderBrush = new SolidColorBrush(Color.FromRgb(54,73,87)), BorderThickness = new Thickness(1), CornerRadius = new CornerRadius(7), Padding = new Thickness(12), Child = _scroll }); Content = root;
         var path = Path.Combine(AppContext.BaseDirectory, "data", "patchnotes-en.md");

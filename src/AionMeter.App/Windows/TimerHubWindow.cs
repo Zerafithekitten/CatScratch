@@ -9,6 +9,9 @@ namespace AionMeter.App.Windows;
 public sealed class TimerHubWindow : Window, IDisplayAppearance
 {
     private readonly TimerCards _cards;
+    private readonly bool _startedOnly;
+    private string PlacementKey => _startedOnly ? "started-events" : "auto-events";
+    private string Caption => _startedOnly ? "Started events" : "Upcoming events";
     private readonly WrapPanel _list = new();
     private readonly DispatcherTimer _clock = new() { Interval = TimeSpan.FromSeconds(1) };
     private Window? _preferences;
@@ -27,18 +30,24 @@ public sealed class TimerHubWindow : Window, IDisplayAppearance
     }
     public Func<DateTimeOffset>? ClockOverride { get; set; }
     private static SolidColorBrush ColorBrush(string hex) => new((Color)ColorConverter.ConvertFromString(hex));
-    public TimerHubWindow(TimerCards cards)
+    public TimerHubWindow(TimerCards cards, bool startedOnly = false)
     {
         AppIcon.Apply(this);
-        _cards=cards; Title="Upcoming events"; Width=480; MinWidth=240; MinHeight=70;
+        _cards=cards; _startedOnly=startedOnly; Title=Caption; Width=480; MinWidth=240; MinHeight=70;
         SizeToContent=SizeToContent.Height; WindowStyle=WindowStyle.None; Background=Brushes.Transparent;
         Topmost=true; Foreground=Brushes.White; Opacity=cards.Saved.EventOpacity;
         var root = new DockPanel { Margin=new(4,2,4,4) };
         var header=new DockPanel { Margin=new(0,0,0,7), Background=ColorBrush("#DF1B2027"), MinHeight=24 }; DockPanel.SetDock(header,Dock.Top); root.Children.Add(header);
         _header=header;
         void Button(string text, Action action) { var b=new Button { Content=text, Style=(Style)FindResource("IconButton"), Width=22, Height=22, FontSize=12 }; b.Click+=(_,_)=>action(); DockPanel.SetDock(b,Dock.Right); header.Children.Add(b); }
-        Button("\uE711",()=> { cards.Saved.EventWindowOpen=false; Close(); }); Button("\uE713",Preferences);
-        header.Children.Add(new TextBlock { Text=UiText.Current.Localize("Upcoming events"), FontSize=10, FontWeight=FontWeights.SemiBold, Foreground=ColorBrush("#79E3CF"), VerticalAlignment=VerticalAlignment.Center,
+        Button("\uE711",()=> { if(_startedOnly)cards.Saved.StartedEventWindowOpen=false; else cards.Saved.EventWindowOpen=false; Close(); }); Button("\uE713",Preferences);
+        if(!_startedOnly)
+        {
+            var active = new Button { Content="\uE823", Style=(Style)FindResource("IconButton"), Width=22,Height=22,FontSize=12,
+                ToolTip=UiText.Current.Localize("Show started events") };
+            active.Click+=(_,_)=>AppHost.Current.ShowStartedEvents(); DockPanel.SetDock(active,Dock.Right); header.Children.Add(active);
+        }
+        header.Children.Add(new TextBlock { Text=UiText.Current.Localize(Caption), FontSize=10, FontWeight=FontWeights.SemiBold, Foreground=ColorBrush("#79E3CF"), VerticalAlignment=VerticalAlignment.Center,
             ToolTip=UiText.Current.Localize("Community schedule · Shugo.GG · checked Oct 12, 2026 · not officially confirmed") });
         header.MouseLeftButtonDown+=(_,e)=> {
             var source=e.OriginalSource as DependencyObject;
@@ -52,12 +61,13 @@ public sealed class TimerHubWindow : Window, IDisplayAppearance
         var shell=new Border { Child=root, Background=Brushes.Transparent };
         shell.SizeChanged+=(_,_)=>shell.Clip=new RectangleGeometry(new Rect(0,0,shell.ActualWidth,shell.ActualHeight),14,14);
         Content=shell;
-        if(cards.Saved.Positions.TryGetValue("auto-events",out var p)) { Left=p.Left; Top=p.Top; Width=Math.Max(240,p.Width); }
-        else { Left=100; Top=100; }
+        if(cards.Saved.Positions.TryGetValue(PlacementKey,out var p)) { Left=p.Left; Top=p.Top; Width=Math.Max(240,p.Width); }
+        else { Left=100; Top=_startedOnly?240:100; }
         _clock.Tick+=(_,_)=>Reload(); Loaded+=(_,_)=>{
             Left=Math.Clamp(Left,SystemParameters.VirtualScreenLeft,Math.Max(SystemParameters.VirtualScreenLeft,SystemParameters.VirtualScreenLeft+SystemParameters.VirtualScreenWidth-ActualWidth));
             Top=Math.Clamp(Top,SystemParameters.VirtualScreenTop,Math.Max(SystemParameters.VirtualScreenTop,SystemParameters.VirtualScreenTop+SystemParameters.VirtualScreenHeight-ActualHeight));
-            cards.Saved.EventWindowOpen=true; cards.Save(); Reload();_clock.Start();
+            if(_startedOnly) cards.Saved.StartedEventWindowOpen=true; else cards.Saved.EventWindowOpen=true;
+            cards.Save(); Reload();_clock.Start();
         };
         Closed+=(_,_)=> { _clock.Stop(); foreach (var tile in _list.Children.OfType<Border>()) EventPulse.Apply(tile,EventPanelBrushes.Border,false); _preferences?.Close(); SavePlacement(); };
         SizeChanged+=(_,_)=>Reload();
@@ -65,9 +75,12 @@ public sealed class TimerHubWindow : Window, IDisplayAppearance
     }
     public void Reload()
     {
-        if(_header?.Children.OfType<TextBlock>().FirstOrDefault() is { } caption)caption.Text=UiText.Current.Localize("Upcoming events")+(_cards.TestMode?" · TEST":"");
+        if(_header?.Children.OfType<TextBlock>().FirstOrDefault() is { } caption)caption.Text=UiText.Current.Localize(Caption)+(_cards.TestMode?" · TEST":"");
         var now=ClockOverride?.Invoke()??DateTimeOffset.UtcNow;
-        var events=_cards.NextEvents(now);
+        var allEvents=_cards.NextEvents(now);
+        var activeIds=allEvents.Where(e=>EventActivity.IsActive(e,now)).Select(e=>e.Id).ToHashSet();
+        var events=_startedOnly ? allEvents.Where(e=>EventActivity.IsActive(e,now)).ToArray()
+            : allEvents.Where(e=>e.StartsAt>now && !activeIds.Contains(e.Id)).ToArray();
         var key=string.Join('|',events.Select(e=>$"{e.Id}:{e.StartsAt:O}"));
         if(_list.Tag as string != key)
         {
@@ -95,19 +108,19 @@ public sealed class TimerHubWindow : Window, IDisplayAppearance
                 tile.MouseRightButtonUp+=(_,_)=> { var menu=new ContextMenu(); var detach=new MenuItem { Header=UiText.Current.Localize("Open separate window") }; detach.Click+=(_,_)=>_cards.Pin(item.Id.StartsWith("boss:") ? item.Id : "auto:"+item.Id); menu.Items.Add(detach); menu.IsOpen=true; };
                 _list.Children.Add(tile);
             }
-            if(events.Count==0) _list.Children.Add(new TextBlock { Text=UiText.Current.Localize("No events in the next hour"), FontSize=11, Foreground=ColorBrush("#91A5C3"), Margin=new(0,4,0,2) });
+            if(events.Length==0) _list.Children.Add(new TextBlock { Text=UiText.Current.Localize(_startedOnly ? "No started events" : "No events in the next hour"), FontSize=11, Foreground=ColorBrush("#91A5C3"), Margin=new(0,4,0,2) });
         }
         foreach(var border in _list.Children.OfType<Border>())
         {
             var row=(Grid)border.Child; var item=(EventStart)row.Tag; var remaining=item.StartsAt-now;
             border.Width = Math.Max(220, (Width-16) / (Width>=460 ? 2 : 1));
-            ((TextBlock)row.Children[2]).Text=remaining <= TimeSpan.Zero ? $"{UiText.Current.Localize("Started")} · {(int)(-remaining).TotalMinutes:00}:{(-remaining).Seconds:00}" : $"{UiText.Current.Localize("in")} {(int)remaining.TotalMinutes:00}:{remaining.Seconds:00}";
+            ((TextBlock)row.Children[2]).Text=remaining <= TimeSpan.Zero ? TimerCards.StartedText(item,now) : $"{UiText.Current.Localize("in")} {(int)remaining.TotalMinutes:00}:{remaining.Seconds:00}";
         }
         SetDisplayOnly(_displayOnly);
     }
     private void SavePlacement()
     {
-        _cards.Saved.Positions["auto-events"]=new(){Left=Left,Top=Top,Width=Width,Height=ActualHeight};
+        _cards.Saved.Positions[PlacementKey]=new(){Left=Left,Top=Top,Width=Width,Height=ActualHeight};
         _cards.Save();
     }
     private void Preferences()

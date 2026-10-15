@@ -35,6 +35,9 @@ public sealed partial class UiText
     }
     private static readonly Dictionary<string,string> ExtraGerman = new(StringComparer.Ordinal)
     {
+        ["Started events"]="Gestartete Events", ["Show started events"]="Gestartete Events anzeigen", ["No started events"]="Keine gestarteten Events",
+        ["Open!"]="Offen!", ["Spawned"]="Erschienen",
+        ["All selected events within the next hour. Started events: 3 minutes; Spacetime Rift: 10 minutes; bosses: 2 minutes. The clock button opens the movable Started events panel."]="Alle gewählten Events innerhalb der nächsten Stunde. Gestartete Events: 3 Minuten; Spacetime Rift: 10 Minuten; Bosse: 2 Minuten. Der Uhr-Button öffnet das verschiebbare Fenster für gestartete Events.",
         ["Death recap"]="Todesanalyse",
         ["Enable / disable death recap"]="Todesanalyse ein- / ausschalten",
         ["Disable death recap"]="Todesanalyse ausschalten",

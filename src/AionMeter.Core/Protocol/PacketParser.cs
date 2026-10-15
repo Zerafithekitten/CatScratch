@@ -112,7 +112,7 @@ public sealed class PacketParser
                 }
                 break;
             case Opcodes.PartyLeft:
-                if (_partyKey != 0 && body.Length == 2 && body[0] == 0 && body[1] == 0)
+                if (body.Length == 2 && body[0] == 0 && body[1] == 0)
                 {
                     _rosterMembers.Clear(); _partyKey = 0; _partyDungeon = 0; _partyName = "";
                     Emit(new PartyLeftEvent(TimeMs));
@@ -639,7 +639,7 @@ public sealed class PacketParser
     /// <summary>
     /// <code>party key u32, party name (u8 len + utf8), size u8, dungeon u32, 2 bytes, leader dbid u64, 3 bytes,
     /// member count varint, then per member: mask u8, slot u8, dbid u64 (its top u16 is the server), nickname (u8 len +
-    /// utf8; empty = a vacant slot, and so are the rest), class u32, level u32, gear score u32, a few flags, the server
+    /// utf8; empty = a vacant slot, which may precede occupied slots), class u32, level u32, gear score u32, a few flags, the server
     /// id again (u16), another u16, one byte, combat power u64, then a tail of varying length.</code>
     /// Layout as documented by A2Tools-DPS-Meter (GPL-3.0). The flags before the combat power vary in width, so it is
     /// found past the member's server id; the next member is found by its header (the next slot, a plausible server in
@@ -668,7 +668,15 @@ public sealed class PacketParser
             var slot = b[o + 1];
             var server = Wire.U16(b, o + 8);
             int nameLength = b[o + 10];
-            if (nameLength == 0) break; // vacant slot: the rest are vacant too
+            if (nameLength == 0)
+            {
+                // Group-search rooms retain empty slots in the middle, with their own variable-length tail.
+                if (mask != 0 || slot is < 1 or > 12 || BinaryPrimitives.ReadUInt64LittleEndian(b[(o + 2)..]) != 0 || i + 1 == count) break;
+                var afterVacancy = FindRosterMember(b, o + 11, (byte)(slot + 1));
+                if (afterVacancy < 0) break;
+                o = afterVacancy;
+                continue;
+            }
             if (server is 0 or > 9_999 || nameLength > 40 || o + 11 + nameLength + 12 > b.Length ||
                 !Wire.TryName(b.Slice(o + 11, nameLength), out var name)) break;
             o += 11 + nameLength;
@@ -746,15 +754,22 @@ public sealed class PacketParser
     /// <summary>The start of the roster record for <paramref name="slot"/>, by its header shape, within 32 bytes.</summary>
     private static int FindRosterMember(ReadOnlySpan<byte> b, int from, byte slot)
     {
+        var vacancy = -1;
         for (var i = from; i <= Math.Min(from + 32, b.Length - 12); i++)
         {
             if (b[i + 1] != slot) continue;
             var server = Wire.U16(b, i + 8);
             int nameLength = b[i + 10];
+            if (b[i] == 0 && nameLength == 0 && BinaryPrimitives.ReadUInt64LittleEndian(b[(i + 2)..]) == 0)
+            {
+                // Zero-filled tails can resemble an empty slot. Prefer a named record when one validates.
+                if (vacancy < 0) vacancy = i;
+                continue;
+            }
             if (server is 0 or > 9_999 || nameLength is 0 or > 40 || i + 11 + nameLength > b.Length) continue;
             if (Wire.TryName(b.Slice(i + 11, nameLength), out _)) return i;
         }
-        return -1;
+        return vacancy;
     }
 
     private void ScanForIdentities(ReadOnlySpan<byte> b)

@@ -25,13 +25,13 @@ public sealed class NameCache(string path)
     {
         try
         {
-            Directory.CreateDirectory(Path.GetDirectoryName(path)!);
+            Directory.CreateDirectory(Path.GetDirectoryName(Path.GetFullPath(path))!);
             var tmp = path + ".tmp";
             var data = new FileData(DateTimeOffset.UtcNow, state.SelfId, state.MapId, state.Players.ToList(), state.Npcs.ToList());
             File.WriteAllText(tmp, JsonSerializer.Serialize(data, Json));
             File.Move(tmp, path, overwrite: true);
         }
-        catch (IOException)
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
         {
         }
     }
@@ -44,10 +44,13 @@ public sealed class NameCache(string path)
             if (!File.Exists(path)) return null;
             var data = JsonSerializer.Deserialize<FileData>(File.ReadAllText(path), Json);
             var age = DateTimeOffset.UtcNow - data?.SavedAt;
-            if (data is null || age > MaxAge) return null;
-            return new SessionState(data.SelfId, data.MapId, data.Players, age <= NpcMaxAge ? data.Npcs ?? [] : []);
+            if (data is null || data.Players is null || age > MaxAge) return null;
+            var players = data.Players.Where(p => p is not null && p.Id > 0 && !string.IsNullOrWhiteSpace(p.Name)
+                && Enum.IsDefined(p.Class)).ToArray();
+            var npcs = age <= NpcMaxAge ? (data.Npcs ?? []).Where(n => n is not null && n.Id > 0 && n.MaxHp >= 0).ToArray() : [];
+            return new SessionState(data.SelfId, data.MapId, players, npcs);
         }
-        catch (Exception ex) when (ex is IOException or JsonException)
+        catch (Exception ex) when (ex is IOException or JsonException or UnauthorizedAccessException)
         {
             return null;
         }

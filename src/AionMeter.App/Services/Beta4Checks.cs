@@ -102,6 +102,9 @@ internal static class Beta4Checks
                     Check(await updater.CheckAsync() == UpdateCheckResult.Available, "Fake update feed detected: " + scenario);
                     var release = updater.Latest!;
                     await server.DownloadStarted.Task.WaitAsync(TimeSpan.FromSeconds(5));
+                    overlay.ShowUpdateBanner(updater);
+                    Check(((FrameworkElement)overlay.FindName("UpdateBanner")).Visibility == Visibility.Collapsed,
+                        "No update banner or restart action is announced while the package is still downloading: " + scenario);
                     var preparing = updater.PrepareAsync(release);
                     Check(ReferenceEquals(preparing, updater.PrepareAsync(release)), "Background and manual preparation share one operation: " + scenario);
                     if (scenario != "channel-cancel") server.Continue.SetResult();
@@ -115,10 +118,16 @@ internal static class Beta4Checks
                     else
                     {
                         Check(await preparing && updater.Ready?.Tag == release.Tag, "Automatic check downloads, verifies and extracts the update without restarting");
+                        overlay.ShowUpdateBanner(updater);
+                        Check(((FrameworkElement)overlay.FindName("UpdateBanner")).Visibility == Visibility.Visible &&
+                            ((TextBlock)overlay.FindName("UpdateActionText")).Text.Contains(UiText.Current.Localize("Restart to update")),
+                            "Only the fully prepared update exposes the meter notification and one-click restart");
                         Check(server.Downloads == 1, "Preparing the same release downloads it once");
                         var window = new UpdateWindow(updater, release, false);
                         Check(Equals(((Button)window.FindName("UpdateButton")).Content, UiText.Current.Localize("Restart to update")), "Prepared update offers an explicit restart button"); window.Close();
                         updater.Skip(release); Check(updater.Ready is null && updater.Available is null, "Skipped update clears the prepared restart action");
+                        overlay.ShowUpdateBanner(updater);
+                        Check(((FrameworkElement)overlay.FindName("UpdateBanner")).Visibility == Visibility.Collapsed, "Skipping removes the ready update banner");
                     }
                 }
                 finally

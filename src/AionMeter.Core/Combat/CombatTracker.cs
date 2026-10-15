@@ -144,14 +144,14 @@ public sealed partial class CombatTracker
                     _entities.SetSelf(s.ActorId, s.Name, s.ServerId, s.Class);
                     if (!sameSelf && string.IsNullOrWhiteSpace(s.Name) && _entities.Self is { } anonymous)
                     { anonymous.Name = ""; anonymous.ServerId = 0; anonymous.Class = s.Class; anonymous.GearScore = 0; anonymous.CombatPower = 0; }
-                    _entities.SetGear(s.Name, s.GearScore, s.CombatPower);
+                    _entities.SetGear(s.Name, s.GearScore, s.CombatPower, s.ServerId);
                     if (_pendingPartyRoster is { } pending && _selfKey.Server > 0 && !string.IsNullOrWhiteSpace(_selfKey.Name))
                     {
                         _pendingPartyRoster = null;
                         ApplyRoster(pending);
                         if (_party.Count > 0)
                         {
-                            foreach (var member in pending.Members) _entities.SetGear(member.Name, member.GearScore, member.CombatPower);
+                            foreach (var member in pending.Members) _entities.SetGear(member.Name, member.GearScore, member.CombatPower, member.ServerId);
                             _pendingRosters.Add(pending);
                         }
                     }
@@ -168,7 +168,7 @@ public sealed partial class CombatTracker
                     }
                     ApplyRoster(roster);
                     if (Options.PartyOnly && _party.Count == 0) break;
-                    foreach (var m in roster.Members) _entities.SetGear(m.Name, m.GearScore, m.CombatPower);
+                    foreach (var m in roster.Members) _entities.SetGear(m.Name, m.GearScore, m.CombatPower, m.ServerId);
                     _pendingRosters.Add(roster);
                     break;
                 case PartyLeftEvent:
@@ -717,8 +717,8 @@ public sealed partial class CombatTracker
             if (!string.IsNullOrEmpty(p.Name)) c.Name = p.Name;
             if (p.Class != GameClass.Unknown) c.Class = p.Class;
             c.ServerId = p.ServerId;
-            if (p.GearScore > 0) c.GearScore = p.GearScore;
-            if (p.CombatPower > 0) c.CombatPower = p.CombatPower;
+            c.GearScore = p.GearScore;
+            c.CombatPower = p.CombatPower;
         }
         c.IsSelf = _entities.SelfId == c.ActorId;
         if (string.IsNullOrEmpty(c.Name)) c.Name = c.IsSelf ? "You" : $"#{c.ActorId}";

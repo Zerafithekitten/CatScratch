@@ -257,14 +257,38 @@ internal static class InteractionChecks
             hub.SetDisplayOnly(false);
             Check(header.Visibility == Visibility.Visible, "Unlock restores the event header");
             hub.ClockOverride=()=>new DateTimeOffset(2026,10,13,14,0,30,TimeSpan.FromHours(2)); hub.Reload();
-            Check(list.Children.OfType<System.Windows.Controls.Border>().Count()==3 && list.Children.OfType<System.Windows.Controls.Border>().Count(b=>b.BorderBrush.HasAnimatedProperties)==2,
-                "Started events pulse while later events within the hour remain visible without pulsing");
+            Check(!list.Children.OfType<System.Windows.Controls.Border>().Any(),
+                "Started events leave Upcoming immediately without duplicate names from later occurrences");
+            cards.Saved.Positions["started-events"]=new(){Left=310,Top=220,Width=320};
+            var startedHub = new AionMeter.App.Windows.TimerHubWindow(cards,startedOnly:true) { ClockOverride=hub.ClockOverride };
+            windows.Add(startedHub); startedHub.Reload();
+            Check(startedHub.Left==310 && startedHub.Top==220 && startedHub.Width==320 && hub.Left!=startedHub.Left,
+                "Started events restore an independent movable module placement");
+            var startedRoot=(System.Windows.Controls.DockPanel)((System.Windows.Controls.Border)startedHub.Content).Child;
+            var startedList=(System.Windows.Controls.WrapPanel)startedRoot.Children[1];
+            string[] ActiveLabels()=>startedList.Children.OfType<System.Windows.Controls.Border>()
+                .Select(b=>((System.Windows.Controls.TextBlock)((System.Windows.Controls.Grid)b.Child).Children[2]).Text).ToArray();
+            Check(ActiveLabels().Order().SequenceEqual(new[]{"Open! · 02:30","Open! · 09:30"}),
+                "Started-only module shows event and Rift countdowns with their own durations");
+            Check(startedList.Children.OfType<System.Windows.Controls.Border>().All(b=>b.BorderBrush.HasAnimatedProperties),
+                "Started-only cards keep the existing pulsing style");
             hub.SetDisplayOnly(true);
-            Check(list.Children.OfType<System.Windows.Controls.Border>().Count(b=>b.BorderBrush.HasAnimatedProperties)==2,
-                "Locking preserves only active event border animation");
-            hub.ClockOverride=()=>new DateTimeOffset(2026,10,13,14,2,0,TimeSpan.FromHours(2)); hub.Reload();
-            Check(cards.NextEvents(hub.ClockOverride()).All(e=>e.StartsAt>hub.ClockOverride()) && list.Children.OfType<System.Windows.Controls.Border>().All(b=>!b.BorderBrush.HasAnimatedProperties),
-                "Started events expire at two minutes and upcoming borders stop pulsing");
+            startedHub.SetDisplayOnly(true);
+            Check(((FrameworkElement)startedRoot.Children[0]).Visibility==Visibility.Collapsed && ActiveLabels().Length==2,
+                "Started events support the meter's click-through appearance");
+            hub.ClockOverride=()=>new DateTimeOffset(2026,10,13,14,3,0,TimeSpan.FromHours(2)); hub.Reload();
+            startedHub.ClockOverride=hub.ClockOverride; startedHub.Reload();
+            Check(ActiveLabels().SequenceEqual(new[]{"Open! · 07:00"}),"Normal events expire at three minutes while Rift stays open");
+            Check(list.Children.OfType<System.Windows.Controls.Border>().Count()==1,
+                "The next recurring event returns to Upcoming after its active occurrence expires");
+            startedHub.ClockOverride=()=>new DateTimeOffset(2026,10,13,14,10,0,TimeSpan.FromHours(2)); startedHub.Reload();
+            Check(ActiveLabels().Length==0,"Rift disappears at exactly ten minutes");
+            cards.Saved.SelectedEvents=["shugo","kaira"];
+            startedHub.ClockOverride=()=>new DateTimeOffset(2026,10,13,13,0,30,TimeSpan.FromHours(2)); startedHub.Reload();
+            Check(ActiveLabels().Contains("Spawned") && ActiveLabels().Contains("Open! · 02:30"),
+                "Started bosses show Spawned without a countdown alongside normal event countdowns");
+            startedHub.ClockOverride=()=>new DateTimeOffset(2026,10,13,13,2,0,TimeSpan.FromHours(2)); startedHub.Reload();
+            Check(ActiveLabels().SequenceEqual(new[]{"Open! · 01:00"}),"Boss cards disappear at exactly two minutes");
             cards.Saved.SelectedEvents=["shugo","rift","invasion"];
             hub.ClockOverride=()=>new DateTimeOffset(2026,10,13,13,10,0,TimeSpan.FromHours(2)); hub.Reload();
             Check(list.Children.OfType<System.Windows.Controls.Border>().Count()==3 && cards.NextEvents(hub.ClockOverride()).Select(e=>e.StartsAt).Distinct().Count()==2,
@@ -322,14 +346,14 @@ internal static class InteractionChecks
             Check(cards.Saved.Sounds.Count == 8 && !cards.Saved.Sounds.Values.Any(s => s.Enabled), "All automatic events and tracked bosses have disabled sound preferences");
             var notes = new AionMeter.App.Windows.PatchNotesWindow(meter.Updates); windows.Add(notes);
             Check(notes.Content is not null, "Patch notes can open without a network request");
-            Check(notes.ReleaseTabs.Count == 5 && notes.ReleaseTabs.All(tag => AionMeter.Core.Updates.ReleaseVersion.Parse(tag)?.Channel == AionMeter.Core.Updates.UpdateChannel.Stable),
-                "Patch notes offer the latest five stable releases in descending version order offline");
+            Check(notes.ReleaseTabs.Count == 10 && notes.ReleaseTabs.All(tag => AionMeter.Core.Updates.ReleaseVersion.Parse(tag)?.Channel == AionMeter.Core.Updates.UpdateChannel.Stable),
+                "Patch notes offer the latest ten stable releases in descending version order offline");
             var oldestNotes = notes.ReleaseTabs[^1];
             notes.SelectRelease(oldestNotes);
             Check(notes.SelectedRelease == oldestNotes, "Older patch notes can be selected independently");
-            notes.SetReleases(Enumerable.Range(1, 6).Select(n => new AionMeter.Core.Updates.ReleaseNotePage($"v99.0.{n}", $"### Release {n}\n- Updated notes")), AionMeter.Core.Updates.UpdateChannel.Stable);
-            Check(notes.ReleaseTabs.Count == 5 && notes.ReleaseTabs[0] == "v99.0.6" && notes.SelectedRelease == "v99.0.6",
-                "Refreshing notes keeps five tabs and selects the newest release when the old selection drops out");
+            notes.SetReleases(Enumerable.Range(1, 11).Select(n => new AionMeter.Core.Updates.ReleaseNotePage($"v99.0.{n}", $"### Release {n}\n- Updated notes")), AionMeter.Core.Updates.UpdateChannel.Stable);
+            Check(notes.ReleaseTabs.Count == 10 && notes.ReleaseTabs[0] == "v99.0.11" && notes.SelectedRelease == "v99.0.11",
+                "Refreshing notes keeps ten tabs and selects the newest release when the old selection drops out");
             Check(notes.ContentsCount == 1, "Each selected release builds its own clickable contents above the detailed notes");
             Check(notes.WindowStyle == WindowStyle.None && notes.Background is System.Windows.Media.SolidColorBrush notesBg && notesBg.Color.A == 255,
                 "Patch notes use the custom CatScratch header and remain opaque");

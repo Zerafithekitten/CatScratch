@@ -131,6 +131,7 @@ public static class SampleRenderer
             case "events":
             case "events-locked":
             case "events-live":
+            case "events-started":
             case "event-settings":
             case "timer-card":
                 var cards = new TimerCards(meter, persistent: false);
@@ -149,7 +150,7 @@ public static class SampleRenderer
                     host = new EventPreferencesWindow(cards, () => 480, _ => { }, _ => { }, () => { }) { Height=o.Height??680 };
                     refresh=()=>{}; break;
                 }
-                var hub = new TimerHubWindow(cards) { Width = o.Width ?? 480, Height = o.Height??144, ClockOverride = () => o.TestMode ? DateTimeOffset.UtcNow : o.Window == "events-live" ? new DateTimeOffset(2026,10,13,14,0,30,TimeSpan.FromHours(2)) : new DateTimeOffset(2026, 10, 13, 13, 10, 0, TimeSpan.FromHours(2)) };
+                var hub = new TimerHubWindow(cards,startedOnly:o.Window=="events-started") { Width = o.Width ?? 480, Height = o.Height??144, ClockOverride = () => o.TestMode ? DateTimeOffset.UtcNow : o.Window is "events-live" or "events-started" ? new DateTimeOffset(2026,10,13,14,0,30,TimeSpan.FromHours(2)) : new DateTimeOffset(2026, 10, 13, 13, 10, 0, TimeSpan.FromHours(2)) };
                 WindowClickThrough.Attach(hub, () => o.Window == "events-locked");
                 host = hub;
                 refresh = hub.Reload;

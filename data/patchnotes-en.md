@@ -1,3 +1,36 @@
+## CatScratch v2.5.4-beta.4
+
+### Started events module
+
+- Move started entries out of Upcoming into a separate movable Started events module. Keep its position and open state independently; reopen it with the clock button in Upcoming events. Both modules support click-through and show/hide all windows.
+- Normal events show Open! with a remaining three-minute countdown; Spacetime Rift shows Open! for ten minutes; bosses show Spawned for two minutes without a countdown. Expired entries are removed automatically.
+- Avoid duplicate active-event names in Upcoming. Later recurring starts return there after the active occurrence expires. Keep the same timing and labels on detached scheduled-event cards.
+
+## CatScratch v2.5.4-beta.3
+
+### Easier updates and faster startup
+
+- Keep automatic update download, verification and extraction in the background. Show the meter notification and restart action only after preparation finishes; one click restarts into the prepared version. Retain successful-start cleanup and user data preservation.
+- Reduce startup data-loading allocations and defer optional windows, driver-help checks and old-update cleanup until after the main meter can appear. Keep automatic update timing and capture startup unchanged.
+- Expand patch notes to the ten newest versions, with a scrollable left version list, per-version notes and clickable contents.
+
+## CatScratch v2.5.4-beta.2
+
+### Reliability fixes
+
+- Keep CP and GS separate for same-named characters on different servers, including after cache reloads and delayed server identification.
+- Clear stale stats when an actor ID is reassigned, and retain known players when another same-named player arrives without a server identity.
+- Ignore incomplete name-cache entries instead of allowing them to break startup; handle unavailable cache files gracefully.
+- Expand regression checks for malformed packets, player identity, cache recovery and displayed stats. Existing death recap, boss bests, recent players, windows, performance and update checks remain covered.
+
+## CatScratch v2.5.4-beta.1
+
+### Group-search fixes
+
+- Read all occupied group-search slots even when empty slots occur in the middle. Keep names, CP and GS for members after a vacancy and preserve them when a new player fills it.
+- Clear retained group stats on a confirmed leave notification even if the current packet reader has not received a roster yet. Reject malformed leave messages and ignore member updates after leaving.
+- Validate the fix against the supplied join recording and regression tests for sparse groups. Damage and DPS calculations are unchanged.
+
 ## CatScratch v2.5.3
 
 ### Five releases in the patch notes window

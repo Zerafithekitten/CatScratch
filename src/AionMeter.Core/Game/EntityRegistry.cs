@@ -63,9 +63,9 @@ public sealed class EntityRegistry
     private readonly Dictionary<uint, UnownedEntity> _unowned = new();
     private readonly HashSet<int> _entitySkills = new();
     private readonly HashSet<uint> _classSkillUsers = new();
-    // Gear score and combat power by character name: the roster names its members, the world knows them by entity id.
+    // Gear score and combat power by character name and server: world actors use a separate entity id.
     // Kept across zones (names do not change on a loading screen).
-    private readonly Dictionary<string, (int Gear, long Power)> _gearByName = new();
+    private readonly Dictionary<(string Name, int Server), (int Gear, long Power)> _gearByName = new();
     private readonly GameData _data;
 
     public EntityRegistry(GameData data) => _data = data;
@@ -103,16 +103,20 @@ public sealed class EntityRegistry
         }
         p.FromCache = false;
         CacheVersion++;
+        if ((!string.IsNullOrWhiteSpace(name) && p.Name != name) || (serverId > 0 && p.ServerId > 0 && p.ServerId != serverId))
+        { p.GearScore = 0; p.CombatPower = 0; }
+        if (!string.IsNullOrWhiteSpace(p.Name) && !string.IsNullOrWhiteSpace(name) && p.Name != name)
+        { p.ServerId = 0; p.Class = GameClass.Unknown; }
         if (!string.IsNullOrWhiteSpace(name))
         {
             // A name belongs to one entity at a time: forget stale ids still carrying it.
             if (p.Name != name)
-                foreach (var other in _players.Values.Where(o => o.ActorId != actorId && o.Name == name && (serverId == 0 || o.ServerId == 0 || o.ServerId == serverId)).ToList())
+                foreach (var other in _players.Values.Where(o => o.ActorId != actorId && o.Name == name && serverId > 0 && o.ServerId == serverId).ToList())
                     _players.Remove(other.ActorId);
             p.Name = name;
-            ApplyGear(p);
         }
         if (serverId != 0) p.ServerId = serverId;
+        ApplyGear(p);
         if (cls != GameClass.Unknown) p.Class = cls;
         _npcs.Remove(actorId);
         _summonOwner.Remove(actorId);
@@ -215,25 +219,26 @@ public sealed class EntityRegistry
     public bool IsEntitySkill(int skillCode) => skillCode < 1_000_000 || _entitySkills.Contains(skillCode);
 
     /// <summary>
-    /// A character's gear score and combat power (0 = leave as it is), by name: from the party roster or the own record.
-    /// Every player with that name gets them, now and whenever they are announced later.
+    /// A character's gear score and combat power (0 = leave as it is), by name and server.
+    /// Only the exact character receives these values, including after a later announcement.
     /// </summary>
-    public void SetGear(string name, int gearScore, long combatPower)
+    public void SetGear(string name, int gearScore, long combatPower, int serverId = 0)
     {
         if (string.IsNullOrEmpty(name) || (gearScore <= 0 && combatPower <= 0)) return;
-        var (gear, power) = _gearByName.GetValueOrDefault(name);
+        var key = (name, serverId);
+        var (gear, power) = _gearByName.GetValueOrDefault(key);
         if (gearScore > 0) gear = gearScore;
         if (combatPower > 0) power = combatPower;
-        if (_gearByName.TryGetValue(name, out var known) && known == (gear, power)) return;
-        _gearByName[name] = (gear, power);
+        if (_gearByName.TryGetValue(key, out var known) && known == (gear, power)) return;
+        _gearByName[key] = (gear, power);
         foreach (var p in _players.Values)
-            if (p.Name == name) ApplyGear(p);
+            if (p.Name == name && p.ServerId == serverId) ApplyGear(p);
         CacheVersion++;
     }
 
     private void ApplyGear(PlayerInfo p)
     {
-        if (!_gearByName.TryGetValue(p.Name, out var g)) return;
+        if (!_gearByName.TryGetValue((p.Name, p.ServerId), out var g)) return;
         if (g.Gear > 0) p.GearScore = g.Gear;
         if (g.Power > 0) p.CombatPower = g.Power;
     }
@@ -314,7 +319,7 @@ public sealed class EntityRegistry
         if (state.MapId != 0) ZoneName ??= _data.MapName(state.MapId);
         foreach (var c in state.Players)
         {
-            if (c.GearScore > 0 || c.CombatPower > 0) _gearByName.TryAdd(c.Name, (c.GearScore, c.CombatPower));
+            if (c.GearScore > 0 || c.CombatPower > 0) _gearByName.TryAdd((c.Name, c.ServerId), (c.GearScore, c.CombatPower));
             if (_players.ContainsKey(c.Id)) continue;
             _players[c.Id] = new PlayerInfo
             {

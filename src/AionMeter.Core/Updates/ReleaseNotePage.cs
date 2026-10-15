@@ -25,5 +25,5 @@ public sealed record ReleaseNotePage(string Tag, string Markdown)
         pages.Where(p => ReleaseVersion.Parse(p.Tag) is { } version &&
                 (channel == UpdateChannel.Beta || version.Channel == UpdateChannel.Stable))
             .DistinctBy(p => ReleaseVersion.Parse(p.Tag))
-            .OrderByDescending(p => ReleaseVersion.Parse(p.Tag)).Take(5).ToArray();
+            .OrderByDescending(p => ReleaseVersion.Parse(p.Tag)).Take(10).ToArray();
 }
