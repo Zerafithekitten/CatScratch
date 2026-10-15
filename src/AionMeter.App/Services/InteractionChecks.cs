@@ -322,14 +322,14 @@ internal static class InteractionChecks
             Check(cards.Saved.Sounds.Count == 8 && !cards.Saved.Sounds.Values.Any(s => s.Enabled), "All automatic events and tracked bosses have disabled sound preferences");
             var notes = new AionMeter.App.Windows.PatchNotesWindow(meter.Updates); windows.Add(notes);
             Check(notes.Content is not null, "Patch notes can open without a network request");
-            Check(notes.ReleaseTabs.Count == 5 && notes.ReleaseTabs.All(tag => AionMeter.Core.Updates.ReleaseVersion.Parse(tag)?.Channel == AionMeter.Core.Updates.UpdateChannel.Stable),
-                "Patch notes offer the latest five stable releases in descending version order offline");
+            Check(notes.ReleaseTabs.Count == 10 && notes.ReleaseTabs.All(tag => AionMeter.Core.Updates.ReleaseVersion.Parse(tag)?.Channel == AionMeter.Core.Updates.UpdateChannel.Stable),
+                "Patch notes offer the latest ten stable releases in descending version order offline");
             var oldestNotes = notes.ReleaseTabs[^1];
             notes.SelectRelease(oldestNotes);
             Check(notes.SelectedRelease == oldestNotes, "Older patch notes can be selected independently");
-            notes.SetReleases(Enumerable.Range(1, 6).Select(n => new AionMeter.Core.Updates.ReleaseNotePage($"v99.0.{n}", $"### Release {n}\n- Updated notes")), AionMeter.Core.Updates.UpdateChannel.Stable);
-            Check(notes.ReleaseTabs.Count == 5 && notes.ReleaseTabs[0] == "v99.0.6" && notes.SelectedRelease == "v99.0.6",
-                "Refreshing notes keeps five tabs and selects the newest release when the old selection drops out");
+            notes.SetReleases(Enumerable.Range(1, 11).Select(n => new AionMeter.Core.Updates.ReleaseNotePage($"v99.0.{n}", $"### Release {n}\n- Updated notes")), AionMeter.Core.Updates.UpdateChannel.Stable);
+            Check(notes.ReleaseTabs.Count == 10 && notes.ReleaseTabs[0] == "v99.0.11" && notes.SelectedRelease == "v99.0.11",
+                "Refreshing notes keeps ten tabs and selects the newest release when the old selection drops out");
             Check(notes.ContentsCount == 1, "Each selected release builds its own clickable contents above the detailed notes");
             Check(notes.WindowStyle == WindowStyle.None && notes.Background is System.Windows.Media.SolidColorBrush notesBg && notesBg.Color.A == 255,
                 "Patch notes use the custom CatScratch header and remain opaque");

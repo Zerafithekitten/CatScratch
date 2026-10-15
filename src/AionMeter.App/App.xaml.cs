@@ -270,7 +270,7 @@ public partial class App : Application
             }
         }
         if (!Core.Updates.UpdateFeed.IsConfigured) { settings.CheckUpdates = false; settings.AutoInstallUpdates = false; }
-        settings.Save(); // persist any migration done while loading
+        // Persist startup migrations together after the service and release-channel transition below.
         UiText.Use(settings.Language);
         Func<Core.Game.GameData, IEventSource> factory = data => new LiveCapture(data, new LiveCaptureOptions
         {
@@ -320,11 +320,16 @@ public partial class App : Application
                 ExitProgram();
             }));
         SessionEnding += (_, end) => Log.Info($"Windows {end.ReasonSessionEnding}: closing");
-        if (_timerCards!.Saved.EventWindowOpen) ShowTimerHub();
+        Dispatcher.BeginInvoke(() =>
+        {
+            if (!IsExiting && _timerCards!.Saved.EventWindowOpen) ShowTimerHub();
+        }, DispatcherPriority.ApplicationIdle);
 
         // A new player's first start: without Npcap nothing can be measured — say so and offer the download.
-        if (!LiveCapture.IsNpcapInstalled())
-            Dispatcher.BeginInvoke(ShowNpcapHelp, DispatcherPriority.ApplicationIdle);
+        Dispatcher.BeginInvoke(() =>
+        {
+            if (!IsExiting && !LiveCapture.IsNpcapInstalled()) ShowNpcapHelp();
+        }, DispatcherPriority.ApplicationIdle);
 
         // Another start of the app asks this one to show the overlay.
         _showRequest = new EventWaitHandle(false, EventResetMode.AutoReset, ShowRequestName);
@@ -334,7 +339,7 @@ public partial class App : Application
         // New versions on GitHub: tray item, the overlay's update button and one notification per version.
         _meter.Updates.Changed += OnUpdatesChanged;
         _meter.Updates.Start();
-        Updater.CleanDownloads();
+        _ = Task.Run(Updater.CleanDownloads);
         if (e.Args.Contains("--updated")) // started by the installer after an in-app update
             Dispatcher.BeginInvoke(() => _tray?.ShowBalloon(AppInfo.Name,
                 string.Format(UiText.Current.UpdatedBalloon, _meter.Updates.CurrentDisplay)), DispatcherPriority.ApplicationIdle);
@@ -342,7 +347,10 @@ public partial class App : Application
         _timer = new DispatcherTimer(DispatcherPriority.Background) { Interval = TimeSpan.FromMilliseconds(200) };
         _timer.Tick += (_, _) => OnTick();
         _timer.Start();
-        if(settings.ShowPetTrackerModule) TogglePetModule();
+        Dispatcher.BeginInvoke(() =>
+        {
+            if (!IsExiting && settings.ShowPetTrackerModule) TogglePetModule();
+        }, DispatcherPriority.ApplicationIdle);
 
         // Developer switches: --demo, --replay <file.pcap> (instant), --open-last (breakdown of the newest fight).
         if (e.Args.Contains("--demo")) ToggleTestMode();

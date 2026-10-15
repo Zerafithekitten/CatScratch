@@ -157,7 +157,7 @@ public sealed class GameData
         JsonDocument doc;
         try
         {
-            doc = JsonDocument.Parse(File.ReadAllText(path), new JsonDocumentOptions { AllowTrailingCommas = true, CommentHandling = JsonCommentHandling.Skip });
+            doc = JsonDocument.Parse(File.ReadAllBytes(path), new JsonDocumentOptions { AllowTrailingCommas = true, CommentHandling = JsonCommentHandling.Skip });
         }
         catch (JsonException)
         {
@@ -166,7 +166,8 @@ public sealed class GameData
         using (doc)
         {
             if (doc.RootElement.ValueKind != JsonValueKind.Object) yield break;
-            foreach (var p in doc.RootElement.EnumerateObject()) yield return (p.Name, p.Value.Clone());
+            // The iterator owns the document until enumeration ends; each caller consumes values immediately.
+            foreach (var p in doc.RootElement.EnumerateObject()) yield return (p.Name, p.Value);
         }
     }
 

@@ -1,3 +1,11 @@
+## CatScratch v2.5.4-beta.3
+
+### Easier updates and faster startup
+
+- Keep automatic update download, verification and extraction in the background. Show the meter notification and restart action only after preparation finishes; one click restarts into the prepared version. Retain successful-start cleanup and user data preservation.
+- Reduce startup data-loading allocations and defer optional windows, driver-help checks and old-update cleanup until after the main meter can appear. Keep automatic update timing and capture startup unchanged.
+- Expand patch notes to the ten newest versions, with a scrollable left version list, per-version notes and clickable contents.
+
 ## CatScratch v2.5.4-beta.2
 
 ### Reliability fixes

@@ -50,13 +50,14 @@ public sealed class ReleaseNotePageTests
     }
 
     [Fact]
-    public void Latest_five_are_sorted_numerically_deduplicated_and_channel_filtered()
+    public void Latest_ten_are_sorted_numerically_deduplicated_and_channel_filtered()
     {
         ReleaseNotePage[] pages = [new("v2.5.2", "Updated"), new("2.5.2", "Old"), new("v2.5.10", "Ten"),
             new("v2.5.11-beta.2", "Beta"), new("v2.5.1", "One"), new("v2.5.0", "Zero"),
-            new("v2.4.8", "Eight"), new("v2.4.7", "Seven"), new("invalid", "Invalid")];
+            new("v2.4.8", "Eight"), new("v2.4.7", "Seven"), new("invalid", "Invalid"),
+            .. Enumerable.Range(1,10).Select(n => new ReleaseNotePage($"v2.3.{n}", "Older"))];
         var stable = ReleaseNotePage.Latest(pages, UpdateChannel.Stable);
-        Assert.Equal(new[] { "v2.5.10", "v2.5.2", "v2.5.1", "v2.5.0", "v2.4.8" }, stable.Select(p => p.Tag));
+        Assert.Equal(new[] { "v2.5.10", "v2.5.2", "v2.5.1", "v2.5.0", "v2.4.8", "v2.4.7", "v2.3.10", "v2.3.9", "v2.3.8", "v2.3.7" }, stable.Select(p => p.Tag));
         Assert.Equal("Updated", stable[1].Markdown);
         Assert.Equal("v2.5.11-beta.2", ReleaseNotePage.Latest(pages, UpdateChannel.Beta)[0].Tag);
     }

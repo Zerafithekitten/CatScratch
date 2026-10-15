@@ -18,7 +18,7 @@ Open the **trophy icon** in the DPS meter. Browse and search all bundled real du
 
 **Stable is v2.5.2.** Future updates are published to the `beta` branch and as GitHub prereleases first, unless explicitly promoted to Stable.
 
-Settings > General > Updates > **Update channel** offers Stable and Beta choices. Beta builds are GitHub prereleases and will not replace the stable download. Automatic checks run shortly after startup and every ten minutes, then download, verify and extract an available update in the background. The meter offers **Restart to update** when preparation finishes. Replacing running program files and restarting require your click. Old program backups, the prepared payload and downloaded ZIP are removed only after the new version successfully starts; recovery backups remain on failure. Settings, saved fights, boss bests and recent-player records are preserved.
+Settings > General > Updates > **Update channel** offers Stable and Beta choices. Beta builds are GitHub prereleases and will not replace the stable download. Automatic checks run shortly after startup and every ten minutes, then download, verify and extract an available update in the background. Only after preparation finishes does the meter show the update notice and **Restart to update** button; a Windows notification announces it once per version. Replacing running program files and restarting require your click. Old program backups, the prepared payload and downloaded ZIP are removed only after the new version successfully starts; recovery backups remain on failure. Settings, saved fights, boss bests and recent-player records are preserved.
 
 Automatic checking and preparation are enabled by default and once when migrating an older installation; you can disable them in Settings > General > Updates. Stable 2.5.1 sorts after all 2.5.1 betas, so Beta.5 installations receive this final release too. When a Beta installation first starts the promoted Stable build, its saved update channel automatically returns to Stable. Selecting Beta again afterward is respected across normal restarts. Returning to Stable can otherwise install an older version.
 
@@ -165,7 +165,7 @@ Use borderless windowed mode to keep the meter visible above the game.
 - Separate observed boss timers; optional fight saving, retaining the last ten saved fights.
 - Colored EVENT / PVP / BOSS badges and readable boss panels when locked.
 - Optional per-event sounds with preview, volume, reminder timing and custom WAV or MP3 files up to ten seconds and 10 MB. The selected filename is displayed; invalid files show a red error with the reason.
-- Patch notes show the latest five releases in compact version tabs, newest first, with individual changes, clickable contents, offline notes and GitHub refresh. Stable shows stable releases; Beta also includes beta notes.
+- Patch notes show the latest ten releases in compact version tabs, newest first, with individual changes, clickable contents, offline notes and GitHub refresh. Stable shows stable releases; Beta also includes beta notes.
 - English by default, selectable German, Russian and French in Settings > General > Language; patch notes remain English.
 - Verified GitHub updates for installed and portable copies; old successful update staging and backups are removed.
 - Optional 60-second recent-debug buffer alongside continuous packet recording, with asynchronous PCAP export.
