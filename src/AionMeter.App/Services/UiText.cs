@@ -165,7 +165,7 @@ public sealed partial class UiText
     public string EmptyParty { get; init; } = "Your party appears here as soon as someone lands a hit.";
     public string TopHit { get; init; } = "TOP HIT";
     public string TopHitBy { get; init; } = "Biggest single hit — {0}";
-    public string TipScrollFights { get; init; } = "Mouse wheel here: step through fights";
+    public string TipScrollFights { get; init; } = "Mouse wheel here: open fight history";
     public string Defeated { get; init; } = "Defeated";
     public string UnknownBoss { get; init; } = "Unknown boss";
     /// <summary>"counted from 82% HP": the meter started (or restarted) after the boss had already lost the rest.</summary>
@@ -279,8 +279,8 @@ public sealed partial class UiText
     public string FilterAll { get; init; } = "All";
     public string FilterBosses { get; init; } = "Bosses";
     public string FilterKills { get; init; } = "Kills";
-    public string ShowInOverlay { get; init; } = "Show in overlay";
-    public string TipShowInOverlay { get; init; } = "Show this fight in the overlay (live returns with the next pull)";
+    public string ShowInOverlay { get; init; } = "Open statistics";
+    public string TipShowInOverlay { get; init; } = "Open this fight in its own statistics window; the meter stays Live";
     public string HistoryEmpty { get; init; } = "Kill a boss and it lands here automatically.";
     public string PlayersShort { get; init; } = "pl.";
     public string JustNow { get; init; } = "just now";
@@ -322,7 +322,7 @@ public sealed partial class UiText
     public string HistBossesLong { get; init; } = "Bosses + longer fights";
     public string HistAll { get; init; } = "Everything (5 s and longer)";
     public string LongerThan { get; init; } = "Longer than (s)";
-    public string HistoryHint { get; init; } = "Saved fights stay pickable in the overlay (Fights menu or mouse wheel over the title) and in Fight history.";
+    public string HistoryHint { get; init; } = "Open earlier fights from the Statistics menu or Fight history. Their statistics open separately; the meter stays Live.";
     public string HistoryInfo { get; init; } = "{0} fights saved in {1}";
     public string SecCapture { get; init; } = "CAPTURE";
     public string NetworkAdapter { get; init; } = "Network adapter";
@@ -491,7 +491,7 @@ public sealed partial class UiText
         EmptyParty = "Группа появится здесь после первого удара.",
         TopHit = "МАКС. УДАР",
         TopHitBy = "Самый сильный удар — {0}",
-        TipScrollFights = "Колесо мыши здесь: листать бои",
+        TipScrollFights = "Колесо мыши: открыть историю боёв",
         Defeated = "Повержен",
         UnknownBoss = "Неизвестный босс",
         CountedFrom = "учтено с {0} HP",
@@ -611,8 +611,8 @@ public sealed partial class UiText
         FilterAll = "Все",
         FilterBosses = "Боссы",
         FilterKills = "Убийства",
-        ShowInOverlay = "Показать в оверлее",
-        TipShowInOverlay = "Показать этот бой в оверлее (с началом нового боя вернётся живой режим)",
+        ShowInOverlay = "Открыть статистику",
+        TipShowInOverlay = "Открыть статистику отдельно; счётчик остаётся в режиме Live",
         HistoryEmpty = "Нет сохранённых боёв. Нажмите кнопку сохранения после боя.",
         PlayersShort = "игр.",
         JustNow = "только что",
@@ -652,7 +652,7 @@ public sealed partial class UiText
         HistBossesLong = "Боссы + длинные бои",
         HistAll = "Все (от 5 с)",
         LongerThan = "Длиннее (с)",
-        HistoryHint = "Сохранённые бои можно выбрать в оверлее (меню «Бои» или колесо мыши над названием) и в окне истории.",
+        HistoryHint = "Статистика предыдущих боёв открывается отдельно из меню статистики или истории. Счётчик остаётся в режиме Live.",
         HistoryInfo = "Сохранено боёв: {0} — {1}",
         SecCapture = "ЗАХВАТ",
         NetworkAdapter = "Сетевой адаптер",

@@ -623,15 +623,18 @@ public partial class App : Application
 
     public void ShowBreakdown(IFightView view, uint actorId) => ShowBreakdown(view, view, actorId);
 
-    private void ShowBreakdown(object key, IFightView view, uint actorId)
+    internal void ShowBreakdown(object key, IFightView view, uint actorId, MeterService? source = null)
     {
         if (_breakdowns.TryGetValue(key, out var existing))
         {
             existing.Select(actorId);
-            Activate(existing);
+            if(source?.Settings.Transient!=true) Activate(existing);
             return;
         }
-        var w = new BreakdownWindow(view, actorId, _meter.Data, _meter.Icons, _meter.Portraits);
+        var meter=source ?? _meter;
+        var w = new BreakdownWindow(view, actorId, meter.Data, meter.Icons, meter.Portraits);
+        if(meter.Settings.Transient)
+        { w.Left=-30000; w.Top=-30000; w.WindowStartupLocation=WindowStartupLocation.Manual; w.ShowInTaskbar=false; w.ShowActivated=false; }
         // Detailed statistics are interactive tools, independent of the meter's display lock and opacity.
         _breakdowns[key] = w;
         w.Closed += (_, _) => _breakdowns.Remove(key);
@@ -688,10 +691,9 @@ public partial class App : Application
     }
     public void ToggleLanguage() => SetLanguage(UiText.Languages[(Array.IndexOf(UiText.Languages, UiText.Current.Code) + 1) % UiText.Languages.Length]);
 
-    public void ShowSavedInOverlay(Core.Storage.HistoryEntry entry)
+    public void ShowSavedStatistics(Core.Storage.HistoryEntry entry)
     {
-        if (!_overlay.IsVisible) SetOverlayVisible(true);
-        _overlay.ShowSaved(entry);
+        _overlay.OpenSavedStatistics(entry);
     }
 
     public void ShowHistory()

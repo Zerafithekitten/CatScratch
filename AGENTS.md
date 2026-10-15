@@ -8,6 +8,8 @@ The DPS meter must provide a small trophy icon that opens permanent personal bos
 
 Keep the Statistics menu focused on live, session and saved fights. Do not duplicate Boss personal bests or Last played with there; they have dedicated meter buttons.
 
+The DPS meter always follows Live. Selecting any earlier session or saved fight opens its statistics immediately in a separate existing-style breakdown window, rather than switching the meter away from Live. Reuse an already open window for the same fight.
+
 The Feedback section only contains feedback controls. Do not duplicate Boss personal bests or Last played with there either.
 
 Patch notes show the ten newest releases in separate compact version tabs in a vertical sidebar on the left. Each tab shows only its own changes on the right, with a clickable contents overview above detailed explanations. Do not display repeated cumulative history in a tab when those versions have their own tabs.

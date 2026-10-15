@@ -25,3 +25,7 @@ The isolated process test confirms a zero console handle, one start per game ses
 - Quiet watcher process tests passed; no console was allocated.
 - The supplied capture was replayed locally; all three rosters now contain five members.
 - README contents anchors and the compact Capture settings render were checked.
+
+## Direct historical statistics
+
+Earlier session and saved-fight selections now open the existing breakdown window directly, using the selected fight and its own character by default. The overlay has no historical selection state and always follows Live. Window checks cover immediate opening, reusing the same session window, saved-fight opening and a new live fight updating the meter while old statistics retain their values. The title wheel opens the history picker without changing the meter; the saved-history action is labelled Open statistics in all four languages.

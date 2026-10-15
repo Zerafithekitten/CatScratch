@@ -168,7 +168,7 @@ public partial class HistoryWindow : Window
 
     private void ShowInOverlay_Click(object sender, RoutedEventArgs e)
     {
-        if (_entry is not null) AppHost.Current.ShowSavedInOverlay(_entry);
+        if (_entry is not null) AppHost.Current.ShowSavedStatistics(_entry);
     }
 
     private void Filter_Changed(object sender, RoutedEventArgs e)

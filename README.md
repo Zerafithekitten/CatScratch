@@ -2,12 +2,12 @@
 
 A separate, always-on-top Windows DPS meter for **AION 2**, by Zerafithekitten. Track your own fights and confirmed party members in a compact dark interface with turquoise accents and purple paw branding.
 
-[Download Stable](https://github.com/Zerafithekitten/CatScratch/releases/latest) · [Download Beta](https://github.com/Zerafithekitten/CatScratch/releases/tag/v2.5.6-beta.5) · [Release history](https://github.com/Zerafithekitten/CatScratch/releases) · [Report a bug / request a feature](https://github.com/Zerafithekitten/CatScratch/issues/new/choose)
+[Download Stable](https://github.com/Zerafithekitten/CatScratch/releases/latest) · [Download Beta](https://github.com/Zerafithekitten/CatScratch/releases/tag/v2.5.6-beta.6) · [Release history](https://github.com/Zerafithekitten/CatScratch/releases) · [Report a bug / request a feature](https://github.com/Zerafithekitten/CatScratch/issues/new/choose)
 
 | Channel | Current version | What it includes |
 | --- | --- | --- |
 | **Stable** | **[v2.5.5](https://github.com/Zerafithekitten/CatScratch/releases/tag/v2.5.5)** | Boss personal bests, recent teammates, death recap, background updates, separate Started events, improved group-search handling and ten patchnotes tabs on the left. |
-| **Beta** | **[v2.5.6-beta.5](https://github.com/Zerafithekitten/CatScratch/releases/tag/v2.5.6-beta.5)** | Everything in Stable, plus optional quiet automatic start/close with AION 2, a five-member roster repair and a capture-folder shortcut. |
+| **Beta** | **[v2.5.6-beta.6](https://github.com/Zerafithekitten/CatScratch/releases/tag/v2.5.6-beta.6)** | Everything in Stable, plus optional quiet automatic start/close with AION 2, a five-member roster repair and a capture-folder shortcut. |
 
 English is the default. German, Russian and French are also available. Screenshots use synthetic sample data; names and numbers are examples. Event-module previews show **v2.5.4-beta.4**.
 
@@ -116,7 +116,7 @@ It closes when fresh positive own HP or a map reload confirms the character is a
 
 ## Fight selection and saved fights
 
-Use **Statistics** for the live fight, current-session fights and **All saved fights**. Boss bests and recent teammates have their own buttons; they are not duplicated in Statistics or Feedback.
+Use **Statistics** for the live fight, current-session fights and **All saved fights**. In the current Beta, selecting an earlier session or saved fight opens its detailed statistics immediately in a separate window, starting with your own character when available. The DPS meter stays on **Live** throughout; opening history never replaces its current fight or room stats. Repeated clicks on the same fight reuse its statistics window. Boss bests and recent teammates have their own buttons; they are not duplicated in Statistics or Feedback.
 
 Saving is optional. Press the **save button after combat** to keep a full fight. The saved-fight history retains the **ten newest saved fights**. This limit applies to full fight records only, not permanent boss bests or recent teammates. Automatic saving is disabled by default.
 
@@ -244,7 +244,7 @@ This keeps the watcher separate from the program files that an update replaces, 
 - The watcher does not capture game traffic, download updates, upload files, read chat or ask for account credentials. Network capture and normal update checks belong to the meter after it starts.
 - The task runs for the signed-in user with the highest available privileges, matching CatScratch's existing administrator requirement. It does not create a SYSTEM service or store your Windows password.
 - The shipped local script uses `-ExecutionPolicy Bypass` for its own PowerShell process. CatScratch does not change the machine-wide PowerShell execution policy. Managed Windows restrictions may still prevent it from running; failed setup is reported rather than silently enabling the option.
-- Scripts and configuration are kept locally in `userdata/game-start`. You can inspect the [watcher source](https://github.com/Zerafithekitten/CatScratch/blob/v2.5.6-beta.5/src/AionMeter.App/Services/GameLifetime.cs) and [windowless launcher source](https://github.com/Zerafithekitten/CatScratch/blob/v2.5.6-beta.5/src/AionMeter.App/Launcher/GameWatcherLauncher.cs).
+- Scripts and configuration are kept locally in `userdata/game-start`. You can inspect the [watcher source](https://github.com/Zerafithekitten/CatScratch/blob/v2.5.6-beta.6/src/AionMeter.App/Services/GameLifetime.cs) and [windowless launcher source](https://github.com/Zerafithekitten/CatScratch/blob/v2.5.6-beta.6/src/AionMeter.App/Launcher/GameWatcherLauncher.cs).
 
 ### Why no PowerShell window should appear
 

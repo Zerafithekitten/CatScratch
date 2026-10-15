@@ -20,8 +20,6 @@ public partial class OverlayWindow : Window, IDisplayAppearance
     private readonly MeterService _meter;
     private readonly AppSettings _settings;
     private readonly OverlayViewModel _vm = new();
-    private Guid? _segment; // in-memory segment; null = live
-    private SavedFight? _saved; // a fight loaded from history (takes precedence over _segment)
     private nint _hwnd;
     private readonly DragAnywhere _drag;
     private long _npcapCheckedAt = long.MinValue;
@@ -34,7 +32,6 @@ public partial class OverlayWindow : Window, IDisplayAppearance
         return brush;
     }
 
-    private sealed record SavedFight(HistoryEntry Entry, FightRecord Record, RecordFightView View, string Title);
 
     /// <summary>The render tool's fight clock for animation frames (Unix ms); null = real time.</summary>
     internal static Func<long>? ClockOverride { get; set; }
@@ -253,36 +250,11 @@ public partial class OverlayWindow : Window, IDisplayAppearance
         ShellTitle.Text = _meter.DemoRunning ? "CatScratch · TEST" : "CatScratch";
         _vm.ShowGear = _settings.ShowGear;
         _vm.ShowCombatPower = _settings.ShowCombatPower ?? _settings.ShowGear;
-        // Looking at an old fight when a new pull starts: jump back to live so the fight is never missed.
-        if ((_saved is not null || _segment is not null) &&
-            _meter.Tracker.Segments() is [{ IsActive: true } running, ..] && running.StartedAt > _selectedAt)
-        {
-            _saved = null;
-            _segment = null;
-        }
-
-        EncounterSnapshot? personalSnapshot;
-        if (_saved is { } saved)
-        {
-            personalSnapshot = saved.Record.Summary;
-            _showingPartyPreview = false;
-            _vm.Apply(saved.Record.Summary with { Title = saved.Title, Zone = _meter.DisplayZone(saved.Record.Summary.Zone) },
-                _settings.MaxRows, _settings.BarsRelativeToTop);
-            _vm.SetSegment("saved", saved.Entry.StartedAt.ToString("dd.MM HH:mm"));
-        }
-        else
         {
             var now = ClockOverride?.Invoke() ?? DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
-            var snap = _meter.Tracker.Snapshot(_segment, now);
-            if (snap is null && _segment is not null)
-            {
-                // The selected segment fell out of the in-memory list.
-                _segment = null;
-                snap = _meter.Tracker.Snapshot(null, now);
-            }
+            var snap = _meter.Tracker.Snapshot(null, now);
             var party = _meter.PartyPreview.Snapshot();
-            personalSnapshot = snap;
-            if (_segment is null && !_meter.PartyPreview.InDungeon && party.Members.Count > 0 &&
+            if (!_meter.PartyPreview.InDungeon && party.Members.Count > 0 &&
                 (snap is null || (party.InRoom && !snap.IsActive)))
             {
                 if (!_showingPartyPreview || _partyPreviewRevision != party.Revision || _partyGearVisibility != (_vm.ShowGear, _vm.ShowCombatPower))
@@ -296,13 +268,13 @@ public partial class OverlayWindow : Window, IDisplayAppearance
             {
                 _showingPartyPreview = false;
                 _vm.Apply(snap, _settings.MaxRows, _settings.BarsRelativeToTop);
-                _vm.SetSegment(_segment is null ? "live" : "session", snap?.StartedAt.ToString("HH:mm"));
+                _vm.SetSegment("live", snap?.StartedAt.ToString("HH:mm"));
             }
+            RefreshPersonal(_showingPartyPreview ? null : snap);
         }
-        if (!_settings.Transient && !_meter.DemoRunning && _saved is null && _segment is null && _meter.LiveIdentity.ActorId is null)
+        if (!_settings.Transient && !_meter.DemoRunning && _meter.LiveIdentity.ActorId is null)
             foreach (var row in _vm.Rows) row.IsSelf = false;
         if (!_settings.ShowBossPanel) _vm.HasBoss = false;
-        RefreshPersonal(_showingPartyPreview ? null : personalSnapshot);
         // The instance's time limit (or the wait after entering), whatever fight is shown: it is about where you are now.
         var wall = ClockOverride?.Invoke() ?? DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
         _vm.SetLimit(_meter.Tracker.NextTimer(wall), wall);
@@ -528,14 +500,11 @@ public partial class OverlayWindow : Window, IDisplayAppearance
 
     private void OpenBreakdown(uint actorId)
     {
-        if (_saved is { } saved) AppHost.Current.ShowBreakdown(saved.View, actorId);
-        else if (_vm.SegmentId is { } seg) AppHost.Current.ShowBreakdown(seg, actorId);
+        if (_vm.SegmentId is { } seg) AppHost.Current.ShowBreakdown(seg, actorId);
     }
 
     private EncounterSnapshot? ShownSummary() =>
-        _saved is { } saved
-            ? saved.Record.Summary with { Title = saved.Title }
-            : _vm.SegmentId is { } seg ? _meter.Tracker.Snapshot(seg, DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()) : null;
+        _vm.SegmentId is { } seg ? _meter.Tracker.Snapshot(seg, DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()) : null;
 
     private void Row_Click(object sender, MouseButtonEventArgs e)
     {
@@ -614,21 +583,10 @@ public partial class OverlayWindow : Window, IDisplayAppearance
         return list;
     }
 
-    private bool IsSelected(PickItem item) =>
-        item.Saved is { } h ? _saved?.Entry.FileName == h.FileName : _saved is null && _segment == item.Segment;
-
-    private void SelectLive()
+    private void OpenStatistics(PickItem item)
     {
-        _saved = null;
-        _segment = null;
-        Refresh();
-    }
-
-    private DateTimeOffset _selectedAt = DateTimeOffset.MinValue;
-
-    private void Select(PickItem item)
-    {
-        _selectedAt = DateTimeOffset.Now;
+        IFightView view;
+        object key;
         if (item.Saved is { } h)
         {
             if (_meter.History.Load(h.Path) is not { } record)
@@ -636,14 +594,18 @@ public partial class OverlayWindow : Window, IDisplayAppearance
                 AppHost.Current.ShowHistory(); // file vanished or is unreadable: let the history window refresh
                 return;
             }
-            _saved = new SavedFight(h, record, new RecordFightView(record), _meter.DisplayTitle(h));
-            _segment = null;
+            view=new RecordFightView(record);
+            key=h.Path;
         }
-        else
+        else if(item.Segment is { } segment)
         {
-            _saved = null;
-            _segment = item.Segment;
+            view=new LiveFightView(_meter.Tracker,segment);
+            key=segment;
         }
+        else return;
+        var summary=view.Summary();
+        var player=summary?.Combatants.FirstOrDefault(c=>c.IsSelf) ?? summary?.Combatants.FirstOrDefault();
+        if(player is not null) AppHost.Current.ShowBreakdown(key,view,player.ActorId,_meter);
         Refresh();
     }
 
@@ -660,9 +622,9 @@ public partial class OverlayWindow : Window, IDisplayAppearance
         {
             Header = PickHeader(UiText.Current.Live, UiText.Current.LiveHint, null, 0, EncounterEndReason.None, active: true, partyDps: 0, portrait: null),
             IsCheckable = true,
-            IsChecked = _saved is null && _segment is null,
+            IsChecked = true,
         };
-        live.Click += (_, _) => SelectLive();
+        live.Click += (_, _) => Refresh();
         menu.Items.Add(live);
 
         var items = BuildFightList(SavedInMenu);
@@ -685,10 +647,10 @@ public partial class OverlayWindow : Window, IDisplayAppearance
             {
                 Header = PickHeader(item.Title, meta, item.SelfDps > 0 ? item.SelfDps : null, item.Place, item.Reason, item.Active, item.PartyDps, item.Portrait),
                 IsCheckable = true,
-                IsChecked = IsSelected(item),
+                IsChecked = false,
             };
             var pick = item;
-            row.Click += (_, _) => Select(pick);
+            row.Click += (_, _) => OpenStatistics(pick);
             menu.Items.Add(row);
         }
         if (items.Count == 0)
@@ -782,22 +744,17 @@ public partial class OverlayWindow : Window, IDisplayAppearance
         return grid;
     }
 
-    /// <summary>Mouse wheel over the title steps through fights: down = older, up = newer, past the newest = live.</summary>
+    /// <summary>Browse the history menu without changing the live meter.</summary>
     private void Title_MouseWheel(object sender, MouseWheelEventArgs e)
     {
-        var items = BuildFightList(SavedInMenu);
-        var index = items.FindIndex(IsSelected); // -1 = live
-        if (_saved is null && _segment is null) index = -1;
-        index += e.Delta < 0 ? 1 : -1;
-        if (index < 0) SelectLive();
-        else if (index < items.Count) Select(items[index]);
+        CreateFightMenu((UIElement)sender).IsOpen=true;
         e.Handled = true;
     }
 
-    /// <summary>Called by the history window to show a saved fight in the overlay.</summary>
-    public void ShowSaved(HistoryEntry entry)
+    /// <summary>Open saved statistics while the meter continues following live combat.</summary>
+    public void OpenSavedStatistics(HistoryEntry entry)
     {
-        Select(new PickItem(entry.Title, entry.StartedAt, entry.CombatMs, entry.Reason, false,
+        OpenStatistics(new PickItem(entry.Title, entry.StartedAt, entry.CombatMs, entry.Reason, false,
             entry.SelfDps, entry.SelfPlace, entry.PartyDps, null, entry));
     }
 
@@ -832,8 +789,6 @@ public partial class OverlayWindow : Window, IDisplayAppearance
     /// <summary>Back to the live view (after a restart of the meter: empty until the next hit).</summary>
     public void ShowLive()
     {
-        _segment = null;
-        _saved = null;
         Refresh();
     }
 

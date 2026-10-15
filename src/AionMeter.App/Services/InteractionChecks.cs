@@ -406,7 +406,12 @@ internal static class InteractionChecks
             var picks = fightMenu.Items.OfType<System.Windows.Controls.MenuItem>().Where(item => item.IsCheckable).ToArray();
             Check(picks.Length > 1 && picks.Any(item => item.IsChecked), "Compact fight menu retains live and encounter selections");
             picks[1].RaiseEvent(new RoutedEventArgs(System.Windows.Controls.MenuItem.ClickEvent));
-            Check(activeModel.SegmentId == segment, "Compact fight menu selects the requested encounter");
+            var sessionStats=Application.Current.Windows.OfType<Windows.BreakdownWindow>().Single(w=>!windows.Contains(w));
+            windows.Add(sessionStats); sessionStats.ReloadNow();
+            Check(sessionStats.IsVisible && ((System.Windows.Controls.TextBlock)sessionStats.FindName("PlayerName")).Text=="Sample" &&
+                activeOverlay.CreateFightMenu(activeOverlay).Items.OfType<System.Windows.Controls.MenuItem>().First().IsChecked,
+                "Selecting an earlier fight opens its statistics immediately while the meter stays Live");
+            var sessionDamage=((System.Windows.Controls.TextBlock)sessionStats.FindName("StatDamage")).Text;
             picks[0].RaiseEvent(new RoutedEventArgs(System.Windows.Controls.MenuItem.ClickEvent));
             Check(activeOverlay.CreateFightMenu(activeOverlay).Items.OfType<System.Windows.Controls.MenuItem>().First().IsChecked,
                 "Compact fight menu returns to live tracking");
@@ -424,7 +429,9 @@ internal static class InteractionChecks
             var previousFight = activeOverlay.CreateFightMenu(activeOverlay).Items.OfType<System.Windows.Controls.MenuItem>()
                 .Where(item => item.IsCheckable).ElementAt(1);
             previousFight.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.MenuItem.ClickEvent));
-            Check(activeModel.SegmentId == segment, "Explicit fight selection remains available while room stats exist");
+            Check(activeModel.Title=="Room stats" && activeModel.SegmentId is null && sessionStats.IsVisible &&
+                Application.Current.Windows.OfType<Windows.BreakdownWindow>().All(w=>windows.Contains(w)),
+                "Historical statistics stay separate from room stats and repeated clicks reuse their window");
             activeOverlay.ShowLive();
             Check(activeModel.Title == "Room stats", "Returning to live restores the current group-search stats");
             meter.PartyPreview.Observe(new AionMeter.Core.Events.ZoneChangedEvent(1_000_000,600001,"Dungeon",true,true));
@@ -437,6 +444,13 @@ internal static class InteractionChecks
             Check(manuallySaved is not null && meter.History.Load(manuallySaved) is { } && !meter.CanSaveLastFight,
                 "Manual save writes a readable fight and disables duplicate saving");
             Check(meter.SaveLastFight() is null, "Repeated Save last fight does not duplicate statistics");
+            var savedEntry=meter.History.List().Single(e=>e.Path==manuallySaved);
+            activeOverlay.OpenSavedStatistics(savedEntry);
+            var savedStats=Application.Current.Windows.OfType<Windows.BreakdownWindow>().Single(w=>!windows.Contains(w));
+            windows.Add(savedStats); savedStats.ReloadNow();
+            Check(savedStats.IsVisible && ((System.Windows.Controls.TextBlock)savedStats.FindName("StatDamage")).Text==sessionDamage &&
+                activeOverlay.CreateFightMenu(activeOverlay).Items.OfType<System.Windows.Controls.MenuItem>().First().IsChecked,
+                "Saved fight statistics open directly without replacing the live meter");
             if (historyBefore == 0)
             {
                 meter.DeleteSavedFights();
@@ -444,6 +458,11 @@ internal static class InteractionChecks
                     "Deleting saved fights removes statistics and allows saving the last fight again");
             }
             else meter.History.Delete(manuallySaved!);
+            meter.Tracker.Process(new AionMeter.Core.Events.DamageEvent(1_000_001,1,501,17010000,250,Core.Events.HitFlags.None));
+            activeOverlay.Refresh(); sessionStats.ReloadNow();
+            Check(activeModel.SegmentId!=segment && activeModel.HasData &&
+                ((System.Windows.Controls.TextBlock)sessionStats.FindName("StatDamage")).Text==sessionDamage,
+                "A new live fight updates the meter while the historical statistics retain their original values");
             var gearPreview = new AionMeter.App.ViewModels.OverlayViewModel();
             foreach (var gsVisible in new[] { true, false })
             foreach (var cpVisible in new[] { true, false })
