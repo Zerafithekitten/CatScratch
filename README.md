@@ -2,14 +2,14 @@
 
 A separate, always-on-top Windows DPS meter for **AION 2**, by Zerafithekitten. Track your own fights and confirmed party members in a compact dark interface with turquoise accents and purple paw branding.
 
-[Download Stable](https://github.com/Zerafithekitten/CatScratch/releases/latest) · [Download Beta](https://github.com/Zerafithekitten/CatScratch/releases/tag/v2.5.4-beta.3) · [Release history](https://github.com/Zerafithekitten/CatScratch/releases) · [Report a bug / request a feature](https://github.com/Zerafithekitten/CatScratch/issues/new/choose)
+[Download Stable](https://github.com/Zerafithekitten/CatScratch/releases/latest) · [Download Beta](https://github.com/Zerafithekitten/CatScratch/releases/tag/v2.5.4-beta.4) · [Release history](https://github.com/Zerafithekitten/CatScratch/releases) · [Report a bug / request a feature](https://github.com/Zerafithekitten/CatScratch/issues/new/choose)
 
 | Channel | Current version | What it includes |
 | --- | --- | --- |
 | **Stable** | **[v2.5.3](https://github.com/Zerafithekitten/CatScratch/releases/tag/v2.5.3)** | Boss personal bests, recent teammates, death recap, background updates and five patchnotes tabs on the left. |
-| **Beta** | **[v2.5.4-beta.3](https://github.com/Zerafithekitten/CatScratch/releases/tag/v2.5.4-beta.3)** | Everything in Stable, plus group-search fixes, more reliable CP/GS identity and cache handling, improved startup, ready-only update notices and **ten** patchnotes tabs. |
+| **Beta** | **[v2.5.4-beta.4](https://github.com/Zerafithekitten/CatScratch/releases/tag/v2.5.4-beta.4)** | Everything in Stable, plus the separate **Started events** module, group-search fixes, more reliable CP/GS identity and cache handling, improved startup, ready-only update notices and **ten** patchnotes tabs. |
 
-English is the default. German, Russian and French are also available. Screenshots below use synthetic sample data from **v2.5.4-beta.3**; names and numbers are examples.
+English is the default. German, Russian and French are also available. Screenshots use synthetic sample data; names and numbers are examples. Event-module previews show **v2.5.4-beta.4**.
 
 ## Contents
 
@@ -141,7 +141,19 @@ The bundled catalog contains confirmed Global monster-source mappings for 165 pe
 
 ## Events, boss timers and sounds
 
-Selected events and enabled world-boss timers within the next hour appear as compact movable cards. Started events remain visible for two minutes with a pulsing border. The event window restores its previous position and open state.
+Selected events and enabled world-boss timers within the next hour appear as compact movable cards. Both modules restore their own positions and open states.
+
+**Beta: Upcoming and Started are separate.** At the start, an entry leaves Upcoming and moves into the movable **Started events** module. Open that module with the small clock button in the Upcoming header; drag its header or cards to place it, and use its X to close it. Click-through and show/hide all windows work for both modules.
+
+| Started entry | Text | Visibility |
+| --- | --- | --- |
+| Event | **Open!** + remaining countdown | 3 minutes |
+| Spacetime Rift | **Open!** + remaining countdown | 10 minutes |
+| Boss | **Spawned**, no countdown | 2 minutes |
+
+Expired entries disappear automatically. While an event is active, a later recurrence with the same name is held out of Upcoming; its next start returns after the active entry expires. Stable v2.5.3 still uses the previous combined display and two-minute started period.
+
+<img src="docs/screenshots/started-events.png" alt="Separate movable Started events module with Open countdowns" width="520" />
 
 Boss timers are separate from personal boss bests. They use received in-game boss-list data and observations; estimated intervals remain identified as estimates.
 
@@ -163,7 +175,7 @@ Choose **Stable** or **Beta** in **Settings > General > Updates**. Stable is the
 
 With automatic updates enabled, CatScratch checks shortly after startup and **every ten minutes**. It downloads, verifies and extracts an available update in the background while the current meter keeps running.
 
-**In v2.5.4-beta.3**, the meter message, restart button and notification appear **only after the update is fully prepared**. There is no download step left for the user: click **Restart to update** to apply the prepared files and restart. CatScratch does not restart automatically. Stable already supports background preparation, but can show its meter banner before preparation finishes.
+**In v2.5.4-beta.4**, the meter message, restart button and notification appear **only after the update is fully prepared**. There is no download step left for the user: click **Restart to update** to apply the prepared files and restart. CatScratch does not restart automatically. Stable already supports background preparation, but can show its meter banner before preparation finishes.
 
 After a successful new startup, the old backup, staged payload and downloaded ZIP are removed. Failed updates retain recovery files. Settings, saved fights, personal bests, recent players and captures are preserved. Update staging stays under `userdata/temp/updates`; a writable program folder is required.
 

@@ -2,7 +2,7 @@ CatScratch — AION 2 for Windows
 
 RELEASE CHANNELS
 Stable: v2.5.3
-Beta: v2.5.4-beta.3
+Beta: v2.5.4-beta.4
 Downloads: https://github.com/Zerafithekitten/CatScratch/releases
 The current GitHub README describes availability by channel.
 
@@ -69,7 +69,11 @@ The paw button toggles the compact pet tracker for personally attacked pet-sourc
 Keep the three most recently attacked pets with soul counts and next-level progress.
 Saved progress is character-scoped; ~ marks last-known counts pending fresh login data.
 Events and enabled boss timers within the next hour appear as movable cards.
-Started event cards remain highlighted for two minutes. Boss observations can be estimates.
+Beta: started entries leave Upcoming and appear exclusively in the movable Started events module.
+Use the Upcoming clock button to reopen it. Its position and open state are saved independently.
+Events: Open! + 3-minute countdown; Spacetime Rift: Open! + 10-minute countdown.
+Bosses: Spawned for 2 minutes, without a countdown. Expired entries disappear automatically.
+Stable v2.5.3 retains the earlier combined display. Boss observations can be estimates.
 Event schedules are bundled community data; verify availability in game.
 Optional custom WAV/MP3 sounds support preview and volume, up to ten seconds and ten MB.
 
@@ -77,7 +81,7 @@ UPDATES
 Choose Stable or Beta in Settings > General > Updates.
 With automatic updates enabled, check shortly after startup and every ten minutes.
 Download, verify and extract updates in the background while the current meter runs.
-In v2.5.4-beta.3 the notice and restart button appear only when preparation is complete.
+In v2.5.4-beta.4 the notice and restart button appear only when preparation is complete.
 Click Restart to update to apply prepared files and restart. No automatic restart occurs.
 Both installed and portable copies support in-app updates in a writable folder.
 Preserve userdata; remove old backups, staging and ZIP only after successful new startup.
