@@ -1,3 +1,12 @@
+## CatScratch v2.5.4-beta.2
+
+### Reliability fixes
+
+- Keep CP and GS separate for same-named characters on different servers, including after cache reloads and delayed server identification.
+- Clear stale stats when an actor ID is reassigned, and retain known players when another same-named player arrives without a server identity.
+- Ignore incomplete name-cache entries instead of allowing them to break startup; handle unavailable cache files gracefully.
+- Expand regression checks for malformed packets, player identity, cache recovery and displayed stats. Existing death recap, boss bests, recent players, windows, performance and update checks remain covered.
+
 ## CatScratch v2.5.4-beta.1
 
 ### Group-search fixes
