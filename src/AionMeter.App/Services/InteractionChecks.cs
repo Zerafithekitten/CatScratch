@@ -72,6 +72,14 @@ internal static class InteractionChecks
             partyView.Apply(null, 10, false);
             Check(!partyView.HasData && partyView.Rows.Count == 0, "Leaving room preview restores the normal waiting view");
             var first = Create(); var second = Create();
+            foreach (var tool in new[] { first, second })
+            {
+                var handle = new WindowInteropHelper(tool).Handle;
+                Check(!tool.ShowInTaskbar && (Style(tool) & NativeMethods.WS_EX_TOOLWINDOW) != 0 && (Style(tool) & 0x00040000) == 0,
+                    "Display modules are tool windows without separate taskbar or Alt-Tab entries");
+                Check(((long)NativeMethods.GetWindowLongPtr(handle, -16) & (0x00040000L | 0x00010000L)) == 0,
+                    "Display modules do not advertise native resize or maximize styles to Windows Snap");
+            }
                         foreach (var window in new[] { first, second })
             {
                 Check(ReferenceEquals(window.Icon, AppIcon.Image), "Window uses the packaged purple paw directly");

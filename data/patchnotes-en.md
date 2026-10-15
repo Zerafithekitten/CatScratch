@@ -1,3 +1,12 @@
+## CatScratch v2.5.5
+
+### Hotfix: one CatScratch taskbar entry
+- Upcoming events, Started events and the other display modules are now registered as tool windows. They no longer create separate taskbar previews or Alt-Tab entries; the DPS meter remains the main CatScratch entry.
+- Modules remain independently movable, with their existing saved positions and compact appearance. Upcoming and Started events continue to show their respective entries separately on screen.
+- Overlay windows no longer expose native resize/maximize frame styles used by Windows Snap, preventing Windows from offering these overlays as normal fullscreen or docked windows when arranging them.
+- Existing in-app resize grips, click-through, opacity and show/hide-all controls remain available.
+- Added checks against actual application window handles to verify tool-window registration and the absence of Snap frame styles. The complete core test suite and release checks run before package publication.
+
 ## CatScratch v2.5.4
 
 ### Separate Started events module

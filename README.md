@@ -6,7 +6,7 @@ A separate, always-on-top Windows DPS meter for **AION 2**, by Zerafithekitten. 
 
 | Channel | Current version | What it includes |
 | --- | --- | --- |
-| **Stable** | **[v2.5.4](https://github.com/Zerafithekitten/CatScratch/releases/tag/v2.5.4)** | Boss personal bests, recent teammates, death recap, background updates, separate Started events, improved group-search handling and ten patchnotes tabs on the left. |
+| **Stable** | **[v2.5.5](https://github.com/Zerafithekitten/CatScratch/releases/tag/v2.5.5)** | Boss personal bests, recent teammates, death recap, background updates, separate Started events, improved group-search handling and ten patchnotes tabs on the left. |
 | **Beta** | **[v2.5.4-beta.4](https://github.com/Zerafithekitten/CatScratch/releases/tag/v2.5.4-beta.4)** | Promoted to **v2.5.4 Stable**. Use the Stable download for the current version. |
 
 English is the default. German, Russian and French are also available. Screenshots use synthetic sample data; names and numbers are examples. Event-module previews show **v2.5.4-beta.4**.
@@ -142,6 +142,8 @@ The bundled catalog contains confirmed Global monster-source mappings for 165 pe
 ## Events, boss timers and sounds
 
 Selected events and enabled world-boss timers within the next hour appear as compact movable cards. Both modules restore their own positions and open states.
+
+The DPS meter is the single taskbar entry; display modules do not add separate taskbar/Alt-Tab entries or native Windows Snap frame styles. They remain freely movable with their existing resize controls.
 
 **Upcoming and Started are separate.** At the start, an entry leaves Upcoming and moves into the movable **Started events** module. Open that module with the small clock button in the Upcoming header; drag its header or cards to place it, and use its X to close it. Click-through and show/hide all windows work for both modules.
 

@@ -1,6 +1,6 @@
 # Release policy
 
-Stable is v2.5.4. On 2026-10-15 the owner explicitly authorized promoting the complete v2.5.4-beta.4 stand to Stable with detailed patch notes.
+Stable is v2.5.5. On 2026-10-15 the owner explicitly authorized an immediate Stable hotfix for duplicate module taskbar entries and Windows Snap suggestions. On 2026-10-15 the owner explicitly authorized promoting the complete v2.5.4-beta.4 stand to Stable with detailed patch notes.
 
 For v2.5.3, On 2026-10-15 the owner explicitly authorized publishing the five-release patch-note tabs, Feedback cleanup and group-search display fix to Stable, with detailed cumulative notes from v2.5.1 through this release.
 

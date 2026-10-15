@@ -22,6 +22,9 @@ internal static class WindowClickThrough
     {
         if (Windows.ContainsKey(window)) return;
         AppIcon.Apply(window);
+        // Only the meter is an application entry. Independently movable modules are tools.
+        var module = window is not AionMeter.App.Windows.OverlayWindow;
+        if (module) window.ShowInTaskbar = false;
         // WPF owns the layered style. Opt in before creating the handle so it keeps that style during repaint/resize.
         if (new WindowInteropHelper(window).Handle != 0) throw new InvalidOperationException("Display registration must happen before creating the window handle.");
         var needsTitle = window.WindowStyle != WindowStyle.None;
@@ -36,7 +39,16 @@ internal static class WindowClickThrough
         if (enabled()) window.ShowActivated = false;
         WindowPresentation.Attach(window);
         Windows[window] = new() { Appearance = appearance };
-        window.SourceInitialized += (_, _) => Apply(window, enabled());
+        window.SourceInitialized += (_, _) =>
+        {
+            var handle = new WindowInteropHelper(window).Handle;
+            if (module) NativeMethods.SetExStyle(handle, NativeMethods.WS_EX_TOOLWINDOW, 0x00040000); // WS_EX_APPWINDOW
+            // Native resize/maximize styles opt overlays into Windows Snap. Our own grips resize them.
+            var style = (long)NativeMethods.GetWindowLongPtr(handle, -16); // GWL_STYLE
+            NativeMethods.SetWindowLongPtr(handle, -16, (nint)(style & ~(0x00040000L | 0x00010000L))); // WS_THICKFRAME / WS_MAXIMIZEBOX
+            NativeMethods.SetWindowPos(handle, 0, 0, 0, 0, 0, 0x0037);
+            Apply(window, enabled());
+        };
         window.Closed += (_, _) => Windows.Remove(window);
         Apply(window, enabled());
     }

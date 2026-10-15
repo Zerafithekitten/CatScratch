@@ -12,6 +12,8 @@ The Feedback section only contains feedback controls. Do not duplicate Boss pers
 
 Patch notes show the ten newest releases in separate compact version tabs in a vertical sidebar on the left. Each tab shows only its own changes on the right, with a clickable contents overview above detailed explanations. Do not display repeated cumulative history in a tab when those versions have their own tabs.
 
+Display modules must not create separate taskbar previews or Alt-Tab entries. Keep the DPS meter as the application entry; register auxiliary display windows as tool windows and exclude overlay frames from native Windows Snap while preserving custom placement and resize controls.
+
 ## Releases
 
 Follow RELEASE-POLICY.md. Beta branch uploads and prereleases are authorized without further confirmation. Stable publication requires explicit owner approval. Beta release notes are brief; Stable notes are detailed. Add release notes for a publication, not for every intermediate change.
