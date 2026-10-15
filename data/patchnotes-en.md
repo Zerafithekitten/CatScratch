@@ -2,7 +2,8 @@
 
 ### Five releases in the patch notes window
 
-- Add compact version tabs for the five newest published releases, sorted by version from newest to oldest. Switch between complete release notes without opening separate windows; each selection starts at the top of its own notes.
+- Add compact version tabs for the five newest published releases, sorted by version from newest to oldest. Each tab shows only the changes in that version. Omit older notes repeated in cumulative hotfix bodies because their versions have separate tabs. Each selection starts at the top of its own notes.
+- Place a clickable contents overview at the top of each version. Select a topic to jump directly to its detailed explanation below.
 - Show Stable releases for the Stable update channel. Beta also includes published beta versions, with final releases sorting after their betas. Ignore drafts, invalid version tags and duplicate versions.
 - Keep the bundled release archive available offline. Refresh from GitHub loads the published history and updates the tabs while retaining the selected version when it remains among the newest five. If GitHub is unavailable, retain the displayed notes.
 - Match the DPS meter's compact dark surfaces, turquoise selected tab, Segoe UI and purple paw. Wrap version tabs at narrow widths and preserve scrolling, resizing and existing screenshot previews.

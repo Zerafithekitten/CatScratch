@@ -10,6 +10,8 @@ Keep the Statistics menu focused on live, session and saved fights. Do not dupli
 
 The Feedback section only contains feedback controls. Do not duplicate Boss personal bests or Last played with there either.
 
+Patch notes show the five newest releases in separate compact version tabs. Each tab shows only its own changes, with a clickable contents overview above detailed explanations. Do not display repeated cumulative history in a tab when those versions have their own tabs.
+
 ## Releases
 
 Follow RELEASE-POLICY.md. Beta branch uploads and prereleases are authorized without further confirmation. Stable publication requires explicit owner approval. Beta release notes are brief; Stable notes are detailed. Add release notes for a publication, not for every intermediate change.

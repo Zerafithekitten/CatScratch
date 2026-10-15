@@ -330,6 +330,7 @@ internal static class InteractionChecks
             notes.SetReleases(Enumerable.Range(1, 6).Select(n => new AionMeter.Core.Updates.ReleaseNotePage($"v99.0.{n}", $"### Release {n}\n- Updated notes")), AionMeter.Core.Updates.UpdateChannel.Stable);
             Check(notes.ReleaseTabs.Count == 5 && notes.ReleaseTabs[0] == "v99.0.6" && notes.SelectedRelease == "v99.0.6",
                 "Refreshing notes keeps five tabs and selects the newest release when the old selection drops out");
+            Check(notes.ContentsCount == 1, "Each selected release builds its own clickable contents above the detailed notes");
             Check(notes.WindowStyle == WindowStyle.None && notes.Background is System.Windows.Media.SolidColorBrush notesBg && notesBg.Color.A == 255,
                 "Patch notes use the custom CatScratch header and remain opaque");
             var fightMenu = activeOverlay.CreateFightMenu(activeOverlay);

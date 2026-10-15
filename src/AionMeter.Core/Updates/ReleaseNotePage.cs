@@ -4,6 +4,15 @@ namespace AionMeter.Core.Updates;
 
 public sealed record ReleaseNotePage(string Tag, string Markdown)
 {
+    // Some hotfix release bodies repeat older releases. Their dedicated tabs already contain that history.
+    public string OwnMarkdown
+    {
+        get
+        {
+            var repeated = Regex.Match(Markdown, @"^###\s+Complete\s+(?:v\d|changes from\s+v\d)", RegexOptions.Multiline | RegexOptions.IgnoreCase);
+            return repeated.Success ? Markdown[..repeated.Index].TrimEnd() : Markdown;
+        }
+    }
     public static IReadOnlyList<ReleaseNotePage> Bundled(string markdown)
     {
         var headings = Regex.Matches(markdown, @"^##\s+(?:CatScratch\s+)?(?<tag>v?\d+\.\d+\.\d+(?:-beta\.\d+)?)\s*\r?$", RegexOptions.Multiline);

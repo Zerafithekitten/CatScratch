@@ -19,6 +19,7 @@ public sealed class PatchNotesWindow : Window
     private IReadOnlyList<ReleaseNotePage> _pages = [];
     internal IReadOnlyList<string> ReleaseTabs => _pages.Select(p => p.Tag).ToArray();
     internal string? SelectedRelease { get; private set; }
+    internal int ContentsCount { get; private set; }
     private readonly HttpClient _images = new() { Timeout = TimeSpan.FromSeconds(15) };
     private int _notesRevision;
     private readonly TextBlock _state = new() { Margin = new Thickness(0,8,0,12), Foreground = Brushes.LightGray };
@@ -91,13 +92,17 @@ public sealed class PatchNotesWindow : Window
         SelectedRelease = tag;
         foreach (RadioButton tab in _tabs.Children) tab.IsChecked = Equals(tab.Tag, tag);
         _scroll.ScrollToTop();
-        ShowNotes(page.Markdown, "Release · " + tag);
+        ShowNotes(page.OwnMarkdown, "Release · " + tag);
     }
     private async void ShowNotes(string markdown, string caption)
     {
         var revision = ++_notesRevision;
         _state.Text = caption;
         _notes.Children.Clear();
+        ContentsCount = 0;
+        var contents = new StackPanel();
+        contents.Children.Add(new TextBlock { Text = "Contents", FontWeight = FontWeights.SemiBold,
+            Foreground = new SolidColorBrush(Color.FromRgb(121,227,207)), Margin = new Thickness(0,0,0,5) });
         var pending = new List<(Image Image, TextBlock Status, Uri Uri)>();
         foreach (var line in markdown.Split('\n'))
         {
@@ -113,10 +118,25 @@ public sealed class PatchNotesWindow : Window
                 continue;
             }
             foreach (var (text, heading) in ReleaseNotes.Lines(line, "en"))
-                _notes.Children.Add(new TextBlock { Text = text, TextWrapping = TextWrapping.Wrap, FontSize = heading ? 14 : 12, LineHeight = 19,
+            {
+                var block = new TextBlock { Text = text, TextWrapping = TextWrapping.Wrap, FontSize = heading ? 14 : 12, LineHeight = 19,
                     Margin = heading ? new(0,8,0,8) : new(0,0,8,6), FontWeight = heading ? FontWeights.SemiBold : FontWeights.Normal,
-                    Foreground = heading ? new SolidColorBrush(Color.FromRgb(121,227,207)) : Foreground });
+                    Foreground = heading ? new SolidColorBrush(Color.FromRgb(121,227,207)) : Foreground };
+                _notes.Children.Add(block);
+                if (heading && Regex.IsMatch(line, @"^#{3,6}\s+"))
+                {
+                    var link = new Hyperlink(new Run(text)) { Foreground = new SolidColorBrush(Color.FromRgb(121,227,207)),
+                        TextDecorations = null };
+                    link.Click += (_, _) => block.BringIntoView();
+                    var entry = new TextBlock { TextWrapping = TextWrapping.Wrap, Margin = new Thickness(0,2,0,2) };
+                    entry.Inlines.Add(new Run("• ")); entry.Inlines.Add(link); contents.Children.Add(entry);
+                    ContentsCount++;
+                }
+            }
         }
+        if (ContentsCount > 0) _notes.Children.Insert(0, new Border { Child = contents,
+            Background = new SolidColorBrush(Color.FromRgb(32,42,53)), CornerRadius = new CornerRadius(5),
+            Padding = new Thickness(10), Margin = new Thickness(0,0,0,10) });
         foreach (var preview in pending)
         {
             if (_lifetime.IsCancellationRequested || revision != _notesRevision) return;

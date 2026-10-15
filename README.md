@@ -165,7 +165,7 @@ Use borderless windowed mode to keep the meter visible above the game.
 - Separate observed boss timers; optional fight saving, retaining the last ten saved fights.
 - Colored EVENT / PVP / BOSS badges and readable boss panels when locked.
 - Optional per-event sounds with preview, volume, reminder timing and custom WAV or MP3 files up to ten seconds and 10 MB. The selected filename is displayed; invalid files show a red error with the reason.
-- Patch notes show the latest five releases in compact version tabs, newest first, with offline notes and GitHub refresh. Stable shows stable releases; Beta also includes beta notes.
+- Patch notes show the latest five releases in compact version tabs, newest first, with individual changes, clickable contents, offline notes and GitHub refresh. Stable shows stable releases; Beta also includes beta notes.
 - English by default, selectable German, Russian and French in Settings > General > Language; patch notes remain English.
 - Verified GitHub updates for installed and portable copies; old successful update staging and backups are removed.
 - Optional 60-second recent-debug buffer alongside continuous packet recording, with asynchronous PCAP export.

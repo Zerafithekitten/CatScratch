@@ -4,6 +4,16 @@ namespace AionMeter.Tests;
 
 public sealed class ReleaseNotePageTests
 {
+    [Theory]
+    [InlineData("### Complete v2.5.1 changes included")]
+    [InlineData("### Complete changes from v2.5.1 through v2.5.2")]
+    public void Each_tab_omits_repeated_history_but_preserves_its_own_details(string heading)
+    {
+        var page = new ReleaseNotePage("v2.5.3", "### New feature\n- Detailed explanation\n\n" + heading + "\n- Older changes");
+        Assert.Contains("Detailed explanation", page.OwnMarkdown);
+        Assert.DoesNotContain("Older changes", page.OwnMarkdown);
+        Assert.Contains("Older changes", page.Markdown);
+    }
     private sealed class NotesResponse : HttpMessageHandler
     {
         protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
