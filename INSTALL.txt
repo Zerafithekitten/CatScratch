@@ -1,138 +1,111 @@
-CatScratch — EU/NA
-Normal startup requires Windows administrator permission. Cancelling the prompt exits without starting capture.
+CatScratch — AION 2 for Windows
 
-SETUP
-1. Extract the complete program folder to a writable location.
-2. Install Npcap from https://npcap.com/#download if it is missing.
-   The application offers to open the official page; installation is done by you.
-3. Start CatScratch.exe, then teleport once or enter a new zone in game.
-   Your character is confirmed only when fresh identity data arrives.
-4. Use borderless windowed mode if the meter should remain visible above the game.
+RELEASE CHANNELS
+Stable: v2.5.3
+Beta: v2.5.4-beta.3
+Downloads: https://github.com/Zerafithekitten/CatScratch/releases
+The current GitHub README describes availability by channel.
 
-DISPLAY AND CONTROLS
-The meter is a separate, movable, always-on-top Windows application.
-The default compact layout is 300 × 300 with colored damage bars.
-The header shows current Europe/Berlin time in 24-hour HH:mm format, including DST.
-Fight duration is separate and marked with a stopwatch symbol.
-Rows show class icon, player name, Combat Power (CP), Gear Score (GS), DPS,
-total damage and damage share. Missing values are shown as dashes.
-The footer shows total DPS and a separate RTT latency estimate.
-RTT uses captured client TCP data and matching server acknowledgments only.
-No extra network probes are sent. Server ACK delays can affect the estimate.
-A local ping accelerator may expose only its local proxy connection.
-RTT is unavailable until outgoing data and matching ACKs are captured on a confirmed
-game flow, and returns to a dash after 15 seconds without a fresh sample.
-The display refreshes approximately five times per second and remains visible
-between fights. All built-in interface text is English.
+GETTING STARTED
+1. Use CatScratch-Setup.exe, or extract the entire portable ZIP to a writable folder.
+2. Install Npcap separately from https://npcap.com/#download if missing.
+3. Start CatScratch.exe and accept the Windows administrator prompt.
+   Cancelling the prompt prevents startup.
+4. Teleport or change zones while CatScratch is running to receive fresh identity data.
+5. Use borderless windowed mode to keep the meter visible above the game.
 
-Top-right gear: Settings, including HOTKEYS > Click-through.
-Click a hotkey field and press the desired combination, then click Save.
-Tab moves to the next field; Escape leaves the field without changing its shortcut.
-App hotkeys pause while Settings is active. No keyboard hook is used.
-Turquoise cursor symbol: clickable. Crossed-out cursor: click-through.
-Default shortcut Ctrl+Shift+L toggles clickability for all display windows.
-The cursor symbol can also enable click-through while the meter is clickable.
-Settings and the system tray menu remain available in click-through mode.
-The program starts clickable. Normal toggles do not show text or notifications.
-Click-through also removes window backgrounds, borders, shadows, title bars and controls.
-Damage rows and their contents remain visible, as do time, duration, DPS and RTT.
-Event names, categories and countdowns remain without the event window frame.
-Switch back using your hotkey or the tray menu to restore controls and backgrounds.
-Settings windows remain opaque and clickable.
-If a shortcut cannot be registered, an error explains how to change it.
+METER AND CONTROLS
+Track your own damage while solo and confirmed current party members while grouped.
+Rows show class, name, CP, GS, DPS, damage and share. Received damage is separate.
+Unknown values appear as dashes. Group-search room values need a received roster.
+Personal combat shows self healing and healing of others in a collapsible section.
+An optional boss HP panel uses received health data. RTT is a passive TCP estimate.
+Resize the meter, adjust opacity and scale, or use compact/normal layouts.
+Click-through removes the outer frame and controls while keeping statistics visible.
+Settings and the tray menu remain clickable. The main window X exits the whole app.
 
-Bottom controls: View, Events, and Statistics.
-Events also opens from the system tray menu under Upcoming events.
-Opening Events switches the display windows to clickable mode for positioning.
-Drag the Upcoming events header or any card to move the event board.
-Use your click-through hotkey to restore pass-through after positioning.
-Event preferences have a solid dark background and always remain clickable.
-The event window opens by default and reopens on restart unless closed with its X.
-Saved event-window positions are moved back into the visible desktop when needed.
-View provides compact mode, size presets, width/height sliders and opacity.
-Drag the lower-right corner to resize; drag the display to move it.
-Opacity can be set from 40% to 100%.
-The top-right X exits the entire program, including all event and boss windows.
-Ctrl+Shift+D only shows/hides the meter. Ctrl+Shift+R resets the measurement.
-Settings > Updates > Check now checks for an update directly inside the meter.
-Use the Setup installation for automatic updates of the complete application.
+DEFAULT SHORTCUTS — change them in Settings > Hotkeys
+Shift+F4: toggle death recap
+Shift+F5: show/hide DPS meter
+Shift+F6: toggle Personal combat
+Shift+F7: upcoming events
+Shift+F8: boss timers
+Shift+F9: pet tracker
+Shift+F10: show/hide all windows, restoring the previously open set
+Shift+F11: toggle click-through
+Shift+F12: restart the meter measurement
+Click a shortcut field, press the desired combination and Save.
+App shortcuts pause while Settings is active.
 
-SOLO AND PARTY TRACKING
-Your freshly confirmed own actor ID is counted even without a party roster.
-Partial identity packets no longer block solo damage or erase the current fight.
-Routine capture status updates and quiet traffic no longer discard your own actor ID.
-Exiting the game still clears identity and requires fresh identification.
-Until fresh name data arrives, your row is labeled You.
-Confirmed members of your current party are included when a fresh roster arrives.
-Other players, unknown attackers and same-name players on other servers are excluded.
-Pets count only when an explicit owner ID identifies you or a confirmed party member.
-The meter does not guess pet ownership from matching skills or damage factors.
-A party change resets the running measurement. If the roster is not refreshed for
-30 seconds, party tracking falls back to your own character; this conservative
-interval still requires verification against the actual EU/NA game stream.
-A capture restart, zone change or conflicting own actor ID requires fresh identity.
-Cached names alone do not confirm your character.
-Your own GS is decoded directly from the fresh own-character record, even solo.
-This layout was verified against the Oct 13 user recording and the in-game GS.
-Teleport once after starting the new version to receive fresh character data.
-Other party members still require roster data. Missing or invalid fields remain dashes.
-CP/GS are displayed when supplied by identity or roster data, never invented.
-The server may omit damage data in crowded encounters, making results incomplete.
+BOSS PERSONAL BESTS
+Open the small trophy icon in the DPS meter.
+Real dungeon/world boss victories can improve six independent permanent bests:
+highest DPS, damage, strongest hit and healing; fewest own deaths and least damage taken.
+Records are separate for each character/server/class and are not limited to ten fights.
+Test mode, recorded playback and incomplete or unqualified fights do not improve records.
 
-HISTORY
-Only the ten newest completed fight statistics are retained, ordered by fight start.
-Older fight files are deleted after saving and when opening an existing larger history.
-The session list also retains ten completed fights.
-Cleanup affects only the meter's own local fight statistics.
+LAST PLAYED WITH
+Open the player icon beside the trophy for confirmed recent teammates.
+Compact rows show name, class, server, last-played time and last received CP/GS.
+Each player has an individual copy-name button. No expandable equipment panel is used.
+The list persists per own character/server with no ten-player limit.
+Stream mode masks displayed and copied names; original local files remain unchanged.
 
-AUTOMATIC EVENTS
-The small event window requires no manual event entry.
-It shows only the next selected start within 60 minutes, including every selected
-event starting at that exact same time. Later starts and past events are omitted.
-Events appear as small dark cards with gold borders, arranged side by side.
-The countdown updates every second; the height adjusts to the number of events.
-Double-click a card, or right-click it, to open a separately movable event window.
-The gear opens event selection, server region, width and independent opacity.
-Europe is the default region; NA East and NA West are also available.
-Default selection: Shugo Festival, Spacetime Rift and Dimensional Invasion.
-Additional choices: Artifact Siege, Siege Bosses, Guardian Lord Nahma, Watcher Kaira.
-The event settings also provide a button to open separate observed boss timers.
-EU scheduling follows Europe/Berlin, including daylight saving time.
-Source: https://shugo.gg/timers — checked Oct 12, 2026; source updated Oct 9, 2026.
-These are community schedules, not officially confirmed Global times.
-Recurring starts are calculated automatically from the bundled schedule.
-Future schedule changes are not downloaded automatically. Verify availability in game.
-Observed boss times may require opening the in-game boss list; estimates are marked.
+DEATH RECAP
+The tombstone icon or Shift+F4 enables/disables the module.
+On death, show received damage from the last ten seconds with attackers and skills.
+Fresh positive own HP or a map reload dismisses the recap. It is not saved across restarts.
+Two recorded resurrection methods were tested; a third still lacks a recording.
 
-DATA ACCESS
-The application passively captures AION2.exe network traffic using Npcap.
-No game-memory access, injection, game-file changes, outgoing game packets or
-simulated game input are implemented. Only its own windows and files are changed.
-Shared incoming packets may contain other players; filtering limits results and
-new name caches to you and your party, rather than preventing shared packet receipt.
-NPC and boss data are read for the requested timers.
-This is not a statement of publisher approval.
-Settings and statistics are stored in userdata inside the program folder.
-Installed and portable copies use GitHub releases from Zerafithekitten/CatScratch.
-Automatic update checking and preparation can be disabled in Settings.
-Updates are checked every ten minutes and verified packages are prepared in the background.
-Restart to update applies the package only after your click. Userdata is preserved.
-Old program backups and update files are deleted only after successful startup.
-When a Beta is promoted, starting its Stable release returns the update channel to Stable.
-Selecting Beta again is remembered until another promoted Stable version is installed.
-Existing Zerafi DPS Monitor installations use one final migration installer.
+FIGHT HISTORY
+Statistics selects live, current-session and saved fights.
+Boss personal bests and Last played with use their own dedicated meter buttons.
+Press Save after combat to keep a full fight. Automatic saving is disabled by default.
+Full saved fights retain the ten newest records. Boss bests and recent players are independent.
+Test fights cannot be saved as real fights or populate permanent personal records.
 
-VALIDATION
-Release build completed. 306 combat/storage/protocol/schedule/latency/update/reminder tests passed. Compact meter and event previews were visually checked.
-Own-window click-through, restoration and repeated toggles passed native checks.
-System-wide hotkey registration is blocked in the protected test environment
-(Windows error 5). Actual hotkey operation and clicks passing into the game still
-require verification outside that environment.
-No live AION 2 or Npcap capture test has been performed on the build machine.
-Preview images use scripted sample data.
+PETS, EVENTS AND SOUNDS
+The paw button toggles the compact pet tracker for personally attacked pet-source monsters.
+Keep the three most recently attacked pets with soul counts and next-level progress.
+Saved progress is character-scoped; ~ marks last-known counts pending fresh login data.
+Events and enabled boss timers within the next hour appear as movable cards.
+Started event cards remain highlighted for two minutes. Boss observations can be estimates.
+Event schedules are bundled community data; verify availability in game.
+Optional custom WAV/MP3 sounds support preview and volume, up to ten seconds and ten MB.
 
-SOURCE AND LICENSE
-Based on https://github.com/cyberbadger6969/aion2-dps-meter
-Base revision: 414de5c1d5f3d45ce35701bd25229c2dba736bb6
-GPL-3.0; LICENSE and complete customized source are included.
-Game tables and graphics: see data/NOTICE.md. AION 2 belongs to NCSOFT.
+UPDATES
+Choose Stable or Beta in Settings > General > Updates.
+With automatic updates enabled, check shortly after startup and every ten minutes.
+Download, verify and extract updates in the background while the current meter runs.
+In v2.5.4-beta.3 the notice and restart button appear only when preparation is complete.
+Click Restart to update to apply prepared files and restart. No automatic restart occurs.
+Both installed and portable copies support in-app updates in a writable folder.
+Preserve userdata; remove old backups, staging and ZIP only after successful new startup.
+Failed updates retain recovery files. Temporary update data uses userdata/temp/updates.
+Promoted Stable builds return Beta subscribers to Stable; a later deliberate Beta choice persists.
+
+PATCHNOTES
+Versions appear in a left sidebar, with per-version notes and clickable contents on the right.
+Beta keeps ten version tabs; Stable v2.5.3 keeps five. Bundled notes work offline.
+Refresh from GitHub updates the history. The selected update channel filters versions.
+
+LANGUAGES AND PRIVACY
+Select English, German, Russian or French in Settings > General > Language.
+English is the default and fallback for missing names. Patchnotes remain English.
+Stream mode masks displayed/copied player names; saved files and captures retain originals.
+
+DEBUG AND FEEDBACK
+Settings > Capture & data > Recent debug buffer can retain up to the last 60 seconds.
+It is disabled by default, capped at 32 MB of accounted packet storage and can be shorter under load.
+Save recent debug exports a local PCAP to userdata/captures. Continuous recording is also available.
+For group issues include joining/leaving; for revival issues include death and resurrection.
+Captures can contain names. Nothing is uploaded automatically.
+Feedback opens GitHub issue forms; reports must be in English and require a GitHub account.
+
+LIMITATIONS AND LICENSE
+Missing server data can leave damage, names, CP/GS or observed deaths incomplete.
+Cached names alone do not confirm the own character. Local accelerators can affect RTT.
+CatScratch passively captures traffic: no game-memory access, injection, game-file changes,
+outgoing game packets or simulated game input are implemented. This is not publisher approval.
+Based on cyberbadger6969/aion2-dps-meter, revision 414de5c1d5f3d45ce35701bd25229c2dba736bb6.
+GPL-3.0. Keep LICENSE and data/NOTICE.md with redistributions. AION 2 belongs to NCSOFT.
