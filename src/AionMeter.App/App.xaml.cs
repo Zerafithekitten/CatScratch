@@ -44,6 +44,9 @@ public partial class App : Application
     private HotkeyManager? _hotkeys;
     private readonly WindowVisibilityGroup _windowVisibility=new();
     private DispatcherTimer? _timer;
+    private DispatcherTimer? _gameTimer;
+    private GameExitGate _gameExit = new();
+    private string? _watchedGame;
     private HistoryWindow? _history;
     private PersonalBestsWindow? _personalBests;
     private LastPlayedWithWindow? _lastPlayedWith;
@@ -238,6 +241,15 @@ public partial class App : Application
             return;
         }
         if (!AdministratorStartup.Ensure(e.Args)) { Shutdown(); return; }
+        if(e.Args.Contains("--remove-game-start-task"))
+        {
+            Dispatcher.BeginInvoke(async () =>
+            {
+                try { await GameLifetime.Configure(false, ""); Shutdown(); }
+                catch(Exception error) { Log.Error("Could not remove game-start task",error); Shutdown(1); }
+            });
+            return;
+        }
         _singleInstance = new Mutex(true, "AionDpsMonitor.SingleInstance", out var first);
         if (!first)
         {
@@ -350,6 +362,17 @@ public partial class App : Application
         _timer = new DispatcherTimer(DispatcherPriority.Background) { Interval = TimeSpan.FromMilliseconds(200) };
         _timer.Tick += (_, _) => OnTick();
         _timer.Start();
+        _watchedGame=settings.GameExecutable;
+        if(e.Args.Contains("--game-session")) _gameExit.ShouldClose(settings.FollowGame,true,DateTimeOffset.UtcNow);
+        _gameTimer=new DispatcherTimer(DispatcherPriority.Background) { Interval=TimeSpan.FromSeconds(2) };
+        _gameTimer.Tick+=(_,_)=>
+        {
+            if(IsExiting || settings.Transient) return;
+            if(_watchedGame!=settings.GameExecutable) { _gameExit=new(); _watchedGame=settings.GameExecutable; }
+            if(_gameExit.ShouldClose(settings.FollowGame,settings.FollowGame && GameLifetime.IsRunning(settings.GameExecutable),DateTimeOffset.UtcNow))
+            { Log.Info("AION 2 closed: ending companion session"); ExitProgram(); }
+        };
+        _gameTimer.Start();
         Dispatcher.BeginInvoke(() =>
         {
             if (!IsExiting && settings.ShowPetTrackerModule) TogglePetModule();
@@ -919,6 +942,7 @@ public partial class App : Application
             TimeSpan.FromSeconds(10), Timeout.InfiniteTimeSpan);
         if (_meter is not null) Log.Info("Exiting");
         _timer?.Stop();
+        _gameTimer?.Stop();
         _timerCards?.Dispose();
         _showWait?.Unregister(null);
         _showRequest?.Dispose();

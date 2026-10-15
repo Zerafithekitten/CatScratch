@@ -35,6 +35,42 @@ internal static class InteractionChecks
         }
         try
         {
+            var gameGate=new GameExitGate();
+            var gameTime=DateTimeOffset.UtcNow;
+            Check(!new AppSettings().FollowGame && !gameGate.ShouldClose(true,false,gameTime),
+                "Game companion is opt-in and an absent game does not close a manually started meter");
+            Check(!gameGate.ShouldClose(true,true,gameTime) && !gameGate.ShouldClose(true,false,gameTime.AddSeconds(2)) &&
+                !gameGate.ShouldClose(true,false,gameTime.AddSeconds(11)) && gameGate.ShouldClose(true,false,gameTime.AddSeconds(12)),
+                "Confirmed game sessions close only after ten seconds of absence");
+            Check(!gameGate.ShouldClose(true,true,gameTime.AddSeconds(13)) && !gameGate.ShouldClose(true,false,gameTime.AddSeconds(14)) &&
+                !gameGate.ShouldClose(false,false,gameTime.AddSeconds(30)) && !gameGate.ShouldClose(true,false,gameTime.AddSeconds(40)),
+                "Game restarts reset the grace period and disabling clears the close gate");
+            Check(GameLifetime.IsRunning(Environment.ProcessPath!) && !GameLifetime.IsRunning(""),
+                "Game detection matches the exact executable in this Windows session without launching it");
+            var taskXml=System.Xml.Linq.XDocument.Parse(GameLifetime.Definition("S-1-5-21-test","C:\\Windows\\powershell.exe","C:\\A & B\\watch.ps1"));
+            System.Xml.Linq.XNamespace taskNs="http://schemas.microsoft.com/windows/2004/02/mit/task";
+            Check(taskXml.Descendants(taskNs+"LogonType").Single().Value=="InteractiveToken" &&
+                taskXml.Descendants(taskNs+"RunLevel").Single().Value=="HighestAvailable" &&
+                taskXml.Descendants(taskNs+"Arguments").Single().Value.Contains("\"C:\\A & B\\watch.ps1\"") &&
+                GameLifetime.TaskName("C:\\Sample")==GameLifetime.TaskName("c:\\sample\\"),
+                "Game watcher task uses the interactive user, safe XML paths and a stable per-installation name");
+            var schedulerType=Type.GetTypeFromProgID("Schedule.Service")!;
+            dynamic scheduler=Activator.CreateInstance(schedulerType)!;
+            object? definition=null;
+            try
+            {
+                scheduler.Connect();
+                definition=scheduler.NewTask(0);
+                using var user=System.Security.Principal.WindowsIdentity.GetCurrent();
+                ((dynamic)definition).XmlText=GameLifetime.Definition(user.User!.Value,Environment.ProcessPath!,"C:\\Sample\\watch.ps1");
+                Check(((string)((dynamic)definition).XmlText).Contains("HighestAvailable"),
+                    "Windows Task Scheduler accepts the companion definition without registering or starting a task");
+            }
+            finally
+            {
+                if(definition is not null) System.Runtime.InteropServices.Marshal.FinalReleaseComObject(definition);
+                System.Runtime.InteropServices.Marshal.FinalReleaseComObject(scheduler);
+            }
             using (var appIcon = System.Drawing.Icon.ExtractAssociatedIcon(Environment.ProcessPath!))
             using (var bitmap = appIcon!.ToBitmap())
             {

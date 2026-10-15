@@ -282,6 +282,17 @@
               </Border>
               <Border Style="{StaticResource Section}">
                 <StackPanel>
+                  <TextBlock x:Name="GameStartTitle" Style="{StaticResource SectionLabel}" Margin="0,0,0,8" />
+                  <CheckBox x:Name="FollowGameCheck" Style="{StaticResource DarkCheck}" />
+                  <TextBlock x:Name="FollowGameHint" Style="{StaticResource Hint}" Margin="24,3,0,8" />
+                  <DockPanel>
+                    <Button x:Name="ChooseGameButton" Style="{StaticResource GhostButton}" DockPanel.Dock="Right" Click="ChooseGame_Click" Margin="8,0,0,0" />
+                    <TextBox x:Name="GameExecutableText" IsReadOnly="True" Width="Auto" HorizontalAlignment="Stretch" />
+                  </DockPanel>
+                </StackPanel>
+              </Border>
+              <Border Style="{StaticResource Section}">
+                <StackPanel>
                   <TextBlock Text="{Binding SecUpdates, Source={x:Static s:UiText.Current}}" Style="{StaticResource SectionLabel}" Margin="0,0,0,8" />
                   <TextBlock x:Name="UpdateChannelLabel" Style="{StaticResource Hint}" Margin="0,0,0,4" />
                   <ComboBox x:Name="UpdateChannelBox" HorizontalAlignment="Left" MinWidth="180" Margin="0,0,0,6" />

@@ -1,3 +1,10 @@
+## CatScratch v2.5.6-beta.1
+
+### Optional AION 2 companion
+- Enable **Start and close CatScratch with AION 2** in Settings > General, then choose the actual game EXE. The option is off by default and also works when the selected game is launched through Steam or Purple.
+- A small per-user background watcher starts at Windows sign-in and opens CatScratch when the selected game starts. CatScratch closes after the game has been absent for ten seconds; manually quitting the meter does not reopen it during the same game session.
+- Turning the option off removes the watcher registration. The watcher does not lock update binaries; uninstall also removes its scheduled task. Settings use the existing compact CatScratch design in all four interface languages.
+
 ## CatScratch v2.5.5
 
 ### Hotfix: one CatScratch taskbar entry

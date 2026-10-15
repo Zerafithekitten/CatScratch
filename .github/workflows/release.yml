@@ -64,6 +64,9 @@ jobs:
             if (-not $testData.StartsWith($payload, [StringComparison]::OrdinalIgnoreCase)) { throw 'Invalid diagnostic cleanup path' }
             if (Test-Path -LiteralPath $testData) { Remove-Item -LiteralPath $testData -Recurse -Force }
           }
+      - name: Verify optional game companion
+        shell: pwsh
+        run: ./tools/check-game-companion.ps1
       - name: Verify direct update and preserved userdata
         shell: pwsh
         run: ./tools/check-direct-update.ps1 -Payload "$PWD/dist/payload"

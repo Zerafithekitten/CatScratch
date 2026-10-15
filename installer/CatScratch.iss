@@ -262,8 +262,11 @@ begin
 end;
 
 function InitializeUninstall(): Boolean;
+var ExitCode: Integer;
 begin
   Result := CloseRunningMeter(not UninstallSilent);
+  if Result then
+    Exec(ExpandConstant('{app}\{#AppExe}'), '--remove-game-start-task', '', SW_HIDE, ewWaitUntilTerminated, ExitCode);
 end;
 
 procedure CurUninstallStepChanged(CurUninstallStep: TUninstallStep);

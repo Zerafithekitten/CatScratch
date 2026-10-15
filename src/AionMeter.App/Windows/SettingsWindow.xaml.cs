@@ -79,6 +79,13 @@ public partial class SettingsWindow : Window
     private void Load()
     {
         var s = _meter.Settings;
+        GameStartTitle.Text=T.Localize("AION 2 companion");
+        FollowGameCheck.Content=T.Localize("Start and close CatScratch with AION 2");
+        FollowGameCheck.IsChecked=s.FollowGame;
+        FollowGameHint.Text=T.Localize("Optional background watcher starts with Windows sign-in. Select the game executable, not the launcher. CatScratch closes 10 seconds after the game exits.");
+        ChooseGameButton.Content=T.Localize("Choose game…");
+        GameExecutableText.Text=s.GameExecutable;
+        GameExecutableText.ToolTip=s.GameExecutable;
         CompactModeCheck.IsChecked = s.CompactMode;
         UiScaleLabel.Text=T.Localize("UI scale"); UiScaleValue.Value=Math.Clamp(s.UiScale,.75,1.5)*100;
         StreamModeCheck.Content=T.Localize("Stream mode: hide player names");StreamModeCheck.IsChecked=s.StreamMode;
@@ -185,9 +192,27 @@ public partial class SettingsWindow : Window
         field.SelectAll();
     }
 
-    private void Save_Click(object sender, RoutedEventArgs e)
+    private async void Save_Click(object sender, RoutedEventArgs e)
     {
         var s = _meter.Settings;
+        var follow=FollowGameCheck.IsChecked==true;
+        var game=GameExecutableText.Text;
+        try
+        {
+            if(follow) GameLifetime.Validate(game);
+            if(!s.Transient && (follow || follow!=s.FollowGame))
+            {
+                IsEnabled=false;
+                try { await GameLifetime.Configure(follow,game); }
+                finally { IsEnabled=true; }
+            }
+        }
+        catch(Exception error) when(error is IOException or UnauthorizedAccessException or InvalidOperationException or System.ComponentModel.Win32Exception)
+        {
+            MessageBox.Show(this,T.Localize("Could not configure automatic game start.")+"\n"+T.Localize(error.Message),"CatScratch",MessageBoxButton.OK,MessageBoxImage.Error);
+            return;
+        }
+        s.FollowGame=follow; s.GameExecutable=game;
         s.CompactMode = CompactModeCheck.IsChecked == true;
         if (int.TryParse(WindowWidthText.Text, out var width)) s.OverlayWidth = Math.Clamp(width, 260, 1600);
         if (int.TryParse(WindowHeightText.Text, out var height)) s.OverlayHeight = Math.Clamp(height, 180, 1200);
@@ -256,6 +281,12 @@ public partial class SettingsWindow : Window
         TestModeButton.Content=T.Localize(_meter.DemoRunning?"Stop test mode":"Start test mode");
     }
     private void Cancel_Click(object sender, RoutedEventArgs e) => Close();
+
+    private void ChooseGame_Click(object sender, RoutedEventArgs e)
+    {
+        var picker=new Microsoft.Win32.OpenFileDialog { Title=T.Localize("Choose the AION 2 game executable first."), Filter="Windows executable (*.exe)|*.exe", CheckFileExists=true };
+        if(picker.ShowDialog(this)==true) { GameExecutableText.Text=picker.FileName; GameExecutableText.ToolTip=picker.FileName; }
+    }
 
     /// <summary>The overlay follows the slider at once, so the size can be judged on the real rows.</summary>
     private void RowSize_Changed(object sender, RoutedPropertyChangedEventArgs<double> e)

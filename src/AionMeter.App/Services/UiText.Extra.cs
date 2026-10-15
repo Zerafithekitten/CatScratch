@@ -35,6 +35,12 @@ public sealed partial class UiText
     }
     private static readonly Dictionary<string,string> ExtraGerman = new(StringComparer.Ordinal)
     {
+        ["AION 2 companion"]="AION 2 begleiten",
+        ["Start and close CatScratch with AION 2"]="CatScratch mit AION 2 starten und beenden",
+        ["Optional background watcher starts with Windows sign-in. Select the game executable, not the launcher. CatScratch closes 10 seconds after the game exits."]="Optionaler Hintergrundwächter startet bei der Windows-Anmeldung. Wähle die Spiel-EXE, nicht den Launcher. CatScratch schließt 10 Sekunden nach dem Spiel.",
+        ["Choose game…"]="Spiel auswählen…",
+        ["Choose the AION 2 game executable first."]="Bitte zuerst die AION-2-Spieldatei auswählen.",
+        ["Could not configure automatic game start."]="Der automatische Spielstart konnte nicht eingerichtet werden.",
         ["Started events"]="Gestartete Events", ["Show started events"]="Gestartete Events anzeigen", ["No started events"]="Keine gestarteten Events",
         ["Open!"]="Offen!", ["Spawned"]="Erschienen",
         ["All selected events within the next hour. Started events: 3 minutes; Spacetime Rift: 10 minutes; bosses: 2 minutes. The clock button opens the movable Started events panel."]="Alle gewählten Events innerhalb der nächsten Stunde. Gestartete Events: 3 Minuten; Spacetime Rift: 10 Minuten; Bosse: 2 Minuten. Der Uhr-Button öffnet das verschiebbare Fenster für gestartete Events.",

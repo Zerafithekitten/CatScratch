@@ -46,6 +46,8 @@ public sealed class AppSettings
     public int AutoHideSeconds { get; set; } = 0;
     /// <summary>Bring the overlay up when the meter starts and when it finds the game, so a player sees it is running.</summary>
     public bool ShowOnStart { get; set; } = true;
+    public bool FollowGame { get; set; }
+    public string GameExecutable { get; set; } = "";
 
     // Boss respawn timers
     /// <summary>Tray notification this many minutes before a tracked boss respawns; 0 = off.</summary>

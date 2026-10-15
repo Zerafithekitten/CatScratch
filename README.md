@@ -2,12 +2,12 @@
 
 A separate, always-on-top Windows DPS meter for **AION 2**, by Zerafithekitten. Track your own fights and confirmed party members in a compact dark interface with turquoise accents and purple paw branding.
 
-[Download Stable](https://github.com/Zerafithekitten/CatScratch/releases/latest) · [Previous Beta (promoted)](https://github.com/Zerafithekitten/CatScratch/releases/tag/v2.5.4-beta.4) · [Release history](https://github.com/Zerafithekitten/CatScratch/releases) · [Report a bug / request a feature](https://github.com/Zerafithekitten/CatScratch/issues/new/choose)
+[Download Stable](https://github.com/Zerafithekitten/CatScratch/releases/latest) · [Download Beta](https://github.com/Zerafithekitten/CatScratch/releases/tag/v2.5.6-beta.1) · [Release history](https://github.com/Zerafithekitten/CatScratch/releases) · [Report a bug / request a feature](https://github.com/Zerafithekitten/CatScratch/issues/new/choose)
 
 | Channel | Current version | What it includes |
 | --- | --- | --- |
 | **Stable** | **[v2.5.5](https://github.com/Zerafithekitten/CatScratch/releases/tag/v2.5.5)** | Boss personal bests, recent teammates, death recap, background updates, separate Started events, improved group-search handling and ten patchnotes tabs on the left. |
-| **Beta** | **[v2.5.4-beta.4](https://github.com/Zerafithekitten/CatScratch/releases/tag/v2.5.4-beta.4)** | Promoted to **v2.5.4 Stable**. Use the Stable download for the current version. |
+| **Beta** | **[v2.5.6-beta.1](https://github.com/Zerafithekitten/CatScratch/releases/tag/v2.5.6-beta.1)** | Everything in Stable, plus an optional automatic start/close companion for AION 2. |
 
 English is the default. German, Russian and French are also available. Screenshots use synthetic sample data; names and numbers are examples. Event-module previews show **v2.5.4-beta.4**.
 
@@ -218,6 +218,12 @@ The all-window shortcut restores the previously open windows and their positions
 <img src="docs/screenshots/settings.png" alt="Current CatScratch settings in the meter's dark turquoise style" width="760" />
 
 </details>
+
+### Automatic start and close with AION 2 (Beta)
+
+In **Settings > General > AION 2 companion**, enable **Start and close CatScratch with AION 2**, select the actual game EXE and save. The setting is off by default. Steam, Purple and direct shortcuts work because detection follows the selected game process, not its launcher.
+
+Enabling installs a per-user Windows sign-in task with a hidden watcher. It checks every two seconds and starts the meter once per game session. CatScratch closes after ten seconds without the game; a brief restart resets that grace period. Manually quitting the meter keeps it closed for the rest of that game session. Turning the option off removes the registration. Uninstall also removes the task. The watcher runs separately and does not lock program files during updates.
 
 ## Languages and stream mode
 
