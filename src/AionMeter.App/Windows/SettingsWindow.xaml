@@ -234,7 +234,10 @@
                   <CheckBox x:Name="Record" Style="{StaticResource DarkCheck}" Content="{Binding RecordPackets, Source={x:Static s:UiText.Current}}" />
                   <TextBlock Style="{StaticResource Hint}" Text="{Binding RecordHint, Source={x:Static s:UiText.Current}}" />
                   <CheckBox x:Name="RecentDebug" Style="{StaticResource DarkCheck}" Content="Recent debug buffer (60 seconds / 32 MB, experimental)" Margin="0,8,0,0" />
-                  <Button x:Name="SaveRecentDebug" Style="{StaticResource GhostButton}" Content="Save recent debug" Click="SaveRecentDebug_Click" HorizontalAlignment="Left" Margin="0,6,0,0" />
+                  <WrapPanel Margin="0,6,0,0">
+                    <Button x:Name="SaveRecentDebug" Style="{StaticResource GhostButton}" Content="Save recent debug" Click="SaveRecentDebug_Click" Margin="0,0,8,4" />
+                    <Button x:Name="OpenCaptures" Style="{StaticResource GhostButton}" Click="OpenCaptures_Click" Margin="0,0,0,4" />
+                  </WrapPanel>
                   <TextBlock x:Name="RecentDebugResult" Style="{StaticResource Hint}" TextWrapping="Wrap" />
                   <TextBlock x:Name="CaptureState" Style="{StaticResource Hint}" Margin="0,6,0,0" Foreground="{StaticResource TextDim}" />
                 </StackPanel>

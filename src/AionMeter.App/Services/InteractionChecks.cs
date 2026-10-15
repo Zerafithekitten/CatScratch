@@ -47,11 +47,12 @@ internal static class InteractionChecks
                 "Game restarts reset the grace period and disabling clears the close gate");
             Check(GameLifetime.IsRunning(Environment.ProcessPath!) && !GameLifetime.IsRunning(""),
                 "Game detection matches the exact executable in this Windows session without launching it");
-            var taskXml=System.Xml.Linq.XDocument.Parse(GameLifetime.Definition("S-1-5-21-test","C:\\Windows\\powershell.exe","C:\\A & B\\watch.ps1"));
+            var taskXml=System.Xml.Linq.XDocument.Parse(GameLifetime.Definition("S-1-5-21-test","C:\\CatScratch\\CatScratch.GameWatcher.exe","C:\\A & B\\watch.ps1"));
             System.Xml.Linq.XNamespace taskNs="http://schemas.microsoft.com/windows/2004/02/mit/task";
             Check(taskXml.Descendants(taskNs+"LogonType").Single().Value=="InteractiveToken" &&
                 taskXml.Descendants(taskNs+"RunLevel").Single().Value=="HighestAvailable" &&
-                taskXml.Descendants(taskNs+"Arguments").Single().Value.Contains("\"C:\\A & B\\watch.ps1\"") &&
+                taskXml.Descendants(taskNs+"Arguments").Single().Value=="\"C:\\A & B\\watch.ps1\"" &&
+                taskXml.Descendants(taskNs+"Command").Single().Value.EndsWith("CatScratch.GameWatcher.exe") &&
                 GameLifetime.TaskName("C:\\Sample")==GameLifetime.TaskName("c:\\sample\\"),
                 "Game watcher task uses the interactive user, safe XML paths and a stable per-installation name");
             var schedulerType=Type.GetTypeFromProgID("Schedule.Service")!;

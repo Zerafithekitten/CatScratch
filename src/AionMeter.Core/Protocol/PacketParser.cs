@@ -639,8 +639,9 @@ public sealed class PacketParser
     /// <summary>
     /// <code>party key u32, party name (u8 len + utf8), size u8, dungeon u32, 2 bytes, leader dbid u64, 3 bytes,
     /// member count varint, then per member: mask u8, slot u8, dbid u64 (its top u16 is the server), nickname (u8 len +
-    /// utf8; empty = a vacant slot, which may precede occupied slots), class u32, level u32, gear score u32, a few flags, the server
-    /// id again (u16), another u16, one byte, combat power u64, then a tail of varying length.</code>
+    /// utf8; empty = a vacant slot, which may precede occupied slots), class u32, level u32, gear score u32, a few flags,
+    /// born server u16, current server u16, role u8, combat power u64, then a tail of varying length.</code>
+    /// The database ID's server may differ from the explicit born server, so preserve the database ID separately.
     /// Layout as documented by A2Tools-DPS-Meter (GPL-3.0). The flags before the combat power vary in width, so it is
     /// found past the member's server id; the next member is found by its header (the next slot, a plausible server in
     /// the dbid, a readable name). Some builds put one more u32 before the gear score (when mask bit 1 is set): a gear
@@ -691,10 +692,9 @@ public sealed class PacketParser
                 o += 4;
             }
 
-            var anchor = -1;
-            for (var at = o; at <= Math.Min(o + 10, b.Length - 2); at++)
-                if (Wire.U16(b, at) == server) { anchor = at; break; }
-            if (anchor < 0 || anchor + 5 + 8 > b.Length) break;
+            var anchor = FindPartyStats(b, o, server);
+            if (anchor < 0) break;
+            server = Wire.U16(b, anchor);
             var power = BinaryPrimitives.ReadUInt64LittleEndian(b[(anchor + 5)..]);
             if (power > MaxCombatPower) break;
             o = anchor + 5 + 8;
@@ -733,15 +733,31 @@ public sealed class PacketParser
         if (level is < 1 or > 200) return;
         if ((b[0] & 1) != 0 && gear < 100 && o + 4 <= b.Length && Wire.U32(b, o) is var next and >= 100 and <= 50_000)
         { gear = next; o += 4; }
-        var anchor = -1;
-        for (var at = o; at <= Math.Min(o + 10, b.Length - 13); at++)
-            if (Wire.U16(b, at) == server) { anchor = at; break; }
+        var anchor = FindPartyStats(b, o, server);
         if (anchor < 0) return;
+        server = Wire.U16(b, anchor);
         var power = BinaryPrimitives.ReadUInt64LittleEndian(b[(anchor + 5)..]);
         if (power > MaxCombatPower) return;
         _rosterMembers[slot] = (BinaryPrimitives.ReadUInt64LittleEndian(b[2..]),
             new PartyMemberInfo(name, server, (int)level, gear is >= 1 and <= 50_000 ? (int)gear : 0, (long)power, cls));
         EmitRoster();
+    }
+
+    private static int FindPartyStats(ReadOnlySpan<byte> b, int from, ushort databaseServer)
+    {
+        var fallback = -1;
+        for (var at = from; at <= Math.Min(from + 10, b.Length - 13); at++)
+        {
+            var born = Wire.U16(b, at);
+            var current = Wire.U16(b, at + 2);
+            var power = BinaryPrimitives.ReadUInt64LittleEndian(b[(at + 5)..]);
+            if (born is 0 or > 9_999 || current is 0 or > 9_999 || b[at + 4] > 12 || power > MaxCombatPower) continue;
+            if (born == databaseServer) return at;
+            // The immutable database ID can retain an older server. Require the complete stats shape,
+            // including a plausible CP, before accepting the explicit born/current-server fields.
+            if (power >= MinCombatPower && fallback < 0) fallback = at;
+        }
+        return fallback;
     }
 
     /// <summary>Rosters also ride inside other packets and in the bundles embedded in them, like identity records.</summary>

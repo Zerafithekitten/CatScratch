@@ -5,6 +5,7 @@ public sealed partial class UiText
     // Exact literals, not substitutions in player names, paths or protocol identifiers.
     private static readonly (string English,string Russian,string French)[] AdditionalTranslations =
     [
+        ("Open captures folder","Открыть папку записей","Ouvrir le dossier des captures"),
         ("AION 2 companion","Вместе с AION 2","Compagnon AION 2"),
         ("Start and close CatScratch with AION 2","Запускать и закрывать CatScratch вместе с AION 2","Démarrer et fermer CatScratch avec AION 2"),
         ("Optional background watcher starts with Windows sign-in. Select the game executable, not the launcher. CatScratch closes 10 seconds after the game exits.","Необязательный фоновый наблюдатель запускается при входе в Windows. Выберите EXE игры, а не лаунчера. CatScratch закроется через 10 секунд после выхода из игры.","Le suivi facultatif démarre à la connexion Windows. Choisissez l’exécutable du jeu, pas le lanceur. CatScratch se ferme 10 secondes après le jeu."),

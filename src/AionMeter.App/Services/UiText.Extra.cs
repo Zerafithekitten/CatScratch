@@ -35,6 +35,7 @@ public sealed partial class UiText
     }
     private static readonly Dictionary<string,string> ExtraGerman = new(StringComparer.Ordinal)
     {
+        ["Open captures folder"]="Aufnahmeordner öffnen",
         ["AION 2 companion"]="AION 2 begleiten",
         ["Start and close CatScratch with AION 2"]="CatScratch mit AION 2 starten und beenden",
         ["Optional background watcher starts with Windows sign-in. Select the game executable, not the launcher. CatScratch closes 10 seconds after the game exits."]="Optionaler Hintergrundwächter startet bei der Windows-Anmeldung. Wähle die Spiel-EXE, nicht den Launcher. CatScratch schließt 10 Sekunden nach dem Spiel.",

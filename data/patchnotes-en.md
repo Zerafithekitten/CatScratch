@@ -1,3 +1,11 @@
+## CatScratch v2.5.6-beta.5
+
+### Group recognition and debug convenience
+- Fixed five-player rosters losing a member when the server encoded in their database ID differs from the explicit server fields. CP/GS, member updates and exact dungeon identity matching now use the validated record correctly.
+- Added **Open captures folder** next to Save recent debug, using the existing compact CatScratch style in all four languages.
+- The optional AION 2 watcher now starts through a windowless helper to prevent the brief PowerShell console flash. Existing enabled installations migrate on first updated startup; the watcher remains optional and avoids duplicate instances.
+- Expanded the GitHub guide with the purpose of autostart, why PowerShell is used, local checks, permissions and how to disable it.
+
 ## CatScratch v2.5.6-beta.4
 
 ### Optional AION 2 companion

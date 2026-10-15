@@ -22,6 +22,7 @@ internal static class GameLifetime
     }
     internal static string TaskName(string folder) => "CatScratch-Game-" + Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(Path.GetFullPath(folder).TrimEnd('\\').ToUpperInvariant())))[..16];
     private static string Folder => Path.Combine(AppSettings.AppDataDir, "game-start");
+    internal static bool NeedsQuietMigration => !File.Exists(Path.Combine(Folder,"watch-quiet.json"));
     internal static bool IsRunning(string executable)
     {
         if (string.IsNullOrWhiteSpace(executable)) return false;
@@ -54,7 +55,7 @@ internal static class GameLifetime
             E("Triggers", new XElement(ns + "LogonTrigger", E("Enabled", "true"), E("UserId", user))),
             E("Principals", new XElement(ns + "Principal", new XAttribute("id", "User"), E("UserId", user), E("LogonType", "InteractiveToken"), E("RunLevel", "HighestAvailable"))),
             E("Settings", new[] { E("MultipleInstancesPolicy", "IgnoreNew"), E("DisallowStartIfOnBatteries", "false"), E("StopIfGoingOnBatteries", "false"), E("ExecutionTimeLimit", "PT0S") }),
-            new XElement(ns + "Actions", new XAttribute("Context", "User"), E("Exec", new[] { E("Command", shell), E("Arguments", "-NoProfile -NonInteractive -WindowStyle Hidden -ExecutionPolicy Bypass -File \"" + script + "\"") })))).ToString();
+            new XElement(ns + "Actions", new XAttribute("Context", "User"), E("Exec", new[] { E("Command", shell), E("Arguments", "\"" + script + "\"") })))).ToString();
     }
 
     private static async Task Run(params string[] arguments)
@@ -77,8 +78,8 @@ internal static class GameLifetime
         if (!enabled)
         {
             // Removing the config also stops a watcher if Task Scheduler is unavailable.
-            var config = Path.Combine(Folder, "watch.json");
-            if (File.Exists(config)) File.Delete(config);
+            foreach(var file in new[]{"watch.json","watch-quiet.json"})
+            { var config=Path.Combine(Folder,file); if(File.Exists(config)) File.Delete(config); }
             try { await Run("/Query", "/TN", name); }
             catch (InvalidOperationException) { return; } // No registration for this installation.
             await Run("/Delete", "/TN", name, "/F");
@@ -88,12 +89,17 @@ internal static class GameLifetime
         try
         {
             Directory.CreateDirectory(Folder);
-            var script = Path.Combine(Folder, "watch.ps1");
+            // Removing the legacy config lets existing PowerShell watchers exit without killing child meters.
+            var legacy=Path.Combine(Folder,"watch.json");
+            if(File.Exists(legacy)) File.Delete(legacy);
+            var script = Path.Combine(Folder, "watch-quiet.ps1");
             File.WriteAllText(script, Watcher, new UTF8Encoding(true));
-            File.WriteAllText(Path.Combine(Folder, "watch.json"), JsonSerializer.Serialize(new { Game = executable, Meter = Environment.ProcessPath }), new UTF8Encoding(true));
+            File.WriteAllText(Path.Combine(Folder, "watch-quiet.json"), JsonSerializer.Serialize(new { Game = executable, Meter = Environment.ProcessPath }), new UTF8Encoding(true));
+            var launcher=Path.Combine(Folder,"CatScratch.GameWatcher.exe");
+            File.Copy(Path.Combine(AppContext.BaseDirectory,"CatScratch.GameWatcher.exe"),launcher,true);
             using var user = WindowsIdentity.GetCurrent();
             var xml = Path.Combine(Folder, "task.xml");
-            File.WriteAllText(xml, Definition(user.User!.Value, Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System), "WindowsPowerShell", "v1.0", "powershell.exe"), script));
+            File.WriteAllText(xml, Definition(user.User!.Value, launcher, script));
             await Run("/Create", "/TN", name, "/XML", xml, "/F");
             // Existing watchers read the config each poll. Never forcibly stop a task and its child meter.
             await Run("/Run", "/TN", name);
@@ -124,8 +130,14 @@ internal static class GameLifetime
             }
         }
         '@
-        $configPath = Join-Path $PSScriptRoot 'watch.json'
+        $configPath = Join-Path $PSScriptRoot 'watch-quiet.json'
         $session = (Get-Process -Id $PID).SessionId
+        $hash = [Security.Cryptography.SHA256]::Create()
+        try { $key = [BitConverter]::ToString($hash.ComputeHash([Text.Encoding]::UTF8.GetBytes([CatScratchGamePath]::Normalize($PSScriptRoot).ToUpperInvariant()))).Replace('-','') } finally { $hash.Dispose() }
+        $created = $false
+        $mutex = [Threading.Mutex]::new($true,('Local\CatScratch.GameWatcher.' + $key),[ref]$created)
+        if (!$created) { $mutex.Dispose(); exit }
+        try {
         $seen = $false
         while (Test-Path -LiteralPath $configPath) {
             try {
@@ -136,7 +148,8 @@ internal static class GameLifetime
                 $running = @(Get-Process -Name $gameName -ErrorAction SilentlyContinue | Where-Object { $_.SessionId -eq $session -and $_.Path -and [CatScratchGamePath]::Normalize($_.Path) -eq $gamePath }).Count -gt 0
                 if ($running -and !$seen) {
                     $seen = $true
-                    $meter = @(Get-Process -Name 'CatScratch' -ErrorAction SilentlyContinue | Where-Object { $_.SessionId -eq $session }).Count -gt 0
+                    $meterName = [IO.Path]::GetFileNameWithoutExtension($config.Meter)
+                    $meter = @(Get-Process -Name $meterName -ErrorAction SilentlyContinue | Where-Object { $_.SessionId -eq $session }).Count -gt 0
                     if (!$meter) { Start-Process -FilePath $config.Meter -ArgumentList '--game-session' -WorkingDirectory ([IO.Path]::GetDirectoryName($config.Meter)) -WindowStyle Normal }
                 }
                 if (!$running) { $seen = $false }
@@ -145,6 +158,7 @@ internal static class GameLifetime
             }
             Start-Sleep -Seconds 2
         }
+        } finally { $mutex.ReleaseMutex(); $mutex.Dispose() }
         """;
 }
 

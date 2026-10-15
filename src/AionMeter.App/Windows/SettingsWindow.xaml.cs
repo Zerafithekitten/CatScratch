@@ -122,6 +122,7 @@ public partial class SettingsWindow : Window
         RecentDebug.IsChecked = s.RecentDebugEnabled;
         RecentDebug.Content = T.Localize("Recent debug buffer (60 seconds / 32 MB, experimental)");
         SaveRecentDebug.Content = T.Localize("Save recent debug");
+        OpenCaptures.Content = T.Localize("Open captures folder");
         RecentDebugResult.Text = T.Localize("Enable and save settings first. High traffic can shorten the recorded minute.");
         HkToggle.Text = s.HotkeyToggleOverlay;
         HkAll.Text = s.HotkeyToggleAll;
@@ -321,7 +322,9 @@ public partial class SettingsWindow : Window
     private static void Open(string path)
     {
         Directory.CreateDirectory(path);
-        Process.Start(new ProcessStartInfo("explorer.exe", path) { UseShellExecute = true });
+        var start=new ProcessStartInfo("explorer.exe") { UseShellExecute = true };
+        start.ArgumentList.Add(path);
+        Process.Start(start);
     }
 
     private void OpenData_Click(object sender, RoutedEventArgs e) => Open(Path.Combine(AppContext.BaseDirectory, "data"));
@@ -329,4 +332,5 @@ public partial class SettingsWindow : Window
     private void OpenAppData_Click(object sender, RoutedEventArgs e) => Open(AppSettings.AppDataDir);
 
     private void OpenLogs_Click(object sender, RoutedEventArgs e) => Open(Log.Directory);
+    private void OpenCaptures_Click(object sender, RoutedEventArgs e) => Open(Path.Combine(AppSettings.AppDataDir,"captures"));
 }

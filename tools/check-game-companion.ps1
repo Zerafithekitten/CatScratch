@@ -14,10 +14,26 @@ try {
     $source = Get-Content -LiteralPath "$PSScriptRoot/../src/AionMeter.App/Services/GameLifetime.cs" -Raw
     $match = [regex]::Match($source, '(?s)internal const string Watcher = """\s*\r?\n(.*?)\r?\n\s*""";')
     if (!$match.Success) { throw 'Watcher source not found' }
-    Set-Content -LiteralPath "$case/watch.ps1" -Value ($match.Groups[1].Value -replace '(?m)^ {8}','') -Encoding utf8
-    @{ Game = "$case/bin/GameProbe.exe"; Meter = "$case/bin/MeterProbe.exe" } | ConvertTo-Json | Set-Content -LiteralPath "$case/watch.json" -Encoding utf8
-    $shell = Join-Path $env:SystemRoot 'System32/WindowsPowerShell/v1.0/powershell.exe'
-    $watch = Start-Process -FilePath $shell -ArgumentList @('-NoProfile','-NonInteractive','-WindowStyle','Hidden','-ExecutionPolicy','Bypass','-File',("`"$case/watch.ps1`"")) -WindowStyle Hidden -PassThru
+    $probe = @'
+Add-Type -TypeDefinition 'using System; using System.Runtime.InteropServices; public static class ProbeConsole { [DllImport("kernel32.dll")] public static extern IntPtr GetConsoleWindow(); }'
+[IO.File]::WriteAllText((Join-Path $PSScriptRoot 'watch-state.json'), (@{Pid=$PID; Console=[ProbeConsole]::GetConsoleWindow().ToInt64()} | ConvertTo-Json))
+'@
+    Set-Content -LiteralPath "$case/watch.ps1" -Value ($probe + "`n" + ($match.Groups[1].Value -replace '(?m)^ {8}','')) -Encoding utf8
+    @{ Game = "$case/bin/GameProbe.exe"; Meter = "$case/bin/MeterProbe.exe" } | ConvertTo-Json | Set-Content -LiteralPath "$case/watch-quiet.json" -Encoding utf8
+    $launcherOutput=[IO.Path]::GetFullPath("$case/bin/WatcherLauncher.exe")
+    $launcherSource=[IO.Path]::GetFullPath("$PSScriptRoot/../src/AionMeter.App/Launcher/GameWatcherLauncher.cs")
+    & "$env:SystemRoot/Microsoft.NET/Framework64/v4.0.30319/csc.exe" /nologo /target:winexe /optimize+ ("/out:"+$launcherOutput) $launcherSource
+    if ($LASTEXITCODE) { throw 'Quiet launcher build failed' }
+    $launcher = Start-Process -FilePath "$case/bin/WatcherLauncher.exe" -ArgumentList ("`"$case/watch.ps1`"") -WindowStyle Hidden -PassThru
+    if (!$launcher.WaitForExit(10000)) { throw 'Quiet launcher did not exit promptly' }
+    $launcher.Refresh()
+    if ($launcher.ExitCode) { throw 'Quiet launcher failed' }
+    $launcher.Dispose()
+    $limit=[DateTime]::UtcNow.AddSeconds(30)
+    while (!(Test-Path -LiteralPath "$case/watch-state.json") -and [DateTime]::UtcNow -lt $limit) { Start-Sleep -Milliseconds 100 }
+    $state=Get-Content -LiteralPath "$case/watch-state.json" -Raw | ConvertFrom-Json
+    if ($state.Console -ne 0) { throw 'Watcher allocated a console window' }
+    $watch=Get-Process -Id $state.Pid
     $game = Start-Process -FilePath "$case/bin/GameProbe.exe" -WindowStyle Hidden -PassThru
     function Wait-Starts([int]$Expected) {
         $limit = [DateTime]::UtcNow.AddSeconds(30)
@@ -35,15 +51,25 @@ try {
         throw "Watcher did not launch for game session $Expected"
     }
     Wait-Starts 1
+    $again=Start-Process -FilePath "$case/bin/WatcherLauncher.exe" -ArgumentList ("`"$case/watch.ps1`"") -WindowStyle Hidden -PassThru
+    if (!$again.WaitForExit(10000)) { throw 'Repeated quiet launcher did not finish' }
+    $again.Dispose()
     Start-Sleep -Seconds 3
     if (@(Get-Content -LiteralPath "$case/bin/starts.txt").Count -ne 1) { throw 'Watcher repeated a launch during the same session' }
+    $repeat=Get-Content -LiteralPath "$case/watch-state.json" -Raw | ConvertFrom-Json
+    if ($repeat.Pid -eq $watch.Id) { throw 'Repeated launch did not reach the singleton check' }
+    $duplicate=Get-Process -Id $repeat.Pid -ErrorAction SilentlyContinue
+    if ($duplicate) {
+        try { if(!$duplicate.WaitForExit(5000)) { throw 'Duplicate watcher remained running' } }
+        finally { $duplicate.Dispose() }
+    }
     $game.Kill(); $game.WaitForExit(); $game.Dispose(); $game = $null
     Start-Sleep -Seconds 3
     $game = Start-Process -FilePath "$case/bin/GameProbe.exe" -WindowStyle Hidden -PassThru
     Wait-Starts 2
-    Remove-Item -LiteralPath "$case/watch.json"
+    Remove-Item -LiteralPath "$case/watch-quiet.json"
     if (!$watch.WaitForExit(6000)) { throw 'Disabled watcher did not stop' }
-    Write-Output 'Game companion passed: exact executable detection, one launch per session, a new game session launches again, disabling stops the watcher. No startup task was installed.'
+    Write-Output 'Game companion passed: no console allocated, exact executable detection, one launch per session, a new game session launches again, disabling stops the watcher. No startup task was installed.'
 } finally {
     foreach ($process in @($game, $watch)) {
         if ($null -ne $process) {

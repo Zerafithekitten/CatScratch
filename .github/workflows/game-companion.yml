@@ -4,6 +4,7 @@ on:
     branches: [beta]
     paths:
       - 'src/AionMeter.App/Services/GameLifetime.cs'
+      - 'src/AionMeter.App/Launcher/GameWatcherLauncher.cs'
       - 'tools/check-game-companion.ps1'
       - '.github/workflows/game-companion.yml'
 permissions:

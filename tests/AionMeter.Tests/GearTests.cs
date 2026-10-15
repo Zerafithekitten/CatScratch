@@ -148,7 +148,7 @@ public class GearTests
         var row=Assert.Single(tracker.Snapshot(null,200)!.Combatants);
         Assert.Equal(expected,row.GearScore); Assert.Equal(85428,row.CombatPower);
     }
-    private sealed record Member(string Name, ushort Server, uint Class, uint Level, uint Gear, ulong Power, byte[] Flags, byte[] Tail);
+    private sealed record Member(string Name, ushort Server, uint Class, uint Level, uint Gear, ulong Power, byte[] Flags, byte[] Tail, ushort? DatabaseServer = null, ushort? CurrentServer = null);
 
     /// <summary>A <c>02 97</c> body laid out as documented (see PacketParser.ParsePartyRoster), vacant slots at the end.</summary>
     private static byte[] Roster(Member[] members, int vacant = 0)
@@ -167,7 +167,7 @@ public class GearTests
             var m = members[i];
             b.Add(0x2C);
             b.Add((byte)(i + 1));
-            b.AddRange(BitConverter.GetBytes(((ulong)m.Server << 48) | (ulong)(1000 + i)));
+            b.AddRange(BitConverter.GetBytes(((ulong)(m.DatabaseServer ?? m.Server) << 48) | (ulong)(1000 + i)));
             b.Add((byte)Encoding.UTF8.GetByteCount(m.Name));
             b.AddRange(Encoding.UTF8.GetBytes(m.Name));
             b.AddRange(BitConverter.GetBytes(m.Class));
@@ -175,7 +175,7 @@ public class GearTests
             b.AddRange(BitConverter.GetBytes(m.Gear));
             b.AddRange(m.Flags);                                 // ready / login: not the same width for everyone
             b.AddRange(BitConverter.GetBytes(m.Server));         // born server
-            b.AddRange(BitConverter.GetBytes(m.Server));         // current server
+            b.AddRange(BitConverter.GetBytes(m.CurrentServer ?? m.Server)); // current server
             b.Add(0);                                            // party role
             b.AddRange(BitConverter.GetBytes(m.Power));
             b.AddRange(m.Tail);
@@ -209,6 +209,46 @@ public class GearTests
             new PartyMemberInfo("Borgrim", 2305, 45, 3012, 61_234, GameClass.Gladiator),
             new PartyMemberInfo("Квилл", 1102, 44, 2650, 38_900, GameClass.Chanter),
         ], roster.Members);
+    }
+
+    [Theory]
+    [InlineData(0)] [InlineData(2)] [InlineData(4)]
+    public void Different_database_and_explicit_servers_keep_all_five_members(int movedSlot)
+    {
+        var members=Enumerable.Range(0,5).Select(i=>new Member("Player"+i,2305,24,45,1600,80000,[],[0,1,1])).ToArray();
+        members[movedSlot]=new("Moved",2301,36,45,1438,75064,[],[0,1,1],DatabaseServer:2308,CurrentServer:4302);
+        var events=new List<GameEvent>(); var parser=new PacketParser(GameData.Empty,events.Add);
+        parser.Handle(Opcodes.PartyRoster,Roster(members));
+        var roster=Assert.IsType<PartyRosterEvent>(Assert.Single(events));
+        Assert.Equal(5,roster.Members.Count);
+        var moved=roster.Members[movedSlot];
+        Assert.Equal(("Moved",2301,1438,75064L),(moved.Name,moved.ServerId,moved.GearScore,moved.CombatPower));
+        var tracker=new CombatTracker(GameData.Empty,new MeterOptions{PartyOnly=true,TargetMode=TargetMode.All});
+        var self=roster.Members[0];
+        tracker.Process(new SelfIdentifiedEvent(0,1,self.Name,self.ServerId,self.Class));
+        tracker.Process(roster);
+        for(var i=1;i<5;i++) { var player=roster.Members[i]; tracker.Process(new PlayerSeenEvent(1,(uint)i+1,player.Name,player.ServerId,player.Class)); }
+        for(uint i=1;i<=5;i++) tracker.Process(new DamageEvent(10+i,i,500,17010000,100,HitFlags.None));
+        Assert.Equal(5,tracker.Snapshot(null,20)!.Combatants.Count);
+        // Dungeon identity is still verified by its exact original database ID, not inferred from a name.
+        var identity=new List<byte>{12,0,0,0,0,1,5}; identity.AddRange("Moved"u8.ToArray());
+        identity.AddRange(BitConverter.GetBytes(36u)); identity.AddRange(new byte[16]);
+        identity.AddRange(BitConverter.GetBytes((2308UL<<48)|(ulong)(1000+movedSlot)));
+        parser.Handle(Opcodes.PlayerInfo,identity.ToArray());
+        Assert.Equal(2301,Assert.IsType<PlayerSeenEvent>(events[^1]).ServerId);
+    }
+
+    [Fact]
+    public void Member_updates_accept_different_explicit_server_without_losing_other_members()
+    {
+        var events=new List<GameEvent>(); var parser=new PacketParser(GameData.Empty,events.Add);
+        parser.Handle(Opcodes.PartyRoster,Roster([new("Self",2305,24,45,1900,90000,[],[])]));
+        var updated=Roster([new("Moved",2301,36,45,1438,75064,[],[],DatabaseServer:2308,CurrentServer:4302)])[29..];
+        updated[1]=2;
+        parser.Handle(Opcodes.PartyMemberUpdate,updated);
+        var roster=Assert.IsType<PartyRosterEvent>(events[^1]);
+        Assert.Equal(2,roster.Members.Count);
+        Assert.Equal((2301,75064L),(roster.Members[1].ServerId,roster.Members[1].CombatPower));
     }
 
     [Fact]

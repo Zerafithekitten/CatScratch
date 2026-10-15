@@ -2,12 +2,12 @@
 
 A separate, always-on-top Windows DPS meter for **AION 2**, by Zerafithekitten. Track your own fights and confirmed party members in a compact dark interface with turquoise accents and purple paw branding.
 
-[Download Stable](https://github.com/Zerafithekitten/CatScratch/releases/latest) · [Download Beta](https://github.com/Zerafithekitten/CatScratch/releases/tag/v2.5.6-beta.4) · [Release history](https://github.com/Zerafithekitten/CatScratch/releases) · [Report a bug / request a feature](https://github.com/Zerafithekitten/CatScratch/issues/new/choose)
+[Download Stable](https://github.com/Zerafithekitten/CatScratch/releases/latest) · [Download Beta](https://github.com/Zerafithekitten/CatScratch/releases/tag/v2.5.6-beta.5) · [Release history](https://github.com/Zerafithekitten/CatScratch/releases) · [Report a bug / request a feature](https://github.com/Zerafithekitten/CatScratch/issues/new/choose)
 
 | Channel | Current version | What it includes |
 | --- | --- | --- |
 | **Stable** | **[v2.5.5](https://github.com/Zerafithekitten/CatScratch/releases/tag/v2.5.5)** | Boss personal bests, recent teammates, death recap, background updates, separate Started events, improved group-search handling and ten patchnotes tabs on the left. |
-| **Beta** | **[v2.5.6-beta.4](https://github.com/Zerafithekitten/CatScratch/releases/tag/v2.5.6-beta.4)** | Everything in Stable, plus an optional automatic start/close companion for AION 2. |
+| **Beta** | **[v2.5.6-beta.5](https://github.com/Zerafithekitten/CatScratch/releases/tag/v2.5.6-beta.5)** | Everything in Stable, plus optional quiet automatic start/close with AION 2, a five-member roster repair and a capture-folder shortcut. |
 
 English is the default. German, Russian and French are also available. Screenshots use synthetic sample data; names and numbers are examples. Event-module previews show **v2.5.4-beta.4**.
 
@@ -25,6 +25,7 @@ English is the default. German, Russian and French are also available. Screensho
 - [Updates and release channels](#updates-and-release-channels)
 - [Patchnotes](#patchnotes)
 - [Controls and shortcuts](#controls-and-shortcuts)
+- [Automatic start and close with AION 2 (Beta)](#automatic-start-and-close-with-aion-2-beta)
 - [Languages and stream mode](#languages-and-stream-mode)
 - [Debug recordings and feedback](#debug-recordings-and-feedback)
 - [Limitations](#limitations)
@@ -219,11 +220,35 @@ The all-window shortcut restores the previously open windows and their positions
 
 </details>
 
-### Automatic start and close with AION 2 (Beta)
+## Automatic start and close with AION 2 (Beta)
 
-In **Settings > General > AION 2 companion**, enable **Start and close CatScratch with AION 2**, select the actual game EXE and save. The setting is off by default. Steam, Purple and direct shortcuts work because detection follows the selected game process, not its launcher.
+**Purpose:** CatScratch can be ready whenever you play, without remembering to open it first. When the game closes, the meter closes too. Only a small game watcher stays idle between sessions; the full meter and packet capture do not need to stay running all day.
 
-Enabling installs a per-user Windows sign-in task with a hidden watcher. It checks every two seconds and starts the meter once per game session. CatScratch closes after ten seconds without the game; a brief restart resets that grace period. Manually quitting the meter keeps it closed for the rest of that game session. Turning the option off removes the registration. Uninstall also removes the task. The watcher runs separately and does not lock program files during updates.
+### Enable or disable it
+
+In **Settings > General > AION 2 companion**, enable **Start and close CatScratch with AION 2**, select the actual **game EXE** and save. This is a single combined option and is **off by default**. Steam, Purple and shortcuts work because detection follows the selected game executable, independently of the launcher.
+
+When enabled, a Windows Task Scheduler entry named `CatScratch-Game-…` starts the watcher at Windows sign-in. It also starts immediately when you save the option. The watcher checks every two seconds, opens CatScratch once per game session and CatScratch closes after ten seconds without the game. Brief game restarts reset that grace period. If you manually quit the meter, it stays closed until the next game session.
+
+Turn the option off and save to remove the scheduled task and let the watcher exit. This does not close the game. Uninstall also removes the registration. No watcher is registered while this option is off.
+
+### Why PowerShell is used
+
+PowerShell provides the small Windows background check that remains available while CatScratch itself is closed. Its job is to detect the selected game and launch the meter. The DPS meter, its interface and combat calculations still run in CatScratch itself.
+
+This keeps the watcher separate from the program files that an update replaces, so it does not lock the running meter's binaries or prevent background update preparation. It also avoids installing a permanent Windows service or requiring the entire meter and capture engine to run while you are not playing.
+
+### What runs and what it checks
+
+- The local watcher checks process names, executable paths and the current Windows session, and checks whether the meter is already running. It never starts or stops AION 2 itself.
+- The watcher does not capture game traffic, download updates, upload files, read chat or ask for account credentials. Network capture and normal update checks belong to the meter after it starts.
+- The task runs for the signed-in user with the highest available privileges, matching CatScratch's existing administrator requirement. It does not create a SYSTEM service or store your Windows password.
+- The shipped local script uses `-ExecutionPolicy Bypass` for its own PowerShell process. CatScratch does not change the machine-wide PowerShell execution policy. Managed Windows restrictions may still prevent it from running; failed setup is reported rather than silently enabling the option.
+- Scripts and configuration are kept locally in `userdata/game-start`. You can inspect the [watcher source](https://github.com/Zerafithekitten/CatScratch/blob/v2.5.6-beta.5/src/AionMeter.App/Services/GameLifetime.cs) and [windowless launcher source](https://github.com/Zerafithekitten/CatScratch/blob/v2.5.6-beta.5/src/AionMeter.App/Launcher/GameWatcherLauncher.cs).
+
+### Why no PowerShell window should appear
+
+The current Beta uses a tiny windowless starter that creates PowerShell with **CreateNoWindow**. The watcher remains in the background without allocating a console window, including the brief console flash possible with the previous direct PowerShell startup. Existing enabled installations switch to the quiet task when the updated meter first starts. Automated checks verify that the watcher has no console window.
 
 ## Languages and stream mode
 
@@ -235,7 +260,7 @@ Test mode provides isolated sample fights and pet progress. Test fights cannot b
 
 ## Debug recordings and feedback
 
-Enable **Recent debug buffer** in **Settings > Capture & data**. **Save recent debug** exports up to the preceding **60 seconds** to `userdata/captures`. The buffer is disabled by default and capped at 32 MB of accounted packet storage; heavy traffic can shorten the available time. Continuous packet recording is also available.
+Enable **Recent debug buffer** in **Settings > Capture & data**. **Save recent debug** exports up to the preceding **60 seconds** to `userdata/captures`. The buffer is disabled by default and capped at 32 MB of accounted packet storage; heavy traffic can shorten the available time. Continuous packet recording is also available. **Open captures folder** (Beta) opens the recording directory directly from this section, creating it if needed.
 
 Only packets received while recording is enabled can be saved. For group issues, include the actual join/leave; for resurrection issues, include death and revival. Short captures can lack earlier character or protocol context. Captures can contain character names; keep them private. Nothing is uploaded automatically.
 

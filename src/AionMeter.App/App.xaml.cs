@@ -373,6 +373,12 @@ public partial class App : Application
             { Log.Info("AION 2 closed: ending companion session"); ExitProgram(); }
         };
         _gameTimer.Start();
+        if(settings.FollowGame && !settings.Transient && GameLifetime.NeedsQuietMigration)
+            Dispatcher.BeginInvoke(async () =>
+            {
+                try { await GameLifetime.Configure(true,settings.GameExecutable); }
+                catch(Exception error) { Log.Error("Quiet game watcher migration deferred",error); }
+            },DispatcherPriority.ApplicationIdle);
         Dispatcher.BeginInvoke(() =>
         {
             if (!IsExiting && settings.ShowPetTrackerModule) TogglePetModule();
