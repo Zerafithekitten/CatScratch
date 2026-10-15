@@ -52,13 +52,78 @@ public class GearTests
     {
         var events = new List<GameEvent>(); var parser = new PacketParser(GameData.Empty, events.Add);
         var member = Roster([new("Mate", 2305, 24, 45, 945, 53718, [0], [])])[29..];
-        parser.Handle(Opcodes.PartyMemberUpdate, member); parser.Handle(Opcodes.PartyLeft, [0, 0]);
+        parser.Handle(Opcodes.PartyMemberUpdate, member);
         Assert.Empty(events);
         parser.Handle(Opcodes.PartyRoster, Roster([new("Self", 2305, 31, 45, 1894, 85471, [0], [])]));
         var count = events.Count;
         parser.Handle(Opcodes.PartyLeft, [1, 0]); parser.Handle(Opcodes.PartyLeft, [0]);
         parser.Handle(Opcodes.PartyMemberUpdate, [0, 12, 1]);
         Assert.Equal(count, events.Count);
+    }
+
+    [Fact]
+    public void Leave_without_a_roster_in_this_parser_clears_a_retained_group()
+    {
+        var preview = new PartyPreview();
+        preview.Observe(new SelfIdentifiedEvent(0, 1, "Self", 2305, GameClass.Cleric));
+        preview.Observe(new PartyRosterEvent(1, [new("Self",2305,45,2027,93503,GameClass.Cleric)],42,600001));
+        Assert.Single(preview.Snapshot().Members);
+        var events = new List<GameEvent>();
+        var parser = new PacketParser(GameData.Empty, e => { events.Add(e); preview.Observe(e); });
+        parser.Handle(Opcodes.PartyLeft, [1, 0]);
+        parser.Handle(Opcodes.PartyLeft, [0]);
+        Assert.Single(preview.Snapshot().Members);
+        parser.Handle(Opcodes.PartyLeft, [0, 0]);
+        Assert.IsType<PartyLeftEvent>(events[0]);
+        Assert.Empty(Assert.IsType<PartyRosterEvent>(events[1]).Members);
+        Assert.Empty(preview.Snapshot().Members);
+        Assert.False(preview.Snapshot().InRoom);
+        parser.Handle(Opcodes.PartyMemberUpdate, Roster([new("Old",2305,31,45,1000,50000,[],[])])[29..]);
+        Assert.Equal(2, events.Count);
+    }
+
+    [Theory]
+    [InlineData(0,1)]
+    [InlineData(1,1)]
+    [InlineData(1,2)]
+    [InlineData(3,1)]
+    public void Group_search_roster_keeps_members_after_empty_slots(int firstEmpty, int emptyCount)
+    {
+        var body = Roster([], vacant: 5)[..29].ToList();
+        var expected = new List<string>();
+        for (var slot = 0; slot < 5; slot++)
+        {
+            if (slot >= firstEmpty && slot < firstEmpty + emptyCount)
+            {
+                body.AddRange([0, (byte)(slot + 1), .. new byte[9]]);
+                var tail = new byte[25]; tail[14] = 4;
+                body.AddRange(tail);
+                continue;
+            }
+            var name = slot == 4 ? "Self" : "Mate" + slot;
+            expected.Add(name);
+            var member = Roster([new(name,2305,31,45,(uint)(1800+slot),(ulong)(80000+slot),[],[0,1,1])])[29..];
+            member[1] = (byte)(slot + 1);
+            BitConverter.GetBytes((2305UL << 48) | (ulong)(1000 + slot)).CopyTo(member, 2);
+            body.AddRange(member);
+        }
+        var preview = new PartyPreview();
+        preview.Observe(new SelfIdentifiedEvent(0,1,"Self",2305,GameClass.Cleric));
+        var events = new List<GameEvent>();
+        var parser = new PacketParser(GameData.Empty, e => { events.Add(e); preview.Observe(e); });
+        parser.Handle(Opcodes.PartyRoster, body.ToArray());
+        var roster = Assert.IsType<PartyRosterEvent>(Assert.Single(events));
+        Assert.Equal(expected, roster.Members.Select(m => m.Name));
+        Assert.Equal(1804, roster.Members[^1].GearScore);
+        Assert.Equal(80004, roster.Members[^1].CombatPower);
+        Assert.True(preview.Snapshot().InRoom);
+        Assert.Equal(expected.Count, preview.Snapshot().Members.Count);
+        // A later join fills the vacancy without discarding members in higher slots.
+        var joined = Roster([new("NewMate",2305,31,45,2000,90000,[],[])])[29..];
+        joined[1] = (byte)(firstEmpty + 1);
+        parser.Handle(Opcodes.PartyMemberUpdate, joined);
+        Assert.Equal(expected.Count + 1, preview.Snapshot().Members.Count);
+        Assert.Contains(preview.Snapshot().Members, m => m.Name == "Self");
     }
     [Theory]
     [InlineData(1889,1889,45,1889)]

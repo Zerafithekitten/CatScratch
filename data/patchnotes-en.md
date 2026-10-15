@@ -1,3 +1,11 @@
+## CatScratch v2.5.4-beta.1
+
+### Group-search fixes
+
+- Read all occupied group-search slots even when empty slots occur in the middle. Keep names, CP and GS for members after a vacancy and preserve them when a new player fills it.
+- Clear retained group stats on a confirmed leave notification even if the current packet reader has not received a roster yet. Reject malformed leave messages and ignore member updates after leaving.
+- Validate the fix against the supplied join recording and regression tests for sparse groups. Damage and DPS calculations are unchanged.
+
 ## CatScratch v2.5.3
 
 ### Five releases in the patch notes window
