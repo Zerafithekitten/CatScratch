@@ -6,7 +6,7 @@
 - Place a clickable contents overview at the top of each version. Select a topic to jump directly to its detailed explanation below.
 - Show Stable releases for the Stable update channel. Beta also includes published beta versions, with final releases sorting after their betas. Ignore drafts, invalid version tags and duplicate versions.
 - Keep the bundled release archive available offline. Refresh from GitHub loads the published history and updates the tabs while retaining the selected version when it remains among the newest five. If GitHub is unavailable, retain the displayed notes.
-- Match the DPS meter's compact dark surfaces, turquoise selected tab, Segoe UI and purple paw. Wrap version tabs at narrow widths and preserve scrolling, resizing and existing screenshot previews.
+- Match the DPS meter's compact dark surfaces, turquoise selected tab, Segoe UI and purple paw. Place the version tabs in a compact vertical sidebar on the left, with contents and detailed notes on the right. Preserve scrolling, resizing and existing screenshot previews.
 
 ### Feedback cleanup
 

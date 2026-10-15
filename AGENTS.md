@@ -10,7 +10,7 @@ Keep the Statistics menu focused on live, session and saved fights. Do not dupli
 
 The Feedback section only contains feedback controls. Do not duplicate Boss personal bests or Last played with there either.
 
-Patch notes show the five newest releases in separate compact version tabs. Each tab shows only its own changes, with a clickable contents overview above detailed explanations. Do not display repeated cumulative history in a tab when those versions have their own tabs.
+Patch notes show the five newest releases in separate compact version tabs in a vertical sidebar on the left. Each tab shows only its own changes on the right, with a clickable contents overview above detailed explanations. Do not display repeated cumulative history in a tab when those versions have their own tabs.
 
 ## Releases
 
