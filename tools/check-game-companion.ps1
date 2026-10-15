@@ -29,6 +29,9 @@ try {
             }
             Start-Sleep -Milliseconds 250
         } while ([DateTime]::UtcNow -lt $limit)
+        Write-Output "Game exited: $($game.HasExited); watcher exited: $($watch.HasExited)"
+        Get-Process -Name GameProbe,MeterProbe,CatScratch -ErrorAction SilentlyContinue | Select-Object ProcessName,SessionId,Path | Format-Table | Out-String | Write-Output
+        if (Test-Path -LiteralPath "$case/watch-error.txt") { Get-Content -LiteralPath "$case/watch-error.txt" | Write-Output }
         throw "Watcher did not launch for game session $Expected"
     }
     Wait-Starts 1

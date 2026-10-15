@@ -117,7 +117,9 @@ internal static class GameLifetime
                     if (!$meter) { Start-Process -FilePath $config.Meter -ArgumentList '--game-session' -WorkingDirectory ([IO.Path]::GetDirectoryName($config.Meter)) -WindowStyle Hidden }
                 }
                 if (!$running) { $seen = $false }
-            } catch { }
+            } catch {
+                try { [IO.File]::WriteAllText((Join-Path $PSScriptRoot 'watch-error.txt'), $_.Exception.ToString()) } catch { }
+            }
             Start-Sleep -Seconds 2
         }
         """;
