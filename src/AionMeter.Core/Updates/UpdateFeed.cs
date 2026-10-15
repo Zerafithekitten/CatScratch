@@ -109,6 +109,23 @@ public sealed class UpdateFeed : IDisposable
             .OfType<ReleaseInfo>().OrderByDescending(r => r.Identity).FirstOrDefault();
     }
 
+    /// <summary>Published release history for the notes window, filtered to the selected update channel.</summary>
+    public async Task<IReadOnlyList<ReleaseNotePage>> GetNotesAsync(UpdateChannel channel, CancellationToken ct = default)
+    {
+        if (string.IsNullOrEmpty(_api)) throw new InvalidOperationException("No update repository configured for this build.");
+        using var timeout = CancellationTokenSource.CreateLinkedTokenSource(ct);
+        timeout.CancelAfter(ApiTimeout);
+        using var request = new HttpRequestMessage(HttpMethod.Get, _api.Replace("/releases/latest", "/releases?per_page=100"));
+        request.Headers.Accept.ParseAdd("application/vnd.github+json");
+        using var response = await _http.SendAsync(request, timeout.Token).ConfigureAwait(false);
+        if (response.StatusCode == HttpStatusCode.NotFound) return [];
+        response.EnsureSuccessStatusCode();
+        using var document = JsonDocument.Parse(await response.Content.ReadAsStringAsync(timeout.Token).ConfigureAwait(false));
+        return ReleaseNotePage.Latest(document.RootElement.EnumerateArray()
+            .Select(r => Parse(r.GetRawText(), channel == UpdateChannel.Beta)).OfType<ReleaseInfo>()
+            .Select(r => new ReleaseNotePage(r.Tag, r.Notes)), channel);
+    }
+
     /// <summary>"v0.2.0", "0.2", "v1.0.3-beta" → 0.2.0, 0.2.0, 1.0.3; null when it is not a version.</summary>
     public static Version? ParseVersion(string? text)
     {

@@ -1,3 +1,9 @@
+## CatScratch v2.5.3-beta.1
+
+- Add compact version tabs for the latest five patch notes, newest first, with offline history and GitHub refresh for the selected update channel.
+- Remove Boss personal bests and Last played with from Feedback. Both remain accessible through their dedicated DPS meter icons.
+- Show the current group-search room's names, CP and GS in the live view after a previous fight ends. Keep active combat and explicitly selected fight results accessible.
+
 ## CatScratch v2.5.2
 
 ### Stable hotfix

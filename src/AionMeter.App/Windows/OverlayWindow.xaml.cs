@@ -282,7 +282,8 @@ public partial class OverlayWindow : Window, IDisplayAppearance
             }
             var party = _meter.PartyPreview.Snapshot();
             personalSnapshot = snap;
-            if (_segment is null && snap is null && !_meter.PartyPreview.InDungeon && party.Members.Count > 0)
+            if (_segment is null && !_meter.PartyPreview.InDungeon && party.Members.Count > 0 &&
+                (snap is null || (party.InRoom && !snap.IsActive)))
             {
                 if (!_showingPartyPreview || _partyPreviewRevision != party.Revision || _partyGearVisibility != (_vm.ShowGear, _vm.ShowCombatPower))
                     _vm.ApplyParty(party.Members, _meter.LiveIdentity.Current?.Name ?? "", party.InRoom);

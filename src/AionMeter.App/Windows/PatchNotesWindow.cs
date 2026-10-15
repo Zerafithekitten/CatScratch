@@ -14,6 +14,11 @@ namespace AionMeter.App.Windows;
 public sealed class PatchNotesWindow : Window
 {
     private readonly StackPanel _notes = new();
+    private readonly WrapPanel _tabs = new();
+    private readonly ScrollViewer _scroll = new() { VerticalScrollBarVisibility = ScrollBarVisibility.Auto };
+    private IReadOnlyList<ReleaseNotePage> _pages = [];
+    internal IReadOnlyList<string> ReleaseTabs => _pages.Select(p => p.Tag).ToArray();
+    internal string? SelectedRelease { get; private set; }
     private readonly HttpClient _images = new() { Timeout = TimeSpan.FromSeconds(15) };
     private int _notesRevision;
     private readonly TextBlock _state = new() { Margin = new Thickness(0,8,0,12), Foreground = Brushes.LightGray };
@@ -26,7 +31,7 @@ public sealed class PatchNotesWindow : Window
         System.Windows.Shell.WindowChrome.SetWindowChrome(this, new System.Windows.Shell.WindowChrome { CaptionHeight = 0, ResizeBorderThickness = new Thickness(6), GlassFrameThickness = new Thickness(0) });
         Background = new SolidColorBrush(Color.FromRgb(27,32,39)); Foreground = new SolidColorBrush(Color.FromRgb(237,242,247));
         FontFamily = (FontFamily)FindResource("UiFont"); FontSize = 12;
-        Resources.MergedDictionaries.Add(new ResourceDictionary { Source = new Uri("/CatScratch;component/Theme/MeterPreferences.xaml", UriKind.Relative) });
+        Resources.MergedDictionaries.Add(new ResourceDictionary { Source = new Uri("/CatScratch;component/Theme/MeterTools.xaml", UriKind.Relative) });
         Resources[typeof(Button)] = (Style)FindResource("GhostButton");
         var root = new DockPanel { Margin = new Thickness(14) };
         var header = new StackPanel(); DockPanel.SetDock(header, Dock.Top); root.Children.Add(header);
@@ -39,24 +44,23 @@ public sealed class PatchNotesWindow : Window
         titleBar.Children.Add(title); header.Children.Add(titleBar);
         title.MouseLeftButtonDown += (_, e) => { if (e.LeftButton == System.Windows.Input.MouseButtonState.Pressed) DragMove(); };
         var refresh = new Button { Content = "Refresh from GitHub", HorizontalAlignment = HorizontalAlignment.Left, Padding = new Thickness(10,5,10,5), Margin = new Thickness(0,12,0,0) };
-        header.Children.Add(refresh); header.Children.Add(_state);
-        root.Children.Add(new Border { Background = new SolidColorBrush(Color.FromRgb(23,30,39)), BorderBrush = new SolidColorBrush(Color.FromRgb(54,73,87)), BorderThickness = new Thickness(1), CornerRadius = new CornerRadius(7), Padding = new Thickness(12), Child = new ScrollViewer { Content = _notes, VerticalScrollBarVisibility = ScrollBarVisibility.Auto } }); Content = root;
-        if (updater.Latest is { } release) ShowNotes(release.Notes, "Latest release · " + release.Tag);
-        else
-        {
-            var path = Path.Combine(AppContext.BaseDirectory, "data", "patchnotes-en.md");
-            ShowNotes(File.Exists(path) ? File.ReadAllText(path) : "No bundled patch notes available.", "Installed version · " + updater.CurrentDisplay);
-        }
+        header.Children.Add(refresh); header.Children.Add(_state); header.Children.Add(_tabs);
+        _scroll.Content = _notes;
+        root.Children.Add(new Border { Background = new SolidColorBrush(Color.FromRgb(23,30,39)), BorderBrush = new SolidColorBrush(Color.FromRgb(54,73,87)), BorderThickness = new Thickness(1), CornerRadius = new CornerRadius(7), Padding = new Thickness(12), Child = _scroll }); Content = root;
+        var path = Path.Combine(AppContext.BaseDirectory, "data", "patchnotes-en.md");
+        var bundled = File.Exists(path) ? ReleaseNotePage.Bundled(File.ReadAllText(path)) : [];
+        SetReleases((updater.Latest is { } release ? new[] { new ReleaseNotePage(release.Tag, release.Notes) } : [])
+            .Concat(bundled), updater.Channel);
         refresh.Click += async (_, _) =>
         {
             refresh.IsEnabled = false; _state.Text = "Checking GitHub…";
             try
             {
                 using var feed = new UpdateFeed("CatScratch-PatchNotes/1.0");
-                var latest = await feed.GetLatestAsync(_lifetime.Token);
+                var releases = await feed.GetNotesAsync(updater.Channel, _lifetime.Token);
                 if (!_lifetime.IsCancellationRequested)
                 {
-                    if (latest is not null) ShowNotes(latest.Notes, "Latest release · " + latest.Tag);
+                    if (releases.Count > 0) SetReleases(releases.Concat(_pages).Concat(bundled), updater.Channel);
                     else _state.Text = "No release notes found. Displaying the saved notes.";
                 }
             }
@@ -65,6 +69,29 @@ public sealed class PatchNotesWindow : Window
             finally { if (!_lifetime.IsCancellationRequested) refresh.IsEnabled = true; }
         };
         Closed += (_, _) => { _lifetime.Cancel(); _images.Dispose(); };
+    }
+    internal void SetReleases(IEnumerable<ReleaseNotePage> pages, UpdateChannel channel)
+    {
+        var selected = SelectedRelease;
+        _pages = ReleaseNotePage.Latest(pages, channel);
+        _tabs.Children.Clear();
+        foreach (var page in _pages)
+        {
+            var tab = new RadioButton { Content = page.Tag, Tag = page.Tag, GroupName = "Releases", Style = (Style)FindResource("ReleaseTab") };
+            tab.Checked += (_, _) => SelectRelease(page.Tag);
+            _tabs.Children.Add(tab);
+        }
+        var index = _pages.ToList().FindIndex(p => p.Tag == selected);
+        if (_pages.Count > 0) ((RadioButton)_tabs.Children[Math.Max(0, index)]).IsChecked = true;
+        else ShowNotes("No bundled patch notes available.", "Patch notes");
+    }
+    internal void SelectRelease(string tag)
+    {
+        if (_pages.FirstOrDefault(p => p.Tag == tag) is not { } page) return;
+        SelectedRelease = tag;
+        foreach (RadioButton tab in _tabs.Children) tab.IsChecked = Equals(tab.Tag, tag);
+        _scroll.ScrollToTop();
+        ShowNotes(page.Markdown, "Release · " + tag);
     }
     private async void ShowNotes(string markdown, string caption)
     {

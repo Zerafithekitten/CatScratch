@@ -8,6 +8,20 @@
     <SolidColorBrush x:Key="TextDim" Color="#BCC9D6"/>
     <SolidColorBrush x:Key="TextMute" Color="#A9B8C7"/>
     <FontFamily x:Key="TitleFont">Segoe UI</FontFamily>
+    <Style x:Key="ReleaseTab" TargetType="RadioButton">
+        <Setter Property="Foreground" Value="#BCC9D6"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="RadioButton">
+            <Border x:Name="Surface" Background="#171E27" BorderBrush="#364957" BorderThickness="1" CornerRadius="5" Padding="9,5" Margin="0,0,5,5">
+                <ContentPresenter/>
+            </Border>
+            <ControlTemplate.Triggers>
+                <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Surface" Property="Background" Value="#24313A"/></Trigger>
+                <Trigger Property="IsChecked" Value="True"><Setter TargetName="Surface" Property="Background" Value="#263C3D"/><Setter TargetName="Surface" Property="BorderBrush" Value="#79E3CF"/><Setter Property="Foreground" Value="#79E3CF"/></Trigger>
+                <Trigger Property="IsKeyboardFocused" Value="True"><Setter TargetName="Surface" Property="BorderBrush" Value="#79E3CF"/></Trigger>
+            </ControlTemplate.Triggers>
+        </ControlTemplate></Setter.Value></Setter>
+    </Style>
     <Style TargetType="ListBoxItem">
         <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
         <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="ListBoxItem">

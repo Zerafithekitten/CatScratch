@@ -179,7 +179,8 @@ internal static class BossRecordChecks
             }
             finally { overlay.Close(); }
             var settings = new SettingsWindow(displayMeter);
-            try { Check(Equals(((Button)settings.FindName("PersonalBestsButton")).Content, "Boss personal bests"), "General settings expose boss personal records"); }
+            try { Check(settings.FindName("PersonalBestsButton") is null && settings.FindName("LastPlayedWithButton") is null,
+                "Feedback does not duplicate the dedicated boss-record and recent-player buttons"); }
             finally { settings.Close(); }
             File.WriteAllText(output, JsonSerializer.Serialize(checks));
         }

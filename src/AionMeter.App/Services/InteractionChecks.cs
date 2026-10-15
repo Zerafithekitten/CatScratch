@@ -164,7 +164,7 @@ internal static class InteractionChecks
             var elevation = AdministratorStartup.StartInfo("C:\\Cat Scratch\\CatScratch.exe", ["--updated", "argument with spaces"]);
             Check(elevation.UseShellExecute && elevation.Verb == "runas" && elevation.ArgumentList.SequenceEqual(new[] { "--updated", "argument with spaces" }),
                 "Normal startup requests administrator elevation and preserves arguments");
-            using var meter = new MeterService(new AppSettings { Transient = true, DownloadIcons = false }, null);
+            using var meter = new MeterService(new AppSettings { Transient = true, DownloadIcons = false, UpdateChannel = "Stable" }, null);
             var exportAnchor = new System.Windows.Controls.Button();
             var disabledExport = ChatCopy.Items(exportAnchor, () => null, null, null).ToArray();
             Check(disabledExport.All(item => !item.IsEnabled), "Chat export is disabled when no real fight is selected");
@@ -322,6 +322,14 @@ internal static class InteractionChecks
             Check(cards.Saved.Sounds.Count == 8 && !cards.Saved.Sounds.Values.Any(s => s.Enabled), "All automatic events and tracked bosses have disabled sound preferences");
             var notes = new AionMeter.App.Windows.PatchNotesWindow(meter.Updates); windows.Add(notes);
             Check(notes.Content is not null, "Patch notes can open without a network request");
+            Check(notes.ReleaseTabs.Count == 5 && notes.ReleaseTabs.All(tag => AionMeter.Core.Updates.ReleaseVersion.Parse(tag)?.Channel == AionMeter.Core.Updates.UpdateChannel.Stable),
+                "Patch notes offer the latest five stable releases in descending version order offline");
+            var oldestNotes = notes.ReleaseTabs[^1];
+            notes.SelectRelease(oldestNotes);
+            Check(notes.SelectedRelease == oldestNotes, "Older patch notes can be selected independently");
+            notes.SetReleases(Enumerable.Range(1, 6).Select(n => new AionMeter.Core.Updates.ReleaseNotePage($"v99.0.{n}", $"### Release {n}\n- Updated notes")), AionMeter.Core.Updates.UpdateChannel.Stable);
+            Check(notes.ReleaseTabs.Count == 5 && notes.ReleaseTabs[0] == "v99.0.6" && notes.SelectedRelease == "v99.0.6",
+                "Refreshing notes keeps five tabs and selects the newest release when the old selection drops out");
             Check(notes.WindowStyle == WindowStyle.None && notes.Background is System.Windows.Media.SolidColorBrush notesBg && notesBg.Color.A == 255,
                 "Patch notes use the custom CatScratch header and remain opaque");
             var fightMenu = activeOverlay.CreateFightMenu(activeOverlay);
@@ -339,6 +347,16 @@ internal static class InteractionChecks
             var historyBefore = meter.History.List().Count;
             Check(!meter.CanSaveLastFight, "Manual saving waits for a completed fight");
             meter.Tracker.Tick(1_000_000);
+            activeOverlay.Refresh();
+            Check(activeModel.Title == "Room stats" && activeModel.SegmentId is null && activeModel.Rows.Count == 1 &&
+                activeModel.Rows[0].GearScore == "1894" && activeModel.Rows[0].HasCombatPower,
+                "Current group-search stats replace a completed fight in the live view");
+            var previousFight = activeOverlay.CreateFightMenu(activeOverlay).Items.OfType<System.Windows.Controls.MenuItem>()
+                .Where(item => item.IsCheckable).ElementAt(1);
+            previousFight.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.MenuItem.ClickEvent));
+            Check(activeModel.SegmentId == segment, "Explicit fight selection remains available while room stats exist");
+            activeOverlay.ShowLive();
+            Check(activeModel.Title == "Room stats", "Returning to live restores the current group-search stats");
             meter.PartyPreview.Observe(new AionMeter.Core.Events.ZoneChangedEvent(1_000_000,600001,"Dungeon",true,true));
             activeOverlay.Refresh();
             Check(activeModel.SegmentId==segment && activeModel.Rows[0].Damage!="—" && activeModel.Title!="Room stats" && activeModel.Title!="Party stats",
