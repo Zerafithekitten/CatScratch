@@ -1,203 +1,236 @@
 # CatScratch
 
-A separate always-on-top Windows damage meter for AION 2 by Zerafithekitten.
+A separate, always-on-top Windows DPS meter for **AION 2**, by Zerafithekitten. Track your own fights and confirmed party members in a compact dark interface with turquoise accents and purple paw branding.
 
-[Download the latest release](https://github.com/Zerafithekitten/CatScratch/releases/latest) · [Patch notes](data/patchnotes-en.md) · [Report an issue](https://github.com/Zerafithekitten/CatScratch/issues)
+[Download Stable](https://github.com/Zerafithekitten/CatScratch/releases/latest) · [Download Beta](https://github.com/Zerafithekitten/CatScratch/releases/tag/v2.5.4-beta.3) · [Release history](https://github.com/Zerafithekitten/CatScratch/releases) · [Report a bug / request a feature](https://github.com/Zerafithekitten/CatScratch/issues/new/choose)
 
-Latest stable version: **2.5.2**. English is the default; German, Russian and French are available in Settings.
+| Channel | Current version | What it includes |
+| --- | --- | --- |
+| **Stable** | **[v2.5.3](https://github.com/Zerafithekitten/CatScratch/releases/tag/v2.5.3)** | Boss personal bests, recent teammates, death recap, background updates and five patchnotes tabs on the left. |
+| **Beta** | **[v2.5.4-beta.3](https://github.com/Zerafithekitten/CatScratch/releases/tag/v2.5.4-beta.3)** | Everything in Stable, plus group-search fixes, more reliable CP/GS identity and cache handling, improved startup, ready-only update notices and **ten** patchnotes tabs. |
 
-Stable 2.5.3 adds five-version patch-note tabs, removes unrelated Feedback shortcuts and fixes completed fights hiding received group-search room statistics. It includes all 2.5.1–2.5.2 features: permanent boss personal bests, compact recent-player stats, death recap and background update preparation. See the [detailed patch notes](data/patchnotes-en.md).
+English is the default. German, Russian and French are also available. Screenshots below use synthetic sample data from **v2.5.4-beta.3**; names and numbers are examples.
 
-Open the **trophy icon** in the DPS meter. Browse and search all bundled real dungeon and world boss entries, even before a first kill. Each boss permanently retains six independent values per character/server/class: highest own DPS, damage, strongest hit and healing, plus fewest own deaths and least damage taken. Each value may come from a different qualifying kill. Equal or worse results never overwrite a record. There is no attempt-history limit because only best values and their achievement dates are stored. Previous beta records migrate automatically. Records require a confirmed real boss kill with a known starting HP baseline and damage only against that boss; test mode, recordings and incomplete fights do not count. Missing packets can omit deaths.
+## Contents
 
-**Last played with** opens from the player icon beside the trophy. It keeps confirmed group members' names, classes and last received CP/GS locally, separately for each own character, newest first. Values appear directly in compact rows; each player has an individual copy-name icon. Missing CP/GS remain dashes until received; old entries cannot reconstruct values that were never recorded. Stream mode masks both displayed and copied names. Test mode and recordings do not populate the list.
+- [Getting started](#getting-started)
+- [DPS meter and fight details](#dps-meter-and-fight-details)
+- [Group-search statistics](#group-search-statistics)
+- [Permanent boss personal bests](#permanent-boss-personal-bests)
+- [Last played with](#last-played-with)
+- [Death recap](#death-recap)
+- [Fight selection and saved fights](#fight-selection-and-saved-fights)
+- [Pet tracker](#pet-tracker)
+- [Events, boss timers and sounds](#events-boss-timers-and-sounds)
+- [Updates and release channels](#updates-and-release-channels)
+- [Patchnotes](#patchnotes)
+- [Controls and shortcuts](#controls-and-shortcuts)
+- [Languages and stream mode](#languages-and-stream-mode)
+- [Debug recordings and feedback](#debug-recordings-and-feedback)
+- [Limitations](#limitations)
+- [Development and license](#development-and-license)
 
-**Death recap** opens automatically on death and lists received hits from the previous ten seconds, including attackers, skills, damage and time before death. It closes after confirmed positive own HP or a map reload, including respawning on the same map. Use the small tombstone icon to enable or disable it, or **Shift+F4** by default. Change the shortcut in Settings > Hotkeys. The recap is temporary and does not persist after restarting the meter.
+## Getting started
 
-## Update channels
+1. Download **CatScratch-Setup.exe** or **CatScratch-win-x64.zip** from your preferred release channel. Extract the entire portable ZIP to a writable folder.
+2. Install [Npcap](https://npcap.com/#download) separately if it is missing. CatScratch can open the official download page for you.
+3. Start **CatScratch.exe** and accept the Windows administrator prompt. Cancelling the prompt prevents startup.
+4. Teleport or change zones once while the meter is running so it receives fresh character information.
+5. Use borderless windowed mode to keep the overlay visible above the game.
 
-**Stable is v2.5.2.** Future updates are published to the `beta` branch and as GitHub prereleases first, unless explicitly promoted to Stable.
+Both Setup and portable installations support in-app updates. Your settings and local records are kept in `userdata` beside the program. The installed version appears at the bottom left of the meter.
 
-Settings > General > Updates > **Update channel** offers Stable and Beta choices. Beta builds are GitHub prereleases and will not replace the stable download. Automatic checks run shortly after startup and every ten minutes, then download, verify and extract an available update in the background. The meter offers **Restart to update** when preparation finishes. Replacing running program files and restarting require your click. Old program backups, the prepared payload and downloaded ZIP are removed only after the new version successfully starts; recovery backups remain on failure. Settings, saved fights, boss bests and recent-player records are preserved.
+## DPS meter and fight details
 
-Automatic checking and preparation are enabled by default and once when migrating an older installation; you can disable them in Settings > General > Updates. Stable 2.5.1 sorts after all 2.5.1 betas, so Beta.5 installations receive this final release too. When a Beta installation first starts the promoted Stable build, its saved update channel automatically returns to Stable. Selecting Beta again afterward is respected across normal restarts. Returning to Stable can otherwise install an older version.
+The meter tracks your own damage while solo and confirmed current party members while grouped. Rows show class, name, DPS, total damage, damage share, Combat Power (**CP**) and Gear Score (**GS**). Missing values appear as dashes. Incoming damage is shown separately in red.
 
-Update older installations to stable v2.5.1 to access the channel selector. A beta build without an existing channel preference follows Beta; a promoted Stable build returns Beta subscribers to Stable as described above.
+The collapsible **Personal combat** section shows self healing and healing of others. An optional boss HP panel uses received health data. The header shows the Europe/Berlin clock and fight duration; the footer includes party DPS and a passive RTT estimate.
 
-Version v2.5.0 includes an isolated test mode with sample fights and pet progress, UI scaling from 75% to 150%, monitor-bound window placement, a stream mode that replaces displayed and copied player names with Cat 1, Cat 2, Cat 3, and automatic fight-end detection. Recordings and saved files keep their original data; test fights cannot be saved as real fights.
+<img src="docs/screenshots/meter.png" alt="Current CatScratch DPS meter with class bars, CP/GS and toolbar shortcuts" width="420" />
 
-## Preview
+Automatic fight-end detection is available in the combat settings. Resize the meter down to 260 px, adjust opacity and UI scale (75–150%), or switch between compact and normal layouts. Click-through hides the frame and controls while keeping statistics readable. Settings remain clickable.
 
-CatScratch UI rendered with sample data. Names and numbers are examples. The screenshots show the current interface.
+Open a player's fight details for DPS, skills, accuracy, rotation and defense, with sorting, a timeline and chat/image export.
 
-### DPS meter and Personal combat
+<details><summary>Fight details and click-through previews</summary>
 
-The optional boss HP bar works in compact and normal views, including click-through, when received HP data is available. Toggle it in Settings > Appearance.
+<img src="docs/screenshots/fight-details-next.png" alt="Fight details with player cards, skills and DPS timeline" width="1040" />
 
-<img src="docs/screenshots/meter.png" alt="CatScratch 2.4.8 DPS meter with party damage taken and personal healing" width="420" />
-
-### Click-through mode
-
-The outer window background, borders and controls disappear; subtle dark player backgrounds keep names and numbers readable. DPS bars, personal values, clock and ping remain visible. The green backdrop below represents the game behind the transparent window.
-
-<img src="docs/screenshots/meter-click-through.png" alt="Transparent click-through DPS meter and personal statistics" width="420" />
-
-### Narrow window
-
-The meter can be resized down to 260 px wide. Long names and CP/GS labels shorten when space is limited; the footer adapts to keep its controls accessible.
-
-<img src="docs/screenshots/meter-narrow.png" alt="CatScratch at its 260 px minimum width" width="260" />
-
-### Detailed fight statistics
-
-Dark player cards, a separate summary row, teal tabs, clearer skill tables and a class-colored timeline replace the older gold layout. Player selection, sorting, rotation, defense and chat/image export remain available.
-
-<img src="docs/screenshots/fight-details-next.png" alt="CatScratch fight details with player cards and DPS timeline" width="1040" />
-
-<details><summary>Accuracy and German interface previews</summary>
-
-<img src="docs/screenshots/fight-accuracy-next.png" alt="Accuracy dashboard with separate hit-quality cards" width="1040" />
-
-<img src="docs/screenshots/fight-details-de-next.png" alt="German fight details at the minimum supported window width" width="900" />
+<img src="docs/screenshots/meter-click-through.png" alt="Click-through meter with transparent outer frame" width="420" />
 
 </details>
 
-### Compact fight selection and Patch notes
+## Group-search statistics
 
-Saving fights is optional: press the save button after combat. The picker switches between the live fight, current-session fights and the last ten saved fights.
+Before combat, the live meter can show the confirmed group-search room's members with their names, classes, CP and GS. No damage is required. An active fight takes priority, and completed fight results remain available through Statistics.
 
-<img src="docs/screenshots/fight-picker.png" alt="Compact CatScratch fight selection" width="340" />
+**Beta improvements:** empty slots in the middle of a room no longer hide the players after them. New arrivals fill those slots without discarding the remaining members. Confirmed leave notifications clear the group even if the packet reader missed an earlier roster. CP/GS are kept separate for same-named characters on different servers, including after cache reloads.
 
-<img src="docs/screenshots/patch-notes.png" alt="CatScratch Patch notes with a dark custom header" width="580" />
+<img src="docs/screenshots/group-room.png" alt="Group-search room overview with names, classes, CP and GS before combat" width="420" />
 
-### Settings and upcoming events
+Group information must actually arrive from the game. CatScratch cannot reconstruct a roster or values it never received.
 
-<img src="docs/screenshots/settings.png" alt="Organized CatScratch settings" width="760" />
+## Permanent boss personal bests
 
-<img src="docs/screenshots/event-settings.png" alt="Event preferences" width="470" />
+Open the **small trophy icon** in the DPS meter. Search the bundled catalog of real dungeon bosses and world bosses, including bosses for which you have no record yet.
 
-Selected events within the next hour appear as single-line cards: event type, name and countdown. Started events remain visible for two minutes with a pulsing border.
+Each boss retains **six independent best values**, separately for each character, server and class:
 
-<img src="docs/screenshots/upcoming-events.png" alt="All selected events within the next hour" width="520" />
+| Statistic | Better result |
+| --- | --- |
+| DPS | Higher |
+| Total damage | Higher |
+| Strongest hit | Higher |
+| Healing done | Higher |
+| Own deaths | Lower |
+| Damage taken | Lower |
 
-<img src="docs/screenshots/upcoming-events-live.png" alt="Just-started events with highlighted borders" width="520" />
+Each value can come from a different qualifying victory. Equal or worse results never replace a best. Values and achievement dates persist across restarts and updates, independently of saved fights: **there is no ten-record limit for boss bests**.
 
-<details><summary>Boss timers and optional event sounds</summary>
+A record requires a confirmed real boss kill, usable own-character data, a known starting HP baseline and boss-only outgoing damage. Test mode, recorded playback and incomplete or unqualified fights do not improve personal bests. Missing packets can prevent qualification or omit observed events.
 
-<img src="docs/screenshots/boss-timers.png" alt="CatScratch boss timers" width="760" />
+<details><summary>Boss personal bests preview</summary>
 
-Custom sounds support WAV and MP3 (maximum **10 seconds / 10 MB**). Selecting custom audio opens the file picker, shows the chosen filename and keeps the previous sound if selection fails. Use **Change audio…** to replace it. Errors appear in red beneath the affected event, including the measured duration for long files.
-
-<img src="docs/screenshots/event-sounds.png" alt="Optional per-event WAV and MP3 sounds with the selected filename" width="580" />
-
-<img src="docs/screenshots/event-sounds-error.png" alt="Red inline error explaining that a selected sound exceeds ten seconds" width="580" />
+<img src="docs/screenshots/boss-personal-bests.png" alt="Permanent boss personal bests with six independent statistics and searchable boss catalog" width="920" />
 
 </details>
 
-### Pet tracker and shortcuts
+## Last played with
 
-Use the paw button beside the CatScratch title to toggle the compact Pet tracker. Only personally attacked, confirmed pet-source monsters add a row: a paw symbol, pet name, soul count such as 11/25 and a thin progress bar toward the next level. Soul loot updates the count after the kill. The three most recently attacked pets are retained, newest first; maxed pets show MAX; repeated hits do not add duplicate rows. Click-through hides the header and outer frame, leaving the compact rows visible. Optional unlock/level-up sounds remain behind the settings button. Own progress is saved per character across restarts. A ~ prefix marks last-known counts until fresh login data arrives. If no saved baseline exists, log into the character once while CatScratch is running; opening an already cached pet menu does not necessarily resend the collection. Recent completed local recordings can recover a missing baseline. The catalog includes confirmed Global monster-source mappings for 165 pets; unknown mappings remain explicit. No nearby scan, location, distance, map or radar is used.
+Open the **player icon beside the trophy**. The local list keeps confirmed teammates, newest first, separately for each own character/server.
 
-<img src="docs/screenshots/pet-tracker.png" alt="Compact attacked-pet tracker with name, soul count and progress" width="300" />
+Compact rows show name, class, server, last-played time and the last received **CP / GS**, without expandable equipment panels. Every player has an individual **copy-name button**. Repeated appearances update an existing entry rather than adding duplicates. The list persists across restarts and has no ten-player limit.
 
-All shortcuts can be recorded by pressing a combination in **Settings > Hotkeys**. Defaults:
+<img src="docs/screenshots/last-played-with.png" alt="Recent teammates with compact CP/GS values and individual copy-name buttons" width="760" />
+
+Unknown CP/GS remain dashes until usable values arrive; missing values do not erase known values. Stream mode masks displayed and copied names consistently. Test mode and recorded playback do not populate the permanent list.
+
+## Death recap
+
+The **tombstone icon** enables or disables the module. When your character dies, a compact recap shows received damage from the previous **ten seconds**: attackers, skills, hit amounts, time before death and attacker totals.
+
+<img src="docs/screenshots/death-recap.png" alt="Death recap listing recent attackers, skills and incoming damage" width="400" />
+
+It closes when fresh positive own HP or a map reload confirms the character is alive. Same-map resurrection and batched HP updates are supported. The default toggle is **Shift+F4**, configurable in Settings > Hotkeys. The recap is temporary and is not retained after restarting CatScratch.
+
+## Fight selection and saved fights
+
+Use **Statistics** for the live fight, current-session fights and **All saved fights**. Boss bests and recent teammates have their own buttons; they are not duplicated in Statistics or Feedback.
+
+Saving is optional. Press the **save button after combat** to keep a full fight. The saved-fight history retains the **ten newest saved fights**. This limit applies to full fight records only, not permanent boss bests or recent teammates. Automatic saving is disabled by default.
+
+<details><summary>Fight selection preview</summary>
+
+<img src="docs/screenshots/fight-picker.png" alt="Statistics menu focused on live, session and saved fights" width="340" />
+
+</details>
+
+## Pet tracker
+
+Use the **paw button beside the CatScratch title** to toggle the compact pet tracker. Personally attacked, confirmed pet-source monsters add a row with pet name, soul count and a progress bar toward the next level. The three most recently attacked pets are retained, newest first; maxed pets show **MAX**. Soul loot updates the count after a kill.
+
+Progress is saved per character. A **~** prefix marks last-known counts until fresh login data arrives. If no baseline is saved, log into the character once while CatScratch is running; opening an already cached pet menu may not resend the collection. Recent completed local recordings can help recover a missing baseline.
+
+The bundled catalog contains confirmed Global monster-source mappings for 165 pets. Unknown mappings remain explicit. This tracker does not scan nearby creatures or provide radar, distance or location tracking.
+
+<details><summary>Pet tracker preview</summary>
+
+<img src="docs/screenshots/pet-tracker.png" alt="Compact pet tracker with soul counts and progress bars" width="300" />
+
+</details>
+
+## Events, boss timers and sounds
+
+Selected events and enabled world-boss timers within the next hour appear as compact movable cards. Started events remain visible for two minutes with a pulsing border. The event window restores its previous position and open state.
+
+Boss timers are separate from personal boss bests. They use received in-game boss-list data and observations; estimated intervals remain identified as estimates.
+
+Optional per-event and pet unlock/level-up sounds support preview and volume settings. Custom **WAV / MP3** files must be at most **10 seconds and 10 MB**. The chosen filename is displayed; **Change audio…** replaces it. Invalid selections show an inline error and keep the previous sound.
+
+<details><summary>Events, boss timers and sound settings</summary>
+
+<img src="docs/screenshots/upcoming-events.png" alt="Selected upcoming event cards and countdowns" width="520" />
+
+<img src="docs/screenshots/boss-timers.png" alt="Observed boss timers" width="760" />
+
+<img src="docs/screenshots/event-sounds.png" alt="Optional event sounds with custom audio filename" width="580" />
+
+</details>
+
+## Updates and release channels
+
+Choose **Stable** or **Beta** in **Settings > General > Updates**. Stable is the default download; beta releases are marked as prereleases and do not replace it. Switching channels may offer an older version when returning to Stable.
+
+With automatic updates enabled, CatScratch checks shortly after startup and **every ten minutes**. It downloads, verifies and extracts an available update in the background while the current meter keeps running.
+
+**In v2.5.4-beta.3**, the meter message, restart button and notification appear **only after the update is fully prepared**. There is no download step left for the user: click **Restart to update** to apply the prepared files and restart. CatScratch does not restart automatically. Stable already supports background preparation, but can show its meter banner before preparation finishes.
+
+After a successful new startup, the old backup, staged payload and downloaded ZIP are removed. Failed updates retain recovery files. Settings, saved fights, personal bests, recent players and captures are preserved. Update staging stays under `userdata/temp/updates`; a writable program folder is required.
+
+When a Beta is promoted and its Stable build starts, Beta subscribers automatically return to the Stable update channel. A later deliberate switch back to Beta is respected until the next Stable transition.
+
+Use **Check now** in Settings or **Check for updates** in the tray menu for a manual check. Automatic checking and preparation can be disabled in Settings. Beta also reduces data-loading allocations and moves optional startup work behind the first meter display.
+
+## Patchnotes
+
+Open **Patch notes** from the meter or Settings. Versions are listed **on the left**, newest first. Each version shows only its own changes, with an **clickable contents overview** above detailed explanations. Repeated older notes in cumulative release bodies are omitted from that version's view.
+
+**Beta shows the last ten versions; Stable v2.5.3 shows five.** The version sidebar is scrollable in Beta when space is limited. Stable shows Stable releases; the Beta channel also includes beta versions. Bundled notes work offline; **Refresh from GitHub** updates the history.
+
+<img src="docs/screenshots/patch-notes.png" alt="Ten patchnotes versions in a left sidebar with clickable contents and individual release notes" width="580" />
+
+[Read all published release notes](https://github.com/Zerafithekitten/CatScratch/releases).
+
+## Controls and shortcuts
+
+Record a combination in **Settings > Hotkeys** and save. Defaults:
 
 | Action | Shortcut |
 | --- | --- |
-| DPS meter | Shift+F5 |
-| Personal combat | Shift+F6 |
-| Upcoming events | Shift+F7 |
-| Boss timers | Shift+F8 |
-| Pet tracker | Shift+F9 |
-| All windows | Shift+F10 |
-| Click-through | Shift+F11 |
-| Restart meter | Shift+F12 |
+| Toggle death recap | **Shift+F4** |
+| Show/hide DPS meter | **Shift+F5** |
+| Toggle Personal combat | **Shift+F6** |
+| Upcoming events | **Shift+F7** |
+| Boss timers | **Shift+F8** |
+| Pet tracker | **Shift+F9** |
+| Show/hide all windows | **Shift+F10** |
+| Toggle click-through | **Shift+F11** |
+| Restart meter measurement | **Shift+F12** |
 
-The all-window shortcut restores the same previously open windows and their positions. The installed version is always visible at the bottom left of the meter.
+The all-window shortcut restores the previously open windows and their positions. App shortcuts pause while Settings is active. The main window's **X exits the entire program**; show/hide shortcuts only change visibility. The tray menu remains available in click-through mode.
 
-<img src="docs/screenshots/pet-tracker-click-through.png" alt="Pet tracker in click-through mode with three compact rows visible" width="300" />
+<details><summary>Settings preview</summary>
 
-### Recent debug buffer (experimental)
+<img src="docs/screenshots/settings.png" alt="Current CatScratch settings in the meter's dark turquoise style" width="760" />
 
-Enable **Recent debug buffer** in **Settings > Capture & data** and save. **Save recent debug** writes up to the previous 60 seconds to `userdata/captures` beside the running executable. The buffer is disabled by default and capped at 32 MB of accounted packet storage; high traffic can shorten the interval. Continuous recording remains available.
+</details>
 
-Only packets received while enabled are available. Export can temporarily retain a snapshot while capture continues, and a short recording can lack earlier protocol or character context. Captures can contain character names; keep them private. Nothing is uploaded automatically.
+## Languages and stream mode
 
-<img src="docs/screenshots/capture-settings.png" alt="Capture settings with the optional 60-second recent debug buffer and export button" width="760" />
+Select **English, Deutsch, Русский or Français** in **Settings > General > Language**. Skill and monster names use bundled language tables, with English fallback where translations are missing. Patchnotes remain in English.
 
-## Languages
+**Stream mode** replaces displayed and copied player names with consistent aliases such as Cat 1, Cat 2 and Cat 3. Original names remain in local saved records and packet captures; stream mode does not anonymize those files.
 
-Select the language in **Settings > General > Language**. English remains the default; patch notes remain English.
+Test mode provides isolated sample fights and pet progress. Test fights cannot be saved as real fights and do not improve permanent boss records or add recent teammates.
 
-| Language | Interface | Availability |
-| --- | --- | --- |
-| English | English | Current release (2.4.8) · default |
-| German | Deutsch | Current release (2.4.8) |
-| Russian | Русский | Current release (2.4.8) |
-| French | Français | Current release (2.4.8) |
+## Debug recordings and feedback
 
-Skill and monster names use the bundled language tables, with English as the fallback for missing names. Player names are preserved.
+Enable **Recent debug buffer** in **Settings > Capture & data**. **Save recent debug** exports up to the preceding **60 seconds** to `userdata/captures`. The buffer is disabled by default and capped at 32 MB of accounted packet storage; heavy traffic can shorten the available time. Continuous packet recording is also available.
 
-## Bugs and feature requests
+Only packets received while recording is enabled can be saved. For group issues, include the actual join/leave; for resurrection issues, include death and revival. Short captures can lack earlier character or protocol context. Captures can contain character names; keep them private. Nothing is uploaded automatically.
 
-[Report a bug or request a feature](https://github.com/Zerafithekitten/CatScratch/issues/new/choose). Choose the appropriate form; bug reports and feature requests must be written in English only. A GitHub account is required.
-
-Use the **Report a bug / request a feature** button in **Settings > General** which opens this page in your browser. No separate server is needed. CatScratch does not submit anything or attach logs or packet captures automatically.
-
-Resource usage: a shared limit of four simultaneous optional image downloads, five-minute retry backoff after temporary failures, cancellation on exit and coalesced statistics redraws when images arrive. The meter's layout stays the same.
-
-## Downloads
-
-Get Setup or the portable ZIP from [Releases](https://github.com/Zerafithekitten/CatScratch/releases/latest).
-Install once with Setup, or unzip the portable package. Both can update directly in the app.
-Install [Npcap](https://npcap.com/#download) separately, start the meter and teleport once.
-Normal startup requests administrator rights through Windows. If you cancel that prompt, the meter does not start.
-Use borderless windowed mode to keep the meter visible above the game.
-
-## Features
-
-- Own damage while solo and confirmed current party members while grouped.
-- Class, name, DPS, damage, share, Combat Power and Gear Score.
-- Dark player rows with separate class-colored DPS bars, resizing, opacity and shortcuts recorded by pressing keys.
-- Damage taken in red on every player row; integrated, collapsible Personal combat for self healing and healing of others.
-- Click-through removes window frames while preserving damage, time and RTT.
-- Movable cards for all selected events and enabled world-boss timers within the next hour, with a pulsing border for two minutes after the start.
-- Separate observed boss timers; optional fight saving, retaining the last ten saved fights.
-- Colored EVENT / PVP / BOSS badges and readable boss panels when locked.
-- Optional per-event sounds with preview, volume, reminder timing and custom WAV or MP3 files up to ten seconds and 10 MB. The selected filename is displayed; invalid files show a red error with the reason.
-- Patch notes show the latest five releases in compact version tabs, newest first, with individual changes, clickable contents, offline notes and GitHub refresh. Stable shows stable releases; Beta also includes beta notes.
-- English by default, selectable German, Russian and French in Settings > General > Language; patch notes remain English.
-- Verified GitHub updates for installed and portable copies; old successful update staging and backups are removed.
-- Optional 60-second recent-debug buffer alongside continuous packet recording, with asynchronous PCAP export.
-
-Use the meter's **Check for updates** button, or Settings > General > Updates > Check now. Checking only checks; installation starts when you press **Update now**.
-CatScratch replaces its program files and restarts without running Setup. Its own userdata is preserved; failed file replacement restores backups. Updates need a writable program folder.
-Update downloads and temporary staging are kept beside the running executable under `userdata/temp/updates`, including portable installations. Settings, captured packets and saved fights are stored separately and are not update cleanup targets.
-Existing Zerafi DPS Monitor installations use one final migration installer to switch the executable and shortcuts to CatScratch. The installation identity and userdata stay the same; the old GitHub URL redirects to this repository.
-The main window's X exits the whole program, including event and boss windows.
-The show/hide shortcut only changes visibility.
-
-The meter passively captures traffic. No game-memory access, injection, game-file
-changes, outgoing game packets or simulated game input are implemented.
-This does not imply publisher approval. Incoming packets can contain other players;
-the results are filtered to your confirmed character and party.
+Use **Report a bug / request a feature** in Settings > General > Feedback, or [open an issue](https://github.com/Zerafithekitten/CatScratch/issues/new/choose). Reports must be in **English**; a GitHub account is required. Please include the version/channel, what happened and how to reproduce it. Feedback opens GitHub without sending logs or captures automatically.
 
 ## Limitations
 
-Missing server data can make damage incomplete. RTT is a passive TCP estimate;
-a local accelerator can expose only its local connection. Events use bundled
-community schedules from [Shugo.GG](https://shugo.gg/timers), checked Oct 12, 2026.
-Global event times are not officially confirmed. Verify availability in game.
+- Missing or unreceived server data can leave names, CP/GS, damage or deaths incomplete. The meter filters results to your confirmed character and party, rather than displaying every nearby player.
+- Death recap needs fresh health or map data to confirm revival. Two recorded resurrection paths have been tested; a third method still lacks a supplied recording.
+- RTT is a passive TCP estimate. Delayed acknowledgements and local accelerators can affect it or expose only a proxy connection.
+- Event schedules are bundled community data from [Shugo.GG](https://shugo.gg/timers), not an official confirmation of Global event times. Verify availability in game.
+- CatScratch passively captures traffic. It does not implement game-memory access, injection, game-file changes, outgoing game packets or simulated game input. This does not imply publisher approval.
 
-## Development
+## Development and license
 
-Requires .NET 10. See [GITHUB-RELEASES.md](GITHUB-RELEASES.md).
-Version tags build the Windows app and installer and publish release downloads.
-Packet recordings and userdata are excluded from Git and releases.
+Requires **.NET 10**. See [GITHUB-RELEASES.md](GITHUB-RELEASES.md) for release builds and [INSTALL.txt](INSTALL.txt) for installation and controls. Version tags build and test the Windows app and installer. Packet recordings and userdata are excluded from Git and release archives.
 
-## License
-
-GPL-3.0, based on [cyberbadger6969/aion2-dps-meter](https://github.com/cyberbadger6969/aion2-dps-meter),
-base revision 414de5c1d5f3d45ce35701bd25229c2dba736bb6.
-Keep LICENSE and data/NOTICE.md with redistributions. Full source accompanies releases.
-AION 2 belongs to NCSOFT.
+**GPL-3.0**, based on [cyberbadger6969/aion2-dps-meter](https://github.com/cyberbadger6969/aion2-dps-meter), base revision `414de5c1d5f3d45ce35701bd25229c2dba736bb6`. Keep [LICENSE](LICENSE) and [data/NOTICE.md](data/NOTICE.md) with redistributions. Full source accompanies releases. AION 2 belongs to NCSOFT.
