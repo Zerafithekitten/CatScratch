@@ -1,6 +1,8 @@
 # Release policy
 
-Stable is v2.5.2. On 2026-10-15 the owner explicitly approved a Stable hotfix removing the duplicate Boss personal bests and Last played with entries from Statistics. Publish its hotfix notes together with the complete v2.5.1 patch notes.
+Stable is v2.5.3. On 2026-10-15 the owner explicitly authorized publishing the five-release patch-note tabs, Feedback cleanup and group-search display fix to Stable, with detailed cumulative notes from v2.5.1 through this release.
+
+For v2.5.2, on 2026-10-15 the owner explicitly approved a Stable hotfix removing the duplicate Boss personal bests and Last played with entries from Statistics. Publish its hotfix notes together with the complete v2.5.1 patch notes.
 
 For v2.5.1, the project owner explicitly approved promoting the tested v2.5.1-beta.5 feature set on 2026-10-14, with detailed patch notes covering all changes since v2.5.0. On 2026-10-15, the owner supplied the second resurrection capture and explicitly requested fixing that method before completing that Stable promotion.
 
