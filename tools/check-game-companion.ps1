@@ -14,7 +14,7 @@ try {
     $source = Get-Content -LiteralPath "$PSScriptRoot/../src/AionMeter.App/Services/GameLifetime.cs" -Raw
     $match = [regex]::Match($source, '(?s)internal const string Watcher = """\s*\r?\n(.*?)\r?\n\s*""";')
     if (!$match.Success) { throw 'Watcher source not found' }
-    Set-Content -LiteralPath "$case/watch.ps1" -Value $match.Groups[1].Value -Encoding utf8
+    Set-Content -LiteralPath "$case/watch.ps1" -Value ($match.Groups[1].Value -replace '(?m)^ {8}','') -Encoding utf8
     @{ Game = "$case/bin/GameProbe.exe"; Meter = "$case/bin/MeterProbe.exe" } | ConvertTo-Json | Set-Content -LiteralPath "$case/watch.json" -Encoding utf8
     $shell = Join-Path $env:SystemRoot 'System32/WindowsPowerShell/v1.0/powershell.exe'
     $watch = Start-Process -FilePath $shell -ArgumentList @('-NoProfile','-NonInteractive','-WindowStyle','Hidden','-ExecutionPolicy','Bypass','-File',("`"$case/watch.ps1`"")) -WindowStyle Hidden -PassThru

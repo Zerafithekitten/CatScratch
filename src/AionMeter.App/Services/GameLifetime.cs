@@ -11,18 +11,28 @@ namespace AionMeter.App.Services;
 /// <summary>Opt-in, current-user game companion. Never starts, stops or modifies the game.</summary>
 internal static class GameLifetime
 {
+    [System.Runtime.InteropServices.DllImport("kernel32.dll", CharSet=System.Runtime.InteropServices.CharSet.Unicode)]
+    private static extern uint GetLongPathName(string path, StringBuilder result, int capacity);
+    internal static string CanonicalPath(string path)
+    {
+        var full=Path.GetFullPath(path);
+        var buffer=new StringBuilder(32768);
+        var length=GetLongPathName(full,buffer,buffer.Capacity);
+        return length>0 && length<buffer.Capacity ? buffer.ToString() : full;
+    }
     internal static string TaskName(string folder) => "CatScratch-Game-" + Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(Path.GetFullPath(folder).TrimEnd('\\').ToUpperInvariant())))[..16];
     private static string Folder => Path.Combine(AppSettings.AppDataDir, "game-start");
     internal static bool IsRunning(string executable)
     {
         if (string.IsNullOrWhiteSpace(executable)) return false;
+        executable=CanonicalPath(executable);
         var session = Process.GetCurrentProcess().SessionId;
         foreach (var process in Process.GetProcessesByName(Path.GetFileNameWithoutExtension(executable)))
         {
             using (process)
                 try
                 {
-                    if (process.SessionId == session && string.Equals(process.MainModule?.FileName, executable, StringComparison.OrdinalIgnoreCase)) return true;
+                    if (process.SessionId == session && process.MainModule?.FileName is { } path && string.Equals(CanonicalPath(path), executable, StringComparison.OrdinalIgnoreCase)) return true;
                 }
                 catch (Exception error) when (error is System.ComponentModel.Win32Exception or InvalidOperationException or NotSupportedException) { }
         }
@@ -101,6 +111,21 @@ internal static class GameLifetime
     // Runs separately so the idle watcher never locks binaries that the updater replaces.
     internal const string Watcher = """
         $ErrorActionPreference = 'Stop'
+        Add-Type -TypeDefinition @'
+        using System.IO;
+        using System.Text;
+        using System.Runtime.InteropServices;
+        public static class CatScratchGamePath {
+            [DllImport("kernel32.dll", CharSet=CharSet.Unicode)]
+            private static extern uint GetLongPathName(string path, StringBuilder result, int capacity);
+            public static string Normalize(string path) {
+                var full=Path.GetFullPath(path);
+                var buffer=new StringBuilder(32768);
+                var length=GetLongPathName(full,buffer,buffer.Capacity);
+                return length>0 && length<buffer.Capacity ? buffer.ToString() : full;
+            }
+        }
+        '@
         $configPath = Join-Path $PSScriptRoot 'watch.json'
         $session = (Get-Process -Id $PID).SessionId
         $seen = $false
@@ -108,9 +133,9 @@ internal static class GameLifetime
             try {
                 $config = Get-Content -LiteralPath $configPath -Raw | ConvertFrom-Json
                 if (!(Test-Path -LiteralPath $config.Meter)) { break }
-                $gamePath = [IO.Path]::GetFullPath($config.Game)
+                $gamePath = [CatScratchGamePath]::Normalize($config.Game)
                 $gameName = [IO.Path]::GetFileNameWithoutExtension($gamePath)
-                $running = @(Get-Process -Name $gameName -ErrorAction SilentlyContinue | Where-Object { $_.SessionId -eq $session -and $_.Path -eq $gamePath }).Count -gt 0
+                $running = @(Get-Process -Name $gameName -ErrorAction SilentlyContinue | Where-Object { $_.SessionId -eq $session -and $_.Path -and [CatScratchGamePath]::Normalize($_.Path) -eq $gamePath }).Count -gt 0
                 if ($running -and !$seen) {
                     $seen = $true
                     $meter = @(Get-Process -Name 'CatScratch' -ErrorAction SilentlyContinue | Where-Object { $_.SessionId -eq $session }).Count -gt 0
