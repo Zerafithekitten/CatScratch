@@ -5,7 +5,7 @@ $game = $null
 $watch = $null
 try {
     New-Item -ItemType Directory -Path $case -Force | Out-Null
-    Set-Content -LiteralPath "$case/Probe.csproj" -Value '<Project Sdk="Microsoft.NET.Sdk"><PropertyGroup><OutputType>Exe</OutputType><TargetFramework>net10.0</TargetFramework><ImplicitUsings>enable</ImplicitUsings></PropertyGroup></Project>'
+    Set-Content -LiteralPath "$case/Probe.csproj" -Value '<Project Sdk="Microsoft.NET.Sdk"><PropertyGroup><OutputType>WinExe</OutputType><TargetFramework>net10.0</TargetFramework><ImplicitUsings>enable</ImplicitUsings></PropertyGroup></Project>'
     Set-Content -LiteralPath "$case/Program.cs" -Value 'if (args.Contains("--game-session")) System.IO.File.AppendAllText(System.IO.Path.Combine(AppContext.BaseDirectory,"starts.txt"),"started\n"); else System.Threading.Thread.Sleep(60000);'
     & $Dotnet build "$case/Probe.csproj" -c Release -o "$case/bin" --ignore-failed-sources
     if ($LASTEXITCODE) { throw 'Companion probe build failed' }

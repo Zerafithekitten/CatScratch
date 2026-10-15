@@ -137,7 +137,7 @@ internal static class GameLifetime
                 if ($running -and !$seen) {
                     $seen = $true
                     $meter = @(Get-Process -Name 'CatScratch' -ErrorAction SilentlyContinue | Where-Object { $_.SessionId -eq $session }).Count -gt 0
-                    if (!$meter) { Start-Process -FilePath $config.Meter -ArgumentList '--game-session' -WorkingDirectory ([IO.Path]::GetDirectoryName($config.Meter)) -WindowStyle Hidden }
+                    if (!$meter) { Start-Process -FilePath $config.Meter -ArgumentList '--game-session' -WorkingDirectory ([IO.Path]::GetDirectoryName($config.Meter)) -WindowStyle Normal }
                 }
                 if (!$running) { $seen = $false }
             } catch {

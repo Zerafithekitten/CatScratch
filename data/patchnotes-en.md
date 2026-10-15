@@ -1,4 +1,4 @@
-## CatScratch v2.5.6-beta.3
+## CatScratch v2.5.6-beta.4
 
 ### Optional AION 2 companion
 - Enable **Start and close CatScratch with AION 2** in Settings > General, then choose the actual game EXE. The option is off by default and also works when the selected game is launched through Steam or Purple.
