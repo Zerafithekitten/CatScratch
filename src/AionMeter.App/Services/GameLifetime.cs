@@ -81,7 +81,6 @@ internal static class GameLifetime
             if (File.Exists(config)) File.Delete(config);
             try { await Run("/Query", "/TN", name); }
             catch (InvalidOperationException) { return; } // No registration for this installation.
-            try { await Run("/End", "/TN", name); } catch (InvalidOperationException) { }
             await Run("/Delete", "/TN", name, "/F");
             return;
         }
@@ -96,8 +95,7 @@ internal static class GameLifetime
             var xml = Path.Combine(Folder, "task.xml");
             File.WriteAllText(xml, Definition(user.User!.Value, Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System), "WindowsPowerShell", "v1.0", "powershell.exe"), script));
             await Run("/Create", "/TN", name, "/XML", xml, "/F");
-            // Refresh a running watcher after a path change. No game or meter process is terminated.
-            try { await Run("/End", "/TN", name); } catch (InvalidOperationException) { }
+            // Existing watchers read the config each poll. Never forcibly stop a task and its child meter.
             await Run("/Run", "/TN", name);
         }
         catch
