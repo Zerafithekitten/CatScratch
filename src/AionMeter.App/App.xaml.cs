@@ -50,6 +50,7 @@ public partial class App : Application
     private SettingsWindow? _settingsWindow;
     private BossTimersWindow? _timersWindow;
     private TimerHubWindow? _timerHub;
+    private TimerHubWindow? _startedEvents;
     private PetTrackerWindow? _petWindow;
     private DeathRecapWindow? _deathRecapWindow;
     private long _deathRecapStamp;
@@ -134,10 +135,11 @@ public partial class App : Application
             _timerCards.Pin("auto:shugo");
             _overlay = new OverlayWindow(_meter);
             _timerHub = new TimerHubWindow(_timerCards);
+            _startedEvents = new TimerHubWindow(_timerCards, startedOnly:true);
             _timersWindow = new BossTimersWindow(_meter);
             _soundWindow = new EventSoundsWindow(_timerCards, (_, _) => { });
             _patchNotes = new PatchNotesWindow(_meter.Updates);
-            foreach (var window in new Window[] { _overlay, _timerHub, _timersWindow, _soundWindow, _patchNotes })
+            foreach (var window in new Window[] { _overlay, _timerHub, _startedEvents, _timersWindow, _soundWindow, _patchNotes })
             {
                 window.Left = -30000; window.Top = -30000;
                 window.ShowInTaskbar = false; window.ShowActivated = false; window.Show();
@@ -323,6 +325,7 @@ public partial class App : Application
         Dispatcher.BeginInvoke(() =>
         {
             if (!IsExiting && _timerCards!.Saved.EventWindowOpen) ShowTimerHub();
+            if (!IsExiting && _timerCards!.Saved.StartedEventWindowOpen) OpenStartedEvents(false);
         }, DispatcherPriority.ApplicationIdle);
 
         // A new player's first start: without Npcap nothing can be measured — say so and offer the download.
@@ -622,6 +625,9 @@ public partial class App : Application
         var reopenEvents = _timerHub?.IsVisible == true;
         _timerHub?.Close();
         if (reopenEvents) ShowTimerHub();
+        var reopenStarted = _startedEvents?.IsVisible == true;
+        _startedEvents?.Close();
+        if (reopenStarted) OpenStartedEvents(false);
         _tray?.ApplyTexts();
         _overlay.OnLanguageChanged();
         if(reopenPets)TogglePetModule();
@@ -640,6 +646,7 @@ public partial class App : Application
         if(petsVisible)TogglePetModule();
         if(bossesVisible){ShowBossTimers();_timersWindow!.Left=bossPosition.Left;_timersWindow.Top=bossPosition.Top;_timersWindow.Width=bossPosition.Width;_timersWindow.Height=bossPosition.Height;}
         _timerHub?.Reload();
+        _startedEvents?.Reload();
         _overlay.ShowLive();_overlay.Refresh();
         if(_meter.DemoRunning && !_overlay.IsVisible)_overlay.Show();
     }
@@ -715,6 +722,17 @@ public partial class App : Application
         else OpenTimerHub(false);
     }
     public void ShowTimerHub()=>OpenTimerHub(true);
+    public void ShowStartedEvents()=>OpenStartedEvents(true);
+    private void OpenStartedEvents(bool interactive)
+    {
+        if (interactive && _meter.Settings.ClickThrough) ToggleClickThrough();
+        if (_startedEvents is { IsLoaded:true }) { Activate(_startedEvents); return; }
+        _startedEvents = new TimerHubWindow(_timerCards!, startedOnly:true);
+        WindowClickThrough.Attach(_startedEvents,()=>_meter.Settings.ClickThrough,()=>_timerCards!.Saved.EventOpacity);
+        _startedEvents.Closed+=(_,_)=>_startedEvents=null;
+        _startedEvents.Show();
+        _windowVisibility.Track(_startedEvents);
+    }
     private void OpenTimerHub(bool interactive)
     {
         // Opening the event controls is an explicit request to interact with the displays.

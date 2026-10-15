@@ -67,14 +67,15 @@ public sealed class TimerCardWindow : Window, IDisplayAppearance
             _kind.Text = UiText.Current.Localize(card.Kind); _kind.Foreground = EventPanelBrushes.ForKind(card.Kind);
             _name.Text = UiText.Current.Localize(card.Name);
             var now = DateTimeOffset.UtcNow;
-            var started = compact && card.Next is { } at && at <= now && at > now.AddMinutes(-2);
+            var occurrence = compact && card.Next is { } at ? new AionMeter.Core.Events.EventStart(id[5..],card.Name,at) : null;
+            var started = occurrence is not null && AionMeter.Core.Events.EventActivity.IsActive(occurrence,now);
             if (_card is not null) EventPulse.Apply(_card,EventPanelBrushes.ForKind(card.Kind),started);
             _time.Text = (card.Next is { } next && !card.Alive ? (compact ? TimerCards.StartLabel(next, now) : TimerCards.Berlin(next).ToString("dd.MM. HH:mm")) + " · " : "") + TimerCards.Countdown(card, now);
             if (started) _time.Text = UiText.Current.Localize("Started · ") + TimerCards.StartLabel(card.Next!.Value,now);
             if(compact)
             {
                 var remaining=card.Next is { } scheduled ? scheduled-now : TimeSpan.Zero;
-                _time.Text=started ? $"{UiText.Current.Localize("Started")} · {(int)(-remaining).TotalMinutes:00}:{(-remaining).Seconds:00}" : $"{UiText.Current.Localize("in")} {(int)Math.Max(0,remaining.TotalMinutes):00}:{Math.Max(0,remaining.Seconds):00}";
+                _time.Text=started ? TimerCards.StartedText(occurrence!,now) : $"{UiText.Current.Localize("in")} {(int)Math.Max(0,remaining.TotalMinutes):00}:{Math.Max(0,remaining.Seconds):00}";
                 if(_card?.Child is Grid row && row.Children[0] is Border badge) badge.BorderBrush=EventPanelBrushes.ForKind(card.Kind);
             }
             _time.TextWrapping = compact ? TextWrapping.NoWrap : TextWrapping.Wrap;

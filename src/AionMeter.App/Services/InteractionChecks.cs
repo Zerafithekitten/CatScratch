@@ -257,14 +257,38 @@ internal static class InteractionChecks
             hub.SetDisplayOnly(false);
             Check(header.Visibility == Visibility.Visible, "Unlock restores the event header");
             hub.ClockOverride=()=>new DateTimeOffset(2026,10,13,14,0,30,TimeSpan.FromHours(2)); hub.Reload();
-            Check(list.Children.OfType<System.Windows.Controls.Border>().Count()==3 && list.Children.OfType<System.Windows.Controls.Border>().Count(b=>b.BorderBrush.HasAnimatedProperties)==2,
-                "Started events pulse while later events within the hour remain visible without pulsing");
+            Check(!list.Children.OfType<System.Windows.Controls.Border>().Any(),
+                "Started events leave Upcoming immediately without duplicate names from later occurrences");
+            cards.Saved.Positions["started-events"]=new(){Left=310,Top=220,Width=320};
+            var startedHub = new AionMeter.App.Windows.TimerHubWindow(cards,startedOnly:true) { ClockOverride=hub.ClockOverride };
+            windows.Add(startedHub); startedHub.Reload();
+            Check(startedHub.Left==310 && startedHub.Top==220 && startedHub.Width==320 && hub.Left!=startedHub.Left,
+                "Started events restore an independent movable module placement");
+            var startedRoot=(System.Windows.Controls.DockPanel)((System.Windows.Controls.Border)startedHub.Content).Child;
+            var startedList=(System.Windows.Controls.WrapPanel)startedRoot.Children[1];
+            string[] ActiveLabels()=>startedList.Children.OfType<System.Windows.Controls.Border>()
+                .Select(b=>((System.Windows.Controls.TextBlock)((System.Windows.Controls.Grid)b.Child).Children[2]).Text).ToArray();
+            Check(ActiveLabels().Order().SequenceEqual(new[]{"Open! · 02:30","Open! · 09:30"}),
+                "Started-only module shows event and Rift countdowns with their own durations");
+            Check(startedList.Children.OfType<System.Windows.Controls.Border>().All(b=>b.BorderBrush.HasAnimatedProperties),
+                "Started-only cards keep the existing pulsing style");
             hub.SetDisplayOnly(true);
-            Check(list.Children.OfType<System.Windows.Controls.Border>().Count(b=>b.BorderBrush.HasAnimatedProperties)==2,
-                "Locking preserves only active event border animation");
-            hub.ClockOverride=()=>new DateTimeOffset(2026,10,13,14,2,0,TimeSpan.FromHours(2)); hub.Reload();
-            Check(cards.NextEvents(hub.ClockOverride()).All(e=>e.StartsAt>hub.ClockOverride()) && list.Children.OfType<System.Windows.Controls.Border>().All(b=>!b.BorderBrush.HasAnimatedProperties),
-                "Started events expire at two minutes and upcoming borders stop pulsing");
+            startedHub.SetDisplayOnly(true);
+            Check(((FrameworkElement)startedRoot.Children[0]).Visibility==Visibility.Collapsed && ActiveLabels().Length==2,
+                "Started events support the meter's click-through appearance");
+            hub.ClockOverride=()=>new DateTimeOffset(2026,10,13,14,3,0,TimeSpan.FromHours(2)); hub.Reload();
+            startedHub.ClockOverride=hub.ClockOverride; startedHub.Reload();
+            Check(ActiveLabels().SequenceEqual(new[]{"Open! · 07:00"}),"Normal events expire at three minutes while Rift stays open");
+            Check(list.Children.OfType<System.Windows.Controls.Border>().Count()==1,
+                "The next recurring event returns to Upcoming after its active occurrence expires");
+            startedHub.ClockOverride=()=>new DateTimeOffset(2026,10,13,14,10,0,TimeSpan.FromHours(2)); startedHub.Reload();
+            Check(ActiveLabels().Length==0,"Rift disappears at exactly ten minutes");
+            cards.Saved.SelectedEvents=["shugo","kaira"];
+            startedHub.ClockOverride=()=>new DateTimeOffset(2026,10,13,13,0,30,TimeSpan.FromHours(2)); startedHub.Reload();
+            Check(ActiveLabels().Contains("Spawned") && ActiveLabels().Contains("Open! · 02:30"),
+                "Started bosses show Spawned without a countdown alongside normal event countdowns");
+            startedHub.ClockOverride=()=>new DateTimeOffset(2026,10,13,13,2,0,TimeSpan.FromHours(2)); startedHub.Reload();
+            Check(ActiveLabels().SequenceEqual(new[]{"Open! · 01:00"}),"Boss cards disappear at exactly two minutes");
             cards.Saved.SelectedEvents=["shugo","rift","invasion"];
             hub.ClockOverride=()=>new DateTimeOffset(2026,10,13,13,10,0,TimeSpan.FromHours(2)); hub.Reload();
             Check(list.Children.OfType<System.Windows.Controls.Border>().Count()==3 && cards.NextEvents(hub.ClockOverride()).Select(e=>e.StartsAt).Distinct().Count()==2,

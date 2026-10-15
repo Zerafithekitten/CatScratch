@@ -5,6 +5,11 @@ public sealed partial class UiText
     // Exact literals, not substitutions in player names, paths or protocol identifiers.
     private static readonly (string English,string Russian,string French)[] AdditionalTranslations =
     [
+        ("Started events","Начавшиеся события","Événements commencés"),
+        ("Show started events","Показать начавшиеся события","Afficher les événements commencés"),
+        ("No started events","Нет начавшихся событий","Aucun événement commencé"),
+        ("Open!","Открыто!","Ouvert !"), ("Spawned","Появился","Apparu"),
+        ("All selected events within the next hour. Started events: 3 minutes; Spacetime Rift: 10 minutes; bosses: 2 minutes. The clock button opens the movable Started events panel.","Все выбранные события в течение часа. После начала: события — 3 минуты, Spacetime Rift — 10 минут, боссы — 2 минуты. Кнопка часов открывает перемещаемую панель начавшихся событий.","Tous les événements sélectionnés dans l’heure. Après le début : événements — 3 minutes, Spacetime Rift — 10 minutes, boss — 2 minutes. Le bouton horloge ouvre le panneau déplaçable des événements commencés."),
         ("Death recap","Анализ смерти","Analyse de mort"),
         ("Enable / disable death recap","Включить / выключить анализ смерти","Activer / désactiver l’analyse de mort"),
         ("Disable death recap","Выключить анализ смерти","Désactiver l’analyse de mort"),

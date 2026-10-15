@@ -35,6 +35,7 @@ public sealed class TimerCards : IDisposable
         public bool ShowAllWorldBosses { get; set; }
         public int EventTileVersion { get; set; }
         public bool EventWindowOpen { get; set; } = true;
+        public bool StartedEventWindowOpen { get; set; } = true;
         public List<ScheduledTimer> Events { get; set; } = [];
         public Dictionary<string, CardPlacement> Positions { get; set; } = [];
         public Dictionary<string, EventSoundPreference> Sounds { get; set; } = [];
@@ -58,32 +59,41 @@ public sealed class TimerCards : IDisposable
             if(now>anchor.AddMinutes(8))anchor=new DateTimeOffset(now.Year,now.Month,now.Day,now.Hour,now.Minute,0,now.Offset);
             var examples=AutomaticEventSchedule.Catalog.Where(e=>Saved.SelectedEvents.Contains(e.Id)).Select((e,i)=>new EventStart(e.Id,e.Name,i==0?anchor.AddSeconds(-30):anchor.AddMinutes(5*(i+1))));
             if(Saved.ShowAllWorldBosses)examples=examples.Concat(_meter.Timers.All().Where(b=>b.NextSpawn is not null).Select(b=>new EventStart($"boss:{b.ServerId}:{b.NpcCode}",_meter.Data.NpcName(b.NpcCode),b.NextSpawn!.Value)));
-            return examples.Where(e=>e.StartsAt>now.AddMinutes(-2) && e.StartsAt<=now.AddHours(1)).OrderBy(e=>e.StartsAt).ToArray();
+            return examples.Where(e=>(e.StartsAt>now || EventActivity.IsActive(e,now)) && e.StartsAt<=now.AddHours(1)).OrderBy(e=>e.StartsAt).ToArray();
         }
         var key = Saved.EventRegion + ":" + Saved.ShowAllWorldBosses + ":" + string.Join('|', Saved.SelectedEvents);
         if (key == _scheduleKey && now >= _scheduleAt && now < _scheduleUntil) return _nextEvents;
         var selected = Saved.ShowAllWorldBosses
             ? Saved.SelectedEvents.Concat(AutomaticEventSchedule.Catalog.Where(e => EventKinds.For(e.Id) == "BOSS").Select(e => e.Id))
             : Saved.SelectedEvents;
-        var scheduled = AutomaticEventSchedule.Next(now, Saved.EventRegion, selected, TimeSpan.FromMinutes(2));
+        var scheduled = AutomaticEventSchedule.Next(now, Saved.EventRegion, selected, TimeSpan.FromMinutes(10))
+            .Where(e => e.StartsAt > now || EventActivity.IsActive(e, now));
         var liveBosses = Saved.ShowAllWorldBosses
             ? _meter.Timers.ForServer(_meter.Timers.CurrentServer)
                 .Where(b => b.NpcCode > 0 && b.NextSpawn is { } next && next > now.AddMinutes(-2) && next <= now.AddHours(1))
                 .Select(b => new EventStart($"boss:{b.ServerId}:{b.NpcCode}", _meter.Data.NpcName(b.NpcCode), b.NextSpawn!.Value))
             : Enumerable.Empty<EventStart>();
-        var candidates = scheduled.Concat(liveBosses).ToArray();
+        var retainedBosses = Saved.ShowAllWorldBosses ? _nextEvents.Where(e =>
+            e.Id.StartsWith($"boss:{_meter.Timers.CurrentServer}:") && EventActivity.IsActive(e,now)) : [];
+        var candidates = scheduled.Concat(liveBosses).Concat(retainedBosses).ToArray();
         _nextEvents = candidates.OrderBy(e => e.StartsAt).ThenBy(e => e.Id)
             .DistinctBy(e => (e.Id,e.StartsAt)).ToArray();
         _scheduleKey = key;
         _scheduleAt = now;
         _scheduleUntil = now.AddSeconds(1);
-        if (_nextEvents.Count > 0)
+        foreach (var item in _nextEvents)
         {
-            var start = _nextEvents[0].StartsAt;
-            var transition = start > now ? start : start.AddMinutes(2);
+            var start = item.StartsAt;
+            var transition = start > now ? start : start.Add(EventActivity.Duration(item.Id));
             if (transition < _scheduleUntil) _scheduleUntil = transition;
         }
         return _nextEvents;
+    }
+    public static string StartedText(EventStart item, DateTimeOffset now)
+    {
+        if (EventKinds.For(item.Id) == "BOSS") return UiText.Current.Localize("Spawned");
+        var seconds = EventActivity.RemainingSeconds(item,now);
+        return $"{UiText.Current.Localize("Open!")} · {seconds / 60:00}:{seconds % 60:00}";
     }
     public TimerCards(MeterService meter, bool persistent = true)
     {

@@ -15,3 +15,5 @@ Patch notes show the ten newest releases in separate compact version tabs in a v
 ## Releases
 
 Follow RELEASE-POLICY.md. Beta branch uploads and prereleases are authorized without further confirmation. Stable publication requires explicit owner approval. Beta release notes are brief; Stable notes are detailed. Add release notes for a publication, not for every intermediate change.
+
+Started events belong exclusively to the separate movable Started events module. Normal events show Open! and a remaining 3-minute countdown; Spacetime Rift uses 10 minutes; bosses show Spawned for 2 minutes without a countdown. Persist the module placement/open state independently from Upcoming events.

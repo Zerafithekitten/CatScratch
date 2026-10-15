@@ -1,3 +1,11 @@
+## CatScratch v2.5.4-beta.4
+
+### Started events module
+
+- Move started entries out of Upcoming into a separate movable Started events module. Keep its position and open state independently; reopen it with the clock button in Upcoming events. Both modules support click-through and show/hide all windows.
+- Normal events show Open! with a remaining three-minute countdown; Spacetime Rift shows Open! for ten minutes; bosses show Spawned for two minutes without a countdown. Expired entries are removed automatically.
+- Avoid duplicate active-event names in Upcoming. Later recurring starts return there after the active occurrence expires. Keep the same timing and labels on detached scheduled-event cards.
+
 ## CatScratch v2.5.4-beta.3
 
 ### Easier updates and faster startup
