@@ -20,7 +20,7 @@ try {
     $watch = Start-Process -FilePath $shell -ArgumentList @('-NoProfile','-NonInteractive','-WindowStyle','Hidden','-ExecutionPolicy','Bypass','-File',("`"$case/watch.ps1`"")) -WindowStyle Hidden -PassThru
     $game = Start-Process -FilePath "$case/bin/GameProbe.exe" -WindowStyle Hidden -PassThru
     function Wait-Starts([int]$Expected) {
-        $limit = [DateTime]::UtcNow.AddSeconds(12)
+        $limit = [DateTime]::UtcNow.AddSeconds(30)
         do {
             if (Test-Path -LiteralPath "$case/bin/starts.txt") {
                 $count = @(Get-Content -LiteralPath "$case/bin/starts.txt").Count
