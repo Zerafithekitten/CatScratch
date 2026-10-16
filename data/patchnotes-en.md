@@ -1,8 +1,8 @@
-## CatScratch v2.5.6-beta.9
+## CatScratch v2.5.6-beta.10
 
 ### Optional layouts and boss fight comparison
 - Added **Overlay profiles** as a separate Settings tab: save, apply, update and delete named layouts. Profiles restore module placement, visibility, scale and appearance without changing capture, updates, hotkeys or autostart preferences.
-- Added **Boss fight comparison** to finished boss statistics. Compare your duration, DPS, damage, healing, damage taken and deaths with an earlier matching session or saved fight; the meter stays Live. Compact dark rows highlight current values and use turquoise/red differences, accounting for lower-is-better statistics.
+- Added **Boss fight comparison** to finished boss statistics. Compare your duration, DPS, damage, healing, damage taken and deaths automatically with the last earlier matching session or saved fight. Both run cards show the boss name clearly; the meter stays Live. Compact dark rows highlight current values and use turquoise/red differences, accounting for lower-is-better statistics.
 - Comparisons match boss, map, character, outcome and damage mode, preserve unknown death counts and flag possibly partial recordings. Instance variants sharing the same map ID cannot be distinguished. Save fights to retain comparisons across restarts.
 
 ## CatScratch v2.5.6-beta.7

@@ -25,3 +25,5 @@ Death recap shows only the five latest received hits, newest first, with red dam
 Follow RELEASE-POLICY.md. Beta branch uploads and prereleases are authorized without further confirmation. Stable publication requires explicit owner approval. Beta release notes are brief; Stable notes are detailed. Add release notes for a publication, not for every intermediate change.
 
 Started events belong exclusively to the separate movable Started events module. Normal events show Open! and a remaining 3-minute countdown; Spacetime Rift uses 10 minutes; bosses show Spawned for 2 minutes without a countdown. Persist the module placement/open state independently from Upcoming events.
+
+Boss fight comparison automatically uses the last earlier matching recorded run. Show the boss name prominently on both run cards with date and duration underneath; do not expose record identifiers or a manual fight selector.

@@ -7,6 +7,8 @@ public sealed partial class UiText
         ["Overlay profiles"]=("Overlay-Profile","Профили оверлеев","Profils des overlays"),
         ["Profile name"]=("Profilname","Название профиля","Nom du profil"),
         ["Compare with"]=("Vergleichen mit","Сравнить с","Comparer avec"),
+        ["Current run"]=("Aktueller Lauf","Текущий бой","Combat actuel"),
+        ["Last matching run"]=("Letzter passender Lauf","Последний подходящий бой","Dernier combat comparable"),
         ["Saved profiles"]=("Gespeicherte Profile","Сохранённые профили","Profils enregistrés"),
         ["Save current layout"]=("Aktuelles Layout speichern","Сохранить текущий макет","Enregistrer la disposition actuelle"),
         ["No profiles saved yet."]=("Noch keine Profile gespeichert.","Пока нет сохранённых профилей.","Aucun profil enregistré."),

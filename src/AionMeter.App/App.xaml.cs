@@ -867,6 +867,7 @@ public partial class App : Application
 
     internal void ShowBossComparison(Core.Combat.EncounterSnapshot current)
     {
+        if(current.Boss is { } boss && _meter.Data.Npcs.ContainsKey(boss.NpcCode))current=current with {Boss=boss with {Name=_meter.Data.NpcName(boss.NpcCode)}};
         var now=DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
         var session=_meter.Tracker.Segments().Select(s=>_meter.Tracker.Snapshot(s.Id,now)).OfType<Core.Combat.EncounterSnapshot>();
         var saved=_meter.History.List().Where(e=>e.BossCode==current.Boss?.NpcCode).Select(e=>_meter.History.Load(e.Path)?.Summary).OfType<Core.Combat.EncounterSnapshot>();

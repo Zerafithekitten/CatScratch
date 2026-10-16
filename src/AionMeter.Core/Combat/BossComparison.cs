@@ -3,6 +3,8 @@ namespace AionMeter.Core.Combat;
 /// <summary>Compare like-for-like encounters without merging separate characters or instance variants.</summary>
 public static class BossComparison
 {
+    public static EncounterSnapshot? Previous(EncounterSnapshot current,IEnumerable<EncounterSnapshot> fights)=>
+        fights.Where(p=>p.StartedAt<current.StartedAt && Compatible(current,p)).OrderByDescending(p=>p.StartedAt).FirstOrDefault();
     public static bool Compatible(EncounterSnapshot current, EncounterSnapshot previous)
     {
         var a=current.Combatants.SingleOrDefault(c=>c.IsSelf);

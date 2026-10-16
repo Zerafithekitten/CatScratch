@@ -14,10 +14,9 @@ internal sealed class BossComparisonWindow : Window
     private static readonly Brush Muted=new SolidColorBrush(Color.FromRgb(169,184,199));
     private static readonly Brush Red=new SolidColorBrush(Color.FromRgb(239,77,86));
     private static readonly Brush Surface=new SolidColorBrush(Color.FromRgb(23,30,39));
-    private sealed record Choice(EncounterSnapshot Fight){public string Label=>$"{Fight.StartedAt.LocalDateTime.ToString("g",UiText.Current.Culture)} · {(Fight.CombatMs/1000d).ToString("N1",UiText.Current.Culture)}s";public override string ToString()=>Label;}
     public BossComparisonWindow(EncounterSnapshot current,IEnumerable<EncounterSnapshot> candidates)
     {
-        Title="CatScratch · "+T("Boss fight comparison");Width=640;Height=510;MinWidth=560;MinHeight=340;WindowStyle=WindowStyle.None;WindowStartupLocation=WindowStartupLocation.CenterScreen;
+        Title="CatScratch · "+T("Boss fight comparison");Width=640;Height=480;MinWidth=560;MinHeight=340;WindowStyle=WindowStyle.None;WindowStartupLocation=WindowStartupLocation.CenterScreen;
         FontFamily=new("Segoe UI");Foreground=new SolidColorBrush(Color.FromRgb(237,242,247));Background=new SolidColorBrush(Color.FromRgb(27,32,39));
         Resources.MergedDictionaries.Add(new ResourceDictionary {Source=new Uri("/CatScratch;component/Theme/MeterTools.xaml",UriKind.Relative)});
         AppIcon.Apply(this);
@@ -26,14 +25,19 @@ internal sealed class BossComparisonWindow : Window
         var close=new Button {Content="\uE711",ToolTip=T("Close"),Style=(Style)FindResource("IconButton"),HorizontalAlignment=HorizontalAlignment.Right};close.Click+=(_,_)=>Close();DockPanel.SetDock(close,Dock.Right);header.Children.Add(close);
         var paw=new Image {Source=Icon,Width=18,Height=18,Margin=new(0,0,8,0)};DockPanel.SetDock(paw,Dock.Left);header.Children.Add(paw);
         header.Children.Add(new TextBlock {Text=T("Boss fight comparison"),FontSize=18,VerticalAlignment=VerticalAlignment.Center,Foreground=new SolidColorBrush(Color.FromRgb(121,227,207))});
-        root.Children.Add(new TextBlock {Text=current.Boss?.Name,FontSize=14,FontWeight=FontWeights.SemiBold,Margin=new(0,10,0,0)});
-        root.Children.Add(new TextBlock {Text=$"{T("Current fight")}: {current.StartedAt.LocalDateTime.ToString("g",UiText.Current.Culture)} · {T(current.Reason.ToString())}",FontSize=11,Foreground=Muted,Margin=new(0,4,0,10)});
-        var choices=candidates.Where(p=>p.StartedAt<current.StartedAt && BossComparison.Compatible(current,p)).DistinctBy(p=>p.Id).OrderByDescending(p=>p.StartedAt).Select(p=>new Choice(p)).ToList();
-        root.Children.Add(new TextBlock {Text=T("Compare with"),FontSize=11,Foreground=Muted,Margin=new(0,0,0,5)});
-        var select=new ComboBox {ItemsSource=choices,DisplayMemberPath="Label",MinWidth=250};root.Children.Add(select);root.Children.Add(_table);
+        var previous=BossComparison.Previous(current,candidates);
+        var runs=new Grid {Margin=new(0,12,0,0)};runs.ColumnDefinitions.Add(new(){Width=new(1,GridUnitType.Star)});runs.ColumnDefinitions.Add(new(){Width=new(1,GridUnitType.Star)});root.Children.Add(runs);
+        void RunCard(string label,EncounterSnapshot? fight,int column)
+        {
+            var content=new StackPanel();content.Children.Add(new TextBlock {Text=T(label),Foreground=Muted,FontSize=10.5});
+            content.Children.Add(new TextBlock {Text=current.Boss?.Name,FontSize=14,FontWeight=FontWeights.SemiBold,Margin=new(0,4,0,4),TextTrimming=TextTrimming.CharacterEllipsis,ToolTip=current.Boss?.Name});
+            content.Children.Add(new TextBlock {Text=fight is null?"—":$"{fight.StartedAt.LocalDateTime.ToString("g",UiText.Current.Culture)} · {(fight.CombatMs/1000d).ToString("N1",UiText.Current.Culture)}s · {T(fight.Reason.ToString())}",FontSize=10.5,Foreground=Muted,TextTrimming=TextTrimming.CharacterEllipsis});
+            var card=new Border {Child=content,Padding=new(10),Background=Surface,BorderBrush=column==0?Accent:new SolidColorBrush(Color.FromRgb(54,73,87)),BorderThickness=new(1),CornerRadius=new(6),Margin=column==0?new Thickness(0,0,5,0):new Thickness(5,0,0,0)};Grid.SetColumn(card,column);runs.Children.Add(card);
+        }
+        RunCard("Current run",current,0);RunCard("Last matching run",previous,1);root.Children.Add(_table);
         root.Children.Add(new Border {Background=Surface,CornerRadius=new(6),Padding=new(10),Margin=new(0,10,0,0),Child=new TextBlock {Text=T("Session and saved fights only. Same boss, map, character and outcome. Instance variants without distinct map IDs cannot be distinguished."),FontSize=10.5,TextWrapping=TextWrapping.Wrap,Foreground=Muted}});
-        if(choices.Count==0)root.Children.Add(new TextBlock {Text=T("No comparable earlier fight available. Save boss fights to compare them after restarting."),TextWrapping=TextWrapping.Wrap,Margin=new(0,10,0,0)});
-        select.SelectionChanged+=(_,_)=>{if(select.SelectedItem is Choice choice)Draw(current,choice.Fight);};select.SelectedIndex=choices.Count>0?0:-1;
+        if(previous is null)root.Children.Add(new TextBlock {Text=T("No comparable earlier fight available. Save boss fights to compare them after restarting."),TextWrapping=TextWrapping.Wrap,Margin=new(0,10,0,0)});
+        else Draw(current,previous);
         Content=new Border {Child=new ScrollViewer {Content=root,VerticalScrollBarVisibility=ScrollBarVisibility.Auto},BorderBrush=new SolidColorBrush(Color.FromRgb(54,73,87)),BorderThickness=new(1),CornerRadius=new(8)};
         AppIcon.Apply(this);Controls.DragAnywhere.Attach(this);WindowPresentation.Attach(this);
     }
