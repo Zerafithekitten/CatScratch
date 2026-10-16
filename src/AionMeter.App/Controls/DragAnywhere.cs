@@ -73,7 +73,7 @@ public sealed class DragAnywhere
                  ? VisualTreeHelper.GetParent(node)
                  : LogicalTreeHelper.GetParent(node))
         {
-            if (node is ButtonBase or Slider or Thumb or ScrollBar or TextBoxBase or PasswordBox or ComboBox or MenuItem)
+            if (node is HsvColorPicker or ButtonBase or Slider or Thumb or ScrollBar or TextBoxBase or PasswordBox or ComboBox or MenuItem)
                 return true;
             if (node is Window) return false;
         }

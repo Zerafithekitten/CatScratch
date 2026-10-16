@@ -80,20 +80,16 @@ internal sealed class ThemeSettingsPanel : StackPanel
         if(_picker is not null)_picker.IsOpen=false;
         var valid=ThemeColors.TryHex(_fields[index].Text,out var hex);
         var initial=(Color)ColorConverter.ConvertFromString(valid?hex:"#C49AF5");
-        var content=new StackPanel{Width=230};
+        var content=new StackPanel{Width=280};
         content.Resources.MergedDictionaries.Add(new(){Source=new Uri("/CatScratch;component/Theme/MeterPreferences.xaml",UriKind.Relative)});
-        var sliders=new Slider[3];var bytes=new[]{initial.R,initial.G,initial.B};
-        for(var i=0;i<3;i++)
-        {
-            var row=new DockPanel{Margin=new(0,4,0,4)};var caption=new TextBlock{Text=new[]{"R","G","B"}[i],Width=22,VerticalAlignment=VerticalAlignment.Center,Foreground=ThemeColors.Brush("#EDF2F7")};row.Children.Add(caption);
-            sliders[i]=new Slider{Minimum=0,Maximum=255,Value=bytes[i],TickFrequency=1,IsSnapToTickEnabled=true,ToolTip=new[]{"Red","Green","Blue"}[i]};row.Children.Add(sliders[i]);content.Children.Add(row);
-        }
-        foreach(var slider in sliders)slider.ValueChanged+=(_,_)=>_fields[index].Text=$"#{(int)sliders[0].Value:X2}{(int)sliders[1].Value:X2}{(int)sliders[2].Value:X2}";
+        var picker=new Controls.HsvColorPicker(initial);
+        picker.ColorChanged+=color=>_fields[index].Text=$"#{color.R:X2}{color.G:X2}{color.B:X2}";
+        content.Children.Add(picker);
         var colors=new WrapPanel{Margin=new(0,8,0,0)};
         foreach(var preset in new[]{"#C49AF5","#7FA9F5","#66D1BF","#F2B575","#F19AC3","#20242A","#191D23","#EDF2F7"})
         {
             var button=new Button{Content=new Border{Width=18,Height=18,CornerRadius=new(3),Background=new SolidColorBrush((Color)ColorConverter.ConvertFromString(preset))},Margin=new(2),Padding=new(3),ToolTip=preset};
-            button.Click+=(_,_)=>{var color=(Color)ColorConverter.ConvertFromString(preset);sliders[0].Value=color.R;sliders[1].Value=color.G;sliders[2].Value=color.B;_fields[index].Text=preset;};colors.Children.Add(button);
+            button.Click+=(_,_)=>{var color=(Color)ColorConverter.ConvertFromString(preset);picker.SetColor(color);_fields[index].Text=preset;};colors.Children.Add(button);
         }
         content.Children.Add(colors);
         var popup=new Popup{PlacementTarget=anchor,Placement=PlacementMode.Bottom,StaysOpen=false,AllowsTransparency=true,

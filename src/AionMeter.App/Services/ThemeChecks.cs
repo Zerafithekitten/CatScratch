@@ -10,6 +10,9 @@ internal static class ThemeChecks
 {
     internal static void Run(MeterService meter,Action<bool,string> check)
     {
+        foreach(var color in new[]{Colors.Red,Colors.Lime,Colors.Blue,Colors.White,Colors.Black,Colors.Gray,Color.FromRgb(196,154,245),Color.FromRgb(17,83,192)})
+            check(new Controls.HsvColorPicker(color).SelectedColor==color,"HSV picker preserves selected RGB color: "+color);
+        check(Controls.HsvColorPicker.FromHsv(0,0,1)==Colors.White&&Controls.HsvColorPicker.FromHsv(0,1,0)==Colors.Black&&Controls.HsvColorPicker.FromHsv(120,1,1)==Colors.Lime,"HSV picker covers white, black and the full hue range");
         var previous=ThemeColors.Current;
         var custom=new ThemePreferences("#7FA9F5","#151A22","#F3F5FA");
         check(ThemeColors.TryHex(" aabbcc ",out var normalized)&&normalized=="#AABBCC"&&!ThemeColors.TryHex("#badinput",out _),"Theme colors normalize six-digit RGB and reject invalid input");

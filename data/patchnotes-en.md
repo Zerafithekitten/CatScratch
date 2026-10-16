@@ -1,3 +1,9 @@
+## CatScratch v3.0.1-beta.4
+
+- Replaced the RGB sliders with a saturation/brightness color field and a rainbow hue strip.
+- Drag to choose a color, or use the keyboard: arrows adjust the selection, Space switches between the field and hue, and Shift makes larger steps.
+- Hex input, presets, preview, default reset and Save/Cancel behavior are retained.
+
 ## CatScratch v3.0.1-beta.3
 
 - Customize accent, background and text colors under Settings > Appearance > Interface colors.
