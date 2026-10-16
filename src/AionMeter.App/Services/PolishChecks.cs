@@ -50,14 +50,14 @@ internal static class PolishChecks
             window.UpdateLayout();
             var formLabels=Visuals(window).OfType<TextBlock>().Where(t=>t.IsVisible && !string.IsNullOrWhiteSpace(t.Text) && !InButton(t)).ToArray();
             check(formLabels.Length>10 && formLabels.All(t=>t.Foreground is System.Windows.Media.SolidColorBrush brush && brush.Color.R+brush.Color.G+brush.Color.B>210),"Settings labels and values remain light on dark expandable sections");
-            void Change(int tab,string label)
+            void Change(string tab,string label)
             {
-                tabs.SelectedIndex=tab;window.UpdateLayout();
+                tabs.SelectedItem=tabs.Items.OfType<TabItem>().Single(t=>Equals(t.Tag,tab));window.UpdateLayout();
                 var box=Visuals(window).OfType<CheckBox>().Single(c=>Equals(c.Content,UiText.Current.Localize(label)));
                 box.IsChecked=box.IsChecked!=true;
                 box.RaiseEvent(new RoutedEventArgs(CheckBox.ClickEvent));
             }
-            Change(6,"Show upcoming events");Change(7,"Sound on collection / level up");
+            Change("events","Show upcoming events");Change("pets","Sound on collection / level up");
             check(cards.Saved.EventWindowOpen==oldEvents && meter.Settings.PetNotify==oldPet,"Event and pet controls remain drafts until Save");
             window.Close();
             check(cards.Saved.EventWindowOpen==oldEvents && meter.Settings.PetNotify==oldPet,"Closing central Settings discards event and pet edits");

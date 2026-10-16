@@ -6,6 +6,8 @@ Preserve the existing DPS meter layout. Use a crisp vector purple cat paw with f
 
 Keep one visible settings gear, in the DPS meter. Centralize event preferences and audio in Settings > Events and pet options in Settings > Pets; other modules must not expose their own settings gears. Show the installed version under the CatScratch title, keep the footer for controls and place the tombstone toggle first. Match functional icon sizes and spacing. Module pins block dragging only, preserve interactive controls and click-through, persist independently and participate in overlay profiles.
 
+Updates and Feedback are independent Settings tabs, removed from General. Update channel and manual update checks belong in Settings > Updates; Feedback contains only the report controls.
+
 The owner explicitly requires every CatScratch change, new window, menu, control and feature to match the current DPS meter. This preference is permanent. Reuse the meter's neutral dark gray surfaces, restrained lavender accents, Segoe UI typography, compact rounded panels, class glyphs and existing button/control styles. Use the purple cat paw branding. Do not introduce a separate visual design or native white controls. Shared resources for interactive meter tools belong in Theme/MeterTools.xaml.
 
 The DPS meter must provide a small trophy icon that opens permanent personal boss bests. Last played with has its own view and a copy-name button for each teammate. Stream mode must mask displayed and copied names consistently.

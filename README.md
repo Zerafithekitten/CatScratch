@@ -6,10 +6,10 @@ A separate, always-on-top Windows DPS meter for **AION 2**, by Zerafithekitten. 
 
 | Channel | Current version | What it includes |
 | --- | --- | --- |
-| **Stable** | **[v2.5.5](https://github.com/Zerafithekitten/CatScratch/releases/tag/v2.5.5)** | Boss personal bests, recent teammates, death recap, background updates, separate Started events, improved group-search handling and ten patchnotes tabs on the left. |
-| **Beta** | **[v2.6.0-beta.2](https://github.com/Zerafithekitten/CatScratch/releases/tag/v2.6.0-beta.2)** | Everything in Stable, plus optional quiet automatic start/close with AION 2, a five-member roster repair, a capture-folder shortcut and a compact five-hit death recap, optional overlay profiles and boss comparisons, central Events/Pets settings and per-module position pins. |
+| **Stable** | **[v3.0.0](https://github.com/Zerafithekitten/CatScratch/releases/tag/v3.0.0)** | Complete tested Beta feature set: compact class-colored rows, central settings with separate Updates/Feedback tabs, position pins, overlay profiles, boss comparisons, compact recap, quiet game companion and safer preferences. |
+| **Beta** | [Last prerelease: v2.6.0-beta.2](https://github.com/Zerafithekitten/CatScratch/releases/tag/v2.6.0-beta.2) | Its features are included in Stable 3.0.0. Select Beta only if you want future prereleases. |
 
-English is the default. German, Russian and French are also available. Screenshots use synthetic sample data; names and numbers are examples. Event-module previews show **v2.5.4-beta.4**.
+English is the default. German, Russian and French are also available. Screenshots use synthetic sample data; names and numbers are examples. Stable 3.0.0 includes the former Beta features.
 
 ## Contents
 
@@ -27,7 +27,7 @@ English is the default. German, Russian and French are also available. Screensho
 - [Updates and release channels](#updates-and-release-channels)
 - [Patchnotes](#patchnotes)
 - [Controls and shortcuts](#controls-and-shortcuts)
-- [Automatic start and close with AION 2 (Beta)](#automatic-start-and-close-with-aion-2-beta)
+- [Automatic start and close with AION 2](#automatic-start-and-close-with-aion-2)
 - [Languages and stream mode](#languages-and-stream-mode)
 - [Debug recordings and feedback](#debug-recordings-and-feedback)
 - [Limitations](#limitations)
@@ -41,7 +41,7 @@ English is the default. German, Russian and French are also available. Screensho
 4. Teleport or change zones once while the meter is running so it receives fresh character information.
 5. Use borderless windowed mode to keep the overlay visible above the game.
 
-Both Setup and portable installations support in-app updates. Your settings and local records are kept in `userdata` beside the program. In the current Beta, the installed version appears underneath the CatScratch title; the footer is reserved for module buttons.
+Both Setup and portable installations support in-app updates. Your settings and local records are kept in `userdata` beside the program. The installed version appears underneath the CatScratch title; the footer is reserved for module buttons.
 
 ## DPS meter and fight details
 
@@ -110,7 +110,7 @@ Unknown CP/GS remain dashes until usable values arrive; missing values do not er
 
 ## Death recap
 
-The **tombstone icon** enables or disables the module. When your character dies, a compact recap shows received damage from the previous **ten seconds**: attackers, skills, hit amounts, time before death and attacker totals. **The current Beta** simplifies this to the five latest hits, newest first, with red damage values and their total. It opens centered in the upper half of the meter screen, above the standard resurrection controls, and remains movable.
+The **tombstone icon** enables or disables the module. When your character dies, a compact recap shows only the five latest received hits from the previous **ten seconds**, newest first, with attackers, skills, time before death, red damage values and their matching total. It opens centered in the upper half of the meter screen, above the standard resurrection controls, and remains movable.
 
 <img src="docs/screenshots/death-recap.png" alt="Death recap listing recent attackers, skills and incoming damage" width="400" />
 
@@ -120,7 +120,7 @@ It closes when fresh positive own HP or a map reload confirms the character is a
 
 <img src="docs/screenshots/overlay-profiles.png" alt="Optional dark overlay profile settings" width="640" />
 
-The current Beta adds **Settings > Overlay profiles**. Arrange the modules first, enter a name and choose **Save new profile**. Use **Apply profile**, **Update selected** or **Delete selected** to manage layouts. Applying acts immediately and closes Settings, discarding any unsaved edits in other tabs.
+Use **Settings > Overlay profiles**. Arrange the modules first, enter a name and choose **Save new profile**. Use **Apply profile**, **Update selected** or **Delete selected** to manage layouts. Applying acts immediately and closes Settings, discarding any unsaved edits in other tabs.
 
 Profiles retain meter and module placement, open states, position pins, UI scale, opacity, row size and display choices. Capture, update channel, hotkeys, autostart, event schedules and sounds stay unchanged. Profiles are optional and switch only when you apply one. Death recap keeps its automatic upper-center default.
 
@@ -128,7 +128,7 @@ Profiles retain meter and module placement, open states, position pins, UI scale
 
 <img src="docs/screenshots/boss-comparison.png" alt="Personal boss fight statistics side by side" width="580" />
 
-In the current Beta, open a finished boss fight from Statistics or saved history and use **Boss fight comparison** in its statistics header. The last earlier matching recorded fight is compared automatically. Both run cards show the boss name prominently, with date and duration beneath; no manual fight list or technical identifiers. The DPS meter remains Live.
+Open a finished boss fight from Statistics or saved history and use **Boss fight comparison** in its statistics header. The last earlier matching recorded fight is compared automatically. Both run cards show the boss name prominently, with date and duration beneath; no manual fight list or technical identifiers. The DPS meter remains Live.
 
 The table compares your duration, DPS, damage, healing, damage taken and deaths with signed differences (current minus previous). Matches require the same boss, map ID, character/server/class, outcome and damage mode. Possibly partial recordings are flagged and unknown deaths remain unknown. Difficulty variants without different map IDs cannot be distinguished.
 
@@ -136,7 +136,7 @@ Comparisons use existing session fights and the ten saved fights. Save boss figh
 
 ## Fight selection and saved fights
 
-Use **Statistics** for the live fight, current-session fights and **All saved fights**. In the current Beta, selecting an earlier session or saved fight opens its detailed statistics immediately in a separate window, starting with your own character when available. The DPS meter stays on **Live** throughout; opening history never replaces its current fight or room stats. Repeated clicks on the same fight reuse its statistics window. Boss bests and recent teammates have their own buttons; they are not duplicated in Statistics or Feedback.
+Use **Statistics** for the live fight, current-session fights and **All saved fights**. Selecting an earlier session or saved fight opens its detailed statistics immediately in a separate window, starting with your own character when available. The DPS meter stays on **Live** throughout; opening history never replaces its current fight or room stats. Repeated clicks on the same fight reuse its statistics window. Boss bests and recent teammates have their own buttons; they are not duplicated in Statistics or Feedback.
 
 Saving is optional. Press the **save button after combat** to keep a full fight. The saved-fight history retains the **ten newest saved fights**. This limit applies to full fight records only, not permanent boss bests or recent teammates. Automatic saving is disabled by default.
 
@@ -148,7 +148,7 @@ Saving is optional. Press the **save button after combat** to keep a full fight.
 
 ## Pet tracker
 
-In the current Beta, **Settings > Pets** contains the pet module toggle, width and collection/level-up sound option. Use Save to apply or Cancel to discard pet edits; the pet overlay has a position pin instead of a settings gear.
+**Settings > Pets** contains the pet module toggle, width and collection/level-up sound option. Use Save to apply or Cancel to discard pet edits; the pet overlay has a position pin instead of a settings gear.
 
 Use the **paw button beside the CatScratch title** to toggle the compact pet tracker. Personally attacked, confirmed pet-source monsters add a row with pet name, soul count and a progress bar toward the next level. The three most recently attacked pets are retained, newest first; maxed pets show **MAX**. Soul loot updates the count after a kill.
 
@@ -164,11 +164,11 @@ The bundled catalog contains confirmed Global monster-source mappings for 165 pe
 
 ## Events, boss timers and sounds
 
-In the current Beta, use the **single gear in the DPS meter > Events** for event visibility, region, selection, module widths, opacity, boss reminders and all event sounds. Event modules no longer have their own gear. Use Save to apply or Cancel to discard these options; sound previews and custom audio selection stay inside the same Settings window.
+use the **single gear in the DPS meter > Events** for event visibility, region, selection, module widths, opacity, boss reminders and all event sounds. Event modules no longer have their own gear. Use Save to apply or Cancel to discard these options; sound previews and custom audio selection stay inside the same Settings window.
 
 Selected events and enabled world-boss timers within the next hour appear as compact movable cards. Both modules restore their own positions and open states.
 
-The DPS meter is the single taskbar entry; display modules do not add separate taskbar/Alt-Tab entries or native Windows Snap frame styles. In the current Beta, each display module has a matching position pin at the upper right. Pinning prevents dragging without changing button interaction or click-through. Pin states survive restarting and are stored with optional overlay profiles; unpin to move a module again.
+The DPS meter is the single taskbar entry; display modules do not add separate taskbar/Alt-Tab entries or native Windows Snap frame styles. Each display module has a matching position pin at the upper right. Pinning prevents dragging without changing button interaction or click-through. Pin states survive restarting and are stored with optional overlay profiles; unpin to move a module again.
 
 **Upcoming and Started are separate.** At the start, an entry leaves Upcoming and moves into the movable **Started events** module. Open that module with the small clock button in the Upcoming header; drag its header or cards to place it, and use its X to close it. Click-through and show/hide all windows work for both modules.
 
@@ -198,7 +198,7 @@ Optional per-event and pet unlock/level-up sounds support preview and volume set
 
 ## Updates and release channels
 
-Choose **Stable** or **Beta** in **Settings > General > Updates**. Stable is the default download; beta releases are marked as prereleases and do not replace it. Switching channels may offer an older version when returning to Stable.
+Choose **Stable** or **Beta** in **Settings > Updates**. Stable is the default download; beta releases are marked as prereleases and do not replace it. Switching channels may offer an older version when returning to Stable.
 
 With automatic updates enabled, CatScratch checks shortly after startup and **every ten minutes**. It downloads, verifies and extracts an available update in the background while the current meter keeps running.
 
@@ -222,6 +222,8 @@ Open **Patch notes** from the meter or Settings. Versions are listed **on the le
 
 ## Controls and shortcuts
 
+The single meter gear opens central Settings. Updates and Feedback have separate tabs; General contains test mode, language and the optional game companion. Event and pet options apply with Save and are discarded with Cancel.
+
 Record a combination in **Settings > Hotkeys** and save. Defaults:
 
 | Action | Shortcut |
@@ -240,11 +242,15 @@ The all-window shortcut restores the previously open windows and their positions
 
 <details><summary>Settings preview</summary>
 
-<img src="docs/screenshots/settings.png" alt="Current CatScratch settings in the meter's dark turquoise style" width="760" />
+<img src="docs/screenshots/settings.png" alt="Current CatScratch settings in the meter's dark gray and purple style" width="760" />
+
+<img src="docs/screenshots/updates-settings.png" alt="Independent Updates settings tab" width="760" />
+
+<img src="docs/screenshots/feedback-settings.png" alt="Independent Feedback settings tab" width="760" />
 
 </details>
 
-## Automatic start and close with AION 2 (Beta)
+## Automatic start and close with AION 2
 
 **Purpose:** CatScratch can be ready whenever you play, without remembering to open it first. When the game closes, the meter closes too. Only a small game watcher stays idle between sessions; the full meter and packet capture do not need to stay running all day.
 
@@ -268,11 +274,11 @@ This keeps the watcher separate from the program files that an update replaces, 
 - The watcher does not capture game traffic, download updates, upload files, read chat or ask for account credentials. Network capture and normal update checks belong to the meter after it starts.
 - The task runs for the signed-in user with the highest available privileges, matching CatScratch's existing administrator requirement. It does not create a SYSTEM service or store your Windows password.
 - The shipped local script uses `-ExecutionPolicy Bypass` for its own PowerShell process. CatScratch does not change the machine-wide PowerShell execution policy. Managed Windows restrictions may still prevent it from running; failed setup is reported rather than silently enabling the option.
-- Scripts and configuration are kept locally in `userdata/game-start`. You can inspect the [watcher source](https://github.com/Zerafithekitten/CatScratch/blob/v2.6.0-beta.2/src/AionMeter.App/Services/GameLifetime.cs) and [windowless launcher source](https://github.com/Zerafithekitten/CatScratch/blob/v2.6.0-beta.2/src/AionMeter.App/Launcher/GameWatcherLauncher.cs).
+- Scripts and configuration are kept locally in `userdata/game-start`. You can inspect the [watcher source](https://github.com/Zerafithekitten/CatScratch/blob/v3.0.0/src/AionMeter.App/Services/GameLifetime.cs) and [windowless launcher source](https://github.com/Zerafithekitten/CatScratch/blob/v3.0.0/src/AionMeter.App/Launcher/GameWatcherLauncher.cs).
 
 ### Why no PowerShell window should appear
 
-The current Beta uses a tiny windowless starter that creates PowerShell with **CreateNoWindow**. The watcher remains in the background without allocating a console window, including the brief console flash possible with the previous direct PowerShell startup. Existing enabled installations switch to the quiet task when the updated meter first starts. Automated checks verify that the watcher has no console window.
+CatScratch uses a tiny windowless starter that creates PowerShell with **CreateNoWindow**. The watcher remains in the background without allocating a console window, including the brief console flash possible with the previous direct PowerShell startup. Existing enabled installations switch to the quiet task when the updated meter first starts. Automated checks verify that the watcher has no console window.
 
 ## Languages and stream mode
 
@@ -284,11 +290,11 @@ Test mode provides isolated sample fights and pet progress. Test fights cannot b
 
 ## Debug recordings and feedback
 
-Enable **Recent debug buffer** in **Settings > Capture & data**. **Save recent debug** exports up to the preceding **60 seconds** to `userdata/captures`. The buffer is disabled by default and capped at 32 MB of accounted packet storage; heavy traffic can shorten the available time. Continuous packet recording is also available. **Open captures folder** (Beta) opens the recording directory directly from this section, creating it if needed.
+Enable **Recent debug buffer** in **Settings > Capture & data**. **Save recent debug** exports up to the preceding **60 seconds** to `userdata/captures`. The buffer is disabled by default and capped at 32 MB of accounted packet storage; heavy traffic can shorten the available time. Continuous packet recording is also available. **Open captures folder** opens the recording directory directly from this section, creating it if needed.
 
 Only packets received while recording is enabled can be saved. For group issues, include the actual join/leave; for resurrection issues, include death and revival. Short captures can lack earlier character or protocol context. Captures can contain character names; keep them private. Nothing is uploaded automatically.
 
-Use **Report a bug / request a feature** in Settings > General > Feedback, or [open an issue](https://github.com/Zerafithekitten/CatScratch/issues/new/choose). Reports must be in **English**; a GitHub account is required. Please include the version/channel, what happened and how to reproduce it. Feedback opens GitHub without sending logs or captures automatically.
+Use **Report a bug / request a feature** in Settings > Feedback, or [open an issue](https://github.com/Zerafithekitten/CatScratch/issues/new/choose). Reports must be in **English**; a GitHub account is required. Please include the version/channel, what happened and how to reproduce it. Feedback opens GitHub without sending logs or captures automatically.
 
 ## Limitations
 

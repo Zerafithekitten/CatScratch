@@ -4,6 +4,8 @@ public sealed partial class UiText
 {
     private static readonly Dictionary<string,(string De,string Ru,string Fr)> LayoutComparisonText=new()
     {
+        ["Updates"]=("Updates","Обновления","Mises à jour"),
+        ["Feedback"]=("Feedback","Обратная связь","Avis"),
         ["Changes take effect after saving."]=("Änderungen werden erst mit Speichern übernommen.","Изменения применяются после сохранения.","Les modifications prennent effet après enregistrement."),
         ["Differences describe these runs; healing, incoming damage and duration depend on the fight."]=("Die Differenzen beschreiben diese Läufe; Heilung, erlittener Schaden und Dauer hängen vom Kampf ab.","Различия описывают эти бои; лечение, входящий урон и длительность зависят от боя.","Les écarts décrivent ces combats ; soins, dégâts reçus et durée dépendent du combat."),
         ["Overlay profiles"]=("Overlay-Profile","Профили оверлеев","Profils des overlays"),

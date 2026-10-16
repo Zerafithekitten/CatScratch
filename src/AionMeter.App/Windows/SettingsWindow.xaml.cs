@@ -55,6 +55,8 @@ public partial class SettingsWindow : Window
         _meter = meter;
         InitializeComponent();
         BrandIcon.Source=AppIcon.Image;
+        foreach(var tab in SettingsTabs.Items.OfType<TabItem>().Where(t=>t.Tag is "updates" or "feedback"))
+            tab.Header=T.Localize((string)tab.Header);
         cards??=new TimerCards(meter,persistent:false);
         _cards=cards;
         _eventDraft=cards.CreatePreferencesDraft();
@@ -73,7 +75,7 @@ public partial class SettingsWindow : Window
         var recap=new CheckBox {Content=T.Localize("Show death recap"),IsChecked=meter.Settings.ShowDeathRecapModule,Style=(Style)FindResource("DarkCheck")};
         recap.Click+=(_,_)=>_moduleDraft.ShowDeathRecapModule=recap.IsChecked==true;
         if(((TabItem)SettingsTabs.Items[1]).Content is ScrollViewer {Content:Panel combat})combat.Children.Add(new Border {Child=recap,Style=(Style)FindResource("Section")});
-        SettingsTabs.Items.Add(new TabItem {Header=T.Localize("Pets"),Padding=new Thickness(12,10,12,10),Content=new ScrollViewer {VerticalScrollBarVisibility=ScrollBarVisibility.Auto,HorizontalScrollBarVisibility=ScrollBarVisibility.Auto,Padding=new Thickness(14,0,0,0),Content=new Border {Child=modules,Style=(Style)FindResource("Section"),VerticalAlignment=VerticalAlignment.Top}}});
+        SettingsTabs.Items.Add(new TabItem {Header=T.Localize("Pets"),Tag="pets",Padding=new Thickness(12,10,12,10),Content=new ScrollViewer {VerticalScrollBarVisibility=ScrollBarVisibility.Auto,HorizontalScrollBarVisibility=ScrollBarVisibility.Auto,Padding=new Thickness(14,0,0,0),Content=new Border {Child=modules,Style=(Style)FindResource("Section"),VerticalAlignment=VerticalAlignment.Top}}});
         SettingsTabs.Items.Add(new TabItem {Header=T.Localize("Overlay profiles"),Padding=new Thickness(12,10,12,10),Content=new ScrollViewer {VerticalScrollBarVisibility=ScrollBarVisibility.Auto,HorizontalScrollBarVisibility=ScrollBarVisibility.Auto,Padding=new Thickness(14,0,0,0),Content=new OverlayProfilesPanel()}});
         // Fold secondary sections and reflow rows instead of forcing a wide inner canvas.
         foreach (var tab in SettingsTabs.Items.OfType<TabItem>())

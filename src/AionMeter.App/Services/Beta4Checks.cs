@@ -59,6 +59,8 @@ internal static class Beta4Checks
         var rejected=false;try {OverlayProfiles.Apply(profile with {Layout=badLayout},layoutSettings,layoutTimers);}catch(JsonException){rejected=true;}
         Check(rejected && layoutSettings.OverlayLeft==-1200,"Invalid profile values are rejected before changing the current layout");
         var final = ReleaseVersion.Parse("2.5.1")!;
+        var majorPromotion = new AppSettings {Transient=true,UpdateChannel="Beta",LastStartedRelease="2.6.0-beta.2"};
+        Check(majorPromotion.ApplyReleaseTransition(ReleaseVersion.Parse("3.0.0")!) && majorPromotion.UpdateChannel=="Stable" && majorPromotion.LastStartedRelease=="3.0.0","Promoting the 2.6 Beta series to 3.0.0 switches subscribers and the recorded version to Stable");
         var promoted = new AppSettings { Transient = true, UpdateChannel = "Beta", LastStartedRelease = "2.5.1-beta.5", SkippedUpdate = "v2.5.1-beta.4" };
         Check(promoted.ApplyReleaseTransition(final) && promoted.UpdateChannel == "Stable" && promoted.SkippedUpdate is null, "Promoting Beta to Stable automatically moves the saved update channel to Stable");
         promoted.UpdateChannel = "Beta";

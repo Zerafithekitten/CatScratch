@@ -1,3 +1,54 @@
+## CatScratch v3.0.0
+
+### Complete Beta feature set promoted to Stable
+This release brings all changes tested in the 2.5.6 and 2.6.0 Beta series to Stable, together with separate Updates and Feedback settings tabs. It replaces Stable 2.5.5. Existing local settings and records are retained.
+
+### One organized Settings window
+- The DPS meter contains the single Settings gear. Event and pet overlays use their own dedicated tabs in that central window rather than opening separate preference menus.
+- **Updates** is now an independent tab for the update channel, background checks, installed version, manual checks and patch notes. **Feedback** has its own tab containing the bug-report / feature-request controls. Both sections have been removed from General.
+- **General** keeps test mode, language and the optional AION 2 companion. **Events** groups visibility, schedule region, event selection, module widths, opacity, boss reminders and sound preferences. **Pets** contains tracker visibility, width and collection/level-up sounds.
+- Related options use compact, expandable sections. The category list can scroll in smaller windows, form rows wrap and labels remain light against neutral gray surfaces.
+- Event, pet and death-recap options now follow **Save / Cancel**. Closing without saving discards their edits. Explicit actions such as sound previews, debug exports and managing saved layout profiles remain immediate.
+
+### Compact meter and consistent appearance
+- Retained the familiar DPS meter layout while narrowing player rows. Each row keeps its class emblem, class-colored background progress fill, DPS, damage percentage and red incoming damage. Removed the thin progress strip and total outgoing damage from these rows; detailed combat statistics remain available in the fight window.
+- CP and GS use the available second-line width, improving readability in narrow meters. Class, healing and damage colors keep their meanings.
+- Neutral dark gray backgrounds and restrained lavender accents are used throughout the interface. The new outlined purple cat paw has four toes and a pad; window headers use a scalable vector, while the executable and tray include native icon sizes.
+- The installed version appears beneath the CatScratch title. Footer controls have matching proportions, and the death-recap tombstone toggle is first on the left.
+- The Rotation tab is explicitly marked **WORK IN PROGRESS**.
+
+### Position pins and optional overlay profiles
+- Display modules have a compact position pin at the upper right. Pinning prevents accidental dragging while leaving controls, resizing and click-through behavior independent. Pin states persist across restarts.
+- **Settings > Overlay profiles** can save, apply, update and delete named layouts. Profiles include module positions, sizes, visibility, appearance and position pins.
+- Layout profiles do not change capture configuration, update subscriptions, hotkeys or game-start preferences. Applying a profile acts immediately, closes Settings and discards other unsaved edits.
+
+### Automatic boss fight comparison
+- Open the statistics for a finished boss fight and use the comparison button. CatScratch selects the latest earlier matching recorded run automatically; both cards clearly show the boss name, date and duration.
+- Compares duration, DPS, outgoing damage, healing, incoming damage and deaths. Matching requires the same boss, map, character, outcome and damage-counting mode. Unknown death counts remain unknown, and possibly partial recordings are flagged.
+- Healing and incoming-damage differences are descriptive rather than automatic performance judgments. The comparison uses existing session and saved fights; automatic history saving is not enabled implicitly. Save fights if you want comparisons after restarting.
+- Instance variants sharing a map ID cannot be distinguished automatically. Opening old fights or comparisons leaves the meter following **Live**; reopening the same fight reuses its statistics window.
+
+### Compact death recap
+- Shows only the five latest received hits, newest first, with red damage values and a total for those displayed hits. Removed duplicate attacker totals, the routine footer, scrolling and the resize grip.
+- Defaults to the upper center of the meter's screen, above standard resurrection controls. Its dark panel remains readable in click-through mode. Dragging and automatic hiding after confirmed resurrection remain available.
+- The tombstone button and configurable death-recap hotkey remain available through the meter and central Settings.
+
+### Group display and debug convenience
+- Fixed a five-player roster case where a member could disappear when the server encoded in their database ID differed from explicit server fields. Validated roster records now preserve the member's identity, class, CP and GS consistently.
+- Added **Open captures folder** beside **Save recent debug**, making locally saved parser recordings easier to find. Recordings remain local unless you choose to share them.
+
+### Optional automatic start and close with AION 2
+- Enable the combined companion option in **Settings > General**, choose the actual game executable and save. It is off by default. Detection follows the selected executable, including launches through Steam or Purple.
+- A per-user watcher starts at Windows sign-in and launches CatScratch once per detected game session. CatScratch closes after the game has been absent for ten seconds; manually quitting the meter does not cause repeated launches during that same session.
+- A windowless helper starts the local PowerShell watcher without allocating a console, preventing the brief PowerShell flash. Existing enabled installations migrate to this quieter task. Disabling the option removes its registration; uninstall removes the task too.
+
+### Updates, persistence and verification
+- Users moving from the Beta series to **3.0.0** automatically return to the **Stable** update channel when the promoted version starts. The displayed installed version is **3.0.0**, without a Beta suffix. A later manual Beta selection remains selected until a subsequent promotion.
+- Background checks continue shortly after startup and every ten minutes. A selected-channel update is downloaded, verified and prepared before restart is offered. Restart still requires the user's action.
+- Successful updated startup removes the old update backup, prepared package and download. Failed updates retain recovery files; settings, saved fights, boss bests, recent players and captures are preserved.
+- Settings, event preferences and overlay profiles use atomic writes with a last readable backup. Added recovery, canceled-edit, narrow-row and text-contrast checks alongside the existing combat and window tests.
+- Release verification covers the core test suite, overlay interaction and shutdown, event audio, boss records, Beta-to-Stable transition, the quiet game companion, and direct updates with preserved user data.
+
 ## CatScratch v2.6.0-beta.2
 
 ### Visual polish and safer preferences

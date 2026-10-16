@@ -351,8 +351,9 @@ internal static class InteractionChecks
                 var box=(System.Windows.Controls.TextBox)settings.FindName(field);
                 Check(box.IsReadOnly && box.Text==gesture && HotkeyManager.TryParse(gesture,out _,out _),"Module shortcut can be recorded by pressing keys: "+field);
             }
-            Check(((System.Windows.Controls.TabControl)settings.FindName("SettingsTabs")).Items.Count==9 && ((System.Windows.Controls.TextBox)settings.FindName("HkClick")).IsReadOnly,
-                "Central settings include Events, Pets and overlay profiles while retaining recorded hotkeys");
+            var categories=((System.Windows.Controls.TabControl)settings.FindName("SettingsTabs")).Items.OfType<System.Windows.Controls.TabItem>().ToArray();
+            Check(categories.Length==11 && categories.Count(t=>Equals(t.Tag,"updates"))==1 && categories.Count(t=>Equals(t.Tag,"feedback"))==1 && ((System.Windows.Controls.TextBox)settings.FindName("HkClick")).IsReadOnly,
+                "Central settings include separate Updates and Feedback tabs, Events, Pets and profiles while retaining recorded hotkeys");
             var headerPin=(System.Windows.Controls.Button)((System.Windows.Controls.ContentControl)activeOverlay.FindName("ShellPin")).Content;
             var beforePin=activeOverlay.Left;var clickBefore=meter.Settings.ClickThrough;
             headerPin.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Button.ClickEvent));
