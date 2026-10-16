@@ -465,10 +465,8 @@ public partial class App : Application
         _deathRecapStamp = stamp; _deathRecapAppearance = appearance;
         if (_deathRecapWindow is not null) { _deathRecapWindow.Reload(recap); return; }
         var window = _deathRecapWindow = new DeathRecapWindow(recap);
-        var area = SystemParameters.WorkArea;
-        window.Left = Math.Clamp(_overlay.Left + _overlay.Width + 8, area.Left, Math.Max(area.Left, area.Right - window.Width));
-        window.Top = Math.Clamp(_overlay.Top, area.Top, Math.Max(area.Top, area.Bottom - 420));
         WindowClickThrough.Attach(window, () => _meter.Settings.ClickThrough, () => _meter.Settings.WindowOpacity);
+        window.PlaceAboveCenter(_overlay);
         window.Closed += (_, _) => { if (_deathRecapWindow == window) _deathRecapWindow = null; };
         window.Show(); _windowVisibility.Track(window);
     }

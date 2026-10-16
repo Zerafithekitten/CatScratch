@@ -5,6 +5,8 @@ public sealed partial class UiText
     // Exact literals, not substitutions in player names, paths or protocol identifiers.
     private static readonly (string English,string Russian,string French)[] AdditionalTranslations =
     [
+        ("{0} hits · {1:N0} damage","Удары: {0} · Урон: {1:N0}","{0} coups · {1:N0} dégâts"),
+        ("Latest received hits · newest first · hides after resurrection.","Последние полученные удары · сначала новые · исчезает после воскрешения.","Derniers coups reçus · plus récent en premier · disparaît après résurrection."),
         ("Open captures folder","Открыть папку записей","Ouvrir le dossier des captures"),
         ("AION 2 companion","Вместе с AION 2","Compagnon AION 2"),
         ("Start and close CatScratch with AION 2","Запускать и закрывать CatScratch вместе с AION 2","Démarrer et fermer CatScratch avec AION 2"),

@@ -185,7 +185,10 @@ public static class SampleRenderer
                 var recap = new DeathRecapWindow(new(died, [
                     new(died - 150, 100, "Ferocious Horn Nuakum", false, 1, "Heavy strike", 18420, HitFlags.Critical, 1),
                     new(died - 1800, 101, "Cave guardian", false, 2, "Claw attack", 4820, HitFlags.None, 1),
-                    new(died - 4300, 100, "Ferocious Horn Nuakum", false, 3, "Flame burst", 9120, HitFlags.Dot, 3)
+                    new(died - 2300, 100, "Ferocious Horn Nuakum", false, 3, "Flame burst", 9120, HitFlags.Dot, 3),
+                    new(died - 3100, 101, "Cave guardian", false, 2, "Claw attack", 1850, HitFlags.None, 1),
+                    new(died - 4300, 100, "Ferocious Horn Nuakum", false, 4, "Wild swing", 2410, HitFlags.None, 1),
+                    new(died - 7000, 101, "Cave guardian", false, 2, "Claw attack", 950, HitFlags.None, 1)
                 ], false));
                 host = recap;
                 refresh = () => { };

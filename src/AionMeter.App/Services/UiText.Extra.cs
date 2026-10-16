@@ -35,6 +35,8 @@ public sealed partial class UiText
     }
     private static readonly Dictionary<string,string> ExtraGerman = new(StringComparer.Ordinal)
     {
+        ["{0} hits · {1:N0} damage"]="{0} Treffer · {1:N0} Schaden",
+        ["Latest received hits · newest first · hides after resurrection."]="Letzte erhaltene Treffer · neuester zuerst · schließt nach Wiederbelebung.",
         ["Open captures folder"]="Aufnahmeordner öffnen",
         ["AION 2 companion"]="AION 2 begleiten",
         ["Start and close CatScratch with AION 2"]="CatScratch mit AION 2 starten und beenden",

@@ -1,3 +1,10 @@
+## CatScratch v2.5.6-beta.7
+
+### Compact death recap
+- Shows only the five most recent received hits, newest first, with red damage values and a matching five-hit total.
+- Cleaner CatScratch layout without duplicate attacker totals, scrollbar or resize grip; the dark surface stays readable in click-through mode.
+- Opens centered in the upper half of the meter screen, above the standard resurrection controls. Dragging and automatic hiding after resurrection remain available.
+
 ## CatScratch v2.5.6-beta.6
 
 ### Group recognition, live statistics and debug convenience

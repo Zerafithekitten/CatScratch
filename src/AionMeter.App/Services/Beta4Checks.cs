@@ -75,15 +75,29 @@ internal static class Beta4Checks
             foreach (var code in new[] { "en", "de", "ru", "fr" })
             {
                 UiText.Use(code); StreamNames.Enabled = true;
-                var recap = new DeathRecapWindow(new(5000, [new(4000, 2, "Private attacker", true, 1, "Attack", 12345, HitFlags.None, 1)], false));
+                var recap = new DeathRecapWindow(new(5000, Enumerable.Range(0,8).Select(i=>
+                    new DeathRecapHit(4900-i*200,(uint)i+2,"Private attacker "+i,true,1,"Attack",1000+i,HitFlags.None,1)).Reverse().ToArray(), false));
                 try
                 {
                     recap.UpdateLayout();
                     var rows = ((ItemsControl)recap.FindName("Hits")).Items.Cast<DeathRecapWindow.HitRow>().ToArray();
-                    Check(rows.Length == 1 && !rows[0].Enemy.Contains("Private") && ((TextBlock)recap.FindName("Summary")).Text.Contains("10"), "Death recap shows ten-second details with stream aliases: " + code);
-                    Check(!((TextBlock)recap.FindName("Sources")).Text.Contains("Private"), "Attacker totals preserve stream aliases: " + code);
+                    Check(rows.Length == 5 && rows.All(r=>!r.Enemy.Contains("Private")) && rows[0].Damage==1000.ToString("N0",UiText.Current.Culture) && rows[^1].Damage==1004.ToString("N0",UiText.Current.Culture),
+                        "Death recap shows only the five latest hits in newest-first order with stream aliases: " + code);
+                    Check(((TextBlock)recap.FindName("Summary")).Text==string.Format(UiText.Current.Culture,UiText.Current.Localize("{0} hits · {1:N0} damage"),5,5010),
+                        "Death recap summary totals only its five displayed hits: " + code);
+                    Check(recap.ResizeMode==ResizeMode.NoResize && ((TextBlock)recap.FindName("Hint")).Visibility==Visibility.Collapsed,
+                        "Compact recap removes the resize grip and routine footer: " + code);
+                    recap.SetDisplayOnly(true);
+                    Check(((Border)recap.FindName("Shell")).Background is System.Windows.Media.SolidColorBrush brush && brush.Color.A>0,
+                        "Click-through recap keeps a readable dark surface: "+code);
                 }
                 finally { recap.Close(); }
+            }
+            foreach(var area in new[]{new Rect(0,0,1920,1080),new Rect(-1920,0,1920,1080),new Rect(1920,-1440,2560,1440),new Rect(0,0,1280,720)})
+            {
+                var position=DeathRecapWindow.DefaultPosition(area,new Size(350,180));
+                Check(Math.Abs(position.X+175-(area.Left+area.Width/2))<.1 && position.Y>=area.Top && position.Y+180<=area.Top+area.Height*.4,
+                    "Death recap defaults to upper center above resurrection controls on screen "+area);
             }
             var actual = meter.Updates.CurrentIdentity;
             // The real local executable is the offered payload; a synthetic older installed identity makes it an update.
