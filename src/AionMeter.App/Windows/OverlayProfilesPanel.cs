@@ -10,18 +10,18 @@ internal sealed class OverlayProfilesPanel : StackPanel
     private readonly List<OverlayProfile> _profiles=OverlayProfiles.Load();
     private readonly ComboBox _list=new(){MinWidth=180,Margin=new(0,8,0,10)};
     private readonly TextBox _name=new(){MaxLength=48,Width=double.NaN,MinWidth=160,Margin=new(0,6,0,10)};
-    private readonly TextBlock _status=new(){TextWrapping=TextWrapping.Wrap,Margin=new(0,2,0,0),FontSize=11,Foreground=new SolidColorBrush(Color.FromRgb(121,227,207))};
+    private readonly TextBlock _status=new(){TextWrapping=TextWrapping.Wrap,Margin=new(0,2,0,0),FontSize=11,Foreground=new SolidColorBrush(Color.FromRgb(196,154,245))};
     private static string T(string text)=>UiText.Current.Localize(text);
     private static Brush ColorBrush(byte r,byte g,byte b)=>new SolidColorBrush(Color.FromRgb(r,g,b));
     public OverlayProfilesPanel()
     {
         Resources.MergedDictionaries.Add(new ResourceDictionary {Source=new Uri("/CatScratch;component/Theme/MeterTools.xaml",UriKind.Relative)});
-        Children.Add(new TextBlock {Text=T("Overlay profiles"),Foreground=ColorBrush(121,227,207),FontSize=16,Margin=new(0,0,0,8)});
+        Children.Add(new TextBlock {Text=T("Overlay profiles"),Foreground=ColorBrush(196,154,245),FontSize=16,Margin=new(0,0,0,8)});
         Children.Add(new TextBlock {Text=T("Save your current layout and switch between your own profiles whenever you want."),Foreground=ColorBrush(169,184,199),FontSize=11.5,TextWrapping=TextWrapping.Wrap,Margin=new(0,0,0,14)});
         StackPanel Section(string heading)
         {
-            var panel=new StackPanel();panel.Children.Add(new TextBlock {Text=T(heading),FontSize=11.5,Foreground=ColorBrush(121,227,207),Margin=new(0,0,0,3)});
-            Children.Add(new Border {Child=panel,Background=ColorBrush(23,30,39),BorderBrush=ColorBrush(54,73,87),BorderThickness=new(1),CornerRadius=new(8),Padding=new(14,12,14,10),Margin=new(0,0,0,12)});return panel;
+            var panel=new StackPanel();panel.Children.Add(new TextBlock {Text=T(heading),FontSize=11.5,Foreground=ColorBrush(196,154,245),Margin=new(0,0,0,3)});
+            Children.Add(new Border {Child=panel,Background=ColorBrush(25,29,35),BorderBrush=ColorBrush(65,74,86),BorderThickness=new(1),CornerRadius=new(8),Padding=new(14,12,14,10),Margin=new(0,0,0,12)});return panel;
         }
         Button ActionButton(Panel parent,string title,Action action)
         {

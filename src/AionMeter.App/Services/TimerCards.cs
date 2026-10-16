@@ -47,7 +47,37 @@ public sealed class TimerCards : IDisposable
     private readonly string _path = Path.Combine(AppSettings.AppDataDir, "timer-cards.json");
     private readonly Dictionary<string, TimerCardWindow> _windows = [];
     public State Saved { get; private set; } = new();
-    internal AppSettings Settings=>_meter.Settings;
+    private AppSettings? _settingsOverride;
+    internal AppSettings Settings=>_settingsOverride ?? _meter.Settings;
+
+    internal TimerCards CreatePreferencesDraft() => new(_meter, persistent: false)
+    {
+        Saved = JsonSerializer.Deserialize<State>(JsonSerializer.Serialize(Saved))!,
+        _settingsOverride = Settings.CreateDraft()
+    };
+
+    internal void ApplyPreferences(TimerCards draft)
+    {
+        var source = draft.Saved;
+        Saved.EventRegion = source.EventRegion;
+        Saved.SelectedEvents = new(source.SelectedEvents);
+        Saved.EventOpacity = source.EventOpacity;
+        Saved.ShowAllWorldBosses = source.ShowAllWorldBosses;
+        Saved.EventWindowOpen = source.EventWindowOpen;
+        Saved.StartedEventWindowOpen = source.StartedEventWindowOpen;
+        Saved.SoundLeadMinutes = source.SoundLeadMinutes;
+        Saved.SoundVolume = source.SoundVolume;
+        Saved.Sounds = JsonSerializer.Deserialize<Dictionary<string,EventSoundPreference>>(JsonSerializer.Serialize(source.Sounds))!;
+        foreach (var key in new[] { "auto-events", "started-events" })
+            if (source.Positions.TryGetValue(key, out var placement))
+            {
+                if (!Saved.Positions.TryGetValue(key, out var live)) Saved.Positions[key] = live = new();
+                live.Width = placement.Width; // Keep positions moved while Settings was open.
+            }
+        Settings.BossAlertMinutes = draft.Settings.BossAlertMinutes;
+        _scheduleKey = null;
+        Save();
+    }
     public bool TestMode => _meter.DemoRunning;
     private IReadOnlyList<EventStart> _nextEvents = [];
     private string? _scheduleKey;
@@ -100,9 +130,8 @@ public sealed class TimerCards : IDisposable
     {
         _meter = meter;
         _persistent = persistent && !meter.Settings.Transient;
-        if (_persistent && File.Exists(_path))
-            try { Saved = JsonSerializer.Deserialize<State>(File.ReadAllText(_path)) ?? new(); }
-            catch (Exception ex) when (ex is IOException or JsonException) { Log.Error("Timer cards could not be loaded", ex); }
+        if (_persistent) Saved = JsonSettingsFile.Read<State>(_path) ?? new();
+        Saved.SelectedEvents ??= []; Saved.Positions ??= []; Saved.Sounds ??= []; Saved.Events ??= [];
         if (Saved.EventRegion == "Europa") Saved.EventRegion = "Europe";
         if (Saved.EventTileVersion < 1)
         {
@@ -171,11 +200,9 @@ public sealed class TimerCards : IDisposable
         if (!_persistent) return;
         try
         {
-            Directory.CreateDirectory(AppSettings.AppDataDir);
-            File.WriteAllText(_path + ".tmp", JsonSerializer.Serialize(Saved, new JsonSerializerOptions { WriteIndented = true }));
-            File.Move(_path + ".tmp", _path, true);
+            JsonSettingsFile.Write(_path, Saved, new JsonSerializerOptions { WriteIndented = true });
         }
-        catch (IOException ex) { Log.Error("Could not save timer cards", ex); }
+        catch (Exception ex) when(ex is IOException or UnauthorizedAccessException) { Log.Error("Could not save timer cards", ex); }
     }
     public void Dispose()
     {

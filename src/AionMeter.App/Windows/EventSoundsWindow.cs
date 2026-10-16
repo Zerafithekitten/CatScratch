@@ -15,7 +15,7 @@ public sealed class EventSoundsWindow : Window
         Title = "CatScratch · " + UiText.Current.Localize("Event sounds"); Width = 580; Height = 700; MinWidth = 540; MinHeight = 400;
         WindowStyle=WindowStyle.None; ResizeMode=ResizeMode.CanResize;
         System.Windows.Shell.WindowChrome.SetWindowChrome(this,new System.Windows.Shell.WindowChrome { CaptionHeight=0, ResizeBorderThickness=new Thickness(6), GlassFrameThickness=new Thickness(0) });
-        Topmost = true; Background = Brush("#1B2027"); Foreground = Brush("#EDF2F7"); FontFamily=(FontFamily)FindResource("UiFont"); FontSize=12;
+        Topmost = true; Background = Brush("#20242A"); Foreground = Brush("#EDF2F7"); FontFamily=(FontFamily)FindResource("UiFont"); FontSize=12;
         Resources.MergedDictionaries.Add(new ResourceDictionary { Source=new Uri("/CatScratch;component/Theme/MeterPreferences.xaml",UriKind.Relative) });
         Resources[typeof(Button)] = (Style)FindResource("GhostButton");
         Resources[typeof(CheckBox)] = (Style)FindResource("DarkCheck");
@@ -23,9 +23,9 @@ public sealed class EventSoundsWindow : Window
         var header=new DockPanel { Margin=new Thickness(0,0,0,14) }; DockPanel.SetDock(header,Dock.Top); root.Children.Add(header);
         var close=new Button { Content="\uE711",Style=(Style)FindResource("IconButton"),Width=22,Height=22 }; close.Click+=(_,_)=>Close(); DockPanel.SetDock(close,Dock.Right); header.Children.Add(close);
         var caption=new StackPanel { Orientation=Orientation.Horizontal }; caption.Children.Add(new Image { Source=Icon,Width=20,Height=20,Margin=new Thickness(0,0,7,0) });
-        caption.Children.Add(new TextBlock { Text=UiText.Current.Localize("Event sounds"),Foreground=Brush("#79E3CF"),FontSize=17,FontWeight=FontWeights.SemiBold }); header.Children.Add(caption);
+        caption.Children.Add(new TextBlock { Text=UiText.Current.Localize("Event sounds"),Foreground=Brush("#C49AF5"),FontSize=17,FontWeight=FontWeights.SemiBold }); header.Children.Add(caption);
         var body=BuildBody(cards,preview,chooseFile,this); root.Children.Add(new ScrollViewer { Content=body,VerticalScrollBarVisibility=ScrollBarVisibility.Auto,HorizontalScrollBarVisibility=ScrollBarVisibility.Auto });
-        Content = new Border { Child=root,Background=Background,BorderBrush=Brush("#607B827F"),BorderThickness=new Thickness(1),CornerRadius=new CornerRadius(10) };
+        Content = new Border { Child=root,Background=Background,BorderBrush=Brush("#60616A76"),BorderThickness=new Thickness(1),CornerRadius=new CornerRadius(10) };
         Controls.DragAnywhere.Attach(this);
         Closed += (_, _) => cards.Save();
     }
@@ -36,10 +36,10 @@ public sealed class EventSoundsWindow : Window
         body.Resources[typeof(CheckBox)]=(Style)scope.FindResource("DarkCheck");
         StackPanel Card(StackPanel parent)
         {
-            var content=new StackPanel(); parent.Children.Add(new Border { Child=content,Background=Brush("#171E27"),BorderBrush=Brush("#364957"),BorderThickness=new Thickness(1),CornerRadius=new CornerRadius(7),Padding=new Thickness(12),Margin=new Thickness(0,0,0,10) }); return content;
+            var content=new StackPanel(); parent.Children.Add(new Border { Child=content,Background=Brush("#191D23"),BorderBrush=Brush("#414A56"),BorderThickness=new Thickness(1),CornerRadius=new CornerRadius(7),Padding=new Thickness(12),Margin=new Thickness(0,0,0,10) }); return content;
         }
         var panel=Card(body);
-        panel.Children.Add(new TextBlock { Text=UiText.Current.Localize("SOUND PREFERENCES"),Foreground=Brush("#79E3CF"),FontWeight=FontWeights.SemiBold });
+        panel.Children.Add(new TextBlock { Text=UiText.Current.Localize("SOUND PREFERENCES"),Foreground=Brush("#C49AF5"),FontWeight=FontWeights.SemiBold });
         panel.Children.Add(new TextBlock { Text = UiText.Current.Localize("Enable a sound for each event you want to hear. Automatic reminders follow your selected events.\nSimultaneous reminders play one after another."), TextWrapping = TextWrapping.Wrap, Margin = new Thickness(0,8,0,15) });
         panel.Children.Add(new TextBlock { Text = UiText.Current.Localize("Volume") });
         var volume = new Slider { Style = (Style)scope.FindResource("GoldSlider"), Minimum = 0, Maximum = 1, Value = Math.Clamp(cards.Saved.SoundVolume, 0, 1), Margin = new Thickness(0,6,0,14) };

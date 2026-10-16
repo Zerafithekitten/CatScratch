@@ -35,6 +35,12 @@ internal static class InteractionChecks
         }
         try
         {
+            static bool HasPurplePaw(System.Drawing.Bitmap bitmap)
+            {
+                for(var y=0;y<bitmap.Height;y++)for(var x=0;x<bitmap.Width;x++)
+                {var pixel=bitmap.GetPixel(x,y);if(pixel.A>120 && pixel.B>pixel.R && pixel.R>pixel.G)return true;}
+                return false;
+            }
             var gameGate=new GameExitGate();
             var gameTime=DateTimeOffset.UtcNow;
             Check(!new AppSettings().FollowGame && !gameGate.ShouldClose(true,false,gameTime),
@@ -75,8 +81,7 @@ internal static class InteractionChecks
             using (var appIcon = System.Drawing.Icon.ExtractAssociatedIcon(Environment.ProcessPath!))
             using (var bitmap = appIcon!.ToBitmap())
             {
-                var paw = bitmap.GetPixel(bitmap.Width / 2, bitmap.Height * 2 / 3);
-                Check(paw.B > paw.R && paw.R > paw.G, "Published executable contains the purple paw icon");
+                Check(HasPurplePaw(bitmap), "Published executable contains the outlined purple paw icon");
             }
                         foreach (var gameClass in Enum.GetValues<AionMeter.Core.Events.GameClass>())
             {
@@ -126,15 +131,13 @@ internal static class InteractionChecks
                     Check(handle != 0, "Native window provides its own small and large taskbar icons");
                     using var nativeIcon = System.Drawing.Icon.FromHandle(handle);
                     using var bitmap = nativeIcon.ToBitmap();
-                    var pixel = bitmap.GetPixel(bitmap.Width / 2, bitmap.Height * 2 / 3);
-                    Check(pixel.B > pixel.R && pixel.R > pixel.G, "Native taskbar icon contains the purple paw");
+                    Check(HasPurplePaw(bitmap), "Native taskbar icon contains the outlined purple paw");
                 }
             }
             using (var trayIcon = AppIcon.CreateTrayIcon())
             using (var bitmap = trayIcon.ToBitmap())
             {
-                var pixel = bitmap.GetPixel(bitmap.Width / 2, bitmap.Height * 2 / 3);
-                Check(pixel.B > pixel.R && pixel.R > pixel.G, "Tray icon uses the packaged purple paw directly");
+                Check(HasPurplePaw(bitmap), "Tray icon uses the packaged outlined purple paw directly");
             }
             var originals = windows.Select(Style).ToArray();
             var frame = (System.Windows.Controls.Border)first.Content;
@@ -637,6 +640,7 @@ internal static class InteractionChecks
             }
             Check(new Uri(Feedback.IssueUrl).Host=="github.com" && new Uri(Feedback.IssueUrl).Query.Length==0,"Feedback opens the official issue chooser without sending user data");
             AssetDownloadChecks.Run(output,Check);
+            PolishChecks.Run(meter,output,Check);
             meter.SetLanguage("en"); activeOverlay.OnLanguageChanged();
             Check(((System.Windows.Controls.TextBlock)healingGrid.Children[2]).Text=="Self healing","Switching back to English restores the live labels");
             meter.Settings.ShowHealingDone=true;

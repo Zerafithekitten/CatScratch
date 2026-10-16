@@ -37,7 +37,7 @@ public sealed class TimerHubWindow : Window, IDisplayAppearance
         SizeToContent=SizeToContent.Height; WindowStyle=WindowStyle.None; Background=Brushes.Transparent;
         Topmost=true; Foreground=Brushes.White; Opacity=cards.Saved.EventOpacity;
         var root = new DockPanel { Margin=new(4,2,4,4) };
-        var header=new DockPanel { Margin=new(0,0,0,7), Background=ColorBrush("#DF1B2027"), MinHeight=24 }; DockPanel.SetDock(header,Dock.Top); root.Children.Add(header);
+        var header=new DockPanel { Margin=new(0,0,0,7), Background=ColorBrush("#DF20242A"), MinHeight=24 }; DockPanel.SetDock(header,Dock.Top); root.Children.Add(header);
         _header=header;
         void Button(string text, Action action) { var b=new Button { Content=text, Style=(Style)FindResource("IconButton"), Width=22, Height=22, FontSize=12 }; b.Click+=(_,_)=>action(); DockPanel.SetDock(b,Dock.Right); header.Children.Add(b); }
         Button("\uE711",()=> { if(_startedOnly)cards.Saved.StartedEventWindowOpen=false; else cards.Saved.EventWindowOpen=false; Close(); }); var pin=WindowPinning.CreateButton(this,cards.Settings,startedOnly?"started-events":"upcoming-events"); DockPanel.SetDock(pin,Dock.Right);header.Children.Add(pin);
@@ -47,7 +47,7 @@ public sealed class TimerHubWindow : Window, IDisplayAppearance
                 ToolTip=UiText.Current.Localize("Show started events") };
             active.Click+=(_,_)=>AppHost.Current.ShowStartedEvents(); DockPanel.SetDock(active,Dock.Right); header.Children.Add(active);
         }
-        header.Children.Add(new TextBlock { Text=UiText.Current.Localize(Caption), FontSize=10, FontWeight=FontWeights.SemiBold, Foreground=ColorBrush("#79E3CF"), VerticalAlignment=VerticalAlignment.Center,
+        header.Children.Add(new TextBlock { Text=UiText.Current.Localize(Caption), FontSize=10, FontWeight=FontWeights.SemiBold, Foreground=ColorBrush("#C49AF5"), VerticalAlignment=VerticalAlignment.Center,
             ToolTip=UiText.Current.Localize("Community schedule · Shugo.GG · checked Oct 12, 2026 · not officially confirmed") });
         header.MouseLeftButtonDown+=(_,e)=> {
             var source=e.OriginalSource as DependencyObject;

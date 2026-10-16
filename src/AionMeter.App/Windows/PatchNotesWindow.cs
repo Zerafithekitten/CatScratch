@@ -30,7 +30,7 @@ public sealed class PatchNotesWindow : Window
         Title = "CatScratch · Patch notes"; Width = 580; Height = 540; MinWidth = 380; MinHeight = 300; Topmost = true;
         WindowStyle = WindowStyle.None; ResizeMode = ResizeMode.CanResize;
         System.Windows.Shell.WindowChrome.SetWindowChrome(this, new System.Windows.Shell.WindowChrome { CaptionHeight = 0, ResizeBorderThickness = new Thickness(6), GlassFrameThickness = new Thickness(0) });
-        Background = new SolidColorBrush(Color.FromRgb(27,32,39)); Foreground = new SolidColorBrush(Color.FromRgb(237,242,247));
+        Background = new SolidColorBrush(Color.FromRgb(32,36,42)); Foreground = new SolidColorBrush(Color.FromRgb(237,242,247));
         FontFamily = (FontFamily)FindResource("UiFont"); FontSize = 12;
         Resources.MergedDictionaries.Add(new ResourceDictionary { Source = new Uri("/CatScratch;component/Theme/MeterTools.xaml", UriKind.Relative) });
         Resources[typeof(Button)] = (Style)FindResource("GhostButton");
@@ -41,7 +41,7 @@ public sealed class PatchNotesWindow : Window
         close.Click += (_, _) => Close(); DockPanel.SetDock(close,Dock.Right); titleBar.Children.Add(close);
         var title = new StackPanel { Orientation = Orientation.Horizontal };
         title.Children.Add(new Image { Source = Icon, Width = 18, Height = 18, Margin = new Thickness(0,0,7,0) });
-        title.Children.Add(new TextBlock { Text = "Patch notes", FontSize = 16, FontWeight = FontWeights.SemiBold, Foreground = new SolidColorBrush(Color.FromRgb(121,227,207)) });
+        title.Children.Add(new TextBlock { Text = "Patch notes", FontSize = 16, FontWeight = FontWeights.SemiBold, Foreground = new SolidColorBrush(Color.FromRgb(196,154,245)) });
         titleBar.Children.Add(title); header.Children.Add(titleBar);
         title.MouseLeftButtonDown += (_, e) => { if (e.LeftButton == System.Windows.Input.MouseButtonState.Pressed) DragMove(); };
         var refresh = new Button { Content = "Refresh from GitHub", HorizontalAlignment = HorizontalAlignment.Left, Padding = new Thickness(10,5,10,5), Margin = new Thickness(0,12,0,0) };
@@ -51,7 +51,7 @@ public sealed class PatchNotesWindow : Window
             VerticalScrollBarVisibility = ScrollBarVisibility.Auto, HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled };
         DockPanel.SetDock(sidebar, Dock.Left); body.Children.Add(sidebar); root.Children.Add(body);
         _scroll.Content = _notes;
-        body.Children.Add(new Border { Background = new SolidColorBrush(Color.FromRgb(23,30,39)), BorderBrush = new SolidColorBrush(Color.FromRgb(54,73,87)), BorderThickness = new Thickness(1), CornerRadius = new CornerRadius(7), Padding = new Thickness(12), Child = _scroll }); Content = root;
+        body.Children.Add(new Border { Background = new SolidColorBrush(Color.FromRgb(25,29,35)), BorderBrush = new SolidColorBrush(Color.FromRgb(65,74,86)), BorderThickness = new Thickness(1), CornerRadius = new CornerRadius(7), Padding = new Thickness(12), Child = _scroll }); Content = root;
         var path = Path.Combine(AppContext.BaseDirectory, "data", "patchnotes-en.md");
         var bundled = File.Exists(path) ? ReleaseNotePage.Bundled(File.ReadAllText(path)) : [];
         SetReleases((updater.Latest is { } release ? new[] { new ReleaseNotePage(release.Tag, release.Notes) } : [])
@@ -106,7 +106,7 @@ public sealed class PatchNotesWindow : Window
         ContentsCount = 0;
         var contents = new StackPanel();
         contents.Children.Add(new TextBlock { Text = "Contents", FontWeight = FontWeights.SemiBold,
-            Foreground = new SolidColorBrush(Color.FromRgb(121,227,207)), Margin = new Thickness(0,0,0,5) });
+            Foreground = new SolidColorBrush(Color.FromRgb(196,154,245)), Margin = new Thickness(0,0,0,5) });
         var pending = new List<(Image Image, TextBlock Status, Uri Uri)>();
         foreach (var line in markdown.Split('\n'))
         {
@@ -125,11 +125,11 @@ public sealed class PatchNotesWindow : Window
             {
                 var block = new TextBlock { Text = text, TextWrapping = TextWrapping.Wrap, FontSize = heading ? 14 : 12, LineHeight = 19,
                     Margin = heading ? new(0,8,0,8) : new(0,0,8,6), FontWeight = heading ? FontWeights.SemiBold : FontWeights.Normal,
-                    Foreground = heading ? new SolidColorBrush(Color.FromRgb(121,227,207)) : Foreground };
+                    Foreground = heading ? new SolidColorBrush(Color.FromRgb(196,154,245)) : Foreground };
                 _notes.Children.Add(block);
                 if (heading && Regex.IsMatch(line, @"^#{3,6}\s+"))
                 {
-                    var link = new Hyperlink(new Run(text)) { Foreground = new SolidColorBrush(Color.FromRgb(121,227,207)),
+                    var link = new Hyperlink(new Run(text)) { Foreground = new SolidColorBrush(Color.FromRgb(196,154,245)),
                         TextDecorations = null };
                     link.Click += (_, _) => block.BringIntoView();
                     var entry = new TextBlock { TextWrapping = TextWrapping.Wrap, Margin = new Thickness(0,2,0,2) };

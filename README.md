@@ -1,13 +1,13 @@
 # CatScratch
 
-A separate, always-on-top Windows DPS meter for **AION 2**, by Zerafithekitten. Track your own fights and confirmed party members in a compact dark interface with turquoise accents and purple paw branding.
+A separate, always-on-top Windows DPS meter for **AION 2**, by Zerafithekitten. Track your own fights and confirmed party members in a compact dark gray interface with restrained purple accents and cat-paw branding.
 
-[Download Stable](https://github.com/Zerafithekitten/CatScratch/releases/latest) · [Download Beta](https://github.com/Zerafithekitten/CatScratch/releases/tag/v2.6.0-beta.1) · [Release history](https://github.com/Zerafithekitten/CatScratch/releases) · [Report a bug / request a feature](https://github.com/Zerafithekitten/CatScratch/issues/new/choose)
+[Download Stable](https://github.com/Zerafithekitten/CatScratch/releases/latest) · [Download Beta](https://github.com/Zerafithekitten/CatScratch/releases/tag/v2.6.0-beta.2) · [Release history](https://github.com/Zerafithekitten/CatScratch/releases) · [Report a bug / request a feature](https://github.com/Zerafithekitten/CatScratch/issues/new/choose)
 
 | Channel | Current version | What it includes |
 | --- | --- | --- |
 | **Stable** | **[v2.5.5](https://github.com/Zerafithekitten/CatScratch/releases/tag/v2.5.5)** | Boss personal bests, recent teammates, death recap, background updates, separate Started events, improved group-search handling and ten patchnotes tabs on the left. |
-| **Beta** | **[v2.6.0-beta.1](https://github.com/Zerafithekitten/CatScratch/releases/tag/v2.6.0-beta.1)** | Everything in Stable, plus optional quiet automatic start/close with AION 2, a five-member roster repair, a capture-folder shortcut and a compact five-hit death recap, optional overlay profiles and boss comparisons, central Events/Pets settings and per-module position pins. |
+| **Beta** | **[v2.6.0-beta.2](https://github.com/Zerafithekitten/CatScratch/releases/tag/v2.6.0-beta.2)** | Everything in Stable, plus optional quiet automatic start/close with AION 2, a five-member roster repair, a capture-folder shortcut and a compact five-hit death recap, optional overlay profiles and boss comparisons, central Events/Pets settings and per-module position pins. |
 
 English is the default. German, Russian and French are also available. Screenshots use synthetic sample data; names and numbers are examples. Event-module previews show **v2.5.4-beta.4**.
 
@@ -148,7 +148,7 @@ Saving is optional. Press the **save button after combat** to keep a full fight.
 
 ## Pet tracker
 
-In the current Beta, **Settings > Pets** contains the pet module toggle, width and collection/level-up sound option. Changes save automatically; the pet overlay has a position pin instead of a settings gear.
+In the current Beta, **Settings > Pets** contains the pet module toggle, width and collection/level-up sound option. Use Save to apply or Cancel to discard pet edits; the pet overlay has a position pin instead of a settings gear.
 
 Use the **paw button beside the CatScratch title** to toggle the compact pet tracker. Personally attacked, confirmed pet-source monsters add a row with pet name, soul count and a progress bar toward the next level. The three most recently attacked pets are retained, newest first; maxed pets show **MAX**. Soul loot updates the count after a kill.
 
@@ -164,7 +164,7 @@ The bundled catalog contains confirmed Global monster-source mappings for 165 pe
 
 ## Events, boss timers and sounds
 
-In the current Beta, use the **single gear in the DPS meter > Events** for event visibility, region, selection, module widths, opacity, boss reminders and all event sounds. Event modules no longer have their own gear. These options save automatically; sound previews and custom audio selection stay inside the same Settings window.
+In the current Beta, use the **single gear in the DPS meter > Events** for event visibility, region, selection, module widths, opacity, boss reminders and all event sounds. Event modules no longer have their own gear. Use Save to apply or Cancel to discard these options; sound previews and custom audio selection stay inside the same Settings window.
 
 Selected events and enabled world-boss timers within the next hour appear as compact movable cards. Both modules restore their own positions and open states.
 
@@ -268,7 +268,7 @@ This keeps the watcher separate from the program files that an update replaces, 
 - The watcher does not capture game traffic, download updates, upload files, read chat or ask for account credentials. Network capture and normal update checks belong to the meter after it starts.
 - The task runs for the signed-in user with the highest available privileges, matching CatScratch's existing administrator requirement. It does not create a SYSTEM service or store your Windows password.
 - The shipped local script uses `-ExecutionPolicy Bypass` for its own PowerShell process. CatScratch does not change the machine-wide PowerShell execution policy. Managed Windows restrictions may still prevent it from running; failed setup is reported rather than silently enabling the option.
-- Scripts and configuration are kept locally in `userdata/game-start`. You can inspect the [watcher source](https://github.com/Zerafithekitten/CatScratch/blob/v2.6.0-beta.1/src/AionMeter.App/Services/GameLifetime.cs) and [windowless launcher source](https://github.com/Zerafithekitten/CatScratch/blob/v2.6.0-beta.1/src/AionMeter.App/Launcher/GameWatcherLauncher.cs).
+- Scripts and configuration are kept locally in `userdata/game-start`. You can inspect the [watcher source](https://github.com/Zerafithekitten/CatScratch/blob/v2.6.0-beta.2/src/AionMeter.App/Services/GameLifetime.cs) and [windowless launcher source](https://github.com/Zerafithekitten/CatScratch/blob/v2.6.0-beta.2/src/AionMeter.App/Launcher/GameWatcherLauncher.cs).
 
 ### Why no PowerShell window should appear
 

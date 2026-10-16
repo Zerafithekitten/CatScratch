@@ -46,12 +46,12 @@ public sealed class PetTrackerWindow:Window,IDisplayAppearance
         System.Windows.Shell.WindowChrome.SetIsHitTestVisibleInChrome(_close,true);DockPanel.SetDock(_close,Dock.Right);header.Children.Add(_close);_close.Click+=(_,_)=>Close();
         _pin=WindowPinning.CreateButton(this,meter.Settings,"pets");DockPanel.SetDock(_pin,Dock.Right);header.Children.Add(_pin);
         var icon=new Image{Source=Icon,Width=14,Height=14,Margin=new(0,0,5,0)};DockPanel.SetDock(icon,Dock.Left);header.Children.Add(icon);
-        header.Children.Add(new TextBlock{Text=T.Localize("Pet tracker"),FontSize=12,FontWeight=FontWeights.SemiBold,Foreground=Brush("#79E3CF"),VerticalAlignment=VerticalAlignment.Center});
+        header.Children.Add(new TextBlock{Text=T.Localize("Pet tracker"),FontSize=12,FontWeight=FontWeights.SemiBold,Foreground=Brush("#C49AF5"),VerticalAlignment=VerticalAlignment.Center});
 
         DockPanel.SetDock(_status,Dock.Top);root.Children.Add(_status);
         _list.SetValue(ScrollViewer.HorizontalScrollBarVisibilityProperty,ScrollBarVisibility.Disabled);
         _list.ItemTemplate=(DataTemplate)XamlReader.Parse("""
-        <DataTemplate xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"><Border Background="#D0171E27" CornerRadius="4" BorderBrush="#30364957" BorderThickness="1" Padding="4,2" Margin="0,1,0,0" ToolTip="{Binding Tooltip}"><StackPanel><Grid><Grid.ColumnDefinitions><ColumnDefinition Width="20"/><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions><Image Source="{Binding Symbol}" Width="14" Height="14"/><TextBlock Grid.Column="1" Text="{Binding Name}" FontSize="11.5" FontWeight="SemiBold" Foreground="#EDF2F7" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/><TextBlock Grid.Column="2" Text="{Binding Progress}" Foreground="#79E3CF" FontSize="11.5" FontWeight="SemiBold" Margin="6,0,0,0" VerticalAlignment="Center"/></Grid><ProgressBar Value="{Binding Fill}" Maximum="1" Height="2" Foreground="#AB80EF" Background="#283540" BorderThickness="0" Margin="20,2,0,0"/></StackPanel></Border></DataTemplate>
+        <DataTemplate xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"><Border Background="#D0191D23" CornerRadius="4" BorderBrush="#30414A56" BorderThickness="1" Padding="4,2" Margin="0,1,0,0" ToolTip="{Binding Tooltip}"><StackPanel><Grid><Grid.ColumnDefinitions><ColumnDefinition Width="20"/><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions><Image Source="{Binding Symbol}" Width="14" Height="14"/><TextBlock Grid.Column="1" Text="{Binding Name}" FontSize="11.5" FontWeight="SemiBold" Foreground="#EDF2F7" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/><TextBlock Grid.Column="2" Text="{Binding Progress}" Foreground="#C49AF5" FontSize="11.5" FontWeight="SemiBold" Margin="6,0,0,0" VerticalAlignment="Center"/></Grid><ProgressBar Value="{Binding Fill}" Maximum="1" Height="2" Foreground="#AB80EF" Background="#283540" BorderThickness="0" Margin="20,2,0,0"/></StackPanel></Border></DataTemplate>
         """);
         _list.ItemContainerStyle=new Style(typeof(ListBoxItem));
         _list.ItemContainerStyle.Setters.Add(new Setter(Control.HorizontalContentAlignmentProperty,HorizontalAlignment.Stretch));
@@ -59,7 +59,7 @@ public sealed class PetTrackerWindow:Window,IDisplayAppearance
         <ControlTemplate xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" TargetType="ListBoxItem"><ContentPresenter HorizontalAlignment="Stretch"/></ControlTemplate>
         """)));
         root.Children.Add(_list);
-        _shell=new(){Child=root,CornerRadius=new(8),Background=Brush("#DF1B2027"),BorderBrush=Brush("#607B827F"),BorderThickness=new(1)};Content=_shell;
+        _shell=new(){Child=root,CornerRadius=new(8),Background=Brush("#DF20242A"),BorderBrush=Brush("#60616A76"),BorderThickness=new(1)};Content=_shell;
 
         meter.Pets.Changed+=Changed;
         Closed+=(_,_)=>{_closed=true;meter.Pets.Changed-=Changed;_sounds?.Dispose();meter.Settings.PetModuleWidth=Width;meter.Settings.PetModuleLeft=Left;meter.Settings.PetModuleTop=Top;meter.Settings.Save();};
@@ -99,7 +99,7 @@ public sealed class PetTrackerWindow:Window,IDisplayAppearance
         MinHeight=enabled?26:52;
         _header.Visibility=enabled?Visibility.Collapsed:Visibility.Visible;
         _root.Margin=enabled?new(0):new(5);
-        _shell.Background=enabled?Brushes.Transparent:Brush("#DF1B2027");_shell.BorderThickness=enabled?new(0):new(1);
+        _shell.Background=enabled?Brushes.Transparent:Brush("#DF20242A");_shell.BorderThickness=enabled?new(0):new(1);
         _close.Visibility=_pin.Visibility=enabled?Visibility.Collapsed:Visibility.Visible;
 
         SizeToContent=SizeToContent.Height;

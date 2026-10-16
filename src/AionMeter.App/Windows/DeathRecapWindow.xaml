@@ -2,11 +2,11 @@
         Width="350" MinWidth="260" SizeToContent="Height" WindowStyle="None" ResizeMode="NoResize" ShowInTaskbar="False" ShowActivated="False" Topmost="True"
         Background="Transparent" Foreground="#EDF2F7" FontFamily="{StaticResource UiFont}" UseLayoutRounding="True" TextOptions.TextFormattingMode="Display">
     <Window.Resources><ResourceDictionary><ResourceDictionary.MergedDictionaries><ResourceDictionary Source="../Theme/MeterTools.xaml"/></ResourceDictionary.MergedDictionaries></ResourceDictionary></Window.Resources>
-    <Border x:Name="Shell" Background="#F0171E27" BorderBrush="#364957" BorderThickness="1" CornerRadius="8" Padding="8,6">
+    <Border x:Name="Shell" Background="#F0191D23" BorderBrush="#414A56" BorderThickness="1" CornerRadius="8" Padding="8,6">
         <StackPanel>
             <Grid Margin="0,0,0,5">
                 <Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
-                <StackPanel Orientation="Horizontal"><Image x:Name="Paw" Width="12" Height="12" Margin="0,0,5,0"/><TextBlock x:Name="Heading" Foreground="#79E3CF" FontWeight="SemiBold" FontSize="11"/></StackPanel>
+                <StackPanel Orientation="Horizontal"><Image x:Name="Paw" Width="12" Height="12" Margin="0,0,5,0"/><TextBlock x:Name="Heading" Foreground="#C49AF5" FontWeight="SemiBold" FontSize="11"/></StackPanel>
                 <TextBlock x:Name="Summary" Grid.Column="1" Foreground="{StaticResource Red}" FontSize="10" VerticalAlignment="Center" TextAlignment="Right" TextTrimming="CharacterEllipsis" ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}" Margin="8,0,0,0"/>
                 <ContentControl x:Name="PositionPin" Grid.Column="2" Margin="3,0,0,0"/>
             </Grid>

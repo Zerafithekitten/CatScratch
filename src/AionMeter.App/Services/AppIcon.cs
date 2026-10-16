@@ -12,8 +12,8 @@ internal static class AppIcon
 
     private static ImageSource LoadImage()
     {
-        using var stream = Application.GetResourceStream(ResourceUri)!.Stream;
-        var image = BitmapFrame.Create(stream, BitmapCreateOptions.None, BitmapCacheOption.OnLoad);
+        // Draw contours at the target DPI instead of scaling a small raster ICO frame.
+        var image = (DrawingImage)Application.LoadComponent(new Uri("/CatScratch;component/Assets/CatPaw.xaml", UriKind.Relative));
         image.Freeze();
         return image;
     }

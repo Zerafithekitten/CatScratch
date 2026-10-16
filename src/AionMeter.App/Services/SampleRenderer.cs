@@ -84,7 +84,7 @@ public static class SampleRenderer
         switch (o.Window)
         {
             case "profiles":
-                host=new Window {Width=740,Height=460,Background=new SolidColorBrush(Color.FromRgb(27,32,39)),Foreground=Brushes.WhiteSmoke,Content=new Border {Padding=new(18),Child=new Windows.OverlayProfilesPanel()}};
+                host=new Window {Width=740,Height=460,Background=new SolidColorBrush(Color.FromRgb(32,36,42)),Foreground=Brushes.WhiteSmoke,Content=new Border {Padding=new(18),Child=new Windows.OverlayProfilesPanel()}};
                 host.Resources.MergedDictionaries.Add(new ResourceDictionary {Source=new Uri("/CatScratch;component/Theme/MeterTools.xaml",UriKind.Relative)});
                 refresh=()=>{};break;
             case "boss-comparison":

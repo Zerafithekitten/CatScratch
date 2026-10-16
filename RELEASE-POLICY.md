@@ -1,5 +1,7 @@
 # Release policy
 
+On 2026-10-16 the owner reviewed the local polish build and explicitly authorized publishing it as v2.6.0-beta.2 after error checks. General backgrounds stay neutral gray; purple is reserved for branding and restrained accents. Preserve class colors and full-row player progress fills. Stable remains unchanged.
+
 On 2026-10-16 the owner explicitly requested the next version series 2.6.0, carrying all previous 2.5.6 Beta changes (including Beta 7) into the eventual Stable 2.6.0 release. Publish current work as 2.6.0-beta.1 for testing; Stable still requires separate approval. The temporary upload hold was explicitly lifted once this work is finished.
 
 Stable is v2.5.5. On 2026-10-15 the owner explicitly authorized an immediate Stable hotfix for duplicate module taskbar entries and Windows Snap suggestions. On 2026-10-15 the owner explicitly authorized promoting the complete v2.5.4-beta.4 stand to Stable with detailed patch notes.

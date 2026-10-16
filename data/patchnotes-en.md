@@ -1,3 +1,11 @@
+## CatScratch v2.6.0-beta.2
+
+### Visual polish and safer preferences
+- Neutral dark gray surfaces, restrained purple accents and a crisp outlined cat paw across the app, including Windows and tray icons.
+- Slimmer DPS meter rows with class-colored background fills, class emblems, DPS, percentage share and red incoming damage. Removed the thin progress strip and total outgoing damage from player rows.
+- Tidier, expandable central Settings and a clearer boss comparison. Event, pet and death-recap options now follow Save/Cancel; preference files keep recoverable backups. Rotation is marked **WORK IN PROGRESS**.
+- Improved narrow-window layouts, text contrast and icon scaling, with additional checks for settings recovery, canceled edits and compact player rows.
+
 ## CatScratch v2.6.0-beta.1
 
 ### Central settings and position pins

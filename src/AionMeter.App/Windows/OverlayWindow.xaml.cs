@@ -27,7 +27,7 @@ public partial class OverlayWindow : Window, IDisplayAppearance
     private static readonly Brush ClickableCursorBrush = CreateCursorBrush();
     private static Brush CreateCursorBrush()
     {
-        var brush = new SolidColorBrush(Color.FromRgb(121, 227, 207));
+        var brush = new SolidColorBrush(Color.FromRgb(196,154,245));
         brush.Freeze();
         return brush;
     }
@@ -42,7 +42,7 @@ public partial class OverlayWindow : Window, IDisplayAppearance
         _settings = meter.Settings;
         var opacity = _settings.BackgroundOpacity; // the slider's coercion during InitializeComponent would overwrite it
         InitializeComponent();
-        AppIcon.Apply(this); ShellPin.Content=WindowPinning.CreateButton(this,_settings,"meter");
+        AppIcon.Apply(this); ShellPaw.Source=AppIcon.Image; ShellPin.Content=WindowPinning.CreateButton(this,_settings,"meter");
         _settings.BackgroundOpacity = opacity;
         DataContext = _vm;
         CreatePersonalRows();
@@ -151,7 +151,7 @@ public partial class OverlayWindow : Window, IDisplayAppearance
     }
     private void PetTracker_Click(object sender,RoutedEventArgs e)=>AppHost.Current.TogglePetModule();
 
-    private static readonly Brush PersonalSurface = FrozenBrush("#D0171E27");
+    private static readonly Brush PersonalSurface = FrozenBrush("#D0191D23");
     private static readonly Brush PersonalLockedSurface = FrozenBrush("#B8101822");
     private readonly List<(Border Surface, TextBlock Value, TextBlock Label, string English)> _personalRows = [];
     private static Brush FrozenBrush(string color)
@@ -370,7 +370,7 @@ public partial class OverlayWindow : Window, IDisplayAppearance
     {
         var k = Math.Clamp(percent, AppSettings.MinRowSize, AppSettings.MaxRowSize) / 100.0;
         var f = Math.Sqrt(k);
-        var height = Math.Max(42, Math.Round((_settings.CompactMode ? 44 : 52) * k));
+        var height = Math.Max(34, Math.Round((_settings.CompactMode ? 38 : 44) * k));
         Resources["RowHeight"] = height;
         Resources["CompactRowHeight"] = height;
         Resources["CompactNameFont"] = Math.Max(12, Math.Round(13 * f, 1));
@@ -684,7 +684,7 @@ public partial class OverlayWindow : Window, IDisplayAppearance
         grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
         grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
 
-        grid.Children.Add(new BossPortrait { Source = portrait, Width = 21, Height = 21, Accent = new SolidColorBrush(Color.FromRgb(121,227,207)), HorizontalAlignment = HorizontalAlignment.Left });
+        grid.Children.Add(new BossPortrait { Source = portrait, Width = 21, Height = 21, Accent = new SolidColorBrush(Color.FromRgb(196,154,245)), HorizontalAlignment = HorizontalAlignment.Left });
 
         var (mark, markBrush) = active ? ("●", "Red") : reason switch
         {

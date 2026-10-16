@@ -17,14 +17,12 @@ public static class OverlayProfiles
     private static string PathName=>Path.Combine(AppSettings.AppDataDir,"overlay-profiles.json");
     public static List<OverlayProfile> Load()
     {
-        try { return JsonSerializer.Deserialize<List<OverlayProfile>>(File.ReadAllText(PathName))?.Where(p=>p is {Layout:not null,Cards:not null} && !string.IsNullOrWhiteSpace(p.Name)).ToList() ?? []; }
+        try { return JsonSettingsFile.Read<List<OverlayProfile>>(PathName)?.Where(p=>p is {Layout:not null,Cards:not null} && !string.IsNullOrWhiteSpace(p.Name)).ToList() ?? []; }
         catch(Exception e) when(e is IOException or JsonException or UnauthorizedAccessException){return [];}
     }
     public static void Save(List<OverlayProfile> profiles)
     {
-        Directory.CreateDirectory(AppSettings.AppDataDir);
-        File.WriteAllText(PathName+".tmp",JsonSerializer.Serialize(profiles));
-        File.Move(PathName+".tmp",PathName,true);
+        JsonSettingsFile.Write(PathName,profiles);
     }
     public static OverlayProfile Capture(string name,AppSettings settings,TimerCards.State timers) => new(name,
         Fields.ToDictionary(f=>f,f=>JsonSerializer.SerializeToElement(typeof(AppSettings).GetProperty(f)!.GetValue(settings))),

@@ -13,25 +13,24 @@
     <Window.Resources>
         <ResourceDictionary>
         <ResourceDictionary.MergedDictionaries><ResourceDictionary Source="../Theme/MeterPreferences.xaml" /></ResourceDictionary.MergedDictionaries>
-        <SolidColorBrush x:Key="Bg0" Color="#1B2027"/>
-        <SolidColorBrush x:Key="Bg1" Color="#171E27"/>
-        <SolidColorBrush x:Key="Line" Color="#364957"/>
-        <SolidColorBrush x:Key="Gold" Color="#79E3CF"/>
-        <SolidColorBrush x:Key="GoldBright" Color="#A3F5E5"/>
-        <SolidColorBrush x:Key="GoldDim" Color="#364957"/>
+        <SolidColorBrush x:Key="Bg0" Color="#20242A"/>
+        <SolidColorBrush x:Key="Bg1" Color="#191D23"/>
+        <SolidColorBrush x:Key="Line" Color="#414A56"/>
+        <SolidColorBrush x:Key="Gold" Color="#C49AF5"/>
+        <SolidColorBrush x:Key="GoldDim" Color="#414A56"/>
         <SolidColorBrush x:Key="Text" Color="#EDF2F7"/>
         <SolidColorBrush x:Key="TextDim" Color="#BCC9D6"/>
         <SolidColorBrush x:Key="TextMute" Color="#A9B8C7"/>
         <FontFamily x:Key="TitleFont">Segoe UI</FontFamily>
         <Style x:Key="TabToggle" TargetType="RadioButton">
             <Setter Property="Foreground" Value="#A9B8C7"/><Setter Property="Cursor" Value="Hand"/><Setter Property="FontSize" Value="12"/>
-            <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="RadioButton"><Border x:Name="Tab" Background="Transparent" Padding="14,8" Margin="0,0,5,0" CornerRadius="6"><ContentPresenter/></Border><ControlTemplate.Triggers><Trigger Property="IsChecked" Value="True"><Setter Property="Foreground" Value="#79E3CF"/><Setter TargetName="Tab" Property="Background" Value="#263C3D"/></Trigger><Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Tab" Property="Background" Value="#24313A"/></Trigger></ControlTemplate.Triggers></ControlTemplate></Setter.Value></Setter>
+            <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="RadioButton"><Border x:Name="Tab" Background="Transparent" Padding="14,8" Margin="0,0,5,0" CornerRadius="6"><ContentPresenter/></Border><ControlTemplate.Triggers><Trigger Property="IsChecked" Value="True"><Setter Property="Foreground" Value="#C49AF5"/><Setter TargetName="Tab" Property="Background" Value="#30333D"/></Trigger><Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Tab" Property="Background" Value="#2B3038"/></Trigger></ControlTemplate.Triggers></ControlTemplate></Setter.Value></Setter>
         </Style>
         <c:VisibleIf x:Key="VisibleIf" />
 
         <Style x:Key="StatTile" TargetType="Border">
-            <Setter Property="Background" Value="#171E27" />
-            <Setter Property="BorderBrush" Value="#364957" />
+            <Setter Property="Background" Value="#191D23" />
+            <Setter Property="BorderBrush" Value="#414A56" />
             <Setter Property="BorderThickness" Value="1" />
             <Setter Property="CornerRadius" Value="8" />
             <Setter Property="Padding" Value="12,9" />
@@ -91,7 +90,7 @@
                 <DockPanel>
                     <StackPanel DockPanel.Dock="Top" Margin="14,14,14,8">
                         <StackPanel Orientation="Horizontal" Margin="0,0,0,7"><Image Source="{x:Static s:AppIcon.Image}" Width="18" Height="18" Margin="0,0,7,0"/><TextBlock Text="CatScratch" FontSize="15" FontWeight="SemiBold" Foreground="{StaticResource Gold}" /></StackPanel>
-                        <Border Background="#202A35" CornerRadius="7" Padding="9" Margin="0,8,0,4">
+                        <Border Background="#262C34" CornerRadius="7" Padding="9" Margin="0,8,0,4">
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto" />
@@ -114,7 +113,7 @@
                                 <Setter Property="Template">
                                     <Setter.Value>
                                         <ControlTemplate TargetType="ListBoxItem">
-                                            <Border x:Name="Bd" CornerRadius="7" Padding="8,9" Margin="0,3" Background="#202A35" BorderBrush="Transparent" BorderThickness="1">
+                                            <Border x:Name="Bd" CornerRadius="7" Padding="8,9" Margin="0,3" Background="#262C34" BorderBrush="Transparent" BorderThickness="1">
                                                 <ContentPresenter />
                                             </Border>
                                             <ControlTemplate.Triggers>
@@ -122,8 +121,8 @@
                                                     <Setter TargetName="Bd" Property="Background" Value="{StaticResource HoverFill}" />
                                                 </Trigger>
                                                 <Trigger Property="IsSelected" Value="True">
-                                                    <Setter TargetName="Bd" Property="Background" Value="#263C3D" />
-                                                    <Setter TargetName="Bd" Property="BorderBrush" Value="#79E3CF" />
+                                                    <Setter TargetName="Bd" Property="Background" Value="#30333D" />
+                                                    <Setter TargetName="Bd" Property="BorderBrush" Value="#C49AF5" />
                                                 </Trigger>
                                             </ControlTemplate.Triggers>
                                         </ControlTemplate>
@@ -208,7 +207,7 @@
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
-                        <Border CornerRadius="8" Background="#171E27" BorderBrush="#364957" BorderThickness="1" Padding="6,10,10,4">
+                        <Border CornerRadius="8" Background="#191D23" BorderBrush="#414A56" BorderThickness="1" Padding="6,10,10,4">
                             <Grid>
                                 <TextBlock Text="{Binding DpsTimeline, Source={x:Static s:UiText.Current}}" Style="{StaticResource SectionLabel}" Margin="8,0,0,0" />
                                 <c:TimelineChart x:Name="Chart" Margin="0,14,0,0" />
@@ -239,7 +238,7 @@
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
                                         <Grid Height="36" Margin="0,0,0,4" ToolTip="{Binding Tooltip}">
-                                            <Border CornerRadius="7" Background="#202A35" />
+                                            <Border CornerRadius="7" Background="#262C34" />
                                             <Grid Margin="8,0,14,0">
                                                 <Grid.ColumnDefinitions>
                                                     <ColumnDefinition Width="*" />
@@ -315,7 +314,7 @@
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
                                         <Grid Height="34" Margin="0,0,0,4">
-                                            <Border CornerRadius="7" Background="#202A35" />
+                                            <Border CornerRadius="7" Background="#262C34" />
                                             <Grid Margin="8,0,14,0">
                                                 <Grid.ColumnDefinitions>
                                                     <ColumnDefinition Width="*" />
@@ -356,8 +355,16 @@
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
-                        <TextBlock x:Name="RotationHint" Foreground="{StaticResource TextDim}" FontSize="11.5" Margin="0,0,0,10"
-                                   Text="{Binding RotationHint, Source={x:Static s:UiText.Current}}" />
+                        <StackPanel>
+                            <Border x:Name="RotationWarning" Background="{StaticResource Bg1}" BorderBrush="#806C5940" BorderThickness="1" CornerRadius="7" Padding="12,8" Margin="0,0,0,10">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="!" Foreground="#F5B544" FontSize="30" FontWeight="Bold" Margin="0,0,12,0" VerticalAlignment="Center"/>
+                                    <TextBlock Text="WORK IN PROGRESS" Foreground="{StaticResource Text}" FontSize="14" FontWeight="Bold" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </Border>
+                            <TextBlock x:Name="RotationHint" Foreground="{StaticResource TextDim}" FontSize="11.5" Margin="0,0,0,10"
+                                       Text="{Binding RotationHint, Source={x:Static s:UiText.Current}}" />
+                        </StackPanel>
                         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
                             <c:RotationStrip x:Name="Rotation" Margin="0,0,8,0" />
                         </ScrollViewer>

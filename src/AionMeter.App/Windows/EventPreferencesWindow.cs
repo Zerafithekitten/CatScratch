@@ -15,7 +15,7 @@ public sealed class EventPreferencesWindow : Window
         Topmost=true; WindowStyle=WindowStyle.None; ResizeMode=ResizeMode.CanResize;
         System.Windows.Shell.WindowChrome.SetWindowChrome(this, new System.Windows.Shell.WindowChrome
         { CaptionHeight=0, ResizeBorderThickness=new Thickness(6), GlassFrameThickness=new Thickness(0), CornerRadius=new CornerRadius(0) });
-        Background=Brush("#1B2027"); Foreground=Brush("#EDF2F7"); FontFamily=(FontFamily)FindResource("UiFont"); FontSize=12;
+        Background=Brush("#20242A"); Foreground=Brush("#EDF2F7"); FontFamily=(FontFamily)FindResource("UiFont"); FontSize=12;
         UseLayoutRounding=true; TextOptions.SetTextFormattingMode(this,TextFormattingMode.Display);
         Resources.MergedDictionaries.Add(new ResourceDictionary { Source=new Uri("/CatScratch;component/Theme/MeterPreferences.xaml",UriKind.Relative) });
         var root=new DockPanel { Margin=new(16) };
@@ -23,9 +23,9 @@ public sealed class EventPreferencesWindow : Window
         var close=new Button { Content="\uE711", Style=(Style)FindResource("IconButton"), Width=22, Height=22 }; close.Click+=(_,_)=>Close(); DockPanel.SetDock(close,Dock.Right); header.Children.Add(close);
         var caption=new StackPanel { Orientation=Orientation.Horizontal };
         caption.Children.Add(new Image { Source=Icon,Width=20,Height=20,Margin=new(0,0,7,0) });
-        caption.Children.Add(new TextBlock { Text=UiText.Current.Localize("Event settings"),Foreground=Brush("#79E3CF"),FontSize=17,FontWeight=FontWeights.SemiBold }); header.Children.Add(caption);
+        caption.Children.Add(new TextBlock { Text=UiText.Current.Localize("Event settings"),Foreground=Brush("#C49AF5"),FontSize=17,FontWeight=FontWeights.SemiBold }); header.Children.Add(caption);
         var body=BuildBody(cards,width,setWidth,setOpacity,reload,this); root.Children.Add(new ScrollViewer { Content=body,VerticalScrollBarVisibility=ScrollBarVisibility.Auto });
-        Content=new Border { Child=root,Background=Background,BorderBrush=Brush("#607B827F"),BorderThickness=new(1),CornerRadius=new(10) };
+        Content=new Border { Child=root,Background=Background,BorderBrush=Brush("#60616A76"),BorderThickness=new(1),CornerRadius=new(10) };
         Controls.DragAnywhere.Attach(this);
     }
     internal static StackPanel BuildBody(TimerCards cards, Func<double> width, Action<double> setWidth, Action<double> setOpacity, Action reload, FrameworkElement scope)
@@ -34,8 +34,8 @@ public sealed class EventPreferencesWindow : Window
         void Save() { cards.Save(); reload(); }
         StackPanel Section(string title)
         {
-            var panel=new StackPanel(); panel.Children.Add(new TextBlock { Text=UiText.Current.Localize(title),Foreground=Brush("#79E3CF"),FontWeight=FontWeights.SemiBold,Margin=new(0,0,0,8) });
-            body.Children.Add(new Border { Child=panel,Background=Brush("#171E27"),BorderBrush=Brush("#364957"),BorderThickness=new(1),CornerRadius=new(7),Padding=new(12),Margin=new(0,0,0,10) }); return panel;
+            var panel=new StackPanel(); panel.Children.Add(new TextBlock { Text=UiText.Current.Localize(title),Foreground=Brush("#C49AF5"),FontWeight=FontWeights.SemiBold,Margin=new(0,0,0,8) });
+            body.Children.Add(new Border { Child=panel,Background=Brush("#191D23"),BorderBrush=Brush("#414A56"),BorderThickness=new(1),CornerRadius=new(7),Padding=new(12),Margin=new(0,0,0,10) }); return panel;
         }
         void Hint(StackPanel parent,string text) => parent.Children.Add(new TextBlock { Text=UiText.Current.Localize(text),Foreground=Brush("#A9B8C7"),FontSize=11,TextWrapping=TextWrapping.Wrap,Margin=new(0,6,0,4) });
         var regionPanel=Section("SCHEDULE");
@@ -68,7 +68,7 @@ public sealed class EventPreferencesWindow : Window
         Slider("Upcoming events width",240,1000,width(),setWidth," px");
         var tools=Section("SOUNDS & BOSS TIMERS");
         var bosses=new Button { Content=UiText.Current.Localize("Open boss timers"),Style=(Style)scope.FindResource("GhostButton") }; bosses.Click+=(_,_)=>AppHost.Current.ShowBossTimers(); tools.Children.Add(bosses);
-        Hint(tools,"Changes are saved automatically. Community schedule from Shugo.GG, checked Oct 12, 2026; availability is not officially confirmed.");
+        Hint(tools,"Community schedule from Shugo.GG, checked Oct 12, 2026; availability is not officially confirmed.");
         var source=new Button { Content=UiText.Current.Localize("Open schedule source"),Style=(Style)scope.FindResource("GhostButton"),Margin=new(0,6,0,0) }; source.Click+=(_,_)=>System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(AutomaticEventSchedule.Source) { UseShellExecute=true }); tools.Children.Add(source);
         return body;
     }

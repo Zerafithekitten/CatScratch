@@ -79,7 +79,12 @@ public partial class App : Application
     protected override void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);
-        if(e.Args.Any(a=>a.StartsWith("--check-",StringComparison.Ordinal) || a=="--render-sample"))WindowPresentation.Enabled=false;
+        if(e.Args.Any(a=>a.StartsWith("--check-",StringComparison.Ordinal) || a=="--render-sample"))
+        {
+            WindowPresentation.Enabled=false;
+            // Test windows may close before assertions finish. Only their explicit result should end the process.
+            if(!e.Args.Contains("--check-shutdown"))ShutdownMode=ShutdownMode.OnExplicitShutdown;
+        }
         if (ArgValue(e.Args,"--clean-update") is { } cleanupStage)
         {
             try
@@ -880,7 +885,7 @@ public partial class App : Application
         var now=DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
         var session=_meter.Tracker.Segments().Select(s=>_meter.Tracker.Snapshot(s.Id,now)).OfType<Core.Combat.EncounterSnapshot>();
         var saved=_meter.History.List().Where(e=>e.BossCode==current.Boss?.NpcCode).Select(e=>_meter.History.Load(e.Path)?.Summary).OfType<Core.Combat.EncounterSnapshot>();
-        new BossComparisonWindow(current,session.Concat(saved)).Show();
+        new BossComparisonWindow(current,session.Concat(saved),_meter.Settings).Show();
     }
 
     // ------------------------------------------------------------ updates

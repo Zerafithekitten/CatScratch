@@ -1,0 +1,20 @@
+<DrawingImage xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+    <DrawingImage.Drawing>
+        <DrawingGroup>
+            <!-- Transparent bounds keep all header and Windows icon sizes proportionate. -->
+            <GeometryDrawing Brush="Transparent" Geometry="M0,0 H24 V24 H0 Z"/>
+            <GeometryDrawing>
+                <GeometryDrawing.Pen><Pen Brush="#B47BEA" Thickness="1.6" StartLineCap="Round" EndLineCap="Round" LineJoin="Round"/></GeometryDrawing.Pen>
+                <GeometryDrawing.Geometry>
+                    <GeometryGroup>
+                        <EllipseGeometry Center="4.6,9.5" RadiusX="2" RadiusY="2.6"/>
+                        <EllipseGeometry Center="9.2,5.1" RadiusX="2.1" RadiusY="2.8"/>
+                        <EllipseGeometry Center="14.8,5.1" RadiusX="2.1" RadiusY="2.8"/>
+                        <EllipseGeometry Center="19.4,9.5" RadiusX="2" RadiusY="2.6"/>
+                        <PathGeometry Figures="M12,11 C9.4,11 9.1,13.4 7.5,14.6 C5.8,15.8 5,17.1 5.4,18.8 C5.8,21 8.2,21.6 10.1,20.7 C11.3,20.1 12.7,20.1 13.9,20.7 C15.8,21.6 18.2,21 18.6,18.8 C19,17.1 18.2,15.8 16.5,14.6 C14.9,13.4 14.6,11 12,11 Z"/>
+                    </GeometryGroup>
+                </GeometryDrawing.Geometry>
+            </GeometryDrawing>
+        </DrawingGroup>
+    </DrawingImage.Drawing>
+</DrawingImage>

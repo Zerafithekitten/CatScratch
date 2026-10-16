@@ -6,7 +6,7 @@
         WindowStyle="None" WindowStartupLocation="CenterScreen" ResizeMode="CanResize" Background="{StaticResource Bg0}"
         Topmost="True" UseLayoutRounding="True" TextOptions.TextFormattingMode="Display"
         FontFamily="{StaticResource UiFont}" Foreground="{StaticResource Text}" FontSize="12.5">
-    <Window.Resources><ResourceDictionary><ResourceDictionary.MergedDictionaries><ResourceDictionary Source="../Theme/MeterTools.xaml"/></ResourceDictionary.MergedDictionaries><SolidColorBrush x:Key="GoldBright" Color="#79E3CF"/></ResourceDictionary></Window.Resources>
+    <Window.Resources><ResourceDictionary><ResourceDictionary.MergedDictionaries><ResourceDictionary Source="../Theme/MeterTools.xaml"/></ResourceDictionary.MergedDictionaries><SolidColorBrush x:Key="GoldBright" Color="#C49AF5"/></ResourceDictionary></Window.Resources>
     <WindowChrome.WindowChrome>
         <WindowChrome CaptionHeight="52" ResizeBorderThickness="6" GlassFrameThickness="0" CornerRadius="0" />
     </WindowChrome.WindowChrome>

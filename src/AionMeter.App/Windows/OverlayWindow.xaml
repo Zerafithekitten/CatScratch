@@ -6,7 +6,7 @@
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
         x:Name="Root"
         Title="CatScratch" Width="420" Height="540" MinWidth="260" MinHeight="320"
-        WindowStyle="None" AllowsTransparency="False" Background="#101420"
+        WindowStyle="None" AllowsTransparency="False" Background="#191D23"
         Topmost="True" ShowInTaskbar="True" ShowActivated="True" ResizeMode="CanResize"
         UseLayoutRounding="True" TextOptions.TextFormattingMode="Display"
         FontFamily="{StaticResource UiFont}">
@@ -168,63 +168,55 @@
         </Style>
 
         <DataTemplate x:Key="CompactRowTemplate" DataType="{x:Type vm:RowViewModel}">
-            <Grid x:Name="ModernRow" Height="{DynamicResource CompactRowHeight}" Margin="0,0,0,2" Cursor="Hand" Background="Transparent" ToolTip="{Binding Tooltip}" MouseLeftButtonUp="Row_Click" MouseRightButtonUp="Row_RightClick">
-                <Border x:Name="RowSurface" Background="#D0171E27" BorderBrush="#302E4252" BorderThickness="1" CornerRadius="6" />
-                <Grid Margin="8,3,8,3">
+            <Grid x:Name="ModernRow" Height="{DynamicResource CompactRowHeight}" Margin="0,0,0,1" Cursor="Hand" Background="Transparent" ToolTip="{Binding Tooltip}" MouseLeftButtonUp="Row_Click" MouseRightButtonUp="Row_RightClick">
+                <Border x:Name="RowSurface" Background="#D0191D23" BorderBrush="#302E4252" BorderThickness="1" CornerRadius="6" />
+                <Border x:Name="RowFill" Background="{Binding AccentBrush}" Opacity="0.28" CornerRadius="6" RenderTransformOrigin="0,0.5" IsHitTestVisible="False">
+                    <Border.RenderTransform><ScaleTransform ScaleX="{Binding Fill}"/></Border.RenderTransform>
+                </Border>
+                <Grid Margin="6,1,6,1">
                     <Grid.ColumnDefinitions><ColumnDefinition Width="{DynamicResource ColGlyphWidth}"/><ColumnDefinition Width="*"/><ColumnDefinition Width="{DynamicResource DpsColumnWidth}"/><ColumnDefinition Width="{DynamicResource ShareColumnWidth}"/></Grid.ColumnDefinitions>
                     <c:ClassGlyph Class="{Binding Class}" Width="{DynamicResource RowGlyphSize}" Height="{DynamicResource RowGlyphSize}" VerticalAlignment="Center" HorizontalAlignment="Left"/>
-                    <Grid Grid.Column="1" Grid.ColumnSpan="3" Margin="4,0,0,0">
-                        <Grid.RowDefinitions><RowDefinition Height="*"/><RowDefinition Height="5"/></Grid.RowDefinitions>
-                        <Grid Margin="0,0,0,2">
+                    <Grid Grid.Column="1" Grid.ColumnSpan="3" Margin="4,0,0,0" VerticalAlignment="Center">
+                        <Grid>
                             <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="{DynamicResource DpsColumnWidth}"/><ColumnDefinition Width="{DynamicResource ShareColumnWidth}"/></Grid.ColumnDefinitions>
-                            <StackPanel VerticalAlignment="Center" Margin="0,0,6,0">
-                                <TextBlock Text="{Binding Name}" FontSize="{DynamicResource CompactNameFont}" FontWeight="SemiBold" Foreground="#EDF2F7" TextTrimming="CharacterEllipsis"/>
-                                <TextBlock Text="{Binding CompactGear}" FontSize="{DynamicResource CompactSubFont}" Foreground="#ADBCCD" TextTrimming="CharacterEllipsis"/>
-                            </StackPanel>
-                            <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                                <TextBlock Text="{Binding Dps}" FontSize="{DynamicResource CompactNumberFont}" FontWeight="SemiBold" Foreground="#EDF2F7" TextAlignment="Right"/>
-                                <TextBlock Text="{Binding Damage}" FontSize="{DynamicResource CompactSubFont}" Foreground="#ADBCCD" TextAlignment="Right"/>
-                            </StackPanel>
-                            <StackPanel Grid.Column="2" VerticalAlignment="Center" Margin="4,0,0,0">
-                                <TextBlock Text="{Binding Share}" Foreground="#79E3DF" FontSize="{DynamicResource CompactNumberFont}" FontWeight="SemiBold" TextAlignment="Right"/>
-                                <TextBlock Text="{Binding DamageTaken}" Foreground="#FF8585" FontSize="{DynamicResource CompactSubFont}" FontWeight="SemiBold" TextAlignment="Right" ToolTip="{Binding DataContext.T.TipTaken, RelativeSource={RelativeSource AncestorType=Window}}"/>
-                            </StackPanel>
-                        </Grid>
-                        <Grid Grid.Row="1">
-                            <Border CornerRadius="3" Background="#FF283540"/>
-                            <Border CornerRadius="3" Background="{Binding AccentBrush}" RenderTransformOrigin="0,0.5"><Border.RenderTransform><ScaleTransform ScaleX="{Binding Fill}"/></Border.RenderTransform></Border>
+                            <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+                            <TextBlock Text="{Binding Name}" FontSize="{DynamicResource CompactNameFont}" FontWeight="SemiBold" Foreground="#EDF2F7" TextTrimming="CharacterEllipsis" Margin="0,0,4,0"/>
+                            <TextBlock Grid.Row="1" Grid.ColumnSpan="2" Text="{Binding CompactGear}" FontSize="{DynamicResource CompactSubFont}" Foreground="#ADBCCD" TextTrimming="CharacterEllipsis" Margin="0,0,4,0"/>
+                            <TextBlock Grid.Column="1" Text="{Binding Dps}" FontSize="{DynamicResource CompactNumberFont}" FontWeight="SemiBold" Foreground="#EDF2F7" TextAlignment="Right"/>
+                            <TextBlock Grid.Column="2" Text="{Binding Share}" Foreground="#C49AF5" FontSize="{DynamicResource CompactNumberFont}" FontWeight="SemiBold" TextAlignment="Right" Margin="4,0,0,0"/>
+                            <TextBlock Grid.Row="1" Grid.Column="2" Text="{Binding DamageTaken}" Foreground="#FF8585" FontSize="{DynamicResource CompactSubFont}" FontWeight="SemiBold" TextAlignment="Right" ToolTip="{Binding DataContext.T.TipTaken, RelativeSource={RelativeSource AncestorType=Window}}"/>
                         </Grid>
                     </Grid>
                 </Grid>
             </Grid>
             <DataTemplate.Triggers>
-                <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="RowSurface" Property="BorderBrush" Value="#6079E3CF"/></Trigger>
+                <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="RowSurface" Property="BorderBrush" Value="#60C49AF5"/></Trigger>
                 <DataTrigger Binding="{Binding DataContext.IsDisplayOnly, RelativeSource={RelativeSource AncestorType=Window}}" Value="True">
-                    <Setter TargetName="RowSurface" Property="Background" Value="#B8101822"/>
+                    <Setter TargetName="RowSurface" Property="Background" Value="#B8191D23"/>
                     <Setter TargetName="RowSurface" Property="BorderBrush" Value="Transparent"/>
                 </DataTrigger>
             </DataTemplate.Triggers>
         </DataTemplate>
     </Window.Resources>
 
-    <Border x:Name="OuterShell" CornerRadius="10" Background="#DF1B2027" BorderBrush="#607B827F" BorderThickness="1">
+    <Border x:Name="OuterShell" CornerRadius="10" Background="#DF20242A" BorderBrush="#60616A76" BorderThickness="1">
     <DockPanel>
         <Grid DockPanel.Dock="Top" Height="38" Margin="8,2,6,0">
             <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
             <StackPanel x:Name="ShellCaption" Orientation="Horizontal" VerticalAlignment="Center">
                 <Image x:Name="ShellPaw" Source="/Assets/app.ico" Width="22" Height="22" Margin="0,0,7,0"/>
                 <StackPanel VerticalAlignment="Center">
-                    <TextBlock x:Name="ShellTitle" Text="CatScratch" Foreground="#79E3CF" FontSize="16" FontWeight="Bold"/>
+                    <TextBlock x:Name="ShellTitle" Text="CatScratch" Foreground="#C49AF5" FontSize="16" FontWeight="Bold"/>
                     <TextBlock x:Name="InstalledVersionText" Text="{Binding Version}" FontSize="9" Foreground="#A9B8C7"/>
                 </StackPanel>
                             <Button x:Name="PersonalCombatButton" Style="{StaticResource ToolIcon}" Content="&#xE95E;" Click="PersonalCombat_Click" ToolTip="{Binding T.Literal0}" AutomationProperties.Name="{Binding T.Literal1}" Margin="4,0,0,0" />
                             <Button x:Name="PetTrackerButton" Style="{StaticResource ToolIcon}" Click="PetTracker_Click" ToolTip="{Binding T.PetTrackerLabel}" Margin="2,0,0,0"><Image Source="/Assets/app.ico" Width="12" Height="12"/></Button>
 </StackPanel>
             <StackPanel x:Name="ShellClockPanel" Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
-                <TextBlock Text="{Binding Clock, StringFormat=⏱ {0}}" Foreground="#91A5A0" FontSize="9" Margin="4,0" ToolTip="{Binding T.Literal2}" VerticalAlignment="Center"/>
+                <TextBlock Text="{Binding Clock, StringFormat=⏱ {0}}" Foreground="#A99CB8" FontSize="9" Margin="4,0" ToolTip="{Binding T.Literal2}" VerticalAlignment="Center"/>
                 <TextBlock Text="{Binding WallClock}" Foreground="#D4DAD9" FontSize="10" Margin="4,0" ToolTip="{Binding T.Literal3}" VerticalAlignment="Center"/>
             </StackPanel>
-            <Button x:Name="ShellClickButton" Grid.Column="2" Style="{StaticResource ToolIcon}" Click="ClickMode_Click"><Grid Width="12" Height="12"><Path x:Name="ClickModeCursor" Data="M 2,1 L 12,8 L 7,8 L 5,13 Z" Fill="#79E3CF"/><Path x:Name="ClickModeSlash" Data="M 1,13 L 13,1" Stroke="#D9ADB1" StrokeThickness="2" Visibility="Collapsed"/></Grid></Button>
+            <Button x:Name="ShellClickButton" Grid.Column="2" Style="{StaticResource ToolIcon}" Click="ClickMode_Click"><Grid Width="12" Height="12"><Path x:Name="ClickModeCursor" Data="M 2,1 L 12,8 L 7,8 L 5,13 Z" Fill="#C49AF5"/><Path x:Name="ClickModeSlash" Data="M 1,13 L 13,1" Stroke="#D9ADB1" StrokeThickness="2" Visibility="Collapsed"/></Grid></Button>
             <Button x:Name="ShellSettingsButton" Grid.Column="3" Style="{StaticResource ToolIcon}" Content="&#xE713;" Click="Settings_Click" ToolTip="{Binding T.Literal4}"/>
             <ContentControl x:Name="ShellPin" Grid.Column="4" VerticalAlignment="Center"/>
             <Button x:Name="ShellHideButton" Grid.Column="5" Style="{StaticResource ToolIcon}" Content="&#xE711;" Click="Hide_Click" ToolTip="{Binding T.Literal5}"/>
@@ -233,7 +225,7 @@
         <!-- Card -->
         <Border x:Name="Frame" CornerRadius="8" BorderThickness="1" BorderBrush="Transparent">
             <Border.Background>
-                <SolidColorBrush x:Name="FrameBackground" Color="#171E27" Opacity="0.92" />
+                <SolidColorBrush x:Name="FrameBackground" Color="#191D23" Opacity="0.92" />
             </Border.Background>
             <Border.Effect>
                 <DropShadowEffect BlurRadius="14" ShadowDepth="0" Opacity="0.5" Color="Black" />
@@ -321,7 +313,7 @@
                     </StackPanel>
                     <TextBlock x:Name="HeaderClock" Text="{Binding WallClock}" ToolTip="{Binding T.Literal3}" FontFamily="{StaticResource NumberFont}" FontWeight="SemiBold" FontSize="13.5"
                                Foreground="#EEF0F5" VerticalAlignment="Center" />
-                    <TextBlock Text="{Binding Clock, StringFormat=⏱ {0}}" Visibility="{Binding Visibility, ElementName=HeaderClock}" ToolTip="{Binding T.Literal2}" Foreground="#91A5A0" Margin="6,0,0,0" VerticalAlignment="Center"/>
+                    <TextBlock Text="{Binding Clock, StringFormat=⏱ {0}}" Visibility="{Binding Visibility, ElementName=HeaderClock}" ToolTip="{Binding T.Literal2}" Foreground="#A99CB8" Margin="6,0,0,0" VerticalAlignment="Center"/>
                 </StackPanel>
             </Grid>
 

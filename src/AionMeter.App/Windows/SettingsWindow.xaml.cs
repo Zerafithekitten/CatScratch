@@ -45,34 +45,42 @@ public partial class SettingsWindow : Window
         { MessageBox.Show(this, T.Localize("Could not open the browser. Please visit GitHub and choose New issue."), "CatScratch"); }
     }
     private readonly MeterService _meter;
+    private readonly TimerCards _cards;
+    private readonly TimerCards _eventDraft;
+    private readonly AppSettings _moduleDraft;
     private readonly List<(string? Name, string Label)> _devices = new();
 
     public SettingsWindow(MeterService meter,TimerCards? cards=null)
     {
         _meter = meter;
         InitializeComponent();
+        BrandIcon.Source=AppIcon.Image;
         cards??=new TimerCards(meter,persistent:false);
-        SettingsTabs.Items.Add(new TabItem {Header=T.Localize("Events"),Tag="events",Padding=new Thickness(12,10,12,10),Content=new ScrollViewer {VerticalScrollBarVisibility=ScrollBarVisibility.Auto,HorizontalScrollBarVisibility=ScrollBarVisibility.Auto,Padding=new Thickness(14,0,0,0),Content=new EventsSettingsPanel(cards,()=>{if(!meter.Settings.Transient)AppHost.Current.RefreshEventSettings();},(sound,volume)=>{if(!meter.Settings.Transient)AppHost.Current.PreviewEventSound(sound,volume);})}});
+        _cards=cards;
+        _eventDraft=cards.CreatePreferencesDraft();
+        _moduleDraft=meter.Settings.CreateDraft();
+        SettingsTabs.Items.Add(new TabItem {Header=T.Localize("Events"),Tag="events",Padding=new Thickness(12,10,12,10),Content=new ScrollViewer {VerticalScrollBarVisibility=ScrollBarVisibility.Auto,HorizontalScrollBarVisibility=ScrollBarVisibility.Disabled,Padding=new Thickness(14,0,0,0),Content=new EventsSettingsPanel(_eventDraft,()=>{},(sound,volume)=>{if(!meter.Settings.Transient)AppHost.Current.PreviewEventSound(sound,volume);})}});
         var modules=new StackPanel();
         modules.Children.Add(new TextBlock {Text=T.Localize("Pet tracker"),FontSize=16,Margin=new Thickness(0,0,0,8)});
-        modules.Children.Add(new TextBlock {Text=T.Localize("Changes are saved automatically."),Margin=new Thickness(0,0,0,12)});
-        void Module(string label,bool value,Action<bool> change){var field=new CheckBox {Content=T.Localize(label),IsChecked=value,Style=(Style)FindResource("DarkCheck"),Margin=new Thickness(0,0,0,10)};field.Click+=(_,_)=>{change(field.IsChecked==true);meter.Settings.Save();};modules.Children.Add(field);}
+        modules.Children.Add(new TextBlock {Text=T.Localize("Changes take effect after saving."),Margin=new Thickness(0,0,0,12),TextWrapping=TextWrapping.Wrap});
+        void Module(string label,bool value,Action<bool> change){var field=new CheckBox {Content=T.Localize(label),IsChecked=value,Style=(Style)FindResource("DarkCheck"),Margin=new Thickness(0,0,0,10)};field.Click+=(_,_)=>change(field.IsChecked==true);modules.Children.Add(field);}
 
-        Module("Show pet tracker",meter.Settings.ShowPetTrackerModule,v=>{if(v!=meter.Settings.ShowPetTrackerModule && !meter.Settings.Transient)AppHost.Current.TogglePetModule();meter.Settings.ShowPetTrackerModule=v;});
-        Module("Sound on collection / level up",meter.Settings.PetNotify,v=>meter.Settings.PetNotify=v);
+        Module("Show pet tracker",meter.Settings.ShowPetTrackerModule,v=>_moduleDraft.ShowPetTrackerModule=v);
+        Module("Sound on collection / level up",meter.Settings.PetNotify,v=>_moduleDraft.PetNotify=v);
         modules.Children.Add(new TextBlock {Text=T.Localize("Window width"),Margin=new Thickness(0,6,0,4)});
         var petWidth=new Slider {Minimum=240,Maximum=360,Value=Math.Clamp(meter.Settings.PetModuleWidth,240,360),Style=(Style)FindResource("GoldSlider")};
-        petWidth.ValueChanged+=(_,e)=>{meter.Settings.PetModuleWidth=e.NewValue;meter.Settings.Save();if(!meter.Settings.Transient)AppHost.Current.RefreshPetSettings();};modules.Children.Add(petWidth);
+        petWidth.ValueChanged+=(_,e)=>_moduleDraft.PetModuleWidth=e.NewValue;modules.Children.Add(petWidth);
         var recap=new CheckBox {Content=T.Localize("Show death recap"),IsChecked=meter.Settings.ShowDeathRecapModule,Style=(Style)FindResource("DarkCheck")};
-        recap.Click+=(_,_)=>{meter.Settings.ShowDeathRecapModule=recap.IsChecked==true;meter.Settings.Save();};
+        recap.Click+=(_,_)=>_moduleDraft.ShowDeathRecapModule=recap.IsChecked==true;
         if(((TabItem)SettingsTabs.Items[1]).Content is ScrollViewer {Content:Panel combat})combat.Children.Add(new Border {Child=recap,Style=(Style)FindResource("Section")});
         SettingsTabs.Items.Add(new TabItem {Header=T.Localize("Pets"),Padding=new Thickness(12,10,12,10),Content=new ScrollViewer {VerticalScrollBarVisibility=ScrollBarVisibility.Auto,HorizontalScrollBarVisibility=ScrollBarVisibility.Auto,Padding=new Thickness(14,0,0,0),Content=new Border {Child=modules,Style=(Style)FindResource("Section"),VerticalAlignment=VerticalAlignment.Top}}});
         SettingsTabs.Items.Add(new TabItem {Header=T.Localize("Overlay profiles"),Padding=new Thickness(12,10,12,10),Content=new ScrollViewer {VerticalScrollBarVisibility=ScrollBarVisibility.Auto,HorizontalScrollBarVisibility=ScrollBarVisibility.Auto,Padding=new Thickness(14,0,0,0),Content=new OverlayProfilesPanel()}});
-        // Keep explanatory text wrapped, while allowing horizontal scrolling at larger UI scales.
+        // Fold secondary sections and reflow rows instead of forcing a wide inner canvas.
         foreach (var tab in SettingsTabs.Items.OfType<TabItem>())
             if (tab.Content is ScrollViewer viewer && viewer.Content is FrameworkElement content)
             {
-                void FitContent() => content.Width = Math.Max(540, viewer.ActualWidth - viewer.Padding.Left - viewer.Padding.Right - 18);
+                SettingsSections.Organize(content);
+                void FitContent() => content.Width = Math.Max(0, viewer.ActualWidth - viewer.Padding.Left - viewer.Padding.Right - 18);
                 viewer.Loaded += (_, _) => FitContent();
                 viewer.SizeChanged += (_, _) => FitContent();
             }
@@ -91,6 +99,7 @@ public partial class SettingsWindow : Window
         Closed += (_, _) => AppHost.Current.ResumeHotkeys();
         // The row size slider previews on the overlay; closing without saving puts the saved size back.
         Closed += (_, _) => AppHost.Current.PreviewRowSize(_meter.Settings.RowSize);
+        Closed += (_, _) => _eventDraft.Dispose();
     }
 
     private void Load()
@@ -281,11 +290,21 @@ public partial class SettingsWindow : Window
         s.HotkeyPets=HkPets.Text.Trim();
         s.HotkeyDeathRecap=HkDeathRecap.Text.Trim();
 
+        _cards.ApplyPreferences(_eventDraft);
+        var petVisibilityChanged=s.ShowPetTrackerModule!=_moduleDraft.ShowPetTrackerModule;
+        s.PetNotify=_moduleDraft.PetNotify;
+        s.PetModuleWidth=_moduleDraft.PetModuleWidth;
+        s.ShowDeathRecapModule=_moduleDraft.ShowDeathRecapModule;
+        if(petVisibilityChanged && !s.Transient)AppHost.Current.TogglePetModule();
+        s.ShowPetTrackerModule=_moduleDraft.ShowPetTrackerModule;
+
         _meter.ApplySettings();
         if (captureChanged) _meter.RestartCapture();
         Close();
         AppHost.Current.OnSettingsChanged();
         AppHost.Current.RefreshPresentation();
+        AppHost.Current.RefreshEventSettings();
+        AppHost.Current.RefreshPetSettings();
         if (language != UiText.Normalize(s.Language)) AppHost.Current.SetLanguage(language);
     }
 

@@ -155,9 +155,8 @@ public sealed class AppSettings
     {
         try
         {
-            if (File.Exists(FilePath))
+            if (JsonSettingsFile.Read<AppSettings>(FilePath, Json) is { } s)
             {
-                var s = JsonSerializer.Deserialize<AppSettings>(File.ReadAllText(FilePath), Json) ?? new AppSettings();
                 if (s.LayoutVersion < 3)
                 {
                     // v3 = card layout (portrait header, two-line rows): the old compact size is too small for it.
@@ -190,6 +189,12 @@ public sealed class AppSettings
                     s.OverlayHeight = Math.Max(s.OverlayHeight, 540);
                 }
                 s.MigrateHotkeys();
+                s.ModulePins ??= [];
+                s.RowSize = Math.Clamp(s.RowSize, MinRowSize, MaxRowSize);
+                s.MaxRows = Math.Clamp(s.MaxRows, 1, 20);
+                s.UiScale = Math.Clamp(s.UiScale, .75, 1.5);
+                s.WindowOpacity = Math.Clamp(s.WindowOpacity, .4, 1);
+                s.BackgroundOpacity = Math.Clamp(s.BackgroundOpacity, .15, 1);
                 s.LayoutVersion = CurrentLayout;
                 return s;
             }
@@ -202,16 +207,19 @@ public sealed class AppSettings
 
     /// <summary>Throw-away settings (render tool): never written to disk.</summary>
     [System.Text.Json.Serialization.JsonIgnore]
-    public bool Transient { get; init; }
+    public bool Transient { get; set; }
+
+    internal AppSettings CreateDraft()
+    {
+        var draft = JsonSerializer.Deserialize<AppSettings>(JsonSerializer.Serialize(this, Json), Json)!;
+        draft.Transient = true;
+        return draft;
+    }
 
     public void Save()
     {
         if (Transient) return;
-        Directory.CreateDirectory(AppDataDir);
-        // Written aside, then swapped in: Windows shutting the app down mid-write must not leave an empty settings.json.
-        var tmp = FilePath + ".tmp";
-        File.WriteAllText(tmp, JsonSerializer.Serialize(this, Json));
-        File.Move(tmp, FilePath, overwrite: true);
+        JsonSettingsFile.Write(FilePath, this, Json);
     }
 
     public void ApplyTo(MeterOptions options)

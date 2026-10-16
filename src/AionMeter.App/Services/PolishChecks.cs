@@ -1,0 +1,93 @@
+using System.IO;
+using System.Windows;
+using System.Windows.Controls;
+using AionMeter.App.Windows;
+
+namespace AionMeter.App.Services;
+
+internal static class PolishChecks
+{
+    internal static void Run(MeterService meter, string output, Action<bool,string> check)
+    {
+        var folder=Path.Combine(Path.GetDirectoryName(Path.GetFullPath(output))!,"preferences-check-"+Guid.NewGuid().ToString("N"));
+        var path=Path.Combine(folder,"settings.json");
+        try
+        {
+            JsonSettingsFile.Write(path,new Dictionary<string,int>{{"value",1}});
+            JsonSettingsFile.Write(path,new Dictionary<string,int>{{"value",2}});
+            File.WriteAllText(path,"{broken");
+            check(JsonSettingsFile.Read<Dictionary<string,int>>(path)!["value"]==1,"Damaged preferences recover the last readable backup");
+            JsonSettingsFile.Write(path,new Dictionary<string,int>{{"value",3}});
+            File.WriteAllText(path,"null");
+            check(JsonSettingsFile.Read<Dictionary<string,int>>(path)!["value"]==1,"Saving after corruption preserves the readable backup");
+        }
+        finally
+        {
+            foreach(var file in new[]{path,path+".bak"})if(File.Exists(file))File.Delete(file);
+            if(Directory.Exists(folder))Directory.Delete(folder);
+        }
+        using var cards=new TimerCards(meter,persistent:false);
+        cards.Saved.SelectedEvents=["shugo"];
+        cards.Saved.Positions["auto-events"]=new(){Left=100,Width=400};
+        using(var draft=cards.CreatePreferencesDraft())
+        {
+            draft.Saved.SelectedEvents.Add("rift");
+            draft.Saved.Positions["auto-events"].Width=300;
+            draft.Settings.BossAlertMinutes=10;
+            check(cards.Saved.SelectedEvents.Count==1 && cards.Saved.Positions["auto-events"].Width==400,"Editing event preferences does not mutate the active modules");
+            cards.Saved.Positions["auto-events"].Left=600;
+            cards.ApplyPreferences(draft);
+            draft.Saved.SelectedEvents.Clear();
+            check(cards.Saved.SelectedEvents.Count==2 && cards.Saved.Positions["auto-events"] is {Left:600,Width:300} && meter.Settings.BossAlertMinutes==10,"Saving event preferences commits changes without sharing lists or overwriting moved windows");
+        }
+        var oldPet=meter.Settings.PetNotify;
+        var oldEvents=cards.Saved.EventWindowOpen;
+        var window=new SettingsWindow(meter,cards){Left=-30000,Top=-30000,ShowInTaskbar=false,ShowActivated=false};
+        try
+        {
+            window.Show();
+            var tabs=(TabControl)window.FindName("SettingsTabs");
+            window.UpdateLayout();
+            var formLabels=Visuals(window).OfType<TextBlock>().Where(t=>t.IsVisible && !string.IsNullOrWhiteSpace(t.Text) && !InButton(t)).ToArray();
+            check(formLabels.Length>10 && formLabels.All(t=>t.Foreground is System.Windows.Media.SolidColorBrush brush && brush.Color.R+brush.Color.G+brush.Color.B>210),"Settings labels and values remain light on dark expandable sections");
+            void Change(int tab,string label)
+            {
+                tabs.SelectedIndex=tab;window.UpdateLayout();
+                var box=Visuals(window).OfType<CheckBox>().Single(c=>Equals(c.Content,UiText.Current.Localize(label)));
+                box.IsChecked=box.IsChecked!=true;
+                box.RaiseEvent(new RoutedEventArgs(CheckBox.ClickEvent));
+            }
+            Change(6,"Show upcoming events");Change(7,"Sound on collection / level up");
+            check(cards.Saved.EventWindowOpen==oldEvents && meter.Settings.PetNotify==oldPet,"Event and pet controls remain drafts until Save");
+            window.Close();
+            check(cards.Saved.EventWindowOpen==oldEvents && meter.Settings.PetNotify==oldPet,"Closing central Settings discards event and pet edits");
+        }
+        finally{window.Close();}
+        var overlay=new OverlayWindow(meter,exitOnClose:false){Left=-30000,Top=-30000,ShowInTaskbar=false,ShowActivated=false};
+        try
+        {
+            overlay.Show();overlay.Refresh();
+            foreach(var width in new[]{260,300,420})foreach(var size in new[]{50,100})
+            {
+                overlay.Width=width;overlay.ApplyRowSize(size);overlay.UpdateLayout();
+                var labels=Visuals(overlay).OfType<TextBlock>().ToArray();
+                var bindings=labels.Select(t=>t.GetBindingExpression(TextBlock.TextProperty)?.ParentBinding.Path?.Path).ToArray();
+                check(Visuals(overlay).OfType<Controls.ClassGlyph>().Any() && bindings.Contains("Dps") && bindings.Contains("Share") && bindings.Contains("DamageTaken") && !bindings.Contains("Damage"),$"Compact {width}px / {size}% rows retain class icons, DPS, share and incoming damage without total damage");
+            }
+        }
+        finally{overlay.Close();}
+    }
+
+    private static IEnumerable<DependencyObject> Visuals(DependencyObject root)
+    {
+        for(var i=0;i<System.Windows.Media.VisualTreeHelper.GetChildrenCount(root);i++)
+        {var child=System.Windows.Media.VisualTreeHelper.GetChild(root,i);yield return child;foreach(var nested in Visuals(child))yield return nested;}
+    }
+
+    private static bool InButton(DependencyObject element)
+    {
+        for(var parent=System.Windows.Media.VisualTreeHelper.GetParent(element);parent is not null;parent=System.Windows.Media.VisualTreeHelper.GetParent(parent))
+            if(parent is System.Windows.Controls.Primitives.ButtonBase)return true;
+        return false;
+    }
+}
