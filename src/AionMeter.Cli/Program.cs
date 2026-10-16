@@ -20,6 +20,7 @@ return args.FirstOrDefault() switch
     "conns" => Connections(),
     "live" => Live(args.Skip(1).ToArray()),
     "replay" when args.Length > 1 => Replay(args[1]),
+    "healing" when args.Length > 1 => Healing(args[1]),
     "party" when args.Length > 1 => Party(args[1]),
     "dump" when args.Length > 1 => Dump(args[1], args.Length > 2 ? args[2] : null),
     "find" when args.Length > 2 => Find(args[1], args[2]),
@@ -130,6 +131,16 @@ int Live(string[] a)
     return 0;
 }
 
+int Healing(string path)
+{
+    var tracker=new CombatTracker(data,new MeterOptions{TargetMode=TargetMode.All});
+    using var replay=new PcapReplaySource(data,path,false);
+    replay.EventDecoded+=tracker.Process;replay.RunToEnd();tracker.Tick(long.MaxValue/2);
+    foreach(var segment in tracker.Segments())
+        foreach(var c in tracker.Snapshot(segment.Id,long.MaxValue/2)!.Combatants.Where(c=>c.Healing>0))
+            Console.WriteLine($"actor={c.ActorId} self={c.IsSelf} rawOthers={c.Healing-c.SelfHealing} effectiveOthers={c.EffectiveHealingOthers} unverifiedRaw={c.UnverifiedHealingOthers}");
+    return 0;
+}
 int Replay(string path)
 {
     var stats = new EventStats(data);

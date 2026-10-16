@@ -10,6 +10,7 @@ namespace AionMeter.Core.Combat;
 public sealed partial class CombatTracker
 {
     private readonly object _gate = new();
+    private readonly EffectiveHealing _effectiveHealing = new();
     private readonly GameData _data;
     private readonly EntityRegistry _entities;
     private readonly List<Encounter> _finished = new(); // newest first
@@ -29,6 +30,7 @@ public sealed partial class CombatTracker
     private void ClearParty()
     {
         _party.Clear();
+        _effectiveHealing.Clear();
         _partyIdentity = default;
         if (Options.PartyOnly) { _current = null; _viewCleared = true; }
     }
@@ -116,6 +118,7 @@ public sealed partial class CombatTracker
         {
             if (e.TimeMs > LastEventMs) LastEventMs = e.TimeMs;
             CheckIdle(e.TimeMs);
+            _effectiveHealing.Prune(e.TimeMs);
 
             switch (e)
             {
@@ -219,12 +222,14 @@ public sealed partial class CombatTracker
                     OnNpcHp(hp);
                     break;
                 case DeathEvent death:
+                    _effectiveHealing.Remove(death.ActorId);
                     OnDeath(death);
                     break;
                 case BattleStateEvent b:
                     OnBattleState(b);
                     break;
                 case ZoneChangedEvent z:
+                    _effectiveHealing.Clear();
                     // A reload of the map we are on keeps every id: an in-map teleport, or the revive after dying on a
                     // boss. The parser knows the map only from the load before; after a meter restart inside a dungeon
                     // the registry knows it from the cache — without that, the first death ended the fight and the boss
@@ -249,6 +254,7 @@ public sealed partial class CombatTracker
         {
             if (_current is { IsActive: true } enc) AttributeOrphans(enc, nowMs);
             CheckIdle(nowMs);
+            _effectiveHealing.Prune(nowMs);
         }
         FlushFinished();
     }
@@ -281,6 +287,7 @@ public sealed partial class CombatTracker
 
         if (_data.IsNonDamageSkill(d.SkillCode)) return; // heals and spirit-link records ride in damage packets too
 
+        _effectiveHealing.Damage(d.TargetId);
         var source = _entities.ResolveOwner(d.SourceId);
         var target = d.TargetId;
         // A player's own pet is never an enemy (nor is anyone's spirit / skill effect whose owner is still unknown).
@@ -370,17 +377,31 @@ public sealed partial class CombatTracker
 
     private void OnHeal(HealEvent h)
     {
-        if (_current is not { IsActive: true } enc) return;
-        var source = _entities.ResolveOwner(h.SourceId);
-        if (h.Amount <= 0 || !IsLikelyPlayer(source) || !InParty(source)) return;
-        var c = GetCombatant(enc, source);
-        c.Healing += h.Amount;
-        enc.LastActivityMs = Math.Max(enc.LastActivityMs,h.TimeMs);
-        if (_entities.ResolveOwner(h.TargetId) == source) c.SelfHealing += h.Amount;
+        if(h.Amount<=0)return;
+        var source=_entities.ResolveOwner(h.SourceId);
+        var target=_entities.ResolveOwner(h.TargetId);
+        Action<long>? confirm=null;
+        if(_current is {IsActive:true} enc&&IsLikelyPlayer(source)&&InParty(source))
+        {
+            var c=GetCombatant(enc,source);
+            c.Healing+=h.Amount;enc.LastActivityMs=Math.Max(enc.LastActivityMs,h.TimeMs);
+            if(target==source)c.SelfHealing+=h.Amount;
+            else
+            {
+                c.UnverifiedHealingOthers+=h.Amount;
+                if(IsLikelyPlayer(target))confirm=amount=>
+                {
+                    if(!ReferenceEquals(_current,enc)||!enc.IsActive)return;
+                    c.EffectiveHealingOthers+=amount;c.UnverifiedHealingOthers-=h.Amount;
+                };
+            }
+        }
+        // Include other healers and self-heals in attribution checks even when they are not displayed.
+        _effectiveHealing.Heal(h.TimeMs,source,h.TargetId,h.Amount,confirm);
     }
-
     private void OnNpcHp(NpcHpEvent e)
     {
+        _effectiveHealing.Update(e);
         if (!e.IsNpc && e.CurrentHp > 0 && _current is { IsActive: true } active
             && active.Combatants.TryGetValue(e.ActorId, out var player)) player.IsDead = false;
         if (_entities.IsPlayerLike(e.ActorId)) return;
@@ -897,7 +918,7 @@ public sealed partial class CombatTracker
                 c.ActorId, c.Name, c.Class, c.IsSelf,
                 t.Damage, t.Damage / seconds, (double)t.Damage / total,
                 t.Hits, t.Hits > 0 ? (double)t.Crits / t.Hits : 0,
-                t.Max, c.DamageTaken, c.ServerId, c.GearScore, c.CombatPower, c.Healing, c.SelfHealing, c.DeathOffsetsMs.Count));
+                t.Max, c.DamageTaken, c.ServerId, c.GearScore, c.CombatPower, c.Healing, c.SelfHealing, c.DeathOffsetsMs.Count, c.EffectiveHealingOthers, c.UnverifiedHealingOthers));
         }
         rows.Sort((a, b) => b.Damage.CompareTo(a.Damage));
         // Pets without a known owner are not a player: list them last so they never take a place in the ranking.

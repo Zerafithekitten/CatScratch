@@ -1,3 +1,10 @@
+## CatScratch v3.0.1-beta.9
+
+- Healing others now shows HP-confirmed effective healing and excludes overhealing.
+- Direct group heals previously ignored in damage packets are now recognized correctly; damage totals stay unaffected.
+- Incomplete verified totals have an asterisk and an explanatory tooltip. Unconfirmed healing is excluded; a dash indicates that no healing could be confirmed.
+- Existing self-healing and reported-healing history fields are preserved.
+
 ## CatScratch v3.0.1-beta.8
 
 - Mario Party now scrolls a continuous rainbow wallpaper across the general window backgrounds rather than cycling individual flat colors.

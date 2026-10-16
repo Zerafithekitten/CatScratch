@@ -513,6 +513,16 @@ internal static class InteractionChecks
             var healingGrid=(System.Windows.Controls.Grid)((System.Windows.Controls.Border)personalMetrics.Children[0]).Child;
             Check(healingGrid.Children.OfType<System.Windows.Controls.TextBlock>().Last().Text == "78,500",
                 "Integrated personal totals display received self healing for the shown fight");
+            meter.Tracker.Process(new Core.Events.PlayerSeenEvent(1_000_004,777777,"Healed ally",2305,Core.Events.GameClass.Gladiator));
+            meter.Tracker.Process(new Core.Events.NpcHpEvent(1_000_005,777777,5726,5790,false));
+            meter.Tracker.Process(new Core.Events.HealEvent(1_000_006,1,777777,17800000,959,Core.Events.HitFlags.None));
+            meter.Tracker.Process(new Core.Events.NpcHpEvent(1_000_007,777777,5790,5790,false));
+            activeOverlay.Refresh();
+            var othersGrid=(System.Windows.Controls.Grid)((System.Windows.Controls.Border)personalMetrics.Children[1]).Child;
+            Check(othersGrid.Children.OfType<System.Windows.Controls.TextBlock>().Last().Text=="64","Healing others displays the HP-confirmed gain instead of the full raw heal");
+            meter.Tracker.Process(new Core.Events.HealEvent(1_000_008,1,777777,17800000,500,Core.Events.HitFlags.None));
+            activeOverlay.Refresh();
+            Check(othersGrid.Children.OfType<System.Windows.Controls.TextBlock>().Last().Text=="64*","Unverified healing is excluded and marks the visible total as incomplete");
             foreach (var showHealing in new[] { true, false })
             {
                 meter.Settings.ShowHealingDone=showHealing;

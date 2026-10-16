@@ -2,12 +2,12 @@
 
 A separate, always-on-top Windows DPS meter for **AION 2**, by Zerafithekitten. Track your own fights and confirmed party members in a compact dark gray interface with restrained purple accents and cat-paw branding.
 
-[Download Stable](https://github.com/Zerafithekitten/CatScratch/releases/latest) · [Download Beta](https://github.com/Zerafithekitten/CatScratch/releases/tag/v3.0.1-beta.8) · [Release history](https://github.com/Zerafithekitten/CatScratch/releases) · [Report a bug / request a feature](https://github.com/Zerafithekitten/CatScratch/issues/new/choose)
+[Download Stable](https://github.com/Zerafithekitten/CatScratch/releases/latest) · [Download Beta](https://github.com/Zerafithekitten/CatScratch/releases/tag/v3.0.1-beta.9) · [Release history](https://github.com/Zerafithekitten/CatScratch/releases) · [Report a bug / request a feature](https://github.com/Zerafithekitten/CatScratch/issues/new/choose)
 
 | Channel | Current version | What it includes |
 | --- | --- | --- |
 | **Stable** | **[v3.0.0](https://github.com/Zerafithekitten/CatScratch/releases/tag/v3.0.0)** | Complete tested Beta feature set: compact class-colored rows, central settings with separate Updates/Feedback tabs, position pins, overlay profiles, boss comparisons, compact recap, quiet game companion and safer preferences. |
-| **Beta** | [Last prerelease: v3.0.1-beta.8](https://github.com/Zerafithekitten/CatScratch/releases/tag/v3.0.1-beta.8) | Custom interface colors, plus the 24-hour event timeline and persistent favorites. |
+| **Beta** | [Last prerelease: v3.0.1-beta.9](https://github.com/Zerafithekitten/CatScratch/releases/tag/v3.0.1-beta.9) | Custom interface colors, plus the 24-hour event timeline and persistent favorites. |
 
 English is the default. German, Russian and French are also available. Screenshots use synthetic sample data; names and numbers are examples. Stable 3.0.0 includes the former Beta features.
 
@@ -48,7 +48,7 @@ Both Setup and portable installations support in-app updates. Your settings and 
 
 The meter tracks your own damage while solo and confirmed current party members while grouped. Rows show class, name, DPS, total damage, damage share, Combat Power (**CP**) and Gear Score (**GS**). Missing values appear as dashes. Incoming damage is shown separately in red.
 
-The collapsible **Personal combat** section shows self healing and healing of others. An optional boss HP panel uses received health data. The header shows the Europe/Berlin clock and fight duration; the footer includes party DPS and a passive RTT estimate.
+The collapsible **Personal combat** section shows self healing and **effective healing of others**. The latter counts only HP gains confirmed by nearby health updates, excludes overhealing, and includes recognized direct group heals as well as healing-over-time ticks. An asterisk marks an incomplete confirmed subtotal; a dash means healing occurred but none could be confirmed. Missing or ambiguous HP data, overlapping healers and concurrent damage are excluded rather than estimated. The tooltip explains the marker. Self healing and the existing total-healing fields in fight statistics and boss records keep their reported-healing meaning. An optional boss HP panel uses received health data. The header shows the Europe/Berlin clock and fight duration; the footer includes party DPS and a passive RTT estimate.
 
 <img src="docs/screenshots/meter.png" alt="Current CatScratch DPS meter with class bars, CP/GS and toolbar shortcuts" width="420" />
 

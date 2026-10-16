@@ -425,7 +425,7 @@ public sealed class PacketParser
             Wire.TryVarint(b, ref o, out _);
         }
 
-        if (actor == target)
+        if (actor == target || _data.IsHealingSkill((int)skill))
         {
             // A known player's self-targeted record is an instant self-heal.
             ev = new HealEvent(TimeMs, actor, target, NormalizeSkill((int)skill), c.Damage, flags);

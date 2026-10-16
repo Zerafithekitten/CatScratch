@@ -197,7 +197,10 @@ public partial class OverlayWindow : Window, IDisplayAppearance
         PersonalName.Text = StreamNames.Name(own?.Name ?? _meter.LiveIdentity.Current?.Name ?? "");
         _personalRows[0].Surface.Visibility = _personalRows[1].Surface.Visibility = _settings.ShowHealingDone ? Visibility.Visible : Visibility.Collapsed;
         _personalRows[0].Value.Text = own is null ? "—" : Format.Grouped(own.SelfHealing);
-        _personalRows[1].Value.Text = own is null ? "—" : Format.Grouped(Math.Max(0,own.Healing-own.SelfHealing));
+        var effective=own?.EffectiveHealingOthers;
+        var incomplete=own?.UnverifiedHealingOthers>0;
+        _personalRows[1].Value.Text=effective is null||effective==0&&incomplete?"—":Format.Grouped(effective.Value)+(incomplete?"*":"");
+        _personalRows[1].Surface.ToolTip=UiText.Current.Localize("Effective healing of others: only HP-confirmed healing. Overhealing is excluded. * means incomplete data; unverified healing is not counted.");
     }
 
     private async void SaveLastFight_Click(object sender, RoutedEventArgs e)

@@ -195,6 +195,10 @@ public sealed class GameData
     /// Records that use the damage opcode but are not damage: Elementalist spirit links (1699xxxx, 1677xxxx) and
     /// known heal skills.
     /// </summary>
+    public bool IsHealingSkill(int code) =>
+        !(code is >= 16_990_000 and <= 16_999_999 or >= 16_770_000 and <= 16_779_999)
+        && (HealSkills.Contains(code) || HealSkills.Contains(BaseSkill(code)));
+
     public bool IsNonDamageSkill(int code) =>
         code is >= 16_990_000 and <= 16_999_999 or >= 16_770_000 and <= 16_779_999
         || HealSkills.Contains(code) || HealSkills.Contains(BaseSkill(code));
