@@ -21,6 +21,7 @@ internal static class AppIcon
     public static void Apply(Window window)
     {
         window.Icon = Image;
+        MarioPartyBackdrop.Attach(window);
         // Record visibility transitions only, without window titles or character information.
         // This helps identify intermittent windows without polling or a background worker.
         window.IsVisibleChanged += (_, _) => Log.Info(

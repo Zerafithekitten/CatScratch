@@ -86,7 +86,7 @@ internal sealed class ThemeSettingsPanel : StackPanel
         // Preview is local; even low-contrast drafts remain selectable.
         if(ThemeColors.TryHex(_fields[0].Text,out var a)&&ThemeColors.TryHex(_fields[1].Text,out var b)&&ThemeColors.TryHex(_fields[2].Text,out var t))
         { _preview.Background=new SolidColorBrush((Color)ColorConverter.ConvertFromString(b));_previewTitle.Foreground=new SolidColorBrush((Color)ColorConverter.ConvertFromString(a));_previewText.Foreground=new SolidColorBrush((Color)ColorConverter.ConvertFromString(t)); }
-        if(_preview.Background is SolidColorBrush previewBrush&&ThemeColors.TryHex(_fields[1].Text,out var original))ThemeColors.AnimateParty(previewBrush,original,_party);
+        if(_party)_preview.Background=MarioPartyBackdrop.CreateBrush(preview:true);
         if(_partyButton is not null)_partyButton.ToolTip=_party?"Mario Party! ★":"Mario Party!";
         TryGet(out _);
     }

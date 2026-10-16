@@ -1,3 +1,9 @@
+## CatScratch v3.0.1-beta.8
+
+- Mario Party now scrolls a continuous rainbow wallpaper across the general window backgrounds rather than cycling individual flat colors.
+- Doubled the speed to a seamless 12-second loop. Class, combat and event colors, control colors and click-through transparency are preserved.
+- Restore default colors and Save still stops the effect and restores the regular palette.
+
 ## CatScratch v3.0.1-beta.7
 
 - Added a hidden Mario Party! gimmick: the ? next to Restore default colors enables smoothly blended rainbow backgrounds after Save, with a seamless 24-second loop.

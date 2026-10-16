@@ -107,6 +107,7 @@ public partial class OverlayWindow : Window, IDisplayAppearance
     }
 
     private bool _displayOnly;
+    internal bool DisplayOnly=>_displayOnly;
     private Brush? _shellBackground, _shellBorder, _frameBorder;
     private System.Windows.Media.Effects.Effect? _frameEffect;
     private Visibility _toolbarVisibility;
@@ -138,6 +139,7 @@ public partial class OverlayWindow : Window, IDisplayAppearance
         FooterControls.Visibility=controls; ResizeGrip.Visibility=controls;
         PlayerScroll.VerticalScrollBarVisibility=enabled ? ScrollBarVisibility.Hidden : ScrollBarVisibility.Auto;
         Toolbar.Visibility=enabled ? Visibility.Collapsed : _toolbarVisibility;
+        MarioPartyBackdrop.Refresh(this);
     }
 
     /// <summary>Called by the app's UI timer (≈5 Hz).</summary>

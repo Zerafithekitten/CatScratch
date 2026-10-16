@@ -348,6 +348,7 @@ public static class SampleRenderer
         refresh();
         root.UpdateLayout();
 
+        MarioPartyBackdrop.Attach(host);MarioPartyBackdrop.Refresh(host);
         var bmp = new RenderTargetBitmap((int)(host.Width * o.Scale), (int)(host.Height * o.Scale), 96 * o.Scale, 96 * o.Scale, PixelFormats.Pbgra32);
         if (Backdrop(host, o.Backdrop) is { } backdrop)
         {
