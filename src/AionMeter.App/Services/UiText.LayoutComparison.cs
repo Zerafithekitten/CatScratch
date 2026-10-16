@@ -6,6 +6,7 @@ public sealed partial class UiText
     {
         ["The clock opens the 24-hour timeline. Enable Started events above."]=("Die Uhr öffnet die 24-Stunden-Timeline. Gestartete Events lassen sich oben aktivieren.","Часы открывают шкалу на 24 часа. Начавшиеся события включаются выше.","L’horloge ouvre la chronologie sur 24 h. Activez les événements commencés ci-dessus."),
         ["All selected events within the next hour. Started events: 3 minutes; Spacetime Rift: 10 minutes; bosses: 2 minutes."]=("Alle gewählten Events der nächsten Stunde. Gestartete Events: 3 Minuten; Raumzeit-Riss: 10 Minuten; Bosse: 2 Minuten.","Выбранные события на ближайший час. Начавшиеся события: 3 минуты; разлом: 10 минут; боссы: 2 минуты.","Événements choisis dans l’heure. Événements ouverts : 3 min ; faille : 10 min ; boss : 2 min."),
+        ["Low contrast. You can still save these colors."]=("Geringer Kontrast. Du kannst diese Farben trotzdem speichern.","Низкий контраст. Эти цвета всё равно можно сохранить.","Contraste faible. Vous pouvez tout de même enregistrer ces couleurs."),
         ["Interface colors"]=("Oberflächenfarben","Цвета интерфейса","Couleurs de l’interface"),
         ["Accent color"]=("Akzentfarbe","Акцентный цвет","Couleur d’accent"),
         ["Background color"]=("Hintergrundfarbe","Цвет фона","Couleur de fond"),

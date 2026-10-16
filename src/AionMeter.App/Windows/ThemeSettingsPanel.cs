@@ -61,10 +61,17 @@ internal sealed class ThemeSettingsPanel : StackPanel
         { _error.Text=T("Enter a valid color in #RRGGBB format.");return false; }
         theme=new(accent,background,text);
         if(!ThemeColors.IsReadable(theme))
-        { _error.Text=T("Choose more contrast: text and accent must stay readable against the background.");return false; }
+        { _error.Text=T("Low contrast. You can still save these colors.");return true; }
         _error.Text="";return true;
     }
 
+    internal void FocusInvalidColor()
+    {
+        for(DependencyObject? parent=this;parent is not null;parent=VisualTreeHelper.GetParent(parent))
+            if(parent is Expander expander)expander.IsExpanded=true;
+        var field=_fields.FirstOrDefault(f=>!ThemeColors.TryHex(f.Text,out _));
+        if(field is not null){field.BringIntoView();field.Focus();field.SelectAll();}
+    }
     private void RefreshPreview()
     {
         if(_fields.Any(f=>f is null))return;

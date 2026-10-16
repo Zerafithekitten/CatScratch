@@ -211,6 +211,13 @@ public partial class App : Application
             catch(Exception ex){File.WriteAllText(resultPath,ex.ToString());Shutdown(1);}
             return;
         }
+        if(ArgValue(e.Args,"--check-theme-restart") is { } themeCheckPath)
+        {
+            Log.Enabled=false;
+            try{ThemeChecks.CheckRestart(themeCheckPath,e.Args.Contains("--write"));Shutdown();}
+            catch(Exception error){File.WriteAllText(themeCheckPath+".error.txt",error.ToString());Shutdown(1);}
+            return;
+        }
         if (ArgValue(e.Args, "--check-interaction") is { } checkPath)
         {
             Log.Enabled = false;

@@ -229,7 +229,7 @@ public partial class SettingsWindow : Window
     private async void Save_Click(object sender, RoutedEventArgs e)
     {
         var s = _meter.Settings;
-        if(!_themePanel.TryGet(out var theme))return;
+        if(!_themePanel.TryGet(out var theme)){SettingsTabs.SelectedIndex=0;_themePanel.FocusInvalidColor();return;}
         var follow=FollowGameCheck.IsChecked==true;
         var game=GameExecutableText.Text;
         try

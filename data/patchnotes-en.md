@@ -1,3 +1,9 @@
+## CatScratch v3.0.1-beta.5
+
+- Fixed valid color choices being blocked by the contrast check. Low contrast is now advice; your chosen colors are applied and saved.
+- Fixed the meter header keeping an old background after color changes, resetting defaults or toggling click-through.
+- Saved palettes now remain exactly as chosen after restart. Invalid hex input is brought into view instead of leaving Save unexplained.
+
 ## CatScratch v3.0.1-beta.4
 
 - Replaced the RGB sliders with a saturation/brightness color field and a rainbow hue strip.

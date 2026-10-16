@@ -76,14 +76,13 @@ internal static class ThemeColors
         var value = preferences ?? new();
         Current = TryHex(value.Accent, out var a) && TryHex(value.Background, out var b) && TryHex(value.Text, out var t)
             ? new(a,b,t) : new();
-        if (!IsReadable(Current)) Current = new();
         Source.Refresh();
         if (Application.Current is not { } app) return;
         foreach (var hex in ResourceColors)
         {
             var color = Resolve("#"+hex);
             app.Resources["CustomColor_"+hex] = color;
-            app.Resources["CustomBrush_"+hex] = new SolidColorBrush(color);
+            app.Resources["CustomBrush_"+hex] = Brush("#"+hex);
         }
         var accent=Parse(Current.Accent);
         var ink=Contrast(accent,Colors.Black)>Contrast(accent,Colors.White)?Colors.Black:Colors.White;

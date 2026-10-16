@@ -153,11 +153,13 @@ public sealed class AppSettings
         if(string.Equals(HotkeyReset,"Ctrl+Shift+R",StringComparison.OrdinalIgnoreCase))HotkeyReset="Shift+F12";
         HotkeyDefaultsVersion=1;
     }
-    public static AppSettings Load()
+    public static AppSettings Load() => LoadFrom(FilePath);
+
+    internal static AppSettings LoadFrom(string path)
     {
         try
         {
-            if (JsonSettingsFile.Read<AppSettings>(FilePath, Json) is { } s)
+            if (JsonSettingsFile.Read<AppSettings>(path, Json) is { } s)
             {
                 if (s.LayoutVersion < 3)
                 {
@@ -218,10 +220,12 @@ public sealed class AppSettings
         return draft;
     }
 
-    public void Save()
+    public void Save() => SaveTo(FilePath);
+
+    internal void SaveTo(string path)
     {
         if (Transient) return;
-        JsonSettingsFile.Write(FilePath, this, Json);
+        JsonSettingsFile.Write(path, this, Json);
     }
 
     public void ApplyTo(MeterOptions options)

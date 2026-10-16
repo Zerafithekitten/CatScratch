@@ -64,6 +64,20 @@ jobs:
             if (-not $testData.StartsWith($payload, [StringComparison]::OrdinalIgnoreCase)) { throw 'Invalid diagnostic cleanup path' }
             if (Test-Path -LiteralPath $testData) { Remove-Item -LiteralPath $testData -Recurse -Force }
           }
+      - name: Verify custom colors survive a new process
+        shell: pwsh
+        run: |
+          $settings = Join-Path $env:RUNNER_TEMP 'theme-restart-settings.json'
+          foreach ($mode in @('write', 'read')) {
+            $arguments = @('--check-theme-restart',("`"$settings`""))
+            if ($mode -eq 'write') { $arguments += '--write' }
+            $process = Start-Process "$PWD/dist/payload/CatScratch.exe" -ArgumentList $arguments -WindowStyle Hidden -PassThru
+            if (-not $process.WaitForExit(20000)) { Stop-Process -Id $process.Id; throw 'Color restart verification timed out' }
+            $process.Refresh()
+            if ($process.ExitCode) { throw 'Color restart verification failed' }
+            $result = Get-Content "$settings.result.json" -Raw | ConvertFrom-Json -ErrorAction Stop
+            if ($mode -eq 'read' -and $result.Stage -ne 'restarted') { throw 'Colors were not restored in a new process' }
+          }
       - name: Verify optional game companion
         shell: pwsh
         run: ./tools/check-game-companion.ps1

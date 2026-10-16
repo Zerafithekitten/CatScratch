@@ -8,6 +8,19 @@ namespace AionMeter.App.Services;
 
 internal static class ThemeChecks
 {
+    internal static void CheckRestart(string file,bool write)
+    {
+        var chosen=new ThemePreferences("#20242A","#20242A","#20242A");
+        if(write)new AppSettings{Theme=chosen}.SaveTo(file);
+        else
+        {
+            var loaded=AppSettings.LoadFrom(file);
+            ThemeColors.Apply(loaded.Theme);
+            if(loaded.Theme!=chosen||ThemeColors.Current!=chosen)throw new InvalidOperationException("Saved colors changed after a fresh process start.");
+        }
+        System.IO.File.WriteAllText(file+".result.json",JsonSerializer.Serialize(new{Stage=write?"saved":"restarted",Theme=chosen}));
+    }
+
     internal static void Run(MeterService meter,Action<bool,string> check)
     {
         foreach(var color in new[]{Colors.Red,Colors.Lime,Colors.Blue,Colors.White,Colors.Black,Colors.Gray,Color.FromRgb(196,154,245),Color.FromRgb(17,83,192)})
@@ -23,7 +36,7 @@ internal static class ThemeChecks
         panel.AccentField.Text=custom.Accent;panel.BackgroundField.Text=custom.Background;panel.TextField.Text=custom.Text;
         check(panel.TryGet(out var draft)&&draft==custom&&ThemeColors.Current==previous,"Theme preview is a draft and does not change the running palette");
         panel.TextField.Text=custom.Background;
-        check(!panel.TryGet(out _),"Unreadable text and background combinations cannot be saved");
+        check(panel.TryGet(out var lowContrast)&&lowContrast.Text==custom.Background,"Low contrast is advisory and never blocks saving a valid color choice");
         panel.ResetButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
         check(panel.TryGet(out var defaults)&&defaults==new ThemePreferences(),"Restore default colors resets only the editable draft");
         check(JsonSerializer.Deserialize<AppSettings>(JsonSerializer.Serialize(new AppSettings{Theme=custom}))!.Theme==custom,"Custom interface colors survive settings serialization");
@@ -48,8 +61,26 @@ internal static class ThemeChecks
             check(ThemeColors.Current==light&&ThemeColors.Contrast(ink,(Color)ColorConverter.ConvertFromString(light.Accent))>=4.5,"Light palettes use dark text and readable labels on dark accent buttons");
             ThemeColors.Apply(new("invalid","#20242A","#EDF2F7"));
             check(ThemeColors.Current==new ThemePreferences(),"Invalid stored themes fall back to readable CatScratch defaults");
-            ThemeColors.Apply(new("#20242A","#20242A","#20242A"));
-            check(ThemeColors.Current==new ThemePreferences(),"Unreadable stored themes fall back to readable CatScratch defaults");
+            overlay.SetDisplayOnly(true);
+            ThemeColors.Apply(custom);
+            overlay.SetDisplayOnly(false);
+            check(((SolidColorBrush)((Border)overlay.FindName("OuterShell")).Background).Color==ThemeColors.Resolve("#DF20242A"),"Changing colors while click-through is active does not restore a stale cached header color");
+            ThemeColors.Apply(new());overlay.SetDisplayOnly(true);overlay.SetDisplayOnly(false);
+            check(((SolidColorBrush)((Border)overlay.FindName("OuterShell")).Background).Color==ThemeColors.Resolve("#DF20242A",new()),"Restoring default colors resets the meter header after repeated click-through toggles");
+            var chosen=new ThemePreferences("#20242A","#20242A","#20242A");
+            ThemeColors.Apply(chosen);
+            check(ThemeColors.Current==chosen,"Valid low-contrast palettes are applied exactly instead of silently reset");
+            var folder=System.IO.Path.Combine(System.IO.Path.GetTempPath(),"catscratch-theme-"+Guid.NewGuid().ToString("N"));
+            var file=System.IO.Path.Combine(folder,"settings.json");
+            try
+            {
+                new AppSettings{Theme=chosen}.SaveTo(file);
+                var loaded=AppSettings.LoadFrom(file);
+                check(loaded.Theme==chosen,"Real settings save/load preserves low-contrast chosen colors on disk");
+                ThemeColors.Apply(new());ThemeColors.Apply(loaded.Theme);
+                check(ThemeColors.Current==chosen&&((SolidColorBrush)settings.Background).Color==(Color)ColorConverter.ConvertFromString(chosen.Background),"Restart palette restoration applies the saved colors to open windows");
+            }
+            finally{if(System.IO.File.Exists(file))System.IO.File.Delete(file);if(System.IO.Directory.Exists(folder))System.IO.Directory.Delete(folder);}
         }
         finally{overlay.Close();settings.Close();peers.Close();ThemeColors.Apply(previous);}
     }
