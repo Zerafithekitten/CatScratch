@@ -7,9 +7,9 @@ A separate, always-on-top Windows DPS meter for **AION 2**, by Zerafithekitten. 
 | Channel | Current version | What it includes |
 | --- | --- | --- |
 | **Stable** | **[v3.0.0](https://github.com/Zerafithekitten/CatScratch/releases/tag/v3.0.0)** | Complete tested Beta feature set: compact class-colored rows, central settings with separate Updates/Feedback tabs, position pins, overlay profiles, boss comparisons, compact recap, quiet game companion and safer preferences. |
-| **Beta** | [Last prerelease: v3.0.1-beta.9](https://github.com/Zerafithekitten/CatScratch/releases/tag/v3.0.1-beta.9) | Custom interface colors, plus the 24-hour event timeline and persistent favorites. |
+| **Beta** | [Last prerelease: v3.0.1-beta.9](https://github.com/Zerafithekitten/CatScratch/releases/tag/v3.0.1-beta.9) | Custom interface colors and Mario Party, the 24-hour event timeline with persistent favorites, and HP-confirmed effective healing of others. |
 
-English is the default. German, Russian and French are also available. Screenshots use synthetic sample data; names and numbers are examples. Stable 3.0.0 includes the former Beta features.
+English is the default. German, Russian and French are also available. Screenshots show **v3.0.1-beta.9** with synthetic sample data; names and numbers are examples. Features exclusive to the current Beta are labeled below. Stable remains **v3.0.0**.
 
 ## Contents
 
@@ -46,9 +46,11 @@ Both Setup and portable installations support in-app updates. Your settings and 
 
 ## DPS meter and fight details
 
-The meter tracks your own damage while solo and confirmed current party members while grouped. Rows show class, name, DPS, total damage, damage share, Combat Power (**CP**) and Gear Score (**GS**). Missing values appear as dashes. Incoming damage is shown separately in red.
+The meter tracks your own damage while solo and confirmed current party members while grouped. Compact rows show class emblems, class-colored background fills, name, DPS, damage share, Combat Power (**CP**) and Gear Score (**GS**). Missing values appear as dashes. Incoming damage is shown separately in red.
 
-The collapsible **Personal combat** section shows self healing and **effective healing of others**. The latter counts only HP gains confirmed by nearby health updates, excludes overhealing, and includes recognized direct group heals as well as healing-over-time ticks. An asterisk marks an incomplete confirmed subtotal; a dash means healing occurred but none could be confirmed. Missing or ambiguous HP data, overlapping healers and concurrent damage are excluded rather than estimated. The tooltip explains the marker. Self healing and the existing total-healing fields in fight statistics and boss records keep their reported-healing meaning. An optional boss HP panel uses received health data. The header shows the Europe/Berlin clock and fight duration; the footer includes party DPS and a passive RTT estimate.
+The collapsible **Personal combat** section shows self healing and healing of others. An optional boss HP panel uses received health data. The header shows the Europe/Berlin clock and fight duration; the footer includes party DPS and a passive RTT estimate.
+
+**Beta: effective healing of others.** Only HP gains confirmed by nearby health updates count, excluding overhealing. Recognized direct group heals and healing-over-time ticks are supported. An asterisk marks an incomplete confirmed subtotal; a dash means healing occurred but none could be confirmed. Missing or ambiguous HP data, overlapping healers and concurrent damage are excluded rather than estimated. The tooltip explains the marker. Self healing and existing total-healing fields in fight statistics and boss records keep their reported-healing meaning.
 
 <img src="docs/screenshots/meter.png" alt="Current CatScratch DPS meter with class bars, CP/GS and toolbar shortcuts" width="420" />
 
@@ -58,7 +60,7 @@ Open a player's fight details for DPS, skills, accuracy, rotation and defense, w
 
 <details><summary>Fight details and click-through previews</summary>
 
-<img src="docs/screenshots/fight-details-next.png" alt="Fight details with player cards, skills and DPS timeline" width="1040" />
+<img src="docs/screenshots/fight-details.png" alt="Fight details with player cards, skills and DPS timeline" width="1040" />
 
 <img src="docs/screenshots/meter-click-through.png" alt="Click-through meter with transparent outer frame" width="420" />
 
@@ -119,7 +121,15 @@ It closes when fresh positive own HP or a map reload confirms the character is a
 
 ## Interface colors
 
-**Custom interface colors:** Settings > Appearance > Interface colors lets you choose accent, background and text colors using a saturation/brightness field, a rainbow hue strip, swatches or #RRGGBB. The preview is a draft: Save applies the colors across open windows and keeps them for the next start; Cancel leaves the saved palette unchanged. Restore default colors returns to the gray/lavender CatScratch palette after Save. Low contrast is shown as advice and does not prevent saving a valid color choice. For a small Easter egg, the **?** beside Restore default colors enables **Mario Party!**: a continuous rainbow wallpaper scrolls across the general window backgrounds in a seamless 12-second loop after Save, including after restart. Restore default colors and Save stops the mode. Class, combat and event colors stay unchanged. Class, healing, damage, event-type and golden favorite colors keep their meaning; the purple paw stays unchanged.
+**Available in Beta.** Settings > Appearance > Interface colors lets you choose accent, background and text colors using a saturation/brightness field, a rainbow hue strip, swatches or #RRGGBB. The preview is a draft: Save applies the colors across open windows and keeps them for the next start; Cancel leaves the saved palette unchanged. Restore default colors returns to the gray/lavender CatScratch palette after Save. Low contrast is shown as advice and does not prevent saving a valid color choice. For a small Easter egg, the **?** beside Restore default colors enables **Mario Party!**: a continuous rainbow wallpaper scrolls across the general window backgrounds in a seamless 12-second loop after Save, including after restart. Restore default colors and Save stops the mode. Class, healing, damage, event-type and golden favorite colors keep their meaning; the purple paw stays unchanged.
+
+<details><summary>Color settings and picker previews (Beta)</summary>
+
+<img src="docs/screenshots/interface-colors.png" alt="Appearance settings with custom accent, background and text colors" width="760" />
+
+<img src="docs/screenshots/color-picker.png" alt="Saturation and brightness field with a rainbow hue strip" width="304" />
+
+</details>
 
 ## Overlay profiles
 
@@ -169,7 +179,7 @@ The bundled catalog contains confirmed Global monster-source mappings for 165 pe
 
 ## Events, boss timers and sounds
 
-use the **single gear in the DPS meter > Events** for event visibility, region, selection, module widths, opacity, boss reminders and all event sounds. Event modules no longer have their own gear. Use Save to apply or Cancel to discard these options; sound previews and custom audio selection stay inside the same Settings window.
+Use the **single gear in the DPS meter > Events** for event visibility, region, selection, module widths, opacity, boss reminders and all event sounds. Event modules no longer have their own gear. Use Save to apply or Cancel to discard these options; sound previews and custom audio selection stay inside the same Settings window.
 
 Selected events and enabled world-boss timers within the next hour appear as compact movable cards. Both modules restore their own positions and open states.
 
@@ -183,7 +193,9 @@ The DPS meter is the single taskbar entry; display modules do not add separate t
 | Spacetime Rift | **Open!** + remaining countdown | 10 minutes |
 | Boss | **Spawned**, no countdown | 2 minutes |
 
-**24-hour timeline:** The clock in Upcoming opens a horizontal planner with a separate track for each event. It shows all scheduled event types in the selected region and known next world-boss spawns. Star an event to persist it as a favorite: its timeline markers and matching overlay cards receive a thin, softly glowing gold frame. Favorites do not change overlay selection or reminder sounds. Events are turquoise, PvP lavender and bosses orange. Times use the selected region, including daylight-saving changes. The bundled community schedule is not officially confirmed.
+**Beta: 24-hour timeline.** The clock in Upcoming opens a horizontal planner with a separate track for each event. It shows all scheduled event types in the selected region and known next world-boss spawns. Star an event to persist it as a favorite: its timeline markers and matching overlay cards receive a thin, softly glowing gold frame. Favorites do not change overlay selection or reminder sounds. Events are turquoise, PvP lavender and bosses orange. Times use the selected region, including daylight-saving changes. The planner refreshes automatically every minute while open and immediately when reopened. It uses the bundled community schedule, rather than fetching live schedule changes; event times are not officially confirmed.
+
+<img src="docs/screenshots/event-timeline.png" alt="Compact 24-hour horizontal event timeline with separate event tracks and gold-framed favorites (Beta)" width="1100" />
 
 Expired entries disappear automatically. While an event is active, a later recurrence with the same name is held out of Upcoming; its next start returns after the active entry expires.
 
@@ -209,7 +221,7 @@ Choose **Stable** or **Beta** in **Settings > Updates**. Stable is the default d
 
 With automatic updates enabled, CatScratch checks shortly after startup and **every ten minutes**. It downloads, verifies and extracts an available update in the background while the current meter keeps running.
 
-**In v2.5.4**, the meter message, restart button and notification appear **only after the update is fully prepared**. There is no download step left for the user: click **Restart to update** to apply the prepared files and restart. CatScratch does not restart automatically.
+The meter message, restart button and notification appear **only after the update is fully prepared**. There is no download step left for the user: click **Restart to update** to apply the prepared files and restart. CatScratch does not restart automatically.
 
 After a successful new startup, the old backup, staged payload and downloaded ZIP are removed. Failed updates retain recovery files. Settings, saved fights, personal bests, recent players and captures are preserved. Update staging stays under `userdata/temp/updates`; a writable program folder is required.
 
@@ -302,6 +314,12 @@ Enable **Recent debug buffer** in **Settings > Capture & data**. **Save recent d
 Only packets received while recording is enabled can be saved. For group issues, include the actual join/leave; for resurrection issues, include death and revival. Short captures can lack earlier character or protocol context. Captures can contain character names; keep them private. Nothing is uploaded automatically.
 
 Use **Report a bug / request a feature** in Settings > Feedback, or [open an issue](https://github.com/Zerafithekitten/CatScratch/issues/new/choose). Reports must be in **English**; a GitHub account is required. Please include the version/channel, what happened and how to reproduce it. Feedback opens GitHub without sending logs or captures automatically.
+
+<details><summary>Capture and recording settings</summary>
+
+<img src="docs/screenshots/capture-settings.png" alt="Central capture settings with recent debug recording and Open captures folder" width="760" />
+
+</details>
 
 ## Limitations
 
