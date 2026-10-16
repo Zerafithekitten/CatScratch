@@ -96,6 +96,7 @@ internal static class PolishChecks
             check(cards.Saved.FavoriteEvents.Count==before,"Planner favorites can be removed again without changing event selection");
         }
         finally{planner.Close();}
+        ThemeChecks.Run(meter,check);
     }
 
     private static IEnumerable<DependencyObject> Visuals(DependencyObject root)

@@ -3,7 +3,7 @@ namespace AionMeter.App.Services;
 
 internal static class EventPanelBrushes
 {
-    public static readonly Brush Background = Create(Color.FromArgb(223, 25,29,35));
+    public static readonly Brush Background = ThemeColors.Brush("#DF191D23");
     public static readonly Brush Border = Create(Color.FromRgb(96, 76, 118));
     public static readonly Brush Boss = Create(Color.FromRgb(255, 167, 106));
     public static readonly Brush Event = Create(Color.FromRgb(97, 205, 193));

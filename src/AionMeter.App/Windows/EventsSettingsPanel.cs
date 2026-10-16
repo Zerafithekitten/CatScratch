@@ -12,10 +12,10 @@ internal sealed class EventsSettingsPanel : StackPanel
         Resources.MergedDictionaries.Add(new ResourceDictionary {Source=new Uri("/CatScratch;component/Theme/MeterPreferences.xaml",UriKind.Relative)});
         string T(string text)=>UiText.Current.Localize(text);
         void Save(){cards.Save();reload();}
-        Children.Add(new TextBlock {Text=T("Changes take effect after saving."),FontSize=11,TextWrapping=TextWrapping.Wrap,Foreground=new SolidColorBrush(Color.FromRgb(169,184,199)),Margin=new(0,0,0,10)});
+        Children.Add(new TextBlock {Text=T("Changes take effect after saving."),FontSize=11,TextWrapping=TextWrapping.Wrap,Foreground=ThemeColors.Brush("#A9B8C7"),Margin=new(0,0,0,10)});
         var display=new StackPanel();
-        Children.Add(new Border {Child=display,Padding=new(12),Margin=new(0,0,0,10),CornerRadius=new(7),Background=new SolidColorBrush(Color.FromRgb(25,29,35)),BorderBrush=new SolidColorBrush(Color.FromRgb(65,74,86)),BorderThickness=new(1)});
-        display.Children.Add(new TextBlock {Text=T("Event modules"),Foreground=new SolidColorBrush(Color.FromRgb(196,154,245)),Margin=new(0,0,0,8)});
+        Children.Add(new Border {Child=display,Padding=new(12),Margin=new(0,0,0,10),CornerRadius=new(7),Background=ThemeColors.Brush("#191D23"),BorderBrush=ThemeColors.Brush("#414A56"),BorderThickness=new(1)});
+        display.Children.Add(new TextBlock {Text=T("Event modules"),Foreground=ThemeColors.Brush("#C49AF5"),Margin=new(0,0,0,8)});
         void Check(string label,bool value,Action<bool> set){var field=new CheckBox {Content=T(label),IsChecked=value,Style=(Style)FindResource("DarkCheck")};field.Click+=(_,_)=>{set(field.IsChecked==true);Save();};display.Children.Add(field);}
         Check("Show upcoming events",cards.Saved.EventWindowOpen,v=>cards.Saved.EventWindowOpen=v);
         Check("Show started events",cards.Saved.StartedEventWindowOpen,v=>cards.Saved.StartedEventWindowOpen=v);

@@ -29,13 +29,13 @@ public sealed class TimerHubWindow : Window, IDisplayAppearance
             placeholder.Visibility = enabled ? Visibility.Collapsed : Visibility.Visible;
     }
     public Func<DateTimeOffset>? ClockOverride { get; set; }
-    private static SolidColorBrush ColorBrush(string hex) => new((Color)ColorConverter.ConvertFromString(hex));
+    private static SolidColorBrush ColorBrush(string hex) => ThemeColors.Brush(hex);
     public TimerHubWindow(TimerCards cards, bool startedOnly = false)
     {
         AppIcon.Apply(this);
         _cards=cards; _startedOnly=startedOnly; Title=Caption; Width=480; MinWidth=240; MinHeight=70;
         SizeToContent=SizeToContent.Height; WindowStyle=WindowStyle.None; Background=Brushes.Transparent;
-        Topmost=true; Foreground=Brushes.White; Opacity=cards.Saved.EventOpacity;
+        Topmost=true; Foreground=ThemeColors.Brush("#EDF2F7"); Opacity=cards.Saved.EventOpacity;
         var root = new DockPanel { Margin=new(4,2,4,4) };
         var header=new DockPanel { Margin=new(0,0,0,7), Background=ColorBrush("#DF20242A"), MinHeight=24 }; DockPanel.SetDock(header,Dock.Top); root.Children.Add(header);
         _header=header;

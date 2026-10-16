@@ -13,7 +13,7 @@ public sealed class PetTrackerWindow:Window,IDisplayAppearance
     private readonly MeterService _meter;
     private readonly IReadOnlyList<PetDefinition> _catalog;
     private readonly ListBox _list=new(){Background=Brushes.Transparent,BorderThickness=new(0),Padding=new(0),MaxHeight=150};
-    private readonly TextBlock _status=new(){TextWrapping=TextWrapping.Wrap,Foreground=Brushes.LightGray,FontSize=11,Margin=new(0,2,0,0)};
+    private readonly TextBlock _status=new(){TextWrapping=TextWrapping.Wrap,Foreground=ThemeColors.Brush("#A9B8C7"),FontSize=11,Margin=new(0,2,0,0)};
 
     private readonly Border _shell;
     private readonly DockPanel _header;
@@ -51,7 +51,7 @@ public sealed class PetTrackerWindow:Window,IDisplayAppearance
         DockPanel.SetDock(_status,Dock.Top);root.Children.Add(_status);
         _list.SetValue(ScrollViewer.HorizontalScrollBarVisibilityProperty,ScrollBarVisibility.Disabled);
         _list.ItemTemplate=(DataTemplate)XamlReader.Parse("""
-        <DataTemplate xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"><Border Background="#D0191D23" CornerRadius="4" BorderBrush="#30414A56" BorderThickness="1" Padding="4,2" Margin="0,1,0,0" ToolTip="{Binding Tooltip}"><StackPanel><Grid><Grid.ColumnDefinitions><ColumnDefinition Width="20"/><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions><Image Source="{Binding Symbol}" Width="14" Height="14"/><TextBlock Grid.Column="1" Text="{Binding Name}" FontSize="11.5" FontWeight="SemiBold" Foreground="#EDF2F7" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/><TextBlock Grid.Column="2" Text="{Binding Progress}" Foreground="#C49AF5" FontSize="11.5" FontWeight="SemiBold" Margin="6,0,0,0" VerticalAlignment="Center"/></Grid><ProgressBar Value="{Binding Fill}" Maximum="1" Height="2" Foreground="#AB80EF" Background="#283540" BorderThickness="0" Margin="20,2,0,0"/></StackPanel></Border></DataTemplate>
+        <DataTemplate xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"><Border Background="{DynamicResource CustomBrush_D0191D23}" CornerRadius="4" BorderBrush="{DynamicResource CustomBrush_30414A56}" BorderThickness="1" Padding="4,2" Margin="0,1,0,0" ToolTip="{Binding Tooltip}"><StackPanel><Grid><Grid.ColumnDefinitions><ColumnDefinition Width="20"/><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions><Image Source="{Binding Symbol}" Width="14" Height="14"/><TextBlock Grid.Column="1" Text="{Binding Name}" FontSize="11.5" FontWeight="SemiBold" Foreground="{DynamicResource CustomBrush_EDF2F7}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/><TextBlock Grid.Column="2" Text="{Binding Progress}" Foreground="{DynamicResource CustomBrush_C49AF5}" FontSize="11.5" FontWeight="SemiBold" Margin="6,0,0,0" VerticalAlignment="Center"/></Grid><ProgressBar Value="{Binding Fill}" Maximum="1" Height="2" Foreground="{DynamicResource CustomBrush_C49AF5}" Background="{DynamicResource CustomBrush_262C34}" BorderThickness="0" Margin="20,2,0,0"/></StackPanel></Border></DataTemplate>
         """);
         _list.ItemContainerStyle=new Style(typeof(ListBoxItem));
         _list.ItemContainerStyle.Setters.Add(new Setter(Control.HorizontalContentAlignmentProperty,HorizontalAlignment.Stretch));
@@ -104,5 +104,5 @@ public sealed class PetTrackerWindow:Window,IDisplayAppearance
 
         SizeToContent=SizeToContent.Height;
     }
-    private static SolidColorBrush Brush(string hex){var brush=new SolidColorBrush((Color)ColorConverter.ConvertFromString(hex));brush.Freeze();return brush;}
+    private static SolidColorBrush Brush(string hex){return ThemeColors.Brush(hex);}
 }

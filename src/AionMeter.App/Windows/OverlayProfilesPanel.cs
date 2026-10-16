@@ -10,9 +10,9 @@ internal sealed class OverlayProfilesPanel : StackPanel
     private readonly List<OverlayProfile> _profiles=OverlayProfiles.Load();
     private readonly ComboBox _list=new(){MinWidth=180,Margin=new(0,8,0,10)};
     private readonly TextBox _name=new(){MaxLength=48,Width=double.NaN,MinWidth=160,Margin=new(0,6,0,10)};
-    private readonly TextBlock _status=new(){TextWrapping=TextWrapping.Wrap,Margin=new(0,2,0,0),FontSize=11,Foreground=new SolidColorBrush(Color.FromRgb(196,154,245))};
+    private readonly TextBlock _status=new(){TextWrapping=TextWrapping.Wrap,Margin=new(0,2,0,0),FontSize=11,Foreground=ThemeColors.Brush("#C49AF5")};
     private static string T(string text)=>UiText.Current.Localize(text);
-    private static Brush ColorBrush(byte r,byte g,byte b)=>new SolidColorBrush(Color.FromRgb(r,g,b));
+    private static Brush ColorBrush(byte r,byte g,byte b)=>ThemeColors.Brush($"#{r:X2}{g:X2}{b:X2}");
     public OverlayProfilesPanel()
     {
         Resources.MergedDictionaries.Add(new ResourceDictionary {Source=new Uri("/CatScratch;component/Theme/MeterTools.xaml",UriKind.Relative)});

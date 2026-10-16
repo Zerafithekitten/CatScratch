@@ -276,6 +276,7 @@ public partial class App : Application
         AppDomain.CurrentDomain.UnhandledException += (_, ex) => Log.Error("Fatal exception", ex.ExceptionObject as Exception);
 
         var settings = AppSettings.Load();
+        ThemeColors.Apply(settings.Theme);
         settings.AutoHideSeconds = 0;
         settings.ClickThrough = false;
         settings.ShowGear = true;

@@ -73,5 +73,5 @@ public sealed class EventPreferencesWindow : Window
         var source=new Button { Content=UiText.Current.Localize("Open schedule source"),Style=(Style)scope.FindResource("GhostButton"),Margin=new(0,6,0,0) }; source.Click+=(_,_)=>System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(AutomaticEventSchedule.Source) { UseShellExecute=true }); tools.Children.Add(source);
         return body;
     }
-    private static Brush Brush(string color) { var brush=new SolidColorBrush((Color)ColorConverter.ConvertFromString(color)); brush.Freeze(); return brush; }
+    private static Brush Brush(string color) { return ThemeColors.Brush(color); }
 }

@@ -1,6 +1,6 @@
 <Window x:Class="AionMeter.App.Windows.LastPlayedWithWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:c="clr-namespace:AionMeter.App.Controls"
         Title="CatScratch" Width="760" Height="600" MinWidth="620" MinHeight="420" WindowStyle="None" ResizeMode="CanResize" WindowStartupLocation="CenterScreen"
-        Background="#20242A" Foreground="#EDF2F7" FontFamily="{StaticResource UiFont}" UseLayoutRounding="True" TextOptions.TextFormattingMode="Display">
+        Background="{DynamicResource CustomBrush_20242A}" Foreground="{DynamicResource CustomBrush_EDF2F7}" FontFamily="{StaticResource UiFont}" UseLayoutRounding="True" TextOptions.TextFormattingMode="Display">
     <Window.Resources><ResourceDictionary><ResourceDictionary.MergedDictionaries><ResourceDictionary Source="../Theme/MeterTools.xaml"/></ResourceDictionary.MergedDictionaries></ResourceDictionary></Window.Resources>
     <WindowChrome.WindowChrome><WindowChrome CaptionHeight="48" ResizeBorderThickness="6" GlassFrameThickness="0" CornerRadius="0"/></WindowChrome.WindowChrome>
     <Border Background="{StaticResource Bg0}" BorderBrush="{StaticResource GoldDim}" BorderThickness="1" Padding="16">

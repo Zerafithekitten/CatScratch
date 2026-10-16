@@ -10,14 +10,14 @@ internal sealed class BossComparisonWindow : Window
 {
     private readonly Grid _table=new(){Margin=new(0,12,0,0)};
     private static string T(string text)=>UiText.Current.Localize(text);
-    private static readonly Brush Accent=new SolidColorBrush(Color.FromRgb(196,154,245));
-    private static readonly Brush Muted=new SolidColorBrush(Color.FromRgb(169,184,199));
+    private static readonly Brush Accent=ThemeColors.Brush("#C49AF5");
+    private static readonly Brush Muted=ThemeColors.Brush("#A9B8C7");
     private static readonly Brush Red=new SolidColorBrush(Color.FromRgb(239,77,86));
-    private static readonly Brush Surface=new SolidColorBrush(Color.FromRgb(25,29,35));
+    private static readonly Brush Surface=ThemeColors.Brush("#191D23");
     public BossComparisonWindow(EncounterSnapshot current,IEnumerable<EncounterSnapshot> candidates,AppSettings? settings=null)
     {
         Title="CatScratch · "+T("Boss fight comparison");Width=600;Height=470;MinWidth=480;MinHeight=340;WindowStyle=WindowStyle.None;WindowStartupLocation=WindowStartupLocation.CenterScreen;
-        FontFamily=new("Segoe UI");Foreground=new SolidColorBrush(Color.FromRgb(237,242,247));Background=new SolidColorBrush(Color.FromRgb(32,36,42));
+        FontFamily=new("Segoe UI");Foreground=ThemeColors.Brush("#EDF2F7");Background=ThemeColors.Brush("#20242A");
         Resources.MergedDictionaries.Add(new ResourceDictionary {Source=new Uri("/CatScratch;component/Theme/MeterTools.xaml",UriKind.Relative)});
         AppIcon.Apply(this);
         var root=new StackPanel {Margin=new(16)};
@@ -33,13 +33,13 @@ internal sealed class BossComparisonWindow : Window
             var content=new StackPanel();content.Children.Add(new TextBlock {Text=T(label),Foreground=Muted,FontSize=10.5});
             content.Children.Add(new TextBlock {Text=current.Boss?.Name,FontSize=14,FontWeight=FontWeights.SemiBold,Margin=new(0,4,0,4),TextTrimming=TextTrimming.CharacterEllipsis,ToolTip=current.Boss?.Name});
             content.Children.Add(new TextBlock {Text=fight is null?"—":$"{fight.StartedAt.LocalDateTime.ToString("g",UiText.Current.Culture)} · {(fight.CombatMs/1000d).ToString("N1",UiText.Current.Culture)}s · {T(fight.Reason.ToString())}",FontSize=10.5,Foreground=Muted,TextTrimming=TextTrimming.CharacterEllipsis});
-            var card=new Border {Child=content,Padding=new(10),Background=Surface,BorderBrush=new SolidColorBrush(Color.FromRgb(65,74,86)),BorderThickness=new(1),CornerRadius=new(6),Margin=column==0?new Thickness(0,0,5,0):new Thickness(5,0,0,0)};Grid.SetColumn(card,column);runs.Children.Add(card);
+            var card=new Border {Child=content,Padding=new(10),Background=Surface,BorderBrush=ThemeColors.Brush("#414A56"),BorderThickness=new(1),CornerRadius=new(6),Margin=column==0?new Thickness(0,0,5,0):new Thickness(5,0,0,0)};Grid.SetColumn(card,column);runs.Children.Add(card);
         }
         RunCard("Current run",current,0);RunCard("Last matching run",previous,1);root.Children.Add(_table);
         root.Children.Add(new Border {Background=Surface,CornerRadius=new(6),Padding=new(10),Margin=new(0,10,0,0),Child=new TextBlock {Text=T("Session and saved fights only. Same boss, map, character and outcome. Instance variants without distinct map IDs cannot be distinguished."),FontSize=10.5,TextWrapping=TextWrapping.Wrap,Foreground=Muted}});
         if(previous is null)root.Children.Add(new TextBlock {Text=T("No comparable earlier fight available. Save boss fights to compare them after restarting."),TextWrapping=TextWrapping.Wrap,Margin=new(0,10,0,0)});
         else Draw(current,previous);
-        Content=new Border {Child=new ScrollViewer {Content=root,VerticalScrollBarVisibility=ScrollBarVisibility.Auto},BorderBrush=new SolidColorBrush(Color.FromRgb(65,74,86)),BorderThickness=new(1),CornerRadius=new(8)};
+        Content=new Border {Child=new ScrollViewer {Content=root,VerticalScrollBarVisibility=ScrollBarVisibility.Auto},BorderBrush=ThemeColors.Brush("#414A56"),BorderThickness=new(1),CornerRadius=new(8)};
         Controls.DragAnywhere.Attach(this);WindowPresentation.Attach(this);
     }
     private void Draw(EncounterSnapshot current,EncounterSnapshot previous)
@@ -49,7 +49,7 @@ internal sealed class BossComparisonWindow : Window
         void Row(string label,string now,string before,string delta,int? improvement=null)
         {
             int row=_table.RowDefinitions.Count;_table.RowDefinitions.Add(new(){Height=GridLength.Auto});
-            var background=new Border {Background=row==0?new SolidColorBrush(Color.FromRgb(32,42,53)):Surface,CornerRadius=new(5),Margin=new(0,0,0,3)};
+            var background=new Border {Background=row==0?ThemeColors.Brush("#202A35"):Surface,CornerRadius=new(5),Margin=new(0,0,0,3)};
             Grid.SetRow(background,row);Grid.SetColumnSpan(background,4);_table.Children.Add(background);
             int col=0;foreach(var text in new[]{label,now,before,delta})
             {

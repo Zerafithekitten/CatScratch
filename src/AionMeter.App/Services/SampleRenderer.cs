@@ -237,6 +237,9 @@ public static class SampleRenderer
                 host = new PatchNotesWindow(meter.Updates);
                 refresh = () => { };
                 break;
+            case "settings-colors":
+                meter.Settings.Theme=new("#7FA9F5","#151A22","#F3F5FA");ThemeColors.Apply(meter.Settings.Theme);
+                goto case "settings";
             case "settings":
                 var settingsWindow = new SettingsWindow(meter) { Width = o.Width ?? 760, Height = o.Height ?? 660 };
                 if (int.TryParse(o.Tab,out var settingsTab)) ((System.Windows.Controls.TabControl)settingsWindow.FindName("SettingsTabs")).SelectedIndex=settingsTab;

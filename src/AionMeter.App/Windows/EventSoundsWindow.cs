@@ -138,5 +138,5 @@ public sealed class EventSoundsWindow : Window
     internal static bool HasCustomFile(EventSoundPreference preference) => !string.IsNullOrWhiteSpace(preference.FilePath) && File.Exists(preference.FilePath);
     internal static string CustomSoundLabel(EventSoundPreference preference) => string.IsNullOrWhiteSpace(preference.FilePath)
         ? UiText.Current.Localize("Choose audio…") : Path.GetFileName(preference.FilePath);
-    private static Brush Brush(string color) => (Brush)new BrushConverter().ConvertFromString(color)!;
+    private static Brush Brush(string color) => ThemeColors.Brush(color);
 }

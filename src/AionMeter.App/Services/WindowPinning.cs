@@ -33,8 +33,8 @@ internal static class WindowPinning
     {
         if(!Windows.TryGetValue(window,out var state))return;
         state.Button.ToolTip=UiText.Current.Localize(IsPinned(window)?"Unpin position":"Pin position");
-        state.Button.Foreground=new SolidColorBrush(IsPinned(window)?Color.FromRgb(196,154,245):Color.FromRgb(169,184,199));
-        state.Button.Background=IsPinned(window)?new SolidColorBrush(Color.FromArgb(35,196,154,245)):Brushes.Transparent;
+        state.Button.Foreground=ThemeColors.Brush(IsPinned(window)?"#C49AF5":"#A9B8C7");
+        state.Button.Background=IsPinned(window)?ThemeColors.Brush("#23C49AF5"):Brushes.Transparent;
     }
     internal static void RefreshAll(){foreach(var window in Windows.Keys.ToArray())Refresh(window);}
     internal static void SetDisplayOnly(Window window,bool enabled){if(Windows.TryGetValue(window,out var state))state.Button.Visibility=enabled?Visibility.Hidden:Visibility.Visible;}

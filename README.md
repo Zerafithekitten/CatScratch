@@ -2,12 +2,12 @@
 
 A separate, always-on-top Windows DPS meter for **AION 2**, by Zerafithekitten. Track your own fights and confirmed party members in a compact dark gray interface with restrained purple accents and cat-paw branding.
 
-[Download Stable](https://github.com/Zerafithekitten/CatScratch/releases/latest) · [Download Beta](https://github.com/Zerafithekitten/CatScratch/releases/tag/v3.0.1-beta.2) · [Release history](https://github.com/Zerafithekitten/CatScratch/releases) · [Report a bug / request a feature](https://github.com/Zerafithekitten/CatScratch/issues/new/choose)
+[Download Stable](https://github.com/Zerafithekitten/CatScratch/releases/latest) · [Download Beta](https://github.com/Zerafithekitten/CatScratch/releases/tag/v3.0.1-beta.3) · [Release history](https://github.com/Zerafithekitten/CatScratch/releases) · [Report a bug / request a feature](https://github.com/Zerafithekitten/CatScratch/issues/new/choose)
 
 | Channel | Current version | What it includes |
 | --- | --- | --- |
 | **Stable** | **[v3.0.0](https://github.com/Zerafithekitten/CatScratch/releases/tag/v3.0.0)** | Complete tested Beta feature set: compact class-colored rows, central settings with separate Updates/Feedback tabs, position pins, overlay profiles, boss comparisons, compact recap, quiet game companion and safer preferences. |
-| **Beta** | [Last prerelease: v3.0.1-beta.2](https://github.com/Zerafithekitten/CatScratch/releases/tag/v3.0.1-beta.2) | 24-hour event timeline, persistent favorites and clearer event-type colors. |
+| **Beta** | [Last prerelease: v3.0.1-beta.3](https://github.com/Zerafithekitten/CatScratch/releases/tag/v3.0.1-beta.3) | Custom interface colors, plus the 24-hour event timeline and persistent favorites. |
 
 English is the default. German, Russian and French are also available. Screenshots use synthetic sample data; names and numbers are examples. Stable 3.0.0 includes the former Beta features.
 
@@ -19,6 +19,7 @@ English is the default. German, Russian and French are also available. Screensho
 - [Permanent boss personal bests](#permanent-boss-personal-bests)
 - [Last played with](#last-played-with)
 - [Death recap](#death-recap)
+- [Interface colors](#interface-colors)
 - [Overlay profiles](#overlay-profiles)
 - [Boss fight comparison](#boss-fight-comparison)
 - [Fight selection and saved fights](#fight-selection-and-saved-fights)
@@ -115,6 +116,10 @@ The **tombstone icon** enables or disables the module. When your character dies,
 <img src="docs/screenshots/death-recap.png" alt="Death recap listing recent attackers, skills and incoming damage" width="400" />
 
 It closes when fresh positive own HP or a map reload confirms the character is alive. Same-map resurrection and batched HP updates are supported. The default toggle is **Shift+F4**, configurable in Settings > Hotkeys. The recap is temporary and is not retained after restarting CatScratch.
+
+## Interface colors
+
+**Custom interface colors:** Settings > Appearance > Interface colors lets you choose accent, background and text colors using RGB sliders, swatches or #RRGGBB. The preview is a draft: Save applies the colors across open windows and keeps them for the next start; Cancel leaves the saved palette unchanged. Restore default colors returns to the gray/lavender CatScratch palette after Save. Low-contrast combinations are rejected. Class, healing, damage, event-type and golden favorite colors keep their meaning; the purple paw stays unchanged.
 
 ## Overlay profiles
 

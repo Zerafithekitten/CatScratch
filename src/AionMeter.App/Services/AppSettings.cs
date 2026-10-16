@@ -26,6 +26,8 @@ public sealed class AppSettings
         Converters = { new JsonStringEnumConverter() },
     };
 
+    public ThemePreferences? Theme { get; set; } = new();
+
     // Overlay window
     public double OverlayLeft { get; set; } = 80;
     public double OverlayTop { get; set; } = 160;

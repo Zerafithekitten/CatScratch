@@ -1,0 +1,37 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:colors="clr-namespace:AionMeter.App.Services">
+    <Color x:Key="CustomColor_0DFFFFFF">#0DFFFFFF</Color><SolidColorBrush x:Key="CustomBrush_0DFFFFFF" Color="{colors:ThemeColor #0DFFFFFF}"/>
+    <Color x:Key="CustomColor_0F1218">#0F1218</Color><SolidColorBrush x:Key="CustomBrush_0F1218" Color="{colors:ThemeColor #0F1218}"/>
+    <Color x:Key="CustomColor_101822">#101822</Color><SolidColorBrush x:Key="CustomBrush_101822" Color="{colors:ThemeColor #101822}"/>
+    <Color x:Key="CustomColor_14FFFFFF">#14FFFFFF</Color><SolidColorBrush x:Key="CustomBrush_14FFFFFF" Color="{colors:ThemeColor #14FFFFFF}"/>
+    <Color x:Key="CustomColor_16FFFFFF">#16FFFFFF</Color><SolidColorBrush x:Key="CustomBrush_16FFFFFF" Color="{colors:ThemeColor #16FFFFFF}"/>
+    <Color x:Key="CustomColor_191D23">#191D23</Color><SolidColorBrush x:Key="CustomBrush_191D23" Color="{colors:ThemeColor #191D23}"/>
+    <Color x:Key="CustomColor_1AFFFFFF">#1AFFFFFF</Color><SolidColorBrush x:Key="CustomBrush_1AFFFFFF" Color="{colors:ThemeColor #1AFFFFFF}"/>
+    <Color x:Key="CustomColor_20242A">#20242A</Color><SolidColorBrush x:Key="CustomBrush_20242A" Color="{colors:ThemeColor #20242A}"/>
+    <Color x:Key="CustomColor_202A35">#202A35</Color><SolidColorBrush x:Key="CustomBrush_202A35" Color="{colors:ThemeColor #202A35}"/>
+    <Color x:Key="CustomColor_22FFFFFF">#22FFFFFF</Color><SolidColorBrush x:Key="CustomBrush_22FFFFFF" Color="{colors:ThemeColor #22FFFFFF}"/>
+    <Color x:Key="CustomColor_262C34">#262C34</Color><SolidColorBrush x:Key="CustomBrush_262C34" Color="{colors:ThemeColor #262C34}"/>
+    <Color x:Key="CustomColor_2B3038">#2B3038</Color><SolidColorBrush x:Key="CustomBrush_2B3038" Color="{colors:ThemeColor #2B3038}"/>
+    <Color x:Key="CustomColor_30333D">#30333D</Color><SolidColorBrush x:Key="CustomBrush_30333D" Color="{colors:ThemeColor #30333D}"/>
+    <Color x:Key="CustomColor_40FFFFFF">#40FFFFFF</Color><SolidColorBrush x:Key="CustomBrush_40FFFFFF" Color="{colors:ThemeColor #40FFFFFF}"/>
+    <Color x:Key="CustomColor_414A56">#414A56</Color><SolidColorBrush x:Key="CustomBrush_414A56" Color="{colors:ThemeColor #414A56}"/>
+    <Color x:Key="CustomColor_59FFFFFF">#59FFFFFF</Color><SolidColorBrush x:Key="CustomBrush_59FFFFFF" Color="{colors:ThemeColor #59FFFFFF}"/>
+    <Color x:Key="CustomColor_60C49AF5">#60C49AF5</Color><SolidColorBrush x:Key="CustomBrush_60C49AF5" Color="{colors:ThemeColor #60C49AF5}"/>
+    <Color x:Key="CustomColor_677382">#677382</Color><SolidColorBrush x:Key="CustomBrush_677382" Color="{colors:ThemeColor #677382}"/>
+    <Color x:Key="CustomColor_6B7590">#6B7590</Color><SolidColorBrush x:Key="CustomBrush_6B7590" Color="{colors:ThemeColor #6B7590}"/>
+    <Color x:Key="CustomColor_91A5C3">#91A5C3</Color><SolidColorBrush x:Key="CustomBrush_91A5C3" Color="{colors:ThemeColor #91A5C3}"/>
+    <Color x:Key="CustomColor_A3ACBF">#A3ACBF</Color><SolidColorBrush x:Key="CustomBrush_A3ACBF" Color="{colors:ThemeColor #A3ACBF}"/>
+    <Color x:Key="CustomColor_A9B8C7">#A9B8C7</Color><SolidColorBrush x:Key="CustomBrush_A9B8C7" Color="{colors:ThemeColor #A9B8C7}"/>
+    <Color x:Key="CustomColor_B8191D23">#B8191D23</Color><SolidColorBrush x:Key="CustomBrush_B8191D23" Color="{colors:ThemeColor #B8191D23}"/>
+    <Color x:Key="CustomColor_BCC9D6">#BCC9D6</Color><SolidColorBrush x:Key="CustomBrush_BCC9D6" Color="{colors:ThemeColor #BCC9D6}"/>
+    <Color x:Key="CustomColor_C49AF5">#C49AF5</Color><SolidColorBrush x:Key="CustomBrush_C49AF5" Color="{colors:ThemeColor #C49AF5}"/>
+    <Color x:Key="CustomColor_D0191D23">#D0191D23</Color><SolidColorBrush x:Key="CustomBrush_D0191D23" Color="{colors:ThemeColor #D0191D23}"/>
+    <Color x:Key="CustomColor_D8DEE9">#D8DEE9</Color><SolidColorBrush x:Key="CustomBrush_D8DEE9" Color="{colors:ThemeColor #D8DEE9}"/>
+    <Color x:Key="CustomColor_DCC2FA">#DCC2FA</Color><SolidColorBrush x:Key="CustomBrush_DCC2FA" Color="{colors:ThemeColor #DCC2FA}"/>
+    <Color x:Key="CustomColor_DCE6EF">#DCE6EF</Color><SolidColorBrush x:Key="CustomBrush_DCE6EF" Color="{colors:ThemeColor #DCE6EF}"/>
+    <Color x:Key="CustomColor_DF20242A">#DF20242A</Color><SolidColorBrush x:Key="CustomBrush_DF20242A" Color="{colors:ThemeColor #DF20242A}"/>
+    <Color x:Key="CustomColor_EDF2F7">#EDF2F7</Color><SolidColorBrush x:Key="CustomBrush_EDF2F7" Color="{colors:ThemeColor #EDF2F7}"/>
+    <Color x:Key="CustomColor_F0191D23">#F0191D23</Color><SolidColorBrush x:Key="CustomBrush_F0191D23" Color="{colors:ThemeColor #F0191D23}"/>
+    <Color x:Key="CustomColor_FFFFFF">#FFFFFF</Color><SolidColorBrush x:Key="CustomBrush_FFFFFF" Color="{colors:ThemeColor #FFFFFF}"/>
+    <SolidColorBrush x:Key="CustomBrush_ButtonInk" Color="#101820"/>
+    <SolidColorBrush x:Key="CustomBrush_30414A56" Color="{colors:ThemeColor #30414A56}"/>
+</ResourceDictionary>

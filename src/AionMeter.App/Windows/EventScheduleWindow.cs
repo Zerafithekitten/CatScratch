@@ -22,7 +22,7 @@ internal sealed class EventScheduleWindow : Window
     private string? _key;
     public Func<DateTimeOffset>? ClockOverride {get;set;}
     private static string T(string value)=>UiText.Current.Localize(value);
-    private static Brush Brush(string value)=> (Brush)new BrushConverter().ConvertFromString(value)!;
+    private static Brush Brush(string value)=> ThemeColors.Brush(value);
 
     internal EventScheduleWindow(TimerCards cards)
     {

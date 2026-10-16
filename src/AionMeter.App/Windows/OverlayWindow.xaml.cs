@@ -27,8 +27,7 @@ public partial class OverlayWindow : Window, IDisplayAppearance
     private static readonly Brush ClickableCursorBrush = CreateCursorBrush();
     private static Brush CreateCursorBrush()
     {
-        var brush = new SolidColorBrush(Color.FromRgb(196,154,245));
-        brush.Freeze();
+        var brush = ThemeColors.Brush("#C49AF5");
         return brush;
     }
 
@@ -156,8 +155,7 @@ public partial class OverlayWindow : Window, IDisplayAppearance
     private readonly List<(Border Surface, TextBlock Value, TextBlock Label, string English)> _personalRows = [];
     private static Brush FrozenBrush(string color)
     {
-        var brush = new SolidColorBrush((Color)ColorConverter.ConvertFromString(color));
-        brush.Freeze(); return brush;
+        return ThemeColors.Brush(color);
     }
     private void CreatePersonalRows()
     {
@@ -684,7 +682,7 @@ public partial class OverlayWindow : Window, IDisplayAppearance
         grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
         grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
 
-        grid.Children.Add(new BossPortrait { Source = portrait, Width = 21, Height = 21, Accent = new SolidColorBrush(Color.FromRgb(196,154,245)), HorizontalAlignment = HorizontalAlignment.Left });
+        grid.Children.Add(new BossPortrait { Source = portrait, Width = 21, Height = 21, Accent = ThemeColors.Brush("#C49AF5"), HorizontalAlignment = HorizontalAlignment.Left });
 
         var (mark, markBrush) = active ? ("●", "Red") : reason switch
         {
@@ -700,11 +698,11 @@ public partial class OverlayWindow : Window, IDisplayAppearance
         text.Children.Add(new TextBlock
         {
             Text = title, FontWeight = FontWeights.SemiBold, FontSize = 12, MaxWidth = 160,
-            TextTrimming = TextTrimming.CharacterEllipsis, Foreground = new SolidColorBrush(Color.FromRgb(237,242,247)),
+            TextTrimming = TextTrimming.CharacterEllipsis, Foreground = ThemeColors.Brush("#EDF2F7"),
         });
         text.Children.Add(new TextBlock
         {
-            Text = meta, FontSize = 10.5, FontFamily = (FontFamily)FindResource("NumberFont"), Foreground = new SolidColorBrush(Color.FromRgb(169,184,199)),
+            Text = meta, FontSize = 10.5, FontFamily = (FontFamily)FindResource("NumberFont"), Foreground = ThemeColors.Brush("#A9B8C7"),
         });
         Grid.SetColumn(text, 2);
         grid.Children.Add(text);

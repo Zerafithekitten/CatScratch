@@ -1,3 +1,10 @@
+## CatScratch v3.0.1-beta.3
+
+- Customize accent, background and text colors under Settings > Appearance > Interface colors.
+- Use the built-in RGB picker, color presets or hex values with a local preview and a default-color reset.
+- Save applies the palette across open windows and preserves it after restart. Cancel discards the draft.
+- Readability checks and automatic button-label contrast help keep custom palettes usable. Class, combat, event and favorite colors keep their meaning.
+
 ## CatScratch v3.0.1-beta.2
 
 - The Upcoming events clock opens a horizontal 24-hour timeline with a separate track per event and regional start times.

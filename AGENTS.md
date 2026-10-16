@@ -35,3 +35,5 @@ Started events belong exclusively to the separate movable Started events module.
 The Upcoming events clock opens a chronological 24-hour planner. Favorite event types persist independently of overlay selection and sounds; mark their occurrences and matching overlay cards with a thin, subtly glowing gold frame. Keep general surfaces gray and branding lavender.
 
 Boss fight comparison automatically uses the last earlier matching recorded run. Show the boss name prominently on both run cards with date and duration underneath; do not expose record identifiers or a manual fight selector.
+
+Interface accent, background and text colors are optionally customizable in Settings > Appearance > Interface colors. Preserve the gray/lavender defaults, vector paw branding and semantic class/combat/event/favorite colors. The picker and preview are local drafts; Save persists and updates all windows, Cancel discards, and Restore default colors resets only the draft. Keep transparent surfaces transparent and validate readable contrast.

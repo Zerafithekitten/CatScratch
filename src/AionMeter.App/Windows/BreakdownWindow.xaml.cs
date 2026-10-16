@@ -26,9 +26,9 @@ public partial class BreakdownWindow : Window
     public sealed record PartyItem(uint ActorId, string Name, GameClass Class, string ShareText, int Place, RankStyle Rank, bool IsSelf)
     {
         public string PlaceText => Place > 0 ? Place.ToString() : "·";
-        public Brush NameBrush => IsSelf ? SelfBrush : Brushes.WhiteSmoke;
+        public Brush NameBrush => IsSelf ? SelfBrush : ThemeColors.Brush("#EDF2F7");
         public FontWeight NameWeight => IsSelf ? FontWeights.Bold : FontWeights.Normal;
-        private static readonly Brush SelfBrush = new SolidColorBrush(Color.FromRgb(0xC4, 0x9A, 0xF5));
+        private static readonly Brush SelfBrush = ThemeColors.Brush("#C49AF5");
     }
 
     public sealed record SkillItem(

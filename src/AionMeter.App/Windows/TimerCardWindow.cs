@@ -18,13 +18,13 @@ public sealed class TimerCardWindow : Window, IDisplayAppearance
     private readonly TextBlock _name = new() { FontSize = 15, FontWeight = FontWeights.SemiBold, TextWrapping = TextWrapping.Wrap };
     private readonly TextBlock _kind = new() { FontSize = 9, FontWeight = FontWeights.Bold, Margin = new(0,0,6,0), VerticalAlignment = VerticalAlignment.Center };
     private readonly TextBlock _time = new() { FontSize = 14, Foreground = Brushes.PaleGoldenrod, Margin = new(0, 6, 0, 0) };
-    private readonly TextBlock _source = new() { FontSize = 10, Foreground = Brushes.LightGray, TextWrapping = TextWrapping.Wrap, Margin = new(0, 5, 0, 0) };
+    private readonly TextBlock _source = new() { FontSize = 10, Foreground = ThemeColors.Brush("#A9B8C7"), TextWrapping = TextWrapping.Wrap, Margin = new(0, 5, 0, 0) };
     public TimerCardWindow(TimerCards cards, string id, CardPlacement placement)
     {
         AppIcon.Apply(this);
         var compact = id.StartsWith("auto:");
         Title = "Timer"; Topmost = true; ShowInTaskbar = true;
-        Background = new SolidColorBrush(Color.FromRgb(15, 18, 24)); Foreground = Brushes.White;
+        Background = ThemeColors.Brush("#0F1218"); Foreground = ThemeColors.Brush("#EDF2F7");
         Width = Math.Max(220, placement.Width); Height = Math.Max(120, placement.Height); MinWidth = 220; MinHeight = 120;
         if (compact)
         {

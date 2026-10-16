@@ -44,6 +44,7 @@ public partial class SettingsWindow : Window
         catch (Exception ex) when (ex is System.ComponentModel.Win32Exception or InvalidOperationException)
         { MessageBox.Show(this, T.Localize("Could not open the browser. Please visit GitHub and choose New issue."), "CatScratch"); }
     }
+    private readonly ThemeSettingsPanel _themePanel;
     private readonly MeterService _meter;
     private readonly TimerCards _cards;
     private readonly TimerCards _eventDraft;
@@ -55,6 +56,9 @@ public partial class SettingsWindow : Window
         _meter = meter;
         InitializeComponent();
         BrandIcon.Source=AppIcon.Image;
+        _themePanel=new ThemeSettingsPanel(meter.Settings.Theme);
+        if(((TabItem)SettingsTabs.Items[0]).Content is ScrollViewer {Content:Panel appearance})
+            appearance.Children.Insert(1,new Border{Child=_themePanel,Style=(Style)FindResource("Section")});
         foreach(var tab in SettingsTabs.Items.OfType<TabItem>().Where(t=>t.Tag is "updates" or "feedback"))
             tab.Header=T.Localize((string)tab.Header);
         cards??=new TimerCards(meter,persistent:false);
@@ -225,6 +229,7 @@ public partial class SettingsWindow : Window
     private async void Save_Click(object sender, RoutedEventArgs e)
     {
         var s = _meter.Settings;
+        if(!_themePanel.TryGet(out var theme))return;
         var follow=FollowGameCheck.IsChecked==true;
         var game=GameExecutableText.Text;
         try
@@ -242,6 +247,7 @@ public partial class SettingsWindow : Window
             MessageBox.Show(this,T.Localize("Could not configure automatic game start.")+"\n"+T.Localize(error.Message),"CatScratch",MessageBoxButton.OK,MessageBoxImage.Error);
             return;
         }
+        s.Theme=theme;ThemeColors.Apply(theme);
         s.FollowGame=follow; s.GameExecutable=game;
         s.CompactMode = CompactModeCheck.IsChecked == true;
         if (int.TryParse(WindowWidthText.Text, out var width)) s.OverlayWidth = Math.Clamp(width, 260, 1600);

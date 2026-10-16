@@ -1,3 +1,4 @@
+using AionMeter.App.Services;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -20,7 +21,7 @@ internal static class SettingsSections
                 if (body.Children.OfType<TextBlock>().FirstOrDefault() is { } title && body.Children.IndexOf(title)==0)
                 {
                     body.Children.Remove(title);
-                    title.Margin=new(0);title.FontSize=12;title.Foreground=(Brush)new BrushConverter().ConvertFromString("#C49AF5")!;
+                    title.Margin=new(0);title.FontSize=12;title.Foreground=ThemeColors.Brush("#C49AF5");
                     card.Child=null;
                     card.Child=new Expander {Header=title,Content=body,IsExpanded=section++<2,Style=(Style)element.FindResource("SettingsExpander")};
                 }
