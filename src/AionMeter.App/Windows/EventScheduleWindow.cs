@@ -26,7 +26,7 @@ internal sealed class EventScheduleWindow : Window
 
     internal EventScheduleWindow(TimerCards cards)
     {
-        _cards=cards;Title="CatScratch · "+T("24-hour event schedule");Width=1100;Height=780;MinWidth=650;MinHeight=420;
+        _cards=cards;Title="CatScratch · "+T("24-hour event schedule");Width=1100;Height=540;MinWidth=650;MinHeight=360;
         WindowStartupLocation=WindowStartupLocation.CenterScreen;WindowStyle=WindowStyle.None;ResizeMode=ResizeMode.CanResize;ShowInTaskbar=false;
         Background=Brush("#20242A");Foreground=Brush("#EDF2F7");FontFamily=new("Segoe UI");FontSize=12;UseLayoutRounding=true;
         Resources.MergedDictionaries.Add(new(){Source=new Uri("/CatScratch;component/Theme/MeterTools.xaml",UriKind.Relative)});

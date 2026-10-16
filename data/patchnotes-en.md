@@ -1,4 +1,4 @@
-## CatScratch v3.0.1-beta.1
+## CatScratch v3.0.1-beta.2
 
 - The Upcoming events clock opens a horizontal 24-hour timeline with a separate track per event and regional start times.
 - Favorite event types with the star. Favorites are saved and receive a subtle glowing gold frame in the timeline and event overlays.
