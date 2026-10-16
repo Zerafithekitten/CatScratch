@@ -24,9 +24,13 @@ public sealed class EventPreferencesWindow : Window
         var caption=new StackPanel { Orientation=Orientation.Horizontal };
         caption.Children.Add(new Image { Source=Icon,Width=20,Height=20,Margin=new(0,0,7,0) });
         caption.Children.Add(new TextBlock { Text=UiText.Current.Localize("Event settings"),Foreground=Brush("#79E3CF"),FontSize=17,FontWeight=FontWeights.SemiBold }); header.Children.Add(caption);
-        var body=new StackPanel(); root.Children.Add(new ScrollViewer { Content=body,VerticalScrollBarVisibility=ScrollBarVisibility.Auto });
+        var body=BuildBody(cards,width,setWidth,setOpacity,reload,this); root.Children.Add(new ScrollViewer { Content=body,VerticalScrollBarVisibility=ScrollBarVisibility.Auto });
         Content=new Border { Child=root,Background=Background,BorderBrush=Brush("#607B827F"),BorderThickness=new(1),CornerRadius=new(10) };
         Controls.DragAnywhere.Attach(this);
+    }
+    internal static StackPanel BuildBody(TimerCards cards, Func<double> width, Action<double> setWidth, Action<double> setOpacity, Action reload, FrameworkElement scope)
+    {
+        var body=new StackPanel();
         void Save() { cards.Save(); reload(); }
         StackPanel Section(string title)
         {
@@ -45,11 +49,11 @@ public sealed class EventPreferencesWindow : Window
             events.Children.Add(new TextBlock { Text=UiText.Current.Localize(group.Key),Foreground=EventPanelBrushes.ForKind(group.Key),FontSize=10,FontWeight=FontWeights.SemiBold,Margin=new(0,6,0,3) });
             foreach(var item in group)
             {
-                var check=new CheckBox { Content=UiText.Current.Localize(item.Name),Style=(Style)FindResource("DarkCheck"),IsChecked=cards.Saved.SelectedEvents.Contains(item.Id) };
+                var check=new CheckBox { Content=UiText.Current.Localize(item.Name),Style=(Style)scope.FindResource("DarkCheck"),IsChecked=cards.Saved.SelectedEvents.Contains(item.Id) };
                 check.Click+=(_,_)=> { cards.Saved.SelectedEvents.Remove(item.Id); if(check.IsChecked==true) cards.Saved.SelectedEvents.Add(item.Id); Save(); }; events.Children.Add(check);
             }
         }
-        var allBosses=new CheckBox { Content=UiText.Current.Localize("Show all world bosses"),Style=(Style)FindResource("DarkCheck"),IsChecked=cards.Saved.ShowAllWorldBosses,Margin=new(0,8,0,0) };
+        var allBosses=new CheckBox { Content=UiText.Current.Localize("Show all world bosses"),Style=(Style)scope.FindResource("DarkCheck"),IsChecked=cards.Saved.ShowAllWorldBosses,Margin=new(0,8,0,0) };
         allBosses.Click+=(_,_)=> { cards.Saved.ShowAllWorldBosses=allBosses.IsChecked==true; Save(); }; events.Children.Add(allBosses);
         Hint(events,"Includes scheduled bosses and known respawns received from the game.");
         var appearance=Section("APPEARANCE");
@@ -57,16 +61,16 @@ public sealed class EventPreferencesWindow : Window
         {
             label=UiText.Current.Localize(label);
             var text=new TextBlock { Text=$"{label} · {current:0}{unit}",Margin=new(0,4,0,2) }; appearance.Children.Add(text);
-            var slider=new Slider { Minimum=min,Maximum=max,Value=current,Style=(Style)FindResource("GoldSlider") };
+            var slider=new Slider { Minimum=min,Maximum=max,Value=current,Style=(Style)scope.FindResource("GoldSlider") };
             slider.ValueChanged+=(_,e)=> { text.Text=$"{label} · {e.NewValue:0}{unit}"; change(e.NewValue); }; appearance.Children.Add(slider);
         }
         Slider("Opacity",40,100,cards.Saved.EventOpacity*100,value=> { cards.Saved.EventOpacity=value/100; setOpacity(value/100); cards.Save(); },"%");
-        Slider("Window width",240,1000,width(),setWidth," px");
+        Slider("Upcoming events width",240,1000,width(),setWidth," px");
         var tools=Section("SOUNDS & BOSS TIMERS");
-        var sounds=new Button { Content=UiText.Current.Localize("Event sounds"),Style=(Style)FindResource("GhostButton"),Margin=new(0,0,0,6) }; sounds.Click+=(_,_)=>AppHost.Current.ShowEventSounds(); tools.Children.Add(sounds);
-        var bosses=new Button { Content=UiText.Current.Localize("Open boss timers"),Style=(Style)FindResource("GhostButton") }; bosses.Click+=(_,_)=>AppHost.Current.ShowBossTimers(); tools.Children.Add(bosses);
+        var bosses=new Button { Content=UiText.Current.Localize("Open boss timers"),Style=(Style)scope.FindResource("GhostButton") }; bosses.Click+=(_,_)=>AppHost.Current.ShowBossTimers(); tools.Children.Add(bosses);
         Hint(tools,"Changes are saved automatically. Community schedule from Shugo.GG, checked Oct 12, 2026; availability is not officially confirmed.");
-        var source=new Button { Content=UiText.Current.Localize("Open schedule source"),Style=(Style)FindResource("GhostButton"),Margin=new(0,6,0,0) }; source.Click+=(_,_)=>System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(AutomaticEventSchedule.Source) { UseShellExecute=true }); tools.Children.Add(source);
+        var source=new Button { Content=UiText.Current.Localize("Open schedule source"),Style=(Style)scope.FindResource("GhostButton"),Margin=new(0,6,0,0) }; source.Click+=(_,_)=>System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(AutomaticEventSchedule.Source) { UseShellExecute=true }); tools.Children.Add(source);
+        return body;
     }
     private static Brush Brush(string color) { var brush=new SolidColorBrush((Color)ColorConverter.ConvertFromString(color)); brush.Freeze(); return brush; }
 }

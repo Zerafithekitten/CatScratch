@@ -42,7 +42,7 @@ public partial class OverlayWindow : Window, IDisplayAppearance
         _settings = meter.Settings;
         var opacity = _settings.BackgroundOpacity; // the slider's coercion during InitializeComponent would overwrite it
         InitializeComponent();
-        AppIcon.Apply(this);
+        AppIcon.Apply(this); ShellPin.Content=WindowPinning.CreateButton(this,_settings,"meter");
         _settings.BackgroundOpacity = opacity;
         DataContext = _vm;
         CreatePersonalRows();
@@ -132,8 +132,10 @@ public partial class OverlayWindow : Window, IDisplayAppearance
         Frame.BorderBrush=enabled ? Brushes.Transparent : _frameBorder;
         Frame.Effect=enabled ? null : _frameEffect;
         var controls=enabled ? Visibility.Hidden : Visibility.Visible;
-        ShellCaption.Visibility=controls; ShellClickButton.Visibility=controls;
-        ShellSettingsButton.Visibility=controls; ShellHideButton.Visibility=controls;
+        ShellCaption.Visibility=Visibility.Visible; ShellTitle.Visibility=controls;
+        ShellPaw.Visibility=enabled?Visibility.Hidden:(Width<300?Visibility.Collapsed:Visibility.Visible);
+        PersonalCombatButton.Visibility=controls;PetTrackerButton.Visibility=controls;ShellClickButton.Visibility=controls;
+        ShellSettingsButton.Visibility=controls; ShellHideButton.Visibility=controls; ShellPin.Visibility=controls;
         FooterControls.Visibility=controls; ResizeGrip.Visibility=controls;
         PlayerScroll.VerticalScrollBarVisibility=enabled ? ScrollBarVisibility.Hidden : ScrollBarVisibility.Auto;
         Toolbar.Visibility=enabled ? Visibility.Collapsed : _toolbarVisibility;
@@ -857,11 +859,11 @@ public partial class OverlayWindow : Window, IDisplayAppearance
         Resources["DpsColumnWidth"] = new GridLength(Width < 320 ? 64 : 76);
         Resources["ShareColumnWidth"] = new GridLength(Width < 320 ? 44 : 57);
         PersonalName.MaxWidth = Math.Clamp(Width - 220,40,120);
-        Grid.SetRow(FooterControls,narrow ? 1 : 0);
-        Grid.SetColumn(FooterControls,narrow ? 0 : 1);
-        Grid.SetColumnSpan(FooterControls,narrow ? 2 : 1);
-        Grid.SetColumnSpan(InstalledVersionText, narrow ? 1 : 2);
-        FooterControls.HorizontalAlignment = HorizontalAlignment.Right;
+        Grid.SetRow(FooterControls,1);
+        Grid.SetColumn(FooterControls,0);
+        Grid.SetColumnSpan(FooterControls,2);
+        ShellClockPanel.Visibility=Width<360?Visibility.Collapsed:Visibility.Visible;
+        FooterControls.HorizontalAlignment = HorizontalAlignment.Left;
         FooterControls.Margin = new Thickness(0,narrow ? 3 : 0,10,0);
         if (narrow)
         {

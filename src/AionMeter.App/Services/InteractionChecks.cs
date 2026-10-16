@@ -348,14 +348,24 @@ internal static class InteractionChecks
                 var box=(System.Windows.Controls.TextBox)settings.FindName(field);
                 Check(box.IsReadOnly && box.Text==gesture && HotkeyManager.TryParse(gesture,out _,out _),"Module shortcut can be recorded by pressing keys: "+field);
             }
-            Check(((System.Windows.Controls.TabControl)settings.FindName("SettingsTabs")).Items.Count==7 && ((System.Windows.Controls.TextBox)settings.FindName("HkClick")).IsReadOnly,
-                "Settings include a separate overlay profiles category while retaining recorded hotkeys");
+            Check(((System.Windows.Controls.TabControl)settings.FindName("SettingsTabs")).Items.Count==9 && ((System.Windows.Controls.TextBox)settings.FindName("HkClick")).IsReadOnly,
+                "Central settings include Events, Pets and overlay profiles while retaining recorded hotkeys");
+            var headerPin=(System.Windows.Controls.Button)((System.Windows.Controls.ContentControl)activeOverlay.FindName("ShellPin")).Content;
+            var beforePin=activeOverlay.Left;var clickBefore=meter.Settings.ClickThrough;
+            headerPin.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Button.ClickEvent));
+            Check(WindowPinning.IsPinned(activeOverlay) && WindowPinning.BlocksMove(activeOverlay,0x0112,0xF012),"Pinning independently blocks native window-move commands");
+            NativeMethods.SendMessage(new WindowInteropHelper(activeOverlay).Handle,0x0112,0xF012,0);
+            Check(activeOverlay.Left==beforePin && meter.Settings.ClickThrough==clickBefore,"Pinned meter stays in place without changing click-through");
+            headerPin.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Button.ClickEvent));
+            Check(!WindowPinning.BlocksMove(activeOverlay,0x0112,0xF012),"Unpinning restores movement without disabling controls");
+            Check(((System.Windows.Controls.Panel)activeOverlay.FindName("FooterControls")).Children[0]==activeOverlay.FindName("DeathRecapButton"),"Death recap toggle is the leftmost footer button");
+            Check(Descendants(activeOverlay).OfType<System.Windows.Controls.Button>().Count(b=>b.Content is string glyph && glyph=="\uE713")==1,"Only one settings gear remains in the DPS meter");
             Check(activeOverlay.FindName("ViewMenuButton") is null,"Unused View button is removed from the DPS footer");
             var detached = new AionMeter.App.Windows.TimerCardWindow(cards, "auto:shugo", new CardPlacement());
             windows.Add(detached);
             detached.SetDisplayOnly(true);
-            Check(detached.Height==28 && detached.Content is System.Windows.Controls.Border single && single.Child is System.Windows.Controls.Grid singleRow && singleRow.ColumnDefinitions.Count==3,
-                "Explicitly detached events use the same single-line compact layout");
+            Check(detached.Height==28 && detached.Content is System.Windows.Controls.Border single && single.Child is System.Windows.Controls.Grid singleRow && singleRow.ColumnDefinitions.Count==4,
+                "Explicitly detached events retain a single-line layout with a compact position pin");
             Check(detached.Content is System.Windows.Controls.Border panel &&
                 panel.Background is System.Windows.Media.SolidColorBrush cardBackground && cardBackground.Color.A > 0,
                 "Detached locked events retain their card background");
@@ -527,7 +537,7 @@ internal static class InteractionChecks
             Check(activeOverlay.FindName("PetTrackerButton") is System.Windows.Controls.Button,"Separate Pet tracker has a meter button");
             var versionText=(System.Windows.Controls.TextBlock)activeOverlay.FindName("InstalledVersionText");
             activeOverlay.UpdateLayout();
-            Check(versionText.Text==activeModel.Version,"Footer shows the running assembly version");
+            Check(versionText.Text==activeModel.Version && versionText.Parent==((System.Windows.Controls.TextBlock)activeOverlay.FindName("ShellTitle")).Parent,"Running version sits below the CatScratch title");
             activeOverlay.SetDisplayOnly(true);
             Check(versionText.Visibility==Visibility.Visible,"Installed version remains visible in click-through mode");
             activeOverlay.SetDisplayOnly(false);

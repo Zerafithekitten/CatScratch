@@ -13,6 +13,7 @@ public sealed class TimerCardWindow : Window, IDisplayAppearance
     {
         if (_card is null) return;
         _card.Background=EventPanelBrushes.Background;
+        WindowPinning.SetDisplayOnly(this,enabled);
     }
     private readonly TextBlock _name = new() { FontSize = 15, FontWeight = FontWeights.SemiBold, TextWrapping = TextWrapping.Wrap };
     private readonly TextBlock _kind = new() { FontSize = 9, FontWeight = FontWeights.Bold, Margin = new(0,0,6,0), VerticalAlignment = VerticalAlignment.Center };
@@ -36,18 +37,18 @@ public sealed class TimerCardWindow : Window, IDisplayAppearance
         Left = Math.Clamp(placement.Left, SystemParameters.VirtualScreenLeft, Math.Max(SystemParameters.VirtualScreenLeft, SystemParameters.VirtualScreenLeft + SystemParameters.VirtualScreenWidth - Width));
         Top = Math.Clamp(placement.Top, SystemParameters.VirtualScreenTop, Math.Max(SystemParameters.VirtualScreenTop, SystemParameters.VirtualScreenTop + SystemParameters.VirtualScreenHeight - Height));
         var body = new StackPanel { Margin = new(12) };
-        var heading = new DockPanel(); DockPanel.SetDock(_kind, Dock.Left); heading.Children.Add(_kind); heading.Children.Add(_name);
+        var heading = new DockPanel(); var pin=WindowPinning.CreateButton(this,cards.Settings,"card:"+id);DockPanel.SetDock(pin,Dock.Right);heading.Children.Add(pin); DockPanel.SetDock(_kind, Dock.Left); heading.Children.Add(_kind); heading.Children.Add(_name);
         body.Children.Add(heading); body.Children.Add(_time); body.Children.Add(_source);
         Content = body;
         if (compact)
         {
             Content = null;
-            heading.Children.Clear(); body.Children.Clear();
+            heading.Children.Clear(); body.Children.Clear(); pin.Width=18;pin.Height=18;
             var row=new Grid { Margin=new Thickness(7,4,7,4) };
-            row.ColumnDefinitions.Add(new(){Width=GridLength.Auto}); row.ColumnDefinitions.Add(new(){Width=new GridLength(1,GridUnitType.Star)}); row.ColumnDefinitions.Add(new(){Width=GridLength.Auto});
+            row.ColumnDefinitions.Add(new(){Width=GridLength.Auto}); row.ColumnDefinitions.Add(new(){Width=new GridLength(1,GridUnitType.Star)}); row.ColumnDefinitions.Add(new(){Width=GridLength.Auto});row.ColumnDefinitions.Add(new(){Width=GridLength.Auto});
             var badge=new Border { Child=_kind, CornerRadius=new(6), BorderThickness=new(1), BorderBrush=EventPanelBrushes.ForKind("EVENT"), Padding=new(4,1,4,1), Margin=new(0,0,5,0), VerticalAlignment=VerticalAlignment.Center };
             _kind.Margin=new Thickness(0); _kind.FontSize=8;
-            row.Children.Add(badge); Grid.SetColumn(_name,1); row.Children.Add(_name); Grid.SetColumn(_time,2); row.Children.Add(_time);
+            row.Children.Add(badge); Grid.SetColumn(_name,1); row.Children.Add(_name); Grid.SetColumn(_time,2); row.Children.Add(_time);Grid.SetColumn(pin,3);row.Children.Add(pin);
             Content = _card = new Border { Child = row, CornerRadius = new CornerRadius(5), Background = EventPanelBrushes.Background, BorderBrush = EventPanelBrushes.Border, BorderThickness = new Thickness(1) };
             MouseLeftButtonDown += (_, e) => { if (e.LeftButton == System.Windows.Input.MouseButtonState.Pressed) DragMove(); };
             MouseRightButtonUp += (_, _) => { var menu = new ContextMenu(); var close = new MenuItem { Header = UiText.Current.Localize("Close card") }; close.Click += (_, _) => Close(); menu.Items.Add(close); menu.IsOpen = true; };

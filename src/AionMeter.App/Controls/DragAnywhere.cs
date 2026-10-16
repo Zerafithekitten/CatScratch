@@ -43,7 +43,7 @@ public sealed class DragAnywhere
     private void OnDown(object sender, MouseButtonEventArgs e)
     {
         JustDragged = false;
-        _pending = _canDrag() && !IsInteractive(e.OriginalSource as DependencyObject);
+        _pending = _canDrag() && !Services.WindowPinning.IsPinned(_window) && !IsInteractive(e.OriginalSource as DependencyObject);
         _start = e.GetPosition(_window);
     }
 

@@ -40,6 +40,7 @@ public sealed class AppSettings
     public bool Locked { get; set; }
     public bool ClickThrough { get; set; }
     public bool OverlayVisible { get; set; } = true;
+    public Dictionary<string,bool> ModulePins {get;set;}=[];
     /// <summary>Bring the overlay up by itself when a boss is fought nearby or you hit anything.</summary>
     public bool AutoShow { get; set; } = true;
     /// <summary>An overlay that came up by itself hides again after this long out of combat; 0 = stays up.</summary>

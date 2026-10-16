@@ -464,7 +464,7 @@ public partial class App : Application
         if (recap is null) return;
         _deathRecapStamp = stamp; _deathRecapAppearance = appearance;
         if (_deathRecapWindow is not null) { _deathRecapWindow.Reload(recap); return; }
-        var window = _deathRecapWindow = new DeathRecapWindow(recap);
+        var window = _deathRecapWindow = new DeathRecapWindow(recap,_meter.Settings);
         WindowClickThrough.Attach(window, () => _meter.Settings.ClickThrough, () => _meter.Settings.WindowOpacity);
         window.PlaceAboveCenter(_overlay);
         window.Closed += (_, _) => { if (_deathRecapWindow == window) _deathRecapWindow = null; };
@@ -643,6 +643,7 @@ public partial class App : Application
     public void SetLanguage(string language)
     {
         _meter.SetLanguage(language);
+        WindowPinning.RefreshAll();
         var reopenPets=_petWindow?.IsVisible==true;
         _petWindow?.Close();
         foreach (var w in _breakdowns.Values.ToList()) w.Close();
@@ -804,10 +805,17 @@ public partial class App : Application
 
     public void ShowEventSounds()
     {
-        if (_soundWindow is { IsLoaded: true }) { Activate(_soundWindow); return; }
-        _soundWindow = new EventSoundsWindow(_timerCards!, (sound, volume) => (_eventSoundPlayer ??= new()).Play(sound, volume, preview: true));
-        _soundWindow.Closed += (_, _) => _soundWindow = null;
-        _soundWindow.Show();
+        ShowSettings();_settingsWindow!.SelectEvents();
+    }
+    internal void PreviewEventSound(EventSoundPreference sound,double volume)=>(_eventSoundPlayer??=new()).Play(sound,volume,preview:true);
+    internal void RefreshPetSettings(){if(_petWindow is { } window){window.Width=Math.Clamp(_meter.Settings.PetModuleWidth,240,360);window.Refresh();}}
+    internal void RefreshEventSettings()
+    {
+        if(_timerCards is not { } cards)return;
+        if(cards.Saved.EventWindowOpen){if(_timerHub is null)OpenTimerHub(false);}else _timerHub?.Close();
+        if(cards.Saved.StartedEventWindowOpen){if(_startedEvents is null)OpenStartedEvents(false);}else _startedEvents?.Close();
+        foreach(var pair in new[]{(Window:_timerHub,Key:"auto-events"),(Window:_startedEvents,Key:"started-events")})
+            if(pair.Window is { } window){if(cards.Saved.Positions.TryGetValue(pair.Key,out var position))window.Width=Math.Clamp(position.Width,240,1000);window.Opacity=cards.Saved.EventOpacity;window.Reload();}
     }
 
     public void ShowPatchNotes()
@@ -836,7 +844,7 @@ public partial class App : Application
             Activate(_settingsWindow);
             return;
         }
-        _settingsWindow = new SettingsWindow(_meter);
+        _settingsWindow = new SettingsWindow(_meter,_timerCards);
         _settingsWindow.Closed += (_, _) => _settingsWindow = null;
         _settingsWindow.Show();
     }
@@ -862,6 +870,7 @@ public partial class App : Application
         if(profile.BossTimers is {Open:true} boss){ShowBossTimers();_timersWindow!.Left=boss.Left;_timersWindow.Top=boss.Top;_timersWindow.Width=Math.Max(_timersWindow.MinWidth,boss.Width);_timersWindow.Height=Math.Max(_timersWindow.MinHeight,boss.Height);WindowPresentation.Constrain(_timersWindow);}
         SetOverlayVisible(_meter.Settings.OverlayVisible);
         WindowClickThrough.ApplyAll(_meter.Settings.ClickThrough);
+        WindowPinning.RefreshAll();
         _overlay.Refresh();_settingsWindow?.Close();
     }
 

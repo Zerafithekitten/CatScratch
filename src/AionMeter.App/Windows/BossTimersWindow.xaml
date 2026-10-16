@@ -48,12 +48,13 @@
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center"
                             WindowChrome.IsHitTestVisibleInChrome="True">
-                    <TextBlock Text="&#xEA8F;" FontFamily="{StaticResource IconFont}" FontSize="13" Foreground="{StaticResource TextDim}"
+                    <TextBlock Visibility="Collapsed" Text="&#xEA8F;" FontFamily="{StaticResource IconFont}" FontSize="13" Foreground="{StaticResource TextDim}"
                                VerticalAlignment="Center" Margin="0,1,6,0" />
-                    <TextBlock Text="{Binding AlertLabel, Source={x:Static s:UiText.Current}}" Foreground="{StaticResource TextDim}"
+                    <TextBlock Visibility="Collapsed" Text="{Binding AlertLabel, Source={x:Static s:UiText.Current}}" Foreground="{StaticResource TextDim}"
                                VerticalAlignment="Center" Margin="0,0,8,0" />
-                    <Button x:Name="AlertButton" Style="{StaticResource Chip}" Height="26" MinWidth="78" FontSize="12" Margin="0,0,10,0"
+                    <Button Visibility="Collapsed" x:Name="AlertButton" Style="{StaticResource Chip}" Height="26" MinWidth="78" FontSize="12" Margin="0,0,10,0"
                             Click="Alert_Click" />
+                    <ContentControl x:Name="PositionPin"/>
                     <Button Style="{StaticResource IconButton}" Content="&#xE711;" Click="Close_Click"
                             ToolTip="{Binding TipClose, Source={x:Static s:UiText.Current}}" />
                 </StackPanel>

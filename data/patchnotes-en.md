@@ -1,3 +1,10 @@
+## CatScratch v2.6.0-beta.1
+
+### Central settings and position pins
+- One Settings menu from the DPS meter gear: event selection, appearance, reminders and sounds now share the Events tab; pet display and sounds have their own Pets tab. Removed module settings gears.
+- Added matching position-pin buttons to display modules. Pinning prevents dragging while controls and click-through retain their existing behavior; pin states persist and are included in optional overlay profiles.
+- Moved the version beneath the CatScratch title, freed the footer for buttons and placed the death-recap toggle first. Carries forward all previous 2.5.6 Beta features, including the compact recap, profiles and automatic boss comparison.
+
 ## CatScratch v2.5.6-beta.11
 
 ### Optional layouts and boss fight comparison

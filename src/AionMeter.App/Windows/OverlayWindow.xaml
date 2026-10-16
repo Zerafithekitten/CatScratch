@@ -210,20 +210,24 @@
     <Border x:Name="OuterShell" CornerRadius="10" Background="#DF1B2027" BorderBrush="#607B827F" BorderThickness="1">
     <DockPanel>
         <Grid DockPanel.Dock="Top" Height="38" Margin="8,2,6,0">
-            <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+            <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
             <StackPanel x:Name="ShellCaption" Orientation="Horizontal" VerticalAlignment="Center">
                 <Image x:Name="ShellPaw" Source="/Assets/app.ico" Width="22" Height="22" Margin="0,0,7,0"/>
-                <TextBlock x:Name="ShellTitle" Text="CatScratch" Foreground="#79E3CF" FontSize="16" FontWeight="Bold" VerticalAlignment="Center"/>
+                <StackPanel VerticalAlignment="Center">
+                    <TextBlock x:Name="ShellTitle" Text="CatScratch" Foreground="#79E3CF" FontSize="16" FontWeight="Bold"/>
+                    <TextBlock x:Name="InstalledVersionText" Text="{Binding Version}" FontSize="9" Foreground="#A9B8C7"/>
+                </StackPanel>
                             <Button x:Name="PersonalCombatButton" Style="{StaticResource ToolIcon}" Content="&#xE95E;" Click="PersonalCombat_Click" ToolTip="{Binding T.Literal0}" AutomationProperties.Name="{Binding T.Literal1}" Margin="4,0,0,0" />
-                            <Button x:Name="PetTrackerButton" Style="{StaticResource ToolIcon}" Click="PetTracker_Click" ToolTip="{Binding T.PetTrackerLabel}" Margin="2,0,0,0"><Image Source="/Assets/app.ico" Width="14" Height="14"/></Button>
+                            <Button x:Name="PetTrackerButton" Style="{StaticResource ToolIcon}" Click="PetTracker_Click" ToolTip="{Binding T.PetTrackerLabel}" Margin="2,0,0,0"><Image Source="/Assets/app.ico" Width="12" Height="12"/></Button>
 </StackPanel>
-            <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+            <StackPanel x:Name="ShellClockPanel" Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
                 <TextBlock Text="{Binding Clock, StringFormat=⏱ {0}}" Foreground="#91A5A0" FontSize="9" Margin="4,0" ToolTip="{Binding T.Literal2}" VerticalAlignment="Center"/>
                 <TextBlock Text="{Binding WallClock}" Foreground="#D4DAD9" FontSize="10" Margin="4,0" ToolTip="{Binding T.Literal3}" VerticalAlignment="Center"/>
             </StackPanel>
-            <Button x:Name="ShellClickButton" Grid.Column="2" Style="{StaticResource ToolIcon}" Click="ClickMode_Click"><Grid Width="14" Height="14"><Path x:Name="ClickModeCursor" Data="M 2,1 L 12,8 L 7,8 L 5,13 Z" Fill="#79E3CF"/><Path x:Name="ClickModeSlash" Data="M 1,13 L 13,1" Stroke="#D9ADB1" StrokeThickness="2" Visibility="Collapsed"/></Grid></Button>
+            <Button x:Name="ShellClickButton" Grid.Column="2" Style="{StaticResource ToolIcon}" Click="ClickMode_Click"><Grid Width="12" Height="12"><Path x:Name="ClickModeCursor" Data="M 2,1 L 12,8 L 7,8 L 5,13 Z" Fill="#79E3CF"/><Path x:Name="ClickModeSlash" Data="M 1,13 L 13,1" Stroke="#D9ADB1" StrokeThickness="2" Visibility="Collapsed"/></Grid></Button>
             <Button x:Name="ShellSettingsButton" Grid.Column="3" Style="{StaticResource ToolIcon}" Content="&#xE713;" Click="Settings_Click" ToolTip="{Binding T.Literal4}"/>
-            <Button x:Name="ShellHideButton" Grid.Column="4" Style="{StaticResource ToolIcon}" Content="&#xE711;" Click="Hide_Click" ToolTip="{Binding T.Literal5}"/>
+            <ContentControl x:Name="ShellPin" Grid.Column="4" VerticalAlignment="Center"/>
+            <Button x:Name="ShellHideButton" Grid.Column="5" Style="{StaticResource ToolIcon}" Content="&#xE711;" Click="Hide_Click" ToolTip="{Binding T.Literal5}"/>
         </Grid>
     <Grid Margin="4,0,4,4">
         <!-- Card -->
@@ -280,7 +284,7 @@
                     <ToggleButton x:Name="LockButton" Style="{StaticResource ToolToggle}" Click="Lock_Click" ToolTip="{Binding T.Literal8}">
                         <TextBlock x:Name="LockGlyph" Text="&#xE785;" />
                     </ToggleButton>
-                    <Button Style="{StaticResource ToolIcon}" Content="&#xE713;" Click="Settings_Click" ToolTip="{Binding T.Literal4}" />
+
                     <Slider x:Name="OpacitySlider" Style="{StaticResource GoldSlider}" Width="52" Minimum="0.15" Maximum="1" Margin="5,0,3,0"
                             ValueChanged="Opacity_Changed" VerticalAlignment="Center" ToolTip="{Binding T.Literal9}" />
                     <Button Style="{StaticResource ToolIcon}" Content="&#xE711;" Click="Hide_Click" ToolTip="{Binding T.Literal5}" />
@@ -412,15 +416,15 @@
                         <TextBlock x:Name="FooterText" FontSize="11" Foreground="#A9B1C0" TextTrimming="CharacterEllipsis"
                                    Effect="{StaticResource TextShadow}" />
                     </StackPanel>
-                    <TextBlock x:Name="InstalledVersionText" Grid.Row="1" Text="{Binding Version}" FontSize="10.5" FontWeight="SemiBold" Foreground="#A9B8C7" Margin="0,3,0,0" VerticalAlignment="Bottom" Effect="{StaticResource TextShadow}"/>
+
                     <StackPanel x:Name="FooterControls" Grid.Column="1" Orientation="Horizontal" Margin="0,0,10,0">
+                        <Button x:Name="DeathRecapButton" Style="{StaticResource ToolIcon}" Click="DeathRecap_Click">
+                            <Path Width="12" Height="12" Stretch="Uniform" Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" StrokeThickness="1" StrokeLineJoin="Round" Data="M3,14 V6 C3,0 13,0 13,6 V14 Z M1,14 H15 M8,5 V11 M5.5,7.5 H10.5"/>
+                        </Button>
                         <Button x:Name="BossRecordsButton" Style="{StaticResource ToolIcon}" Click="PersonalBests_Click" ToolTip="{Binding T.BossPersonalBestsLabel}" AutomationProperties.Name="{Binding T.BossPersonalBestsLabel}">
                             <Path Width="12" Height="12" Stretch="Uniform" Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" StrokeThickness="1" StrokeLineJoin="Round" Data="M4,2 H12 V6 C12,8 10,10 8,10 C6,10 4,8 4,6 Z M4,3 H2 V5 C2,7 3,8 5,8 M12,3 H14 V5 C14,7 13,8 11,8 M8,10 V14 M5,14 H11"/>
                         </Button>
                         <Button x:Name="LastPlayedButton" Style="{StaticResource ToolIcon}" Content="&#xE716;" Click="LastPlayedWith_Click" ToolTip="{Binding T.LastPlayedWithLabel}" AutomationProperties.Name="{Binding T.LastPlayedWithLabel}"/>
-                        <Button x:Name="DeathRecapButton" Style="{StaticResource ToolIcon}" Click="DeathRecap_Click">
-                            <Path Width="12" Height="12" Stretch="Uniform" Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" StrokeThickness="1" StrokeLineJoin="Round" Data="M3,14 V6 C3,0 13,0 13,6 V14 Z M1,14 H15 M8,5 V11 M5.5,7.5 H10.5"/>
-                        </Button>
                         <Button x:Name="CompactHistory" Style="{StaticResource ToolIcon}" Content="&#xE8A5;" Click="Segments_Click" ToolTip="{Binding T.Literal13}"/>
                         <Button Style="{StaticResource ToolIcon}" Content="&#xE8BD;" Click="Chat_Click" ToolTip="{Binding T.Literal14}"/>
                         <Button Style="{StaticResource ToolIcon}" Content="&#xE8A1;" Click="PatchNotes_Click" ToolTip="Patch notes"/>

@@ -47,11 +47,27 @@ public partial class SettingsWindow : Window
     private readonly MeterService _meter;
     private readonly List<(string? Name, string Label)> _devices = new();
 
-    public SettingsWindow(MeterService meter)
+    public SettingsWindow(MeterService meter,TimerCards? cards=null)
     {
         _meter = meter;
         InitializeComponent();
-        SettingsTabs.Items.Add(new TabItem {Header=T.Localize("Overlay profiles"),Padding=new Thickness(12,10,12,10),Content=new ScrollViewer {VerticalScrollBarVisibility=ScrollBarVisibility.Auto,Padding=new Thickness(14,0,0,0),Content=new OverlayProfilesPanel()}});
+        cards??=new TimerCards(meter,persistent:false);
+        SettingsTabs.Items.Add(new TabItem {Header=T.Localize("Events"),Tag="events",Padding=new Thickness(12,10,12,10),Content=new ScrollViewer {VerticalScrollBarVisibility=ScrollBarVisibility.Auto,HorizontalScrollBarVisibility=ScrollBarVisibility.Auto,Padding=new Thickness(14,0,0,0),Content=new EventsSettingsPanel(cards,()=>{if(!meter.Settings.Transient)AppHost.Current.RefreshEventSettings();},(sound,volume)=>{if(!meter.Settings.Transient)AppHost.Current.PreviewEventSound(sound,volume);})}});
+        var modules=new StackPanel();
+        modules.Children.Add(new TextBlock {Text=T.Localize("Pet tracker"),FontSize=16,Margin=new Thickness(0,0,0,8)});
+        modules.Children.Add(new TextBlock {Text=T.Localize("Changes are saved automatically."),Margin=new Thickness(0,0,0,12)});
+        void Module(string label,bool value,Action<bool> change){var field=new CheckBox {Content=T.Localize(label),IsChecked=value,Style=(Style)FindResource("DarkCheck"),Margin=new Thickness(0,0,0,10)};field.Click+=(_,_)=>{change(field.IsChecked==true);meter.Settings.Save();};modules.Children.Add(field);}
+
+        Module("Show pet tracker",meter.Settings.ShowPetTrackerModule,v=>{if(v!=meter.Settings.ShowPetTrackerModule && !meter.Settings.Transient)AppHost.Current.TogglePetModule();meter.Settings.ShowPetTrackerModule=v;});
+        Module("Sound on collection / level up",meter.Settings.PetNotify,v=>meter.Settings.PetNotify=v);
+        modules.Children.Add(new TextBlock {Text=T.Localize("Window width"),Margin=new Thickness(0,6,0,4)});
+        var petWidth=new Slider {Minimum=240,Maximum=360,Value=Math.Clamp(meter.Settings.PetModuleWidth,240,360),Style=(Style)FindResource("GoldSlider")};
+        petWidth.ValueChanged+=(_,e)=>{meter.Settings.PetModuleWidth=e.NewValue;meter.Settings.Save();if(!meter.Settings.Transient)AppHost.Current.RefreshPetSettings();};modules.Children.Add(petWidth);
+        var recap=new CheckBox {Content=T.Localize("Show death recap"),IsChecked=meter.Settings.ShowDeathRecapModule,Style=(Style)FindResource("DarkCheck")};
+        recap.Click+=(_,_)=>{meter.Settings.ShowDeathRecapModule=recap.IsChecked==true;meter.Settings.Save();};
+        if(((TabItem)SettingsTabs.Items[1]).Content is ScrollViewer {Content:Panel combat})combat.Children.Add(new Border {Child=recap,Style=(Style)FindResource("Section")});
+        SettingsTabs.Items.Add(new TabItem {Header=T.Localize("Pets"),Padding=new Thickness(12,10,12,10),Content=new ScrollViewer {VerticalScrollBarVisibility=ScrollBarVisibility.Auto,HorizontalScrollBarVisibility=ScrollBarVisibility.Auto,Padding=new Thickness(14,0,0,0),Content=new Border {Child=modules,Style=(Style)FindResource("Section"),VerticalAlignment=VerticalAlignment.Top}}});
+        SettingsTabs.Items.Add(new TabItem {Header=T.Localize("Overlay profiles"),Padding=new Thickness(12,10,12,10),Content=new ScrollViewer {VerticalScrollBarVisibility=ScrollBarVisibility.Auto,HorizontalScrollBarVisibility=ScrollBarVisibility.Auto,Padding=new Thickness(14,0,0,0),Content=new OverlayProfilesPanel()}});
         // Keep explanatory text wrapped, while allowing horizontal scrolling at larger UI scales.
         foreach (var tab in SettingsTabs.Items.OfType<TabItem>())
             if (tab.Content is ScrollViewer viewer && viewer.Content is FrameworkElement content)
@@ -167,6 +183,7 @@ public partial class SettingsWindow : Window
     }
 
     private static UiText T => UiText.Current;
+    internal void SelectEvents()=>SettingsTabs.SelectedItem=SettingsTabs.Items.OfType<TabItem>().First(t=>Equals(t.Tag,"events"));
 
     private void RecordHotkey(object sender, KeyEventArgs e)
     {

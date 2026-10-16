@@ -28,9 +28,9 @@ public partial class DeathRecapWindow : Window, IDisplayAppearance
             Left=point.X; Top=point.Y;
         };
     }
-    public DeathRecapWindow(DeathRecapSnapshot recap)
+    public DeathRecapWindow(DeathRecapSnapshot recap,AppSettings? settings=null)
     {
-        InitializeComponent(); AppIcon.Apply(this); Paw.Source = Icon;
+        InitializeComponent(); AppIcon.Apply(this); Paw.Source = Icon; PositionPin.Content=WindowPinning.CreateButton(this,settings??new AppSettings{Transient=true},"death-recap");
         Controls.DragAnywhere.Attach(this);
         Reload(recap);
     }
@@ -51,6 +51,6 @@ public partial class DeathRecapWindow : Window, IDisplayAppearance
     {
         // Keep text readable over the game even when the module passes mouse clicks through.
         Shell.Background = (Brush)new BrushConverter().ConvertFromString("#F0171E27")!;
-        Shell.BorderThickness = new(enabled ? 0 : 1);
+        Shell.BorderThickness = new(enabled ? 0 : 1); WindowPinning.SetDisplayOnly(this,enabled);
     }
 }

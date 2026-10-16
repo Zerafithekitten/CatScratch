@@ -51,7 +51,7 @@ public partial class BossTimersWindow : Window
     {
         _meter = meter;
         InitializeComponent();
-        AppIcon.Apply(this);
+        AppIcon.Apply(this); PositionPin.Content=WindowPinning.CreateButton(this,meter.Settings,"boss-timers");
         Controls.DragAnywhere.Attach(this);
         List.ItemsSource = _rows;
         UpdateAlertButton();

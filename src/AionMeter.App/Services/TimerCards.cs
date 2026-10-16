@@ -47,6 +47,7 @@ public sealed class TimerCards : IDisposable
     private readonly string _path = Path.Combine(AppSettings.AppDataDir, "timer-cards.json");
     private readonly Dictionary<string, TimerCardWindow> _windows = [];
     public State Saved { get; private set; } = new();
+    internal AppSettings Settings=>_meter.Settings;
     public bool TestMode => _meter.DemoRunning;
     private IReadOnlyList<EventStart> _nextEvents = [];
     private string? _scheduleKey;

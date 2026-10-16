@@ -61,12 +61,13 @@ internal static class WindowClickThrough
         DockPanel.SetDock(title, Dock.Top); root.Children.Add(title);
         void Button(string label, Action action)
         {
-            var button = new Button { Content = label, Width = 38, Height = 28, Margin = new Thickness(2, 3, 3, 3), Foreground = Brushes.White, Background = Brushes.Transparent, BorderThickness = new Thickness(0) };
+            var button = new Button { Content = label, Style=(Style)window.FindResource("IconButton"),Width=22,Height=22,FontSize=12,Margin=new Thickness(2,3,3,3) };
             DockPanel.SetDock(button, Dock.Right); button.Click += (_, _) => action(); title.Children.Add(button);
         }
-        Button("×", window.Close);
-        Button("□", () => window.WindowState = window.WindowState == WindowState.Maximized ? WindowState.Normal : WindowState.Maximized);
-        Button("—", () => window.WindowState = WindowState.Minimized);
+        Button("\uE711", window.Close);
+        Button("\uE922", () => window.WindowState = window.WindowState == WindowState.Maximized ? WindowState.Normal : WindowState.Maximized);
+        Button("\uE921", () => window.WindowState = WindowState.Minimized);
+        if(WindowPinning.ButtonFor(window) is { } pin && pin.Parent is Panel parent){parent.Children.Remove(pin);DockPanel.SetDock(pin,Dock.Right);title.Children.Add(pin);}
         var paw = new Image { Source = AppIcon.Image, Width = 16, Height = 16, Margin = new Thickness(10, 0, 0, 0), VerticalAlignment = VerticalAlignment.Center };
         DockPanel.SetDock(paw, Dock.Left); title.Children.Add(paw);
         var caption = new TextBlock { Margin = new Thickness(10, 0, 6, 0), VerticalAlignment = VerticalAlignment.Center, Foreground = Brushes.White, FontSize = 12, TextTrimming = TextTrimming.CharacterEllipsis };
@@ -118,6 +119,7 @@ internal static class WindowClickThrough
         var state = Windows[window];
         state.Appearance?.Invoke(enabled);
         if (window is IDisplayAppearance appearance) appearance.SetDisplayOnly(enabled);
+        WindowPinning.SetDisplayOnly(window,enabled);
         var handle = new WindowInteropHelper(window).Handle;
         if (handle == 0) return;
         if (state.Handle == 0)

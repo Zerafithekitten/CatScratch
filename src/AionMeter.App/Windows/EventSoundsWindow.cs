@@ -24,7 +24,16 @@ public sealed class EventSoundsWindow : Window
         var close=new Button { Content="\uE711",Style=(Style)FindResource("IconButton"),Width=22,Height=22 }; close.Click+=(_,_)=>Close(); DockPanel.SetDock(close,Dock.Right); header.Children.Add(close);
         var caption=new StackPanel { Orientation=Orientation.Horizontal }; caption.Children.Add(new Image { Source=Icon,Width=20,Height=20,Margin=new Thickness(0,0,7,0) });
         caption.Children.Add(new TextBlock { Text=UiText.Current.Localize("Event sounds"),Foreground=Brush("#79E3CF"),FontSize=17,FontWeight=FontWeights.SemiBold }); header.Children.Add(caption);
-        var body=new StackPanel(); root.Children.Add(new ScrollViewer { Content=body,VerticalScrollBarVisibility=ScrollBarVisibility.Auto,HorizontalScrollBarVisibility=ScrollBarVisibility.Auto });
+        var body=BuildBody(cards,preview,chooseFile,this); root.Children.Add(new ScrollViewer { Content=body,VerticalScrollBarVisibility=ScrollBarVisibility.Auto,HorizontalScrollBarVisibility=ScrollBarVisibility.Auto });
+        Content = new Border { Child=root,Background=Background,BorderBrush=Brush("#607B827F"),BorderThickness=new Thickness(1),CornerRadius=new CornerRadius(10) };
+        Controls.DragAnywhere.Attach(this);
+        Closed += (_, _) => cards.Save();
+    }
+    internal static StackPanel BuildBody(TimerCards cards, Action<EventSoundPreference,double> preview, Func<string?>? chooseFile, FrameworkElement scope)
+    {
+        var body=new StackPanel();
+        body.Resources[typeof(Button)]=(Style)scope.FindResource("GhostButton");
+        body.Resources[typeof(CheckBox)]=(Style)scope.FindResource("DarkCheck");
         StackPanel Card(StackPanel parent)
         {
             var content=new StackPanel(); parent.Children.Add(new Border { Child=content,Background=Brush("#171E27"),BorderBrush=Brush("#364957"),BorderThickness=new Thickness(1),CornerRadius=new CornerRadius(7),Padding=new Thickness(12),Margin=new Thickness(0,0,0,10) }); return content;
@@ -33,7 +42,7 @@ public sealed class EventSoundsWindow : Window
         panel.Children.Add(new TextBlock { Text=UiText.Current.Localize("SOUND PREFERENCES"),Foreground=Brush("#79E3CF"),FontWeight=FontWeights.SemiBold });
         panel.Children.Add(new TextBlock { Text = UiText.Current.Localize("Enable a sound for each event you want to hear. Automatic reminders follow your selected events.\nSimultaneous reminders play one after another."), TextWrapping = TextWrapping.Wrap, Margin = new Thickness(0,8,0,15) });
         panel.Children.Add(new TextBlock { Text = UiText.Current.Localize("Volume") });
-        var volume = new Slider { Style = (Style)FindResource("GoldSlider"), Minimum = 0, Maximum = 1, Value = Math.Clamp(cards.Saved.SoundVolume, 0, 1), Margin = new Thickness(0,6,0,14) };
+        var volume = new Slider { Style = (Style)scope.FindResource("GoldSlider"), Minimum = 0, Maximum = 1, Value = Math.Clamp(cards.Saved.SoundVolume, 0, 1), Margin = new Thickness(0,6,0,14) };
         volume.ValueChanged += (_, e) => { cards.Saved.SoundVolume = e.NewValue; cards.Save(); }; panel.Children.Add(volume);
         panel.Children.Add(new TextBlock { Text = UiText.Current.Localize("Automatic event reminder") });
         var lead = new ComboBox { ItemsSource = new[] { "At start", "1 minute before", "2 minutes before", "5 minutes before", "10 minutes before" }.Select(UiText.Current.Localize).ToArray(),
@@ -69,7 +78,7 @@ public sealed class EventSoundsWindow : Window
                 try
                 {
                     var picker = new Microsoft.Win32.OpenFileDialog { Filter = "Audio (*.wav;*.mp3)|*.wav;*.mp3|WAV (*.wav)|*.wav|MP3 (*.mp3)|*.mp3", CheckFileExists = true };
-                    var path = chooseFile is null ? (picker.ShowDialog(this) == true ? picker.FileName : null) : chooseFile();
+                    var path = chooseFile is null ? ((Window.GetWindow(body) is { } owner ? picker.ShowDialog(owner) : picker.ShowDialog()) == true ? picker.FileName : null) : chooseFile();
                     if (path is null) return false;
                     await CustomEventAudio.ValidateAsync(path);
                     preference.FilePath = path; preference.Sound = "Custom audio";
@@ -124,9 +133,7 @@ public sealed class EventSoundsWindow : Window
             box.Children.Add(feedback);
         }
         body.Children.Add(new TextBlock { Text = UiText.Current.Localize("Tracked world bosses use the watched-boss and ‘Notify before respawn’ settings in Boss timers. Custom audio files must stay at their selected location."), Foreground=Brush("#A9B8C7"),TextWrapping = TextWrapping.Wrap, Margin = new Thickness(0,2,0,0) });
-        Content = new Border { Child=root,Background=Background,BorderBrush=Brush("#607B827F"),BorderThickness=new Thickness(1),CornerRadius=new CornerRadius(10) };
-        Controls.DragAnywhere.Attach(this);
-        Closed += (_, _) => cards.Save();
+        return body;
     }
     internal static bool HasCustomFile(EventSoundPreference preference) => !string.IsNullOrWhiteSpace(preference.FilePath) && File.Exists(preference.FilePath);
     internal static string CustomSoundLabel(EventSoundPreference preference) => string.IsNullOrWhiteSpace(preference.FilePath)

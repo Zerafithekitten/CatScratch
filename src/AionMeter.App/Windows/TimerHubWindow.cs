@@ -14,7 +14,7 @@ public sealed class TimerHubWindow : Window, IDisplayAppearance
     private string Caption => _startedOnly ? "Started events" : "Upcoming events";
     private readonly WrapPanel _list = new();
     private readonly DispatcherTimer _clock = new() { Interval = TimeSpan.FromSeconds(1) };
-    private Window? _preferences;
+
     private DockPanel? _header;
     private bool _displayOnly;
     public void SetDisplayOnly(bool enabled)
@@ -40,7 +40,7 @@ public sealed class TimerHubWindow : Window, IDisplayAppearance
         var header=new DockPanel { Margin=new(0,0,0,7), Background=ColorBrush("#DF1B2027"), MinHeight=24 }; DockPanel.SetDock(header,Dock.Top); root.Children.Add(header);
         _header=header;
         void Button(string text, Action action) { var b=new Button { Content=text, Style=(Style)FindResource("IconButton"), Width=22, Height=22, FontSize=12 }; b.Click+=(_,_)=>action(); DockPanel.SetDock(b,Dock.Right); header.Children.Add(b); }
-        Button("\uE711",()=> { if(_startedOnly)cards.Saved.StartedEventWindowOpen=false; else cards.Saved.EventWindowOpen=false; Close(); }); Button("\uE713",Preferences);
+        Button("\uE711",()=> { if(_startedOnly)cards.Saved.StartedEventWindowOpen=false; else cards.Saved.EventWindowOpen=false; Close(); }); var pin=WindowPinning.CreateButton(this,cards.Settings,startedOnly?"started-events":"upcoming-events"); DockPanel.SetDock(pin,Dock.Right);header.Children.Add(pin);
         if(!_startedOnly)
         {
             var active = new Button { Content="\uE823", Style=(Style)FindResource("IconButton"), Width=22,Height=22,FontSize=12,
@@ -69,7 +69,7 @@ public sealed class TimerHubWindow : Window, IDisplayAppearance
             if(_startedOnly) cards.Saved.StartedEventWindowOpen=true; else cards.Saved.EventWindowOpen=true;
             cards.Save(); Reload();_clock.Start();
         };
-        Closed+=(_,_)=> { _clock.Stop(); foreach (var tile in _list.Children.OfType<Border>()) EventPulse.Apply(tile,EventPanelBrushes.Border,false); _preferences?.Close(); SavePlacement(); };
+        Closed+=(_,_)=> { _clock.Stop(); foreach (var tile in _list.Children.OfType<Border>()) EventPulse.Apply(tile,EventPanelBrushes.Border,false); SavePlacement(); };
         SizeChanged+=(_,_)=>Reload();
         Reload();
     }
@@ -122,11 +122,5 @@ public sealed class TimerHubWindow : Window, IDisplayAppearance
     {
         _cards.Saved.Positions[PlacementKey]=new(){Left=Left,Top=Top,Width=Width,Height=ActualHeight};
         _cards.Save();
-    }
-    private void Preferences()
-    {
-        if(_preferences is not null) { _preferences.Activate(); return; }
-        _preferences=new EventPreferencesWindow(_cards, () => Width, value => { Width=value; Reload(); SavePlacement(); }, value => Opacity=value, Reload) { Owner=this, WindowStartupLocation=WindowStartupLocation.CenterOwner };
-        _preferences.Closed+=(_,_)=>_preferences=null; _preferences.Show();
     }
 }
