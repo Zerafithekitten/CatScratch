@@ -1,4 +1,4 @@
-## CatScratch v3.0.1-beta.6
+## CatScratch v3.0.1-beta.7
 
 - Added a hidden Mario Party! gimmick: the ? next to Restore default colors enables smoothly blended rainbow backgrounds after Save, with a seamless 24-second loop.
 - The mode is saved across restarts. Restore default colors and Save stops it; Cancel discards a draft choice.

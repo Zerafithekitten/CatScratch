@@ -73,14 +73,16 @@ internal static class ThemeChecks
             check(((SolidColorBrush)((Border)overlay.FindName("OuterShell")).Background).Color==ThemeColors.Resolve("#DF20242A",new()),"Restoring default colors resets the meter header after repeated click-through toggles");
             ThemeColors.Apply(custom with{MarioParty=true});
             check(frame.HasAnimatedProperties&&((SolidColorBrush)settings.Background).HasAnimatedProperties&&((SolidColorBrush)EventPanelBrushes.Background).HasAnimatedProperties,"Mario Party animates meter, Settings and event backgrounds");
-            void AdvanceParty()
-            {
-                var tick=new System.Windows.Threading.DispatcherFrame();
-                var timer=new System.Windows.Threading.DispatcherTimer(System.Windows.Threading.DispatcherPriority.Background){Interval=TimeSpan.FromMilliseconds(150)};
-                timer.Tick+=(_,_)=>{timer.Stop();tick.Continue=false;};timer.Start();System.Windows.Threading.Dispatcher.PushFrame(tick);
-            }
-            AdvanceParty();var partyColor=frame.Color;AdvanceParty();
-            check(frame.Color!=partyColor,"Mario Party background colors advance continuously on the WPF animation clock");
+            // Seek the actual applied animation clock: headless CI does not tick a display compositor.
+            var clock=ThemeColors.AnimateParty(frame,"#191D23",true)!;
+            clock.Controller!.SeekAlignedToLastTick(TimeSpan.FromSeconds(1),System.Windows.Media.Animation.TimeSeekOrigin.BeginTime);
+            var partyColor=frame.Color;
+            clock.Controller.SeekAlignedToLastTick(TimeSpan.FromSeconds(2),System.Windows.Media.Animation.TimeSeekOrigin.BeginTime);
+            check(frame.Color!=partyColor,"Mario Party interpolates background colors between animation times");
+            clock.Controller.SeekAlignedToLastTick(TimeSpan.Zero,System.Windows.Media.Animation.TimeSeekOrigin.BeginTime);
+            var loopStart=frame.Color;
+            clock.Controller.SeekAlignedToLastTick(TimeSpan.FromSeconds(24),System.Windows.Media.Animation.TimeSeekOrigin.BeginTime);
+            check(frame.Color==loopStart,"Mario Party joins the 24-second loop seamlessly");
             check(!((SolidColorBrush)EventPanelBrushes.Pvp).HasAnimatedProperties&&frame.Color.A==255,"Mario Party preserves semantic event colors and brush transparency");
             ThemeColors.Apply(new());
             check(!frame.HasAnimatedProperties&&!((SolidColorBrush)EventPanelBrushes.Background).HasAnimatedProperties&&frame.Color==ThemeColors.Resolve("#191D23"),"Restoring defaults stops every tested background animation and restores the gray palette");

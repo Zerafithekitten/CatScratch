@@ -2,12 +2,12 @@
 
 A separate, always-on-top Windows DPS meter for **AION 2**, by Zerafithekitten. Track your own fights and confirmed party members in a compact dark gray interface with restrained purple accents and cat-paw branding.
 
-[Download Stable](https://github.com/Zerafithekitten/CatScratch/releases/latest) · [Download Beta](https://github.com/Zerafithekitten/CatScratch/releases/tag/v3.0.1-beta.6) · [Release history](https://github.com/Zerafithekitten/CatScratch/releases) · [Report a bug / request a feature](https://github.com/Zerafithekitten/CatScratch/issues/new/choose)
+[Download Stable](https://github.com/Zerafithekitten/CatScratch/releases/latest) · [Download Beta](https://github.com/Zerafithekitten/CatScratch/releases/tag/v3.0.1-beta.7) · [Release history](https://github.com/Zerafithekitten/CatScratch/releases) · [Report a bug / request a feature](https://github.com/Zerafithekitten/CatScratch/issues/new/choose)
 
 | Channel | Current version | What it includes |
 | --- | --- | --- |
 | **Stable** | **[v3.0.0](https://github.com/Zerafithekitten/CatScratch/releases/tag/v3.0.0)** | Complete tested Beta feature set: compact class-colored rows, central settings with separate Updates/Feedback tabs, position pins, overlay profiles, boss comparisons, compact recap, quiet game companion and safer preferences. |
-| **Beta** | [Last prerelease: v3.0.1-beta.6](https://github.com/Zerafithekitten/CatScratch/releases/tag/v3.0.1-beta.6) | Custom interface colors, plus the 24-hour event timeline and persistent favorites. |
+| **Beta** | [Last prerelease: v3.0.1-beta.7](https://github.com/Zerafithekitten/CatScratch/releases/tag/v3.0.1-beta.7) | Custom interface colors, plus the 24-hour event timeline and persistent favorites. |
 
 English is the default. German, Russian and French are also available. Screenshots use synthetic sample data; names and numbers are examples. Stable 3.0.0 includes the former Beta features.
 

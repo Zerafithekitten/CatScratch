@@ -109,9 +109,9 @@ internal static class ThemeColors
         if(Current.MarioParty)AnimateParty(brush,original,true);
     }
 
-    internal static void AnimateParty(SolidColorBrush brush,string original,bool enabled)
+    internal static AnimationClock? AnimateParty(SolidColorBrush brush,string original,bool enabled)
     {
-        if(!enabled){brush.BeginAnimation(SolidColorBrush.ColorProperty,null);return;}
+        if(!enabled){brush.BeginAnimation(SolidColorBrush.ColorProperty,null);return null;}
         var alpha=Parse(original).A;
         var animation=new ColorAnimationUsingKeyFrames{Duration=TimeSpan.FromSeconds(24),RepeatBehavior=RepeatBehavior.Forever,
             BeginTime=-TimeSpan.FromSeconds(PartyClock.Elapsed.TotalSeconds%24)};
@@ -121,7 +121,10 @@ internal static class ThemeColors
             color.A=alpha;
             animation.KeyFrames.Add(new LinearColorKeyFrame(color,KeyTime.FromTimeSpan(TimeSpan.FromSeconds(i*4))));
         }
-        animation.Freeze();brush.BeginAnimation(SolidColorBrush.ColorProperty,animation,HandoffBehavior.SnapshotAndReplace);
+        animation.Freeze();
+        var clock=(AnimationClock)animation.CreateClock(true);
+        brush.ApplyAnimationClock(SolidColorBrush.ColorProperty,clock,HandoffBehavior.SnapshotAndReplace);
+        return clock;
     }
 
     internal static double Contrast(Color a, Color b)
