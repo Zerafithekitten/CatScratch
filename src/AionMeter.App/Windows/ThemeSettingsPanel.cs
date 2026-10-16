@@ -16,12 +16,15 @@ internal sealed class ThemeSettingsPanel : StackPanel
     private readonly TextBlock _previewText = new(){Margin=new(0,5,0,0)};
     private readonly TextBlock _error = new(){TextWrapping=TextWrapping.Wrap,Foreground=new SolidColorBrush(Color.FromRgb(245,181,68)),Margin=new(0,4,0,4)};
     private readonly Button _reset;
+    private readonly Button _partyButton;
+    private bool _party;
     private Popup? _picker;
     private static string T(string text)=>UiText.Current.Localize(text);
     internal TextBox AccentField=>_fields[0];
     internal TextBox BackgroundField=>_fields[1];
     internal TextBox TextField=>_fields[2];
     internal Button ResetButton=>_reset;
+    internal Button PartyButton=>_partyButton;
 
     internal ThemeSettingsPanel(ThemePreferences? preferences)
     {
@@ -46,21 +49,25 @@ internal sealed class ThemeSettingsPanel : StackPanel
         var sample=new StackPanel();sample.Children.Add(_previewTitle);sample.Children.Add(_previewText);_preview.Child=sample;Children.Add(_preview);
         Children.Add(_error);
         _reset=new Button{Content=T("Restore default colors"),HorizontalAlignment=HorizontalAlignment.Left,Margin=new(0,4,0,0)};
-        _reset.Click+=(_,_)=>Set(new());Children.Add(_reset);
+        _reset.Click+=(_,_)=>Set(new());
+        var actions=new StackPanel{Orientation=Orientation.Horizontal};actions.Children.Add(_reset);
+        _partyButton=new Button{Content="?",ToolTip="Mario Party!",Width=30,Height=30,Margin=new(6,4,0,0),Padding=new(0),FontWeight=FontWeights.Bold};
+        System.Windows.Automation.AutomationProperties.SetName(_partyButton,"Mario Party!");
+        _partyButton.Click+=(_,_)=>{_party=true;RefreshPreview();};actions.Children.Add(_partyButton);Children.Add(actions);
         Set(preferences??new());
         Unloaded+=(_,_)=>{if(_picker is not null)_picker.IsOpen=false;};
     }
 
     private void Set(ThemePreferences theme)
-    { _fields[0].Text=theme.Accent;_fields[1].Text=theme.Background;_fields[2].Text=theme.Text;RefreshPreview(); }
+    { _party=theme.MarioParty;_fields[0].Text=theme.Accent;_fields[1].Text=theme.Background;_fields[2].Text=theme.Text;RefreshPreview(); }
 
     internal bool TryGet(out ThemePreferences theme)
     {
         theme=new();
         if(!ThemeColors.TryHex(_fields[0].Text,out var accent)||!ThemeColors.TryHex(_fields[1].Text,out var background)||!ThemeColors.TryHex(_fields[2].Text,out var text))
         { _error.Text=T("Enter a valid color in #RRGGBB format.");return false; }
-        theme=new(accent,background,text);
-        if(!ThemeColors.IsReadable(theme))
+        theme=new(accent,background,text,_party);
+        if(!_party&&!ThemeColors.IsReadable(theme))
         { _error.Text=T("Low contrast. You can still save these colors.");return true; }
         _error.Text="";return true;
     }
@@ -76,9 +83,11 @@ internal sealed class ThemeSettingsPanel : StackPanel
     {
         if(_fields.Any(f=>f is null))return;
         for(var i=0;i<3;i++)if(ThemeColors.TryHex(_fields[i].Text,out var hex))_swatches[i].Background=new SolidColorBrush((Color)ColorConverter.ConvertFromString(hex));
-        // Even a low-contrast draft is previewed so the user can see why it cannot be saved.
+        // Preview is local; even low-contrast drafts remain selectable.
         if(ThemeColors.TryHex(_fields[0].Text,out var a)&&ThemeColors.TryHex(_fields[1].Text,out var b)&&ThemeColors.TryHex(_fields[2].Text,out var t))
         { _preview.Background=new SolidColorBrush((Color)ColorConverter.ConvertFromString(b));_previewTitle.Foreground=new SolidColorBrush((Color)ColorConverter.ConvertFromString(a));_previewText.Foreground=new SolidColorBrush((Color)ColorConverter.ConvertFromString(t)); }
+        if(_preview.Background is SolidColorBrush previewBrush&&ThemeColors.TryHex(_fields[1].Text,out var original))ThemeColors.AnimateParty(previewBrush,original,_party);
+        if(_partyButton is not null)_partyButton.ToolTip=_party?"Mario Party! ★":"Mario Party!";
         TryGet(out _);
     }
 

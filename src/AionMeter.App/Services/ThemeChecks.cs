@@ -10,7 +10,7 @@ internal static class ThemeChecks
 {
     internal static void CheckRestart(string file,bool write)
     {
-        var chosen=new ThemePreferences("#20242A","#20242A","#20242A");
+        var chosen=new ThemePreferences("#20242A","#20242A","#20242A",MarioParty:true);
         if(write)new AppSettings{Theme=chosen}.SaveTo(file);
         else
         {
@@ -40,6 +40,10 @@ internal static class ThemeChecks
         panel.ResetButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
         check(panel.TryGet(out var defaults)&&defaults==new ThemePreferences(),"Restore default colors resets only the editable draft");
         check(JsonSerializer.Deserialize<AppSettings>(JsonSerializer.Serialize(new AppSettings{Theme=custom}))!.Theme==custom,"Custom interface colors survive settings serialization");
+        panel.PartyButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+        check(panel.TryGet(out var partyDraft)&&partyDraft.MarioParty&&ThemeColors.Current==previous,"Mario Party is an opt-in draft until Save");
+        panel.ResetButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+        check(panel.TryGet(out var resetDraft)&&!resetDraft.MarioParty,"Restore default colors disables the Mario Party draft");
         var overlay=new OverlayWindow(meter,exitOnClose:false){Left=-30000,Top=-30000,ShowActivated=false};
         var settings=new SettingsWindow(meter){Left=-30000,Top=-30000,ShowActivated=false};
         var peers=new LastPlayedWithWindow(meter,BossRecordChecks.SamplePlayers()){Left=-30000,Top=-30000,ShowActivated=false};
@@ -67,6 +71,19 @@ internal static class ThemeChecks
             check(((SolidColorBrush)((Border)overlay.FindName("OuterShell")).Background).Color==ThemeColors.Resolve("#DF20242A"),"Changing colors while click-through is active does not restore a stale cached header color");
             ThemeColors.Apply(new());overlay.SetDisplayOnly(true);overlay.SetDisplayOnly(false);
             check(((SolidColorBrush)((Border)overlay.FindName("OuterShell")).Background).Color==ThemeColors.Resolve("#DF20242A",new()),"Restoring default colors resets the meter header after repeated click-through toggles");
+            ThemeColors.Apply(custom with{MarioParty=true});
+            check(frame.HasAnimatedProperties&&((SolidColorBrush)settings.Background).HasAnimatedProperties&&((SolidColorBrush)EventPanelBrushes.Background).HasAnimatedProperties,"Mario Party animates meter, Settings and event backgrounds");
+            void AdvanceParty()
+            {
+                var tick=new System.Windows.Threading.DispatcherFrame();
+                var timer=new System.Windows.Threading.DispatcherTimer(System.Windows.Threading.DispatcherPriority.Background){Interval=TimeSpan.FromMilliseconds(150)};
+                timer.Tick+=(_,_)=>{timer.Stop();tick.Continue=false;};timer.Start();System.Windows.Threading.Dispatcher.PushFrame(tick);
+            }
+            AdvanceParty();var partyColor=frame.Color;AdvanceParty();
+            check(frame.Color!=partyColor,"Mario Party background colors advance continuously on the WPF animation clock");
+            check(!((SolidColorBrush)EventPanelBrushes.Pvp).HasAnimatedProperties&&frame.Color.A==255,"Mario Party preserves semantic event colors and brush transparency");
+            ThemeColors.Apply(new());
+            check(!frame.HasAnimatedProperties&&!((SolidColorBrush)EventPanelBrushes.Background).HasAnimatedProperties&&frame.Color==ThemeColors.Resolve("#191D23"),"Restoring defaults stops every tested background animation and restores the gray palette");
             var chosen=new ThemePreferences("#20242A","#20242A","#20242A");
             ThemeColors.Apply(chosen);
             check(ThemeColors.Current==chosen,"Valid low-contrast palettes are applied exactly instead of silently reset");
