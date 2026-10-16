@@ -4,6 +4,15 @@ public sealed partial class UiText
 {
     private static readonly Dictionary<string,(string De,string Ru,string Fr)> LayoutComparisonText=new()
     {
+        ["The clock opens the 24-hour timeline. Enable Started events above."]=("Die Uhr öffnet die 24-Stunden-Timeline. Gestartete Events lassen sich oben aktivieren.","Часы открывают шкалу на 24 часа. Начавшиеся события включаются выше.","L’horloge ouvre la chronologie sur 24 h. Activez les événements commencés ci-dessus."),
+        ["All selected events within the next hour. Started events: 3 minutes; Spacetime Rift: 10 minutes; bosses: 2 minutes."]=("Alle gewählten Events der nächsten Stunde. Gestartete Events: 3 Minuten; Raumzeit-Riss: 10 Minuten; Bosse: 2 Minuten.","Выбранные события на ближайший час. Начавшиеся события: 3 минуты; разлом: 10 минут; боссы: 2 минуты.","Événements choisis dans l’heure. Événements ouverts : 3 min ; faille : 10 min ; boss : 2 min."),
+        ["24-hour event schedule"]=("24-Stunden-Eventplan","Расписание на 24 часа","Programme des événements sur 24 h"),
+        ["Add favorite"]=("Favorisieren","В избранное","Ajouter aux favoris"),
+        ["Remove favorite"]=("Favorit entfernen","Убрать из избранного","Retirer des favoris"),
+        ["Today"]=("Heute","Сегодня","Aujourd’hui"),
+        ["Tomorrow"]=("Morgen","Завтра","Demain"),
+        ["All scheduled events. Favorites highlight every occurrence; overlay selection and sounds stay unchanged."]=("Alle geplanten Events. Favoriten markieren jede Wiederholung; Overlay-Auswahl und Sounds bleiben unverändert.","Все запланированные события. Избранное выделяет каждое повторение; выбор оверлеев и звуки не меняются.","Tous les événements prévus. Les favoris marquent chaque occurrence sans modifier les overlays ni les sons."),
+        ["Community schedule · Shugo.GG · not officially confirmed"]=("Community-Zeitplan · Shugo.GG · nicht offiziell bestätigt","Расписание сообщества · Shugo.GG · официально не подтверждено","Calendrier communautaire · Shugo.GG · non confirmé officiellement"),
         ["Updates"]=("Updates","Обновления","Mises à jour"),
         ["Feedback"]=("Feedback","Обратная связь","Avis"),
         ["Changes take effect after saving."]=("Änderungen werden erst mit Speichern übernommen.","Изменения применяются после сохранения.","Les modifications prennent effet après enregistrement."),

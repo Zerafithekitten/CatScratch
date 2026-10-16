@@ -31,6 +31,7 @@ public sealed class TimerCards : IDisposable
     {
         public string EventRegion { get; set; } = "Europe";
         public List<string> SelectedEvents { get; set; } = ["shugo", "rift", "invasion"];
+        public HashSet<string> FavoriteEvents { get; set; } = [];
         public double EventOpacity { get; set; } = 0.85;
         public bool ShowAllWorldBosses { get; set; }
         public int EventTileVersion { get; set; }
@@ -79,6 +80,23 @@ public sealed class TimerCards : IDisposable
         Save();
     }
     public bool TestMode => _meter.DemoRunning;
+    public event Action? FavoritesChanged;
+    public bool IsFavorite(string id)=>Saved.FavoriteEvents.Contains(id.StartsWith("auto:")?id[5..]:id);
+    public void SetFavorite(string id,bool favorite)
+    {
+        if(id.StartsWith("auto:"))id=id[5..];
+        if(favorite?!Saved.FavoriteEvents.Add(id):!Saved.FavoriteEvents.Remove(id))return;
+        Save();FavoritesChanged?.Invoke();
+    }
+    public IReadOnlyList<EventStart> Schedule24Hours(DateTimeOffset now)
+    {
+        var until=now.AddHours(24);
+        var scheduled=AutomaticEventSchedule.Next(now,Saved.EventRegion,AutomaticEventSchedule.Catalog.Select(e=>e.Id),horizon:TimeSpan.FromHours(24));
+        var bosses=_meter.Timers.ForServer(_meter.Timers.CurrentServer)
+            .Where(b=>b.NpcCode>0 && b.NextSpawn is { } at && at>=now && at<until)
+            .Select(b=>new EventStart($"boss:{b.ServerId}:{b.NpcCode}",_meter.Data.NpcName(b.NpcCode),b.NextSpawn!.Value));
+        return scheduled.Concat(bosses).Where(e=>e.StartsAt>=now && e.StartsAt<until).OrderBy(e=>e.StartsAt).ThenBy(e=>e.Id).DistinctBy(e=>(e.Id,e.StartsAt)).ToArray();
+    }
     private IReadOnlyList<EventStart> _nextEvents = [];
     private string? _scheduleKey;
     private DateTimeOffset _scheduleAt, _scheduleUntil;
@@ -131,7 +149,7 @@ public sealed class TimerCards : IDisposable
         _meter = meter;
         _persistent = persistent && !meter.Settings.Transient;
         if (_persistent) Saved = JsonSettingsFile.Read<State>(_path) ?? new();
-        Saved.SelectedEvents ??= []; Saved.Positions ??= []; Saved.Sounds ??= []; Saved.Events ??= [];
+        Saved.SelectedEvents ??= []; Saved.FavoriteEvents ??= []; Saved.Positions ??= []; Saved.Sounds ??= []; Saved.Events ??= [];
         if (Saved.EventRegion == "Europa") Saved.EventRegion = "Europe";
         if (Saved.EventTileVersion < 1)
         {

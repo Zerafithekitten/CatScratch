@@ -18,14 +18,18 @@ public static class AutomaticEventSchedule
     ];
     public static TimeZoneInfo Zone(string region) => TimeZoneInfo.FindSystemTimeZoneById(region switch
     { "NA East" => "Eastern Standard Time", "NA West" => "Pacific Standard Time", _ => "W. Europe Standard Time" });
-    public static IReadOnlyList<EventStart> Next(DateTimeOffset now, string region, IEnumerable<string> enabled, TimeSpan? recentlyStarted = null)
+    public static IReadOnlyList<EventStart> Next(DateTimeOffset now, string region, IEnumerable<string> enabled, TimeSpan? recentlyStarted = null, TimeSpan? horizon = null)
     {
+        var duration=horizon??TimeSpan.FromHours(1);
+        if(duration<=TimeSpan.Zero || duration>TimeSpan.FromHours(24))throw new ArgumentOutOfRangeException(nameof(horizon));
+        var until=now.Add(duration);
         var selected = enabled.ToHashSet();
         var zone = Zone(region);
         var day = TimeZoneInfo.ConvertTime(now,zone).Date;
+        var lastDay=TimeZoneInfo.ConvertTime(until,zone).Date;
         var candidates = new List<EventStart>();
         foreach(var e in Catalog.Where(e=>selected.Contains(e.Id)))
-        foreach(var date in new[]{day.AddDays(-1),day,day.AddDays(1)})
+        for(var date=day.AddDays(-1);date<=lastDay;date=date.AddDays(1))
         {
             if(e.Days is not null && !e.Days.Contains(date.DayOfWeek)) continue;
             foreach(var minute in e.Minutes)
@@ -36,7 +40,7 @@ public static class AutomaticEventSchedule
                 foreach(var offset in offsets)
                 {
                     var at = new DateTimeOffset(local,offset);
-                    if((at >= now || recentlyStarted is { } grace && at > now - grace) && at <= now.AddHours(1)) candidates.Add(new(e.Id,e.Name,at));
+                    if((at >= now || recentlyStarted is { } grace && at > now - grace) && at <= until) candidates.Add(new(e.Id,e.Name,at));
                 }
             }
         }

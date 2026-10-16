@@ -53,6 +53,7 @@ public partial class App : Application
     private SettingsWindow? _settingsWindow;
     private BossTimersWindow? _timersWindow;
     private TimerHubWindow? _timerHub;
+    private EventScheduleWindow? _eventSchedule;
     private TimerHubWindow? _startedEvents;
     private PetTrackerWindow? _petWindow;
     private DeathRecapWindow? _deathRecapWindow;
@@ -658,6 +659,9 @@ public partial class App : Application
         _timersWindow?.Close();
         _updateWindow?.Close();
         _soundWindow?.Close();
+        var reopenSchedule=_eventSchedule?.IsVisible==true;
+        _eventSchedule?.Close();
+        if(reopenSchedule)ShowEventSchedule();
         var reopenEvents = _timerHub?.IsVisible == true;
         _timerHub?.Close();
         if (reopenEvents) ShowTimerHub();
@@ -758,6 +762,13 @@ public partial class App : Application
     }
     public void ShowTimerHub()=>OpenTimerHub(true);
     public void ShowStartedEvents()=>OpenStartedEvents(true);
+    public void ShowEventSchedule()
+    {
+        if(_eventSchedule is {IsLoaded:true}){_eventSchedule.Reload();Activate(_eventSchedule);return;}
+        _eventSchedule=new EventScheduleWindow(_timerCards!);
+        _eventSchedule.Closed+=(_,_)=>_eventSchedule=null;
+        _eventSchedule.Show();_windowVisibility.Track(_eventSchedule);
+    }
     private void OpenStartedEvents(bool interactive)
     {
         if (interactive && _meter.Settings.ClickThrough) ToggleClickThrough();
@@ -816,6 +827,7 @@ public partial class App : Application
     internal void RefreshPetSettings(){if(_petWindow is { } window){window.Width=Math.Clamp(_meter.Settings.PetModuleWidth,240,360);window.Refresh();}}
     internal void RefreshEventSettings()
     {
+        _eventSchedule?.Reload();
         if(_timerCards is not { } cards)return;
         if(cards.Saved.EventWindowOpen){if(_timerHub is null)OpenTimerHub(false);}else _timerHub?.Close();
         if(cards.Saved.StartedEventWindowOpen){if(_startedEvents is null)OpenStartedEvents(false);}else _startedEvents?.Close();

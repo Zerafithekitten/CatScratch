@@ -21,7 +21,7 @@ public partial class LastPlayedWithWindow : Window
     public LastPlayedWithWindow(MeterService meter, LastPlayedWithStore? store = null, Action<string>? copy = null)
     {
         _meter = meter; _store = store ?? meter.LastPlayedWith; _copy = copy ?? Clipboard.SetText;
-        InitializeComponent(); AppIcon.Apply(this); PawIcon.Source = Icon;
+        InitializeComponent(); AppIcon.Apply(this); PawIcon.Source = AppIcon.Image;
         Title = "CatScratch · " + L("Last played with"); Heading.Text = L("Last played with");
         Explanation.Text = L("Your recent group members, newest first. Names and classes stay on this PC. Use Copy name for an individual player.");
         SearchLabel.Text = L("Search players");

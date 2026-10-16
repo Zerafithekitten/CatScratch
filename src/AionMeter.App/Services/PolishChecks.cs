@@ -76,6 +76,26 @@ internal static class PolishChecks
             }
         }
         finally{overlay.Close();}
+        var scheduleNow=DateTimeOffset.Parse("2026-10-16T13:10:00+02:00");
+        var day=cards.Schedule24Hours(scheduleNow);
+        check(day.Count>24 && day.All(e=>e.StartsAt>=scheduleNow && e.StartsAt<scheduleNow.AddHours(24)),"Planner covers all event types inside the next 24 hours, independently of overlay selection");
+        cards.SetFavorite("auto:shugo",true);
+        var persisted=System.Text.Json.JsonSerializer.Deserialize<TimerCards.State>(System.Text.Json.JsonSerializer.Serialize(cards.Saved))!;
+        check(persisted.FavoriteEvents.Contains("shugo"),"Event favorites survive serialization using stable event IDs");
+        using(var draft=cards.CreatePreferencesDraft())
+        {cards.SetFavorite("rift",true);cards.ApplyPreferences(draft);check(cards.IsFavorite("rift"),"Saving older Settings drafts preserves newly chosen planner favorites");}
+        var planner=new EventScheduleWindow(cards){ClockOverride=()=>scheduleNow,Left=-30000,Top=-30000,ShowActivated=false};
+        try
+        {
+            planner.Show();planner.Reload();planner.UpdateLayout();
+            var star=Visuals(planner).OfType<Button>().First(b=>Equals(b.ToolTip,UiText.Current.Localize("Add favorite")));
+            var before=cards.Saved.FavoriteEvents.Count;
+            star.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            check(cards.Saved.FavoriteEvents.Count==before+1 && Visuals(planner).OfType<Border>().Any(b=>b.BorderBrush==EventFavoriteAppearance.Gold && b.Effect is System.Windows.Media.Effects.DropShadowEffect),"Planner star buttons persist favorites and apply a subtle glowing gold frame");
+            star.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            check(cards.Saved.FavoriteEvents.Count==before,"Planner favorites can be removed again without changing event selection");
+        }
+        finally{planner.Close();}
     }
 
     private static IEnumerable<DependencyObject> Visuals(DependencyObject root)

@@ -70,7 +70,7 @@ public sealed class TimerCardWindow : Window, IDisplayAppearance
             var now = DateTimeOffset.UtcNow;
             var occurrence = compact && card.Next is { } at ? new AionMeter.Core.Events.EventStart(id[5..],card.Name,at) : null;
             var started = occurrence is not null && AionMeter.Core.Events.EventActivity.IsActive(occurrence,now);
-            if (_card is not null) EventPulse.Apply(_card,EventPanelBrushes.ForKind(card.Kind),started);
+            if (_card is not null) EventFavoriteAppearance.Apply(_card,EventPanelBrushes.ForKind(card.Kind),cards.IsFavorite(id),started);
             _time.Text = (card.Next is { } next && !card.Alive ? (compact ? TimerCards.StartLabel(next, now) : TimerCards.Berlin(next).ToString("dd.MM. HH:mm")) + " · " : "") + TimerCards.Countdown(card, now);
             if (started) _time.Text = UiText.Current.Localize("Started · ") + TimerCards.StartLabel(card.Next!.Value,now);
             if(compact)

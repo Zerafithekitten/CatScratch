@@ -2,12 +2,12 @@
 
 A separate, always-on-top Windows DPS meter for **AION 2**, by Zerafithekitten. Track your own fights and confirmed party members in a compact dark gray interface with restrained purple accents and cat-paw branding.
 
-[Download Stable](https://github.com/Zerafithekitten/CatScratch/releases/latest) · [Download Beta](https://github.com/Zerafithekitten/CatScratch/releases/tag/v2.6.0-beta.2) · [Release history](https://github.com/Zerafithekitten/CatScratch/releases) · [Report a bug / request a feature](https://github.com/Zerafithekitten/CatScratch/issues/new/choose)
+[Download Stable](https://github.com/Zerafithekitten/CatScratch/releases/latest) · [Download Beta](https://github.com/Zerafithekitten/CatScratch/releases/tag/v3.0.1-beta.1) · [Release history](https://github.com/Zerafithekitten/CatScratch/releases) · [Report a bug / request a feature](https://github.com/Zerafithekitten/CatScratch/issues/new/choose)
 
 | Channel | Current version | What it includes |
 | --- | --- | --- |
 | **Stable** | **[v3.0.0](https://github.com/Zerafithekitten/CatScratch/releases/tag/v3.0.0)** | Complete tested Beta feature set: compact class-colored rows, central settings with separate Updates/Feedback tabs, position pins, overlay profiles, boss comparisons, compact recap, quiet game companion and safer preferences. |
-| **Beta** | [Last prerelease: v2.6.0-beta.2](https://github.com/Zerafithekitten/CatScratch/releases/tag/v2.6.0-beta.2) | Its features are included in Stable 3.0.0. Select Beta only if you want future prereleases. |
+| **Beta** | [Last prerelease: v3.0.1-beta.1](https://github.com/Zerafithekitten/CatScratch/releases/tag/v3.0.1-beta.1) | 24-hour event timeline, persistent favorites and clearer event-type colors. |
 
 English is the default. German, Russian and French are also available. Screenshots use synthetic sample data; names and numbers are examples. Stable 3.0.0 includes the former Beta features.
 
@@ -170,13 +170,15 @@ Selected events and enabled world-boss timers within the next hour appear as com
 
 The DPS meter is the single taskbar entry; display modules do not add separate taskbar/Alt-Tab entries or native Windows Snap frame styles. Each display module has a matching position pin at the upper right. Pinning prevents dragging without changing button interaction or click-through. Pin states survive restarting and are stored with optional overlay profiles; unpin to move a module again.
 
-**Upcoming and Started are separate.** At the start, an entry leaves Upcoming and moves into the movable **Started events** module. Open that module with the small clock button in the Upcoming header; drag its header or cards to place it, and use its X to close it. Click-through and show/hide all windows work for both modules.
+**Upcoming and Started are separate.** At the start, an entry leaves Upcoming and moves into the movable **Started events** module. Enable that module in Settings > Events; drag its header or cards to place it, and use its X to close it. Click-through and show/hide all windows work for both modules.
 
 | Started entry | Text | Visibility |
 | --- | --- | --- |
 | Event | **Open!** + remaining countdown | 3 minutes |
 | Spacetime Rift | **Open!** + remaining countdown | 10 minutes |
 | Boss | **Spawned**, no countdown | 2 minutes |
+
+**24-hour timeline:** The clock in Upcoming opens a horizontal planner with a separate track for each event. It shows all scheduled event types in the selected region and known next world-boss spawns. Star an event to persist it as a favorite: its timeline markers and matching overlay cards receive a thin, softly glowing gold frame. Favorites do not change overlay selection or reminder sounds. Events are turquoise, PvP lavender and bosses orange. Times use the selected region, including daylight-saving changes. The bundled community schedule is not officially confirmed.
 
 Expired entries disappear automatically. While an event is active, a later recurrence with the same name is held out of Upcoming; its next start returns after the active entry expires.
 

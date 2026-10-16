@@ -2,6 +2,35 @@ using AionMeter.Core.Events;
 namespace AionMeter.Tests;
 public class AutomaticEventTests
 {
+    [Theory]
+    [InlineData("Europe")]
+    [InlineData("NA East")]
+    [InlineData("NA West")]
+    public void FullDayContainsEveryHourlyOccurrenceInChronologicalOrder(string region)
+    {
+        var now=DateTimeOffset.Parse("2026-10-16T13:10:00+02:00");
+        var events=AutomaticEventSchedule.Next(now,region,["shugo"],horizon:TimeSpan.FromHours(24));
+        Assert.Equal(24,events.Count);
+        Assert.All(events,e=>Assert.InRange(e.StartsAt,now,now.AddHours(24)));
+        Assert.Equal(events.OrderBy(e=>e.StartsAt),events);
+        Assert.Equal(24,events.Select(e=>e.StartsAt).Distinct().Count());
+    }
+    [Fact] public void SpringForwardFullDayIncludesEventsOnSecondFollowingLocalDate()
+    {
+        var now=DateTimeOffset.Parse("2026-03-28T23:30:00+01:00");
+        var events=AutomaticEventSchedule.Next(now,"Europe",["shugo"],horizon:TimeSpan.FromHours(24));
+        Assert.Equal(24,events.Count);
+        Assert.Contains(events,e=>e.StartsAt==DateTimeOffset.Parse("2026-03-30T00:00:00+02:00"));
+        Assert.DoesNotContain(events,e=>e.StartsAt.Date==new DateTime(2026,3,29) && e.StartsAt.Hour==2);
+    }
+    [Fact] public void AutumnFullDayPreservesBothRepeatedHoursWithoutDuplicateInstants()
+    {
+        var now=DateTimeOffset.Parse("2026-10-24T23:30:00+02:00");
+        var events=AutomaticEventSchedule.Next(now,"Europe",["shugo"],horizon:TimeSpan.FromHours(24));
+        Assert.Equal(24,events.Count);
+        Assert.Equal(2,events.Count(e=>e.StartsAt.Hour==2));
+        Assert.Equal(events.Count,events.Select(e=>e.StartsAt).Distinct().Count());
+    }
     [Fact] public void StartedEventsRemainTogetherUntilTwoMinuteBoundary()
     {
         var start = DateTimeOffset.Parse("2026-10-13T14:00:00+02:00");

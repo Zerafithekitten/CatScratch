@@ -83,6 +83,11 @@ public static class SampleRenderer
         Action refresh;
         switch (o.Window)
         {
+            case "event-schedule":
+                var plannerCards=new TimerCards(meter,persistent:false);
+                plannerCards.SetFavorite("shugo",true);
+                var planner=new EventScheduleWindow(plannerCards){ClockOverride=()=>new DateTimeOffset(2026,10,16,20,15,0,TimeSpan.FromHours(2)),Width=o.Width??1100,Height=o.Height??780};
+                host=planner;refresh=planner.Reload;break;
             case "profiles":
                 host=new Window {Width=740,Height=460,Background=new SolidColorBrush(Color.FromRgb(32,36,42)),Foreground=Brushes.WhiteSmoke,Content=new Border {Padding=new(18),Child=new Windows.OverlayProfilesPanel()}};
                 host.Resources.MergedDictionaries.Add(new ResourceDictionary {Source=new Uri("/CatScratch;component/Theme/MeterTools.xaml",UriKind.Relative)});

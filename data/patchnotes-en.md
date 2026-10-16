@@ -1,3 +1,11 @@
+## CatScratch v3.0.1-beta.1
+
+- The Upcoming events clock opens a horizontal 24-hour timeline with a separate track per event and regional start times.
+- Favorite event types with the star. Favorites are saved and receive a subtle glowing gold frame in the timeline and event overlays.
+- Event, PvP and boss types now have distinct turquoise, lavender and orange accents.
+- Last played with uses the shared crisp vector cat paw.
+- Started events remains a separate module, available through Settings > Events.
+
 ## CatScratch v3.0.0
 
 ### Complete Beta feature set promoted to Stable

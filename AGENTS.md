@@ -32,4 +32,6 @@ Follow RELEASE-POLICY.md. Beta branch uploads and prereleases are authorized wit
 
 Started events belong exclusively to the separate movable Started events module. Normal events show Open! and a remaining 3-minute countdown; Spacetime Rift uses 10 minutes; bosses show Spawned for 2 minutes without a countdown. Persist the module placement/open state independently from Upcoming events.
 
+The Upcoming events clock opens a chronological 24-hour planner. Favorite event types persist independently of overlay selection and sounds; mark their occurrences and matching overlay cards with a thin, subtly glowing gold frame. Keep general surfaces gray and branding lavender.
+
 Boss fight comparison automatically uses the last earlier matching recorded run. Show the boss name prominently on both run cards with date and duration underneath; do not expose record identifiers or a manual fight selector.

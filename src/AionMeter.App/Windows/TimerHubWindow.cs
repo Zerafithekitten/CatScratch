@@ -23,7 +23,7 @@ public sealed class TimerHubWindow : Window, IDisplayAppearance
         if (_header is not null) _header.Visibility=enabled ? Visibility.Collapsed : Visibility.Visible;
         foreach(var tile in _list.Children.OfType<Border>()) {
             tile.Background=EventPanelBrushes.Background;
-            if (tile.Child is Grid { Tag: EventStart item }) EventPulse.Apply(tile,EventPanelBrushes.ForKind(EventKinds.For(item.Id)),item.StartsAt <= (ClockOverride?.Invoke() ?? DateTimeOffset.UtcNow));
+            if (tile.Child is Grid { Tag: EventStart item }) EventFavoriteAppearance.Apply(tile,EventPanelBrushes.ForKind(EventKinds.For(item.Id)),_cards.IsFavorite(item.Id),item.StartsAt <= (ClockOverride?.Invoke() ?? DateTimeOffset.UtcNow));
         }
         foreach (var placeholder in _list.Children.OfType<TextBlock>())
             placeholder.Visibility = enabled ? Visibility.Collapsed : Visibility.Visible;
@@ -44,8 +44,8 @@ public sealed class TimerHubWindow : Window, IDisplayAppearance
         if(!_startedOnly)
         {
             var active = new Button { Content="\uE823", Style=(Style)FindResource("IconButton"), Width=22,Height=22,FontSize=12,
-                ToolTip=UiText.Current.Localize("Show started events") };
-            active.Click+=(_,_)=>AppHost.Current.ShowStartedEvents(); DockPanel.SetDock(active,Dock.Right); header.Children.Add(active);
+                ToolTip=UiText.Current.Localize("24-hour event schedule") };
+            active.Click+=(_,_)=>AppHost.Current.ShowEventSchedule(); DockPanel.SetDock(active,Dock.Right); header.Children.Add(active);
         }
         header.Children.Add(new TextBlock { Text=UiText.Current.Localize(Caption), FontSize=10, FontWeight=FontWeights.SemiBold, Foreground=ColorBrush("#C49AF5"), VerticalAlignment=VerticalAlignment.Center,
             ToolTip=UiText.Current.Localize("Community schedule · Shugo.GG · checked Oct 12, 2026 · not officially confirmed") });
