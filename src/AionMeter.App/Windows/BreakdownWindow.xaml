@@ -175,6 +175,7 @@
                             <TextBlock x:Name="PlayerMeta" FontSize="11" Foreground="{StaticResource TextDim}" TextTrimming="CharacterEllipsis" ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}"/>
                         </StackPanel>
                         <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Top" Margin="4,2,0,0" WindowChrome.IsHitTestVisibleInChrome="True">
+                            <Button x:Name="CompareBoss" Style="{StaticResource IconButton}" Content="&#xE8AB;" Click="CompareBoss_Click"/>
                             <Button Style="{StaticResource IconButton}" Content="&#xE8BD;" Click="CopyChat_Click" ToolTip="{Binding TipChat, Source={x:Static s:UiText.Current}}"/>
                             <Button Style="{StaticResource IconButton}" Content="&#xE8C8;" Click="CopyImage_Click" ToolTip="{Binding TipCopyImage, Source={x:Static s:UiText.Current}}"/>
                             <Button Style="{StaticResource IconButton}" Content="&#xE921;" Click="Minimize_Click" ToolTip="{Binding TipMinimize, Source={x:Static s:UiText.Current}}"/>

@@ -44,6 +44,17 @@ internal static class Beta4Checks
     {
         var checks = new List<string>();
         void Check(bool ok, string text) { if (!ok) throw new InvalidOperationException(text); checks.Add(text); }
+        var layoutSettings=new AppSettings {Transient=true,OverlayLeft=-1200,OverlayWidth=500,ShowPetTrackerModule=true,UpdateChannel="Beta",FollowGame=true};
+        var layoutTimers=new TimerCards.State {EventWindowOpen=false,Positions=new(){{"auto-events",new(){Left=300,Top=100,Width=280,Open=true}}}};
+        var profile=JsonSerializer.Deserialize<OverlayProfile>(JsonSerializer.Serialize(OverlayProfiles.Capture("Dungeon",layoutSettings,layoutTimers)))!;
+        layoutSettings.OverlayLeft=100;layoutSettings.OverlayWidth=300;layoutSettings.ShowPetTrackerModule=false;layoutSettings.UpdateChannel="Stable";layoutSettings.FollowGame=false;
+        layoutTimers.Positions["auto-events"].Left=999;
+        OverlayProfiles.Apply(profile,layoutSettings,layoutTimers);
+        Check(layoutSettings.OverlayLeft==-1200 && layoutSettings.OverlayWidth==500 && layoutSettings.ShowPetTrackerModule && !layoutTimers.EventWindowOpen && layoutTimers.Positions["auto-events"].Left==300,"Overlay profiles round-trip geometry, module visibility and event layout without sharing mutable placements");
+        Check(layoutSettings.UpdateChannel=="Stable" && !layoutSettings.FollowGame,"Applying overlay profiles preserves update and game-start preferences");
+        var badLayout=new Dictionary<string,JsonElement>(profile.Layout) {["OverlayLeft"]=JsonSerializer.SerializeToElement(900),["OverlayWidth"]=JsonSerializer.SerializeToElement("invalid")};
+        var rejected=false;try {OverlayProfiles.Apply(profile with {Layout=badLayout},layoutSettings,layoutTimers);}catch(JsonException){rejected=true;}
+        Check(rejected && layoutSettings.OverlayLeft==-1200,"Invalid profile values are rejected before changing the current layout");
         var final = ReleaseVersion.Parse("2.5.1")!;
         var promoted = new AppSettings { Transient = true, UpdateChannel = "Beta", LastStartedRelease = "2.5.1-beta.5", SkippedUpdate = "v2.5.1-beta.4" };
         Check(promoted.ApplyReleaseTransition(final) && promoted.UpdateChannel == "Stable" && promoted.SkippedUpdate is null, "Promoting Beta to Stable automatically moves the saved update channel to Stable");

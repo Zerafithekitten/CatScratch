@@ -83,6 +83,15 @@ public static class SampleRenderer
         Action refresh;
         switch (o.Window)
         {
+            case "profiles":
+                host=new Window {Width=740,Height=460,Background=new SolidColorBrush(Color.FromRgb(27,32,39)),Foreground=Brushes.WhiteSmoke,Content=new Border {Padding=new(18),Child=new Windows.OverlayProfilesPanel()}};
+                host.Resources.MergedDictionaries.Add(new ResourceDictionary {Source=new Uri("/CatScratch;component/Theme/MeterTools.xaml",UriKind.Relative)});
+                refresh=()=>{};break;
+            case "boss-comparison":
+                var comparison=meter.Tracker.Snapshot(null,start+20000)!;
+                comparison=comparison with {IsActive=false,Reason=Core.Combat.EncounterEndReason.Kill,MapId=600001,BossStartObserved=true,Combatants=comparison.Combatants.Select(c=>c with {ServerId=2305}).ToArray()};
+                var earlier=comparison with {Id=Guid.NewGuid(),StartedAt=comparison.StartedAt.AddDays(-1),CombatMs=comparison.CombatMs+5000,Combatants=comparison.Combatants.Select(c=>c with {Damage=(long)(c.Damage*.9),Dps=c.Dps*.8,Healing=25000,DamageTaken=45000,Deaths=1}).ToArray()};
+                host=new BossComparisonWindow(comparison,[earlier]);refresh=()=>{};break;
             case "pets":
             case "pets-locked":
             case "pets-three":

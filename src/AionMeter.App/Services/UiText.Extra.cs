@@ -22,6 +22,7 @@ public sealed partial class UiText
     }
     public string Localize(string english)
     {
+        if(LayoutComparisonText.TryGetValue(english,out var feature))return Code switch {"de"=>feature.De,"ru"=>feature.Ru,"fr"=>feature.Fr,_=>english};
         var literals = Code switch { "de" => GermanLiterals.Value, "ru" => RussianLiterals.Value, "fr" => FrenchLiterals.Value, _ => null };
         return literals is not null && literals.TryGetValue(english, out var value) ? value : english;
     }

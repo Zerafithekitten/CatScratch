@@ -51,6 +51,7 @@ public partial class SettingsWindow : Window
     {
         _meter = meter;
         InitializeComponent();
+        SettingsTabs.Items.Add(new TabItem {Header=T.Localize("Overlay profiles"),Padding=new Thickness(12,10,12,10),Content=new ScrollViewer {VerticalScrollBarVisibility=ScrollBarVisibility.Auto,Padding=new Thickness(14,0,0,0),Content=new OverlayProfilesPanel()}});
         // Keep explanatory text wrapped, while allowing horizontal scrolling at larger UI scales.
         foreach (var tab in SettingsTabs.Items.OfType<TabItem>())
             if (tab.Content is ScrollViewer viewer && viewer.Content is FrameworkElement content)

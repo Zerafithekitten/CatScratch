@@ -2,12 +2,12 @@
 
 A separate, always-on-top Windows DPS meter for **AION 2**, by Zerafithekitten. Track your own fights and confirmed party members in a compact dark interface with turquoise accents and purple paw branding.
 
-[Download Stable](https://github.com/Zerafithekitten/CatScratch/releases/latest) · [Download Beta](https://github.com/Zerafithekitten/CatScratch/releases/tag/v2.5.6-beta.7) · [Release history](https://github.com/Zerafithekitten/CatScratch/releases) · [Report a bug / request a feature](https://github.com/Zerafithekitten/CatScratch/issues/new/choose)
+[Download Stable](https://github.com/Zerafithekitten/CatScratch/releases/latest) · [Download Beta](https://github.com/Zerafithekitten/CatScratch/releases/tag/v2.5.6-beta.8) · [Release history](https://github.com/Zerafithekitten/CatScratch/releases) · [Report a bug / request a feature](https://github.com/Zerafithekitten/CatScratch/issues/new/choose)
 
 | Channel | Current version | What it includes |
 | --- | --- | --- |
 | **Stable** | **[v2.5.5](https://github.com/Zerafithekitten/CatScratch/releases/tag/v2.5.5)** | Boss personal bests, recent teammates, death recap, background updates, separate Started events, improved group-search handling and ten patchnotes tabs on the left. |
-| **Beta** | **[v2.5.6-beta.7](https://github.com/Zerafithekitten/CatScratch/releases/tag/v2.5.6-beta.7)** | Everything in Stable, plus optional quiet automatic start/close with AION 2, a five-member roster repair, a capture-folder shortcut and a compact five-hit death recap. |
+| **Beta** | **[v2.5.6-beta.8](https://github.com/Zerafithekitten/CatScratch/releases/tag/v2.5.6-beta.8)** | Everything in Stable, plus optional quiet automatic start/close with AION 2, a five-member roster repair, a capture-folder shortcut and a compact five-hit death recap, optional overlay profiles and boss comparisons. |
 
 English is the default. German, Russian and French are also available. Screenshots use synthetic sample data; names and numbers are examples. Event-module previews show **v2.5.4-beta.4**.
 
@@ -19,6 +19,8 @@ English is the default. German, Russian and French are also available. Screensho
 - [Permanent boss personal bests](#permanent-boss-personal-bests)
 - [Last played with](#last-played-with)
 - [Death recap](#death-recap)
+- [Overlay profiles](#overlay-profiles)
+- [Boss fight comparison](#boss-fight-comparison)
 - [Fight selection and saved fights](#fight-selection-and-saved-fights)
 - [Pet tracker](#pet-tracker)
 - [Events, boss timers and sounds](#events-boss-timers-and-sounds)
@@ -113,6 +115,24 @@ The **tombstone icon** enables or disables the module. When your character dies,
 <img src="docs/screenshots/death-recap.png" alt="Death recap listing recent attackers, skills and incoming damage" width="400" />
 
 It closes when fresh positive own HP or a map reload confirms the character is alive. Same-map resurrection and batched HP updates are supported. The default toggle is **Shift+F4**, configurable in Settings > Hotkeys. The recap is temporary and is not retained after restarting CatScratch.
+
+## Overlay profiles
+
+<img src="docs/screenshots/overlay-profiles.png" alt="Optional dark overlay profile settings" width="640" />
+
+The current Beta adds **Settings > Overlay profiles**. Arrange the modules first, enter a name and choose **Save new profile**. Use **Apply profile**, **Update selected** or **Delete selected** to manage layouts. Applying acts immediately and closes Settings, discarding any unsaved edits in other tabs.
+
+Profiles retain meter and module placement, open states, UI scale, opacity, row size and display choices. Capture, update channel, hotkeys, autostart, event schedules and sounds stay unchanged. Profiles are optional and switch only when you apply one. Death recap keeps its automatic upper-center default.
+
+## Boss fight comparison
+
+<img src="docs/screenshots/boss-comparison.png" alt="Personal boss fight statistics side by side" width="580" />
+
+In the current Beta, open a finished boss fight from Statistics or saved history and use **Boss fight comparison** in its statistics header. The newest earlier matching fight is selected automatically; choose another available attempt from the list. The DPS meter remains Live.
+
+The table compares your duration, DPS, damage, healing, damage taken and deaths with signed differences (current minus previous). Matches require the same boss, map ID, character/server/class, outcome and damage mode. Possibly partial recordings are flagged and unknown deaths remain unknown. Difficulty variants without different map IDs cannot be distinguished.
+
+Comparisons use existing session fights and the ten saved fights. Save boss fights to retain them after restarting; this feature does not turn on automatic saving or change permanent boss bests.
 
 ## Fight selection and saved fights
 
@@ -244,7 +264,7 @@ This keeps the watcher separate from the program files that an update replaces, 
 - The watcher does not capture game traffic, download updates, upload files, read chat or ask for account credentials. Network capture and normal update checks belong to the meter after it starts.
 - The task runs for the signed-in user with the highest available privileges, matching CatScratch's existing administrator requirement. It does not create a SYSTEM service or store your Windows password.
 - The shipped local script uses `-ExecutionPolicy Bypass` for its own PowerShell process. CatScratch does not change the machine-wide PowerShell execution policy. Managed Windows restrictions may still prevent it from running; failed setup is reported rather than silently enabling the option.
-- Scripts and configuration are kept locally in `userdata/game-start`. You can inspect the [watcher source](https://github.com/Zerafithekitten/CatScratch/blob/v2.5.6-beta.7/src/AionMeter.App/Services/GameLifetime.cs) and [windowless launcher source](https://github.com/Zerafithekitten/CatScratch/blob/v2.5.6-beta.7/src/AionMeter.App/Launcher/GameWatcherLauncher.cs).
+- Scripts and configuration are kept locally in `userdata/game-start`. You can inspect the [watcher source](https://github.com/Zerafithekitten/CatScratch/blob/v2.5.6-beta.8/src/AionMeter.App/Services/GameLifetime.cs) and [windowless launcher source](https://github.com/Zerafithekitten/CatScratch/blob/v2.5.6-beta.8/src/AionMeter.App/Launcher/GameWatcherLauncher.cs).
 
 ### Why no PowerShell window should appear
 

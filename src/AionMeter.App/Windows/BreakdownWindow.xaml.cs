@@ -61,13 +61,15 @@ public partial class BreakdownWindow : Window
         _portraits = portraits;
         InitializeComponent();
         AppIcon.Apply(this);
+        CompareBoss.ToolTip=T.Localize("Boss fight comparison");
+        CompareBoss.Visibility=_view.Summary() is {Boss:not null,IsActive:false}?Visibility.Visible:Visibility.Collapsed;
         ShowSortHeads();
         DragAnywhere.Attach(this);
         _timer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
         _timer.Tick += (_, _) =>
         {
             if (_view.IsLive) Reload();
-            else _timer.Stop();
+            else { Reload(); _timer.Stop(); }
         };
         Loaded += (_, _) =>
         {
@@ -86,6 +88,11 @@ public partial class BreakdownWindow : Window
     }
 
     /// <summary>Icons arrive one by one from the CDN: coalesce them into one redraw.</summary>
+    private void CompareBoss_Click(object sender,RoutedEventArgs e)
+    {
+        if(_view.Summary() is {Boss:not null,IsActive:false} fight)AppHost.Current.ShowBossComparison(fight);
+    }
+
     private void OnIconReady()
     {
         if (Interlocked.Exchange(ref _iconRefreshQueued,1)!=0) return;
@@ -125,6 +132,7 @@ public partial class BreakdownWindow : Window
     {
         var summary = _view.Summary();
         if (summary is null) return;
+        CompareBoss.Visibility=summary is {Boss:not null,IsActive:false}?Visibility.Visible:Visibility.Collapsed;
 
         FightTitle.Text = summary.Title;
         FightPortrait.Source = _portraits?.Of(summary);

@@ -18,6 +18,8 @@ Display modules must not create separate taskbar previews or Alt-Tab entries. Ke
 
 ## Releases
 
+Overlay profiles are optional named layouts managed in their own Settings tab. Keep capture, update channel, hotkeys and game-start preferences outside profiles. Boss comparisons use existing session/saved fights, match boss/map/character/outcome/damage mode, preserve unknown values and flag partial recordings. Do not enable automatic fight saving implicitly.
+
 Death recap shows only the five latest received hits, newest first, with red damage values. Keep its compact dark CatScratch panel centered in the upper half of the meter screen by default, above standard resurrection controls. Preserve dragging and automatic hiding after confirmed revival.
 
 Follow RELEASE-POLICY.md. Beta branch uploads and prereleases are authorized without further confirmation. Stable publication requires explicit owner approval. Beta release notes are brief; Stable notes are detailed. Add release notes for a publication, not for every intermediate change.

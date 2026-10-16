@@ -841,6 +841,38 @@ public partial class App : Application
         _settingsWindow.Show();
     }
 
+    internal OverlayProfile CaptureOverlayProfile(string name) => OverlayProfiles.Capture(name,_meter.Settings,_timerCards!.Saved) with
+    {BossTimers=_timersWindow is {IsLoaded:true} w?new CardPlacement {Left=w.Left,Top=w.Top,Width=w.Width,Height=w.Height,Open=w.IsVisible}:null};
+    internal void ApplyOverlayProfile(OverlayProfile profile)
+    {
+        // Validate first, then close displays before restoring saved placement (close handlers write positions).
+        OverlayProfiles.Apply(profile,new AppSettings(),new TimerCards.State());
+        _timerHub?.Close();_startedEvents?.Close();_petWindow?.Close();_timersWindow?.Close();_timerCards!.Dispose();
+        OverlayProfiles.Apply(profile,_meter.Settings,_timerCards.Saved);
+        var placement=new Rect(_meter.Settings.OverlayLeft,_meter.Settings.OverlayTop,_meter.Settings.OverlayWidth,_meter.Settings.OverlayHeight);
+        _meter.ApplySettings();
+        // Scale/size events persist the old window geometry while applying appearance.
+        _meter.Settings.OverlayWidth=placement.Width;_meter.Settings.OverlayHeight=placement.Height;
+        _overlay.ApplyAppearance();_overlay.Left=placement.Left;_overlay.Top=placement.Top;
+        WindowPresentation.Constrain(_overlay);
+        _timerCards.Save();_timerCards.Restore();
+        if(profile.Upcoming)OpenTimerHub(false);
+        if(profile.Started)OpenStartedEvents(false);
+        if(_meter.Settings.ShowPetTrackerModule)TogglePetModule();
+        if(profile.BossTimers is {Open:true} boss){ShowBossTimers();_timersWindow!.Left=boss.Left;_timersWindow.Top=boss.Top;_timersWindow.Width=Math.Max(_timersWindow.MinWidth,boss.Width);_timersWindow.Height=Math.Max(_timersWindow.MinHeight,boss.Height);WindowPresentation.Constrain(_timersWindow);}
+        SetOverlayVisible(_meter.Settings.OverlayVisible);
+        WindowClickThrough.ApplyAll(_meter.Settings.ClickThrough);
+        _overlay.Refresh();_settingsWindow?.Close();
+    }
+
+    internal void ShowBossComparison(Core.Combat.EncounterSnapshot current)
+    {
+        var now=DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+        var session=_meter.Tracker.Segments().Select(s=>_meter.Tracker.Snapshot(s.Id,now)).OfType<Core.Combat.EncounterSnapshot>();
+        var saved=_meter.History.List().Where(e=>e.BossCode==current.Boss?.NpcCode).Select(e=>_meter.History.Load(e.Path)?.Summary).OfType<Core.Combat.EncounterSnapshot>();
+        new BossComparisonWindow(current,session.Concat(saved)).Show();
+    }
+
     // ------------------------------------------------------------ updates
 
     private UpdateWindow? _updateWindow;
