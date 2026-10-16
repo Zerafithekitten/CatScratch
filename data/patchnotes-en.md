@@ -1,4 +1,4 @@
-## CatScratch v2.5.6-beta.10
+## CatScratch v2.5.6-beta.11
 
 ### Optional layouts and boss fight comparison
 - Added **Overlay profiles** as a separate Settings tab: save, apply, update and delete named layouts. Profiles restore module placement, visibility, scale and appearance without changing capture, updates, hotkeys or autostart preferences.

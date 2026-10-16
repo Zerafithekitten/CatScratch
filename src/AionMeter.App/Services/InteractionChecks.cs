@@ -348,8 +348,8 @@ internal static class InteractionChecks
                 var box=(System.Windows.Controls.TextBox)settings.FindName(field);
                 Check(box.IsReadOnly && box.Text==gesture && HotkeyManager.TryParse(gesture,out _,out _),"Module shortcut can be recorded by pressing keys: "+field);
             }
-            Check(((System.Windows.Controls.TabControl)settings.FindName("SettingsTabs")).Items.Count==6 && ((System.Windows.Controls.TextBox)settings.FindName("HkClick")).IsReadOnly,
-                "Settings are organized into six categories while retaining recorded hotkeys");
+            Check(((System.Windows.Controls.TabControl)settings.FindName("SettingsTabs")).Items.Count==7 && ((System.Windows.Controls.TextBox)settings.FindName("HkClick")).IsReadOnly,
+                "Settings include a separate overlay profiles category while retaining recorded hotkeys");
             Check(activeOverlay.FindName("ViewMenuButton") is null,"Unused View button is removed from the DPS footer");
             var detached = new AionMeter.App.Windows.TimerCardWindow(cards, "auto:shugo", new CardPlacement());
             windows.Add(detached);
