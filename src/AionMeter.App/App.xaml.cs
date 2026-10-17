@@ -450,6 +450,7 @@ public partial class App : Application
     {
         _meter.Tick();
         UpdateAutoVisibility();
+        SyncMeterControls();
         SyncDeathRecap();
         if (_overlay.IsVisible) _overlay.Refresh();
         if (++_ticks % 5 == 0)
@@ -464,6 +465,21 @@ public partial class App : Application
     }
 
     // ------------------------------------------------------------ automatic show / hide
+
+    private MeterControlsWindow? _meterControls;
+    private void SyncMeterControls()
+    {
+        if(_shutdownStarted)return;
+        if(_meter.Settings.ShowDpsMeterModule){_meterControls?.Hide();return;}
+        if(_windowVisibility.Hidden)return;
+        if(_meterControls is null)
+        {
+            _meterControls=new MeterControlsWindow(_meter.Settings,ShowSettings,()=>SetOverlayVisible(true),
+                (left,top)=>{_overlay.Left=left;_overlay.Top=top;});
+            _meterControls.Closed+=(_,_)=>_meterControls=null;
+        }
+        if(!_meterControls.IsVisible)_meterControls.Show();
+    }
 
     private void SyncDeathRecap()
     {
@@ -624,6 +640,7 @@ public partial class App : Application
         }
         _meter.Settings.OverlayVisible = visible;
         _meter.Settings.Save();
+        SyncMeterControls();
     }
 
     public void ToggleClickThrough()
@@ -681,6 +698,7 @@ public partial class App : Application
         _startedEvents?.Close();
         if (reopenStarted) OpenStartedEvents(false);
         _tray?.ApplyTexts();
+        _meterControls?.RefreshText();
         _overlay.OnLanguageChanged();
         if(reopenPets)TogglePetModule();
     }
@@ -898,6 +916,7 @@ public partial class App : Application
         if(_meter.Settings.ShowPetTrackerModule)TogglePetModule();
         if(profile.BossTimers is {Open:true} boss){ShowBossTimers();_timersWindow!.Left=boss.Left;_timersWindow.Top=boss.Top;_timersWindow.Width=Math.Max(_timersWindow.MinWidth,boss.Width);_timersWindow.Height=Math.Max(_timersWindow.MinHeight,boss.Height);WindowPresentation.Constrain(_timersWindow);}
         SetOverlayVisible(_meter.Settings.OverlayVisible,updateModule:false);
+        _meterControls?.RestorePosition();
         WindowClickThrough.ApplyAll(_meter.Settings.ClickThrough);
         WindowPinning.RefreshAll();
         _overlay.Refresh();_settingsWindow?.Close();
@@ -985,6 +1004,7 @@ public partial class App : Application
 
     public void OnSettingsChanged(bool dpsVisibilityChanged=false)
     {
+        _meterControls?.RefreshText();
         if(dpsVisibilityChanged)SetOverlayVisible(_meter.Settings.ShowDpsMeterModule);
         RegisterHotkeys();
         _overlay.ApplyAppearance();

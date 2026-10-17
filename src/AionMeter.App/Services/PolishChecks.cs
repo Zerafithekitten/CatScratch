@@ -35,6 +35,23 @@ internal static class PolishChecks
             if(Directory.Exists(folder))Directory.Delete(folder);
         }
         using var cards=new TimerCards(meter,persistent:false);
+        var controlsSettings=new AppSettings {Transient=true,ShowDpsMeterModule=false,ClickThrough=true,OverlayHeight=540};
+        var openedSettings=0;var restoredMeter=0;
+        var controls=new MeterControlsWindow(controlsSettings,()=>openedSettings++,()=>restoredMeter++) {Left=-30000,Top=-30000};
+        try
+        {
+            controls.Show();controls.UpdateLayout();
+            controls.SettingsButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            controls.RestoreButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            check(openedSettings==1 && restoredMeter==1,"Hidden-meter control bar directly opens Settings and provides a restore button");
+            WindowClickThrough.ApplyAll(true);
+            var style=(long)NativeMethods.GetWindowLongPtr(new System.Windows.Interop.WindowInteropHelper(controls).Handle,NativeMethods.GWL_EXSTYLE);
+            check((style&NativeMethods.WS_EX_TRANSPARENT)==0 && controls.SettingsButton.IsVisible && controls.SettingsButton.IsEnabled,"Hidden-meter settings bar remains clickable during global click-through");
+            check(!controls.ShowInTaskbar && controls.Height<60 && controlsSettings.OverlayHeight==540,"Compact settings bar adds no taskbar entry and preserves the full meter size");
+            var group=new WindowVisibilityGroup();group.Toggle([controls],controls,false);group.Restore();
+            check(controls.IsVisible && !controlsSettings.ShowDpsMeterModule,"Show/hide all restores the control bar without re-enabling DPS statistics");
+        }
+        finally{WindowClickThrough.ApplyAll(false);controls.Close();}
         cards.Saved.SelectedEvents=["shugo"];
         cards.Saved.Positions["auto-events"]=new(){Left=100,Width=400};
         using(var draft=cards.CreatePreferencesDraft())

@@ -114,7 +114,7 @@ public partial class SettingsWindow : Window
         ModulesTitle.Text=T.Localize("Modules");
         ShowDpsMeterCheck.Content=T.Localize("Show DPS meter");
         ShowDpsMeterCheck.IsChecked=s.ShowDpsMeterModule;
-        ShowDpsMeterHint.Text=T.Localize("Only hides the DPS meter. Recording and other modules keep running. Restore it from the tray icon or the DPS meter hotkey.");
+        ShowDpsMeterHint.Text=T.Localize("Hides combat statistics but keeps a small CatScratch bar with Settings available. Capture and other modules keep running.");
         GameStartTitle.Text=T.Localize("AION 2 companion");
         FollowGameCheck.Content=T.Localize("Start and close CatScratch with AION 2");
         FollowGameCheck.IsChecked=s.FollowGame;

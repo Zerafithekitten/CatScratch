@@ -83,6 +83,8 @@ public static class SampleRenderer
         Action refresh;
         switch (o.Window)
         {
+            case "meter-controls":
+                host=new MeterControlsWindow(meter.Settings,()=>{},()=>{});refresh=()=>{};break;
             case "color-picker":
                 host=new Window{Width=304,Height=198,Background=ThemeColors.Brush("#20242A"),Content=new Border{Padding=new(12),Child=new Controls.HsvColorPicker(Colors.Red)}};
                 refresh=()=>{};break;

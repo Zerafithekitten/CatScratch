@@ -1,3 +1,9 @@
+## CatScratch v3.0.1-beta.11
+
+- Hiding the DPS meter now leaves a small CatScratch control bar with direct Settings access and a button to restore the meter.
+- The movable, pinnable bar stays clickable even with global click-through enabled and adds no extra taskbar entry.
+- Capture, other modules, saved meter dimensions and Show/hide all continue working independently.
+
 ## CatScratch v3.0.1-beta.10
 
 - Added Settings > Appearance > Modules > Show DPS meter. Disable the display while capture and other modules keep running.
