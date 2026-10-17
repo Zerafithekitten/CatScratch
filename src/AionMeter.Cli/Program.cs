@@ -15,6 +15,7 @@ var data = GameData.Load(dataDir, langAt >= 0 && langAt + 1 < args.Length ? args
 return args.FirstOrDefault() switch
 {
     "petpositions" when args.Length>1=>PetPositions(args[1]),
+    "petclientpositions" when args.Length>1=>PetClientPositions(args[1]),
     "petscan" when args.Length > 1 => PetScan(args[1]),
     "petverify" when args.Length > 2 => PetVerify(args[1],args[2]),
     "devices" => Devices(),
@@ -36,12 +37,77 @@ return args.FirstOrDefault() switch
     _ => Usage(),
 };
 
+int PetClientPositions(string path)
+{
+    var anchors=new List<float[]>();
+    using(var replay=new PcapReplaySource(data,path,false))
+    {
+        replay.Pipeline.Parser.Tap=(_,op,body)=>
+        {
+            if(op==Opcodes.Teleport && body.Length==24)
+                anchors.Add([System.Buffers.Binary.BinaryPrimitives.ReadSingleLittleEndian(body[6..]),System.Buffers.Binary.BinaryPrimitives.ReadSingleLittleEndian(body[10..]),System.Buffers.Binary.BinaryPrimitives.ReadSingleLittleEndian(body[14..])]);
+        };
+        replay.RunToEnd();
+    }
+    anchors=anchors.Where(p=>p.All(float.IsFinite)).ToList();
+    var matches=new List<float[]>();var candidateCount=0;long byteCount=0;var segmentCount=0;
+    var lengths=new Dictionary<int,int>();var prefixes=new List<string>();
+    var streams=new Dictionary<FlowKey,TcpReassembler>();
+    using var reader=new SharpPcap.LibPcap.CaptureFileReaderDevice(path);reader.Open(new SharpPcap.DeviceConfiguration());
+    while(reader.GetNextPacket(out var packet)==SharpPcap.GetPacketStatus.PacketRead)
+    {
+        if(!SegmentReader.TryRead(packet.GetPacket(),out var segment)||segment.Key.DstPort!=PacketPipeline.GamePort||segment.Payload.Length==0)continue;
+        segmentCount++;
+        lengths[segment.Payload.Length]=lengths.GetValueOrDefault(segment.Payload.Length)+1;
+        if(prefixes.Count<8)prefixes.Add(Wire.Hex(segment.Payload,32));
+        if(!streams.TryGetValue(segment.Key,out var stream))
+        {
+            byte[] tail=[];
+            stream=new TcpReassembler(memory=>
+            {
+                byteCount+=memory.Length;
+                var bytes=new byte[tail.Length+memory.Length];tail.CopyTo(bytes,0);memory.Span.CopyTo(bytes.AsSpan(tail.Length));
+                for(var at=0;at+12<=bytes.Length;at++)
+                {
+                    var x=System.Buffers.Binary.BinaryPrimitives.ReadSingleLittleEndian(bytes.AsSpan(at));
+                    var y=System.Buffers.Binary.BinaryPrimitives.ReadSingleLittleEndian(bytes.AsSpan(at+4));
+                    var z=System.Buffers.Binary.BinaryPrimitives.ReadSingleLittleEndian(bytes.AsSpan(at+8));
+                    if(anchors.Any(p=>Math.Abs(x-p[0])<25000 && Math.Abs(y-p[1])<25000 && Math.Abs(z-p[2])<10000))
+                    {candidateCount++;if(matches.Count<10)matches.Add([x,y,z]);}
+                }
+                tail=bytes[^Math.Min(11,bytes.Length)..];
+            },()=>tail=[]);
+            streams[segment.Key]=stream;
+        }
+        stream.Push(segment.Seq,segment.Payload,segment.TimeMs);
+    }
+    Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(new{anchorCount=anchors.Count,segmentCount,byteCount,candidateCount,samples=matches,
+        lengths=lengths.OrderByDescending(p=>p.Value).Take(10),prefixes}));
+    return 0;
+}
+
 int PetPositions(string path)
 {
     using var replay=new PcapReplaySource(data,path,false);
     replay.Pipeline.Parser.DecodePetPositions=true;
     var identity=new LiveIdentity();
     var own=new HashSet<uint>();var maps=new HashSet<int>();
+    var ownPackets=new Dictionary<ushort,(int Count,string Sample)>();var teleports=new List<float[]>();
+    var ownPositionCandidates=new List<object>();
+    replay.Pipeline.Parser.Tap=(time,op,body)=>
+    {
+        var at=0;
+        if(Wire.TryVarint(body,ref at,out var actor)&&own.Contains(actor))
+        {
+            var previous=ownPackets.GetValueOrDefault(op);
+            ownPackets[op]=(previous.Count+1,op is >=0x1a37 and <=0x3037?Wire.Hex(body,64):"");
+            if(op==0x2a38 && body.Length>=12)
+                ownPositionCandidates.Add(new{timeMs=time,opcode="2a38",length=body.Length,
+                    xyz=new[]{System.Buffers.Binary.BinaryPrimitives.ReadSingleLittleEndian(body[^12..]),System.Buffers.Binary.BinaryPrimitives.ReadSingleLittleEndian(body[^8..]),System.Buffers.Binary.BinaryPrimitives.ReadSingleLittleEndian(body[^4..])}});
+        }
+        if(op==Opcodes.Teleport && body.Length==24)
+            teleports.Add([System.Buffers.Binary.BinaryPrimitives.ReadSingleLittleEndian(body[6..]),System.Buffers.Binary.BinaryPrimitives.ReadSingleLittleEndian(body[10..]),System.Buffers.Binary.BinaryPrimitives.ReadSingleLittleEndian(body[14..])]);
+    };
     var positions=new Dictionary<uint,List<float[]>>();var npcs=new Dictionary<uint,NpcSeenEvent>();
     replay.EventDecoded+=e=>
     {
@@ -56,7 +122,8 @@ int PetPositions(string path)
         }
     };
     var count=replay.RunToEnd();
-    Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(new {packets=count,maps=maps.ToArray(),ownActors=own.ToArray(),
+    Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(new {packets=count,maps=maps.ToArray(),ownActors=own.ToArray(),teleports,ownPositionCandidates,
+        ownPackets=ownPackets.Select(p=>new{opcode=p.Key.ToString("x4"),count=p.Value.Count,sample=p.Value.Sample}),
         movers=positions.Select(p=>new {actor=p.Key,own=own.Contains(p.Key),npc=npcs.GetValueOrDefault(p.Key)?.NpcCode??0,
             count=p.Value.Count,first=p.Value.First(),last=p.Value.Last(),min=new[]{p.Value.Min(x=>x[0]),p.Value.Min(x=>x[1]),p.Value.Min(x=>x[2])},max=new[]{p.Value.Max(x=>x[0]),p.Value.Max(x=>x[1]),p.Value.Max(x=>x[2])}}).OrderByDescending(p=>p.count).Take(30),
         spawns=npcs.Values.Where(n=>n.X!=0||n.Y!=0||n.Z!=0).Select(n=>new{npc=n.NpcCode,n.X,n.Y,n.Z}).Take(30)},new System.Text.Json.JsonSerializerOptions{WriteIndented=true}));

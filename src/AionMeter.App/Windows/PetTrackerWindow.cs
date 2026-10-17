@@ -101,11 +101,12 @@ public sealed class PetTrackerWindow:Window,IDisplayAppearance
         var now=DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
         var seenCodes=_meter.Pets.Nearby().Npcs.Where(n=>n.TimeMs<=now && now-n.TimeMs<=30000).Select(n=>n.NpcCode).ToHashSet();
         var nearbyPets=_catalog.Where(p=>p.Sources.Any(s=>seenCodes.Contains(s.NpcCode))||_meter.Pets.Farms(p.Id).Any(f=>seenCodes.Contains(f.NpcCode))).Select(p=>p.Id).ToHashSet();
-        var suggestions=PetRecommendations.Select(_locations,_meter.Pets.MapId,states,confirmed,nearbyPets,256);
+        var suggestions=PetRecommendations.Select(_locations,_meter.Pets.MapId,states,confirmed,nearbyPets);
         var region=_locations.FirstOrDefault(l=>l.MapId==_meter.Pets.MapId)?.Region;
         var byId=_catalog.ToDictionary(p=>p.Id);
         var pets=suggestions.Count>0?suggestions.Where(s=>byId.ContainsKey(s.PetId)).Select(s=>byId[s.PetId]).ToArray():
-            region is not null?[]:codes.SelectMany(npc=>_catalog.Where(p=>p.Sources.Any(s=>s.NpcCode==npc)||_meter.Pets.Farms(p.Id).Any(f=>f.NpcCode==npc))).DistinctBy(p=>p.Id).Take(3).ToArray();
+            region is not null?[]:codes.SelectMany(npc=>_catalog.Where(p=>p.Sources.Any(s=>s.NpcCode==npc)||_meter.Pets.Farms(p.Id).Any(f=>f.NpcCode==npc)))
+                .DistinctBy(p=>p.Id).Where(p=>!confirmed || states.GetValueOrDefault(p.Id,new(p.Id,0,0)).Level<3).Take(3).ToArray();
         _status.Text=!confirmed?T.Localize("Pet progress data not received yet."):
             suggestions.Count>0?T.Localize(nearbyPets.Overlaps(suggestions.Select(s=>s.PetId))?"Nearby first":"Pets in this region")+(region is null?"":" · "+region):
             region is not null?T.Localize("No incomplete pets with known locations in this region."):

@@ -616,8 +616,8 @@ internal static class InteractionChecks
             {meter.Pets.Observe(new Core.Events.NpcSeenEvent(5,actor,code));meter.Pets.Observe(new Core.Events.DamageEvent(6,1,actor,17010000,100,Core.Events.HitFlags.None));}
             petWindow.Refresh();
             var latestPets=petList.Items.OfType<Windows.PetTrackerWindow.Row>().ToArray();
-            Check(latestPets.Length==3 && latestPets.Select(p=>p.Definition.Id).SequenceEqual(new[]{1040,1047,1176}),"Pet panel keeps only the three most recently attacked pets in order");
-            Check(latestPets.Single(p=>p.Definition.Id==1176).Progress=="MAX" && latestPets.Single(p=>p.Definition.Id==1176).Fill==1,"Maxed pets show MAX with a full progress bar");
+            Check(latestPets.Length==3 && latestPets.Select(p=>p.Definition.Id).SequenceEqual(new[]{1040,1047,1193}),"Pet panel keeps the three most recent incomplete attacked pets in order");
+            Check(latestPets.All(p=>p.Definition.Id!=1176 && p.Progress!="MAX"),"Completed pets are hidden even in the attacked-target fallback");
             petWindow.SetDisplayOnly(true);
             Check(petWindow.MinHeight==26,"Locked attacked-pet display can shrink to a single compact row");
             Check(((System.Windows.Controls.Border)petWindow.Content).Background==System.Windows.Media.Brushes.Transparent,"Locked Pet tracker hides its window background");
@@ -632,11 +632,14 @@ internal static class InteractionChecks
             Check(petList.Items.OfType<Windows.PetTrackerWindow.Row>().Single().Progress=="~11/25","Restored counters are visibly marked last-known until fresh login data arrives");
             meter.Pets.Observe(new Core.Game.PetCollectionEvent(24,new Dictionary<int,Core.Game.PetState>{{1193,new(1193,1,12)}}));petWindow.Refresh();
             Check(petList.Items.OfType<Windows.PetTrackerWindow.Row>().Single().Progress=="12/25","Fresh login counters replace restored values and remove the cache marker");
+            meter.Pets.Observe(new Core.Game.PetSoulEvent(25,new Dictionary<int,int>{{1193,88}}));petWindow.Refresh();
+            Check(petList.Items.Count==0,"A pet reaching level three disappears immediately after its final soul loot");
+            meter.Pets.Observe(new Core.Game.PetCollectionEvent(26,new Dictionary<int,Core.Game.PetState>{{1193,new(1193,1,12)}}));
             var petLocations=PetCatalog.Locations(MeterService.DataDirectory);
             Check(petLocations.Select(l=>l.PetId).Distinct().Count()==156 && petLocations.All(l=>petCatalog.Any(p=>p.Id==l.PetId) && l.MapId is 1010 or 1110 or 20
                 && l.Points.All(p=>double.IsFinite(p.X)&&double.IsFinite(p.Y))),"Offline pet locations contain only matched known pets and valid source-map coordinates");
             meter.Pets.Observe(new Core.Events.ZoneChangedEvent(25,1110,"Altgard",false));petWindow.Refresh();
-            Check(petList.Items.Count>0 && meter.Pets.AttackedTargetId==0
+            Check(petList.Items.Count is >0 and <=5 && meter.Pets.AttackedTargetId==0
                 && petList.Items.OfType<Windows.PetTrackerWindow.Row>().All(p=>p.Progress!="MAX"),"The Pet tracker recommends incomplete current-region pets without any attack");
             meter.Pets.Observe(new Core.Events.NpcSeenEvent(DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),77,2400455));petWindow.Refresh();
             Check(petList.Items.OfType<Windows.PetTrackerWindow.Row>().First().Definition.Id==1193,"Freshly seen pet monsters move their pet to the top without an attack");

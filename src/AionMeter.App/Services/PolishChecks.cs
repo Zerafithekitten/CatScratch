@@ -74,6 +74,13 @@ internal static class PolishChecks
             check(permanentPanel.UpdateNotice.IsOpen && permanentPanel.UpdateNotice.Child is Button {Content:"Update!"}
                 && WindowPresentation.PhysicalBounds(permanentPanel)==panelBeforeNotice,
                 "Update! opens in a separate popup above the panel without changing panel position or size");
+            var noticeButton=(Button)permanentPanel.UpdateNotice.Child;
+            noticeButton.ApplyTemplate();noticeButton.UpdateLayout();
+            var noticeText=Visuals(noticeButton).OfType<TextBlock>().First(t=>t.Text=="Update!");
+            noticeText.Measure(new Size(double.PositiveInfinity,double.PositiveInfinity));
+            check(noticeText.DesiredSize.Height<=noticeButton.ActualHeight-noticeButton.Padding.Top-noticeButton.Padding.Bottom-2
+                && ((System.Windows.Media.SolidColorBrush)noticeButton.Foreground).Color.G>((System.Windows.Media.SolidColorBrush)noticeButton.Foreground).Color.R,
+                "The green Update! notice has sufficient text height without clipping");
             permanentPanel.Hide();
             check(!permanentPanel.UpdateNotice.IsOpen,"Hiding the panel hides its separate update notice");
             permanentPanel.Show();

@@ -81,8 +81,7 @@ internal sealed class MeterControlsWindow : Window
         _verticalFooter=new Grid {Margin=new(5,2,5,4),Visibility=Visibility.Collapsed};
         _verticalFooter.ColumnDefinitions.Add(new(){Width=GridLength.Auto});_verticalFooter.ColumnDefinitions.Add(new(){Width=new(1,GridUnitType.Star)});
         var root=new StackPanel();root.Children.Add(header);root.Children.Add(buttons);root.Children.Add(_verticalActions);root.Children.Add(_verticalFooter);
-        var updateButton=new Button {Content="Update!",Width=72,Height=26,FontFamily=new("Segoe UI"),FontSize=12,
-            Style=(Style)FindResource("GhostButton"),Foreground=ThemeColors.Brush("#C49AF5"),ToolTip=UiText.Current.TipUpdate};
+        var updateButton=CreateUpdateNoticeButton(this);
         updateButton.Click+=(_,_)=>overlay.OpenReadyUpdate();
         _updateNotice.Child=updateButton;_updateNotice.PlacementTarget=this;
         SetUpdateAvailable(update.Visibility==Visibility.Visible);
@@ -103,6 +102,15 @@ internal sealed class MeterControlsWindow : Window
             _horizontalSizing[item]=(item.Width,item.Height,item.Margin,item.HorizontalAlignment);
         SizeToContent=SizeToContent.Height;Height=double.NaN;ApplyLayout();
     }
+
+    internal static Button CreateUpdateNoticeButton(FrameworkElement resources)=>new()
+    {
+        Content="Update!",Width=72,Height=26,Padding=new Thickness(8,2,8,2),
+        FontFamily=new("Segoe UI"),FontSize=12,FontWeight=FontWeights.SemiBold,
+        Style=(Style)resources.FindResource("GhostButton"),
+        Background=ThemeColors.Brush("#223A2D"),BorderBrush=ThemeColors.Brush("#4FC18A"),Foreground=ThemeColors.Brush("#A4E8BD"),
+        UseLayoutRounding=true,SnapsToDevicePixels=true,ToolTip=UiText.Current.TipUpdate
+    };
 
     internal void SetUpdateAvailable(bool available){_updateAvailable=available;SyncUpdateNotice();}
     private void SyncUpdateNotice()

@@ -84,6 +84,10 @@ public static class SampleRenderer
         Action refresh;
         switch (o.Window)
         {
+            case "update-notice":
+                var badgeResources=new MeterControlsWindow(meter.Settings,()=>{},()=>{});
+                host=new Window {Width=72,Height=26,Background=Brushes.Transparent,Content=MeterControlsWindow.CreateUpdateNoticeButton(badgeResources)};
+                refresh=()=>{};break;
             case "meter-controls":
             case "meter-controls-vertical":
             case "meter-controls-transparent":

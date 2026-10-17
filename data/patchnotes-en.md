@@ -1,3 +1,9 @@
+## CatScratch v3.0.1-beta.25
+
+- Limited the Pet tracker to five recommendations, with fresh sources in sight taking priority over regional suggestions. No exact-distance ranking is implied.
+- Completed level-3 pets are now hidden in every Pet tracker view, including recently attacked sources, and disappear immediately when final soul loot confirms completion.
+- Made the separate Update! notice green and fixed its clipped text while preserving the control panel position and size.
+
 ## CatScratch v3.0.1-beta.24
 
 - Pet tracker now recommends incomplete pets in supported current regions without requiring an attack. Freshly seen source monsters take priority and mark their pets with a location symbol.

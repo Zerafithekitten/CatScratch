@@ -8,7 +8,7 @@ public sealed record PetRecommendation(int PetId,bool Nearby,int Needed);
 public static class PetRecommendations
 {
     public static IReadOnlyList<PetRecommendation> Select(IEnumerable<PetMapLocation> locations,int mapId,
-        IReadOnlyDictionary<int,PetState> states,bool confirmed,IReadOnlySet<int> nearbyPets,int limit=3)
+        IReadOnlyDictionary<int,PetState> states,bool confirmed,IReadOnlySet<int> nearbyPets,int limit=5)
     {
         if(!confirmed)return [];
         return locations.Where(l=>mapId>0 && l.MapId==mapId).Select(l=>l.PetId).Concat(nearbyPets).Distinct()
@@ -16,6 +16,6 @@ public static class PetRecommendations
             .Where(p=>p.Level<3)
             .OrderByDescending(p=>nearbyPets.Contains(p.Id)).ThenBy(p=>p.Level)
             .ThenBy(p=>p.Needed(Math.Min(3,p.Level+1))).ThenBy(p=>p.Id)
-            .Take(Math.Clamp(limit,1,256)).Select(p=>new PetRecommendation(p.Id,nearbyPets.Contains(p.Id),p.Needed(p.Level+1))).ToArray();
+            .Take(Math.Clamp(limit,1,5)).Select(p=>new PetRecommendation(p.Id,nearbyPets.Contains(p.Id),p.Needed(p.Level+1))).ToArray();
     }
 }
