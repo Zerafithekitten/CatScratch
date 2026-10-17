@@ -110,10 +110,12 @@ public partial class OverlayWindow : Window, IDisplayAppearance
     private bool _displayOnly;
     internal bool DisplayOnly=>_displayOnly;
     internal bool ControlsDetached {get;private set;}
+    private MeterControlsWindow? _controlsPanel;
     internal void MoveControlsTo(MeterControlsWindow panel)
     {
         if(ControlsDetached)return;
         ControlsDetached=true;
+        _controlsPanel=panel;
         Toolbar.Visibility=Visibility.Collapsed;
         ((Panel)ShellHeader.Parent).Children.Remove(ShellHeader);
         ((Panel)FooterControls.Parent).Children.Remove(FooterControls);
@@ -373,6 +375,7 @@ public partial class OverlayWindow : Window, IDisplayAppearance
         var available = updates.Ready;
         var show = available is not null && available.Tag != _bannerClosedFor;
         UpdateBanner.Visibility = show ? Visibility.Visible : Visibility.Collapsed;
+        _controlsPanel?.SetUpdateAvailable(show);
         if (show)
         {
             var t = UiText.Current;
@@ -387,6 +390,7 @@ public partial class OverlayWindow : Window, IDisplayAppearance
         if (_meter.Updates.Ready is { } ready && _meter.Updates.RestartPrepared(ready)) AppHost.Current.ExitProgram();
         else AppHost.Current.ShowUpdate();
     }
+    internal void OpenReadyUpdate()=>Update_Click(this,new RoutedEventArgs());
 
     private void UpdateBannerClose_Click(object sender, RoutedEventArgs e)
     {

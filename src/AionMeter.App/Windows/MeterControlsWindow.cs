@@ -1,5 +1,6 @@
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Interop;
 using System.Windows.Media;
 using AionMeter.App.Controls;
@@ -25,6 +26,9 @@ internal sealed class MeterControlsWindow : Window
     private ControlsLayout? _layout;
     private ControlsAnchor? _anchor;
     private bool _aligning;
+    private readonly Popup _updateNotice=new(){AllowsTransparency=true,StaysOpen=true,Placement=PlacementMode.Top};
+    private bool _updateAvailable;
+    internal Popup UpdateNotice=>_updateNotice;
     internal double BackgroundOpacity=>_backdrop.Opacity;
     internal Button SettingsButton { get; private set; }
     internal Button RestoreButton { get; }
@@ -59,6 +63,9 @@ internal sealed class MeterControlsWindow : Window
             settings.ControlsLeft=Left;settings.ControlsTop=Top;settings.Save();moved?.Invoke(Left,Top);
         });
         Loaded+=(_,_)=>AlignToScreen();SizeChanged+=(_,_)=>AlignToScreen();
+        LocationChanged+=(_,_)=>SyncUpdateNotice();SizeChanged+=(_,_)=>SyncUpdateNotice();
+        IsVisibleChanged+=(_,_)=>SyncUpdateNotice();
+        Closed+=(_,_)=>{_updateAvailable=false;_updateNotice.IsOpen=false;_updateNotice.Child=null;};
         RefreshText();RestorePosition();
     }
 
@@ -73,7 +80,12 @@ internal sealed class MeterControlsWindow : Window
         for(var i=0;i<4;i++){_verticalActions.ColumnDefinitions.Add(new(){Width=new(1,GridUnitType.Star)});_verticalActions.RowDefinitions.Add(new(){Height=new(22)});}
         _verticalFooter=new Grid {Margin=new(5,2,5,4),Visibility=Visibility.Collapsed};
         _verticalFooter.ColumnDefinitions.Add(new(){Width=GridLength.Auto});_verticalFooter.ColumnDefinitions.Add(new(){Width=new(1,GridUnitType.Star)});
-        var root=new StackPanel();root.Children.Add(header);root.Children.Add(buttons);root.Children.Add(_verticalActions);root.Children.Add(_verticalFooter);root.Children.Add(update);
+        var root=new StackPanel();root.Children.Add(header);root.Children.Add(buttons);root.Children.Add(_verticalActions);root.Children.Add(_verticalFooter);
+        var updateButton=new Button {Content="Update!",Width=72,Height=26,FontFamily=new("Segoe UI"),FontSize=12,
+            Style=(Style)FindResource("GhostButton"),Foreground=ThemeColors.Brush("#C49AF5"),ToolTip=UiText.Current.TipUpdate};
+        updateButton.Click+=(_,_)=>overlay.OpenReadyUpdate();
+        _updateNotice.Child=updateButton;_updateNotice.PlacementTarget=this;
+        SetUpdateAvailable(update.Visibility==Visibility.Visible);
         SetFrame(root);
         _header=(Grid)header;_buttons=(WrapPanel)buttons;
         foreach(var button in _buttons.Children.OfType<System.Windows.Controls.Primitives.ButtonBase>())
@@ -90,6 +102,16 @@ internal sealed class MeterControlsWindow : Window
         foreach(var item in _horizontalItems.OfType<FrameworkElement>().Concat([_personalButton,_petButton]))
             _horizontalSizing[item]=(item.Width,item.Height,item.Margin,item.HorizontalAlignment);
         SizeToContent=SizeToContent.Height;Height=double.NaN;ApplyLayout();
+    }
+
+    internal void SetUpdateAvailable(bool available){_updateAvailable=available;SyncUpdateNotice();}
+    private void SyncUpdateNotice()
+    {
+        _updateNotice.HorizontalOffset=(ActualWidth-72)/2;
+        _updateNotice.VerticalOffset=-4;
+        _updateNotice.IsOpen=_updateAvailable && IsVisible && WindowState!=WindowState.Minimized;
+        // Recalculate screen placement after a parent move without touching the panel's bounds.
+        if(_updateNotice.IsOpen){var offset=_updateNotice.HorizontalOffset;_updateNotice.HorizontalOffset=offset+.01;_updateNotice.HorizontalOffset=offset;}
     }
 
     internal void RefreshText()

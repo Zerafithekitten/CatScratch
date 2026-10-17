@@ -69,6 +69,18 @@ internal static class PolishChecks
             permanentPanel.Hide();
             check(!WindowPresentation.RestoreTopmost(permanentPanel) && !permanentPanel.IsVisible,"Topmost recovery never reveals a hidden module");
             permanentPanel.Show();
+            var panelBeforeNotice=WindowPresentation.PhysicalBounds(permanentPanel);
+            permanentPanel.SetUpdateAvailable(true);permanentPanel.UpdateLayout();
+            check(permanentPanel.UpdateNotice.IsOpen && permanentPanel.UpdateNotice.Child is Button {Content:"Update!"}
+                && WindowPresentation.PhysicalBounds(permanentPanel)==panelBeforeNotice,
+                "Update! opens in a separate popup above the panel without changing panel position or size");
+            permanentPanel.Hide();
+            check(!permanentPanel.UpdateNotice.IsOpen,"Hiding the panel hides its separate update notice");
+            permanentPanel.Show();
+            check(permanentPanel.UpdateNotice.IsOpen,"The ready update notice returns with the panel");
+            permanentPanel.SetUpdateAvailable(false);
+            check(!permanentPanel.UpdateNotice.IsOpen && WindowPresentation.PhysicalBounds(permanentPanel)==panelBeforeNotice,
+                "Removing a ready update closes only the notice and preserves panel bounds");
             var exitButton=(Button)detachedOverlay.FindName("ShellHideButton");
             var version=(TextBlock)detachedOverlay.FindName("InstalledVersionText");
             check(Window.GetWindow(exitButton)==permanentPanel && Window.GetWindow(version)==permanentPanel,"Version and the sole CatScratch Exit button move to the permanent control panel");

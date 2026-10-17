@@ -1,3 +1,8 @@
+## CatScratch v3.0.1-beta.23
+
+- Ready updates now appear as a small, clickable Update! notice above the control panel instead of expanding the panel.
+- The notice follows the panel and hides with it. Showing or hiding an update leaves the panel position and size unchanged.
+
 ## CatScratch v3.0.1-beta.22
 
 - Hotfix: recover visible overlays that lose their always-on-top position after game activation or display changes.
