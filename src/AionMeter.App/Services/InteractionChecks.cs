@@ -609,7 +609,7 @@ internal static class InteractionChecks
             petWindow.Refresh();
             Check(petList.Items.OfType<Windows.PetTrackerWindow.Row>().Single(x=>x.Definition.Id==1193).Progress=="10/25","Pet window renders the confirmed Global 10/25 baseline");
             var farmRow=petList.Items.OfType<Windows.PetTrackerWindow.Row>().Single(x=>x.Definition.Id==1193);
-            Check(farmRow.Name==meter.Data.NpcName(2400455) && farmRow.Tooltip.Contains(farmRow.Definition.Name),"Pet rows show the attacked farming monster and retain the pet name in their tooltip");
+            Check(farmRow.Name==meter.Data.NpcName(2400455) && farmRow.Tooltip==farmRow.Definition.Name,"Pet rows show the attacked farming monster and only the pet name in their tooltip");
             meter.Pets.Observe(new Core.Game.PetSoulEvent(3,new Dictionary<int,int>{{1193,1}}));petWindow.Refresh();
             Check(petList.Items.OfType<Windows.PetTrackerWindow.Row>().Single(x=>x.Definition.Id==1193).Progress=="11/25","Pet window updates to 11/25 from the verified soul delta");
             Check(petList.Items.Count==1 && petList.Items.OfType<Windows.PetTrackerWindow.Row>().Single().Fill==11d/25,"Only the personally attacked pet is shown with exact next-level progress");

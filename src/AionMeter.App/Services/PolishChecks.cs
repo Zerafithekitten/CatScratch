@@ -80,6 +80,19 @@ internal static class PolishChecks
             permanentPanel.Hide();
             check(!WindowPresentation.RestoreTopmost(permanentPanel) && !permanentPanel.IsVisible,"Topmost recovery never reveals a hidden module");
             permanentPanel.Show();
+            var tooltip=new ToolTip {Content="Pet details",PlacementTarget=permanentPanel,IsOpen=true};
+            try
+            {
+                tooltip.UpdateLayout();
+                var popup=(System.Windows.Interop.HwndSource)PresentationSource.FromVisual(tooltip);
+                NativeMethods.SetWindowPos(popup.Handle,(nint)(-2),0,0,0,0,0x0013);
+                WindowPresentation.MaintainTopmost();
+                check(((long)NativeMethods.GetWindowLongPtr(popup.Handle,NativeMethods.GWL_EXSTYLE)&8)!=0,
+                    "An open tooltip is restored above overlays after native topmost recovery");
+                tooltip.IsOpen=false;
+                check(!WindowPresentation.RestoreTooltip(tooltip) && !tooltip.IsOpen,"Tooltip recovery never reopens closed hints");
+            }
+            finally{tooltip.IsOpen=false;}
             var panelBeforeNotice=WindowPresentation.PhysicalBounds(permanentPanel);
             permanentPanel.SetUpdateAvailable(true);permanentPanel.UpdateLayout();
             check(permanentPanel.UpdateNotice.IsOpen && permanentPanel.UpdateNotice.Child is Button {Content:"Update!"}

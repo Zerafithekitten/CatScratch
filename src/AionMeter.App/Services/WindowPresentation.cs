@@ -2,6 +2,7 @@ using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Media;
+using System.Windows.Controls;
 
 namespace AionMeter.App.Services;
 
@@ -11,6 +12,21 @@ internal static class WindowPresentation
     private static readonly Dictionary<Window, ScaleTransform> Windows = [];
     private static readonly Dictionary<Window,(double Width,double Height)> Limits=[];
     private static readonly HashSet<Window> NativeDragging=[];
+    private static readonly HashSet<ToolTip> OpenTooltips=[];
+    static WindowPresentation()
+    {
+        EventManager.RegisterClassHandler(typeof(ToolTip),ToolTip.OpenedEvent,new RoutedEventHandler((sender,_)=>
+        {
+            var tooltip=(ToolTip)sender;OpenTooltips.Add(tooltip);
+            tooltip.Dispatcher.BeginInvoke(()=>RestoreTooltip(tooltip));
+        }));
+        EventManager.RegisterClassHandler(typeof(ToolTip),ToolTip.ClosedEvent,new RoutedEventHandler((sender,_)=>OpenTooltips.Remove((ToolTip)sender)));
+    }
+    internal static bool RestoreTooltip(ToolTip tooltip)
+    {
+        if(!tooltip.IsOpen || !tooltip.IsVisible || PresentationSource.FromVisual(tooltip) is not HwndSource source || source.Handle==0)return false;
+        return NativeMethods.SetWindowPos(source.Handle,(nint)(-1),0,0,0,0,0x0013);
+    }
     [DllImport("user32.dll")] private static extern nint GetForegroundWindow();
     [DllImport("user32.dll")] private static extern uint GetWindowThreadProcessId(nint window,out uint process);
     [DllImport("user32.dll")] private static extern nint GetWindow(nint window,uint command);
@@ -22,8 +38,10 @@ internal static class WindowPresentation
     {
         var foreground=GetForegroundWindow();
         GetWindowThreadProcessId(foreground,out var process);
-        if(process==(uint)Environment.ProcessId)return; // Keep Settings and interactive dialogs above overlays.
-        foreach(var window in Windows.Keys.ToArray())RestoreTopmost(window);
+        if(process!=(uint)Environment.ProcessId) // Keep Settings and interactive dialogs above overlays.
+            foreach(var window in Windows.Keys.ToArray())RestoreTopmost(window);
+        // Tooltips are separate native popup windows. Reassert them after overlays, without activation.
+        foreach(var tooltip in OpenTooltips.ToArray())RestoreTooltip(tooltip);
     }
     internal static bool RestoreTopmost(Window window)
     {

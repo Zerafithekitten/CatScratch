@@ -119,9 +119,7 @@ public sealed class PetTrackerWindow:Window,IDisplayAppearance
             var required=state.Level switch{0=>5,1=>25,2=>75,_=>0};
             var monster=PetFarmNames.Resolve(p,_meter.Data,_locations,_meter.Pets.MapId,seen,codes,_meter.Pets.Farms(p.Id));
             return new Row(p,(nearbyPets.Contains(p.Id)?"⌖ ":"")+monster,!confirmed?"—":required==0?"MAX":(_meter.Pets.FromCache?"~":"")+$"{state.Souls}/{required}",
-                !confirmed?0:required==0?1:Math.Clamp((double)state.Souls/required,0,1),AppIcon.Image,monster+"\n"+p.Name+
-                (suggestions.FirstOrDefault(s=>s.PetId==p.Id) is { } suggestion?"\n"+T.Localize(suggestion.Nearby?"Monster seen nearby; no attack required.":"Recorded farming location in this region; exact distance is not confirmed.")+"\n"+T.Localize("Souls needed for next level")+": "+suggestion.Needed:"")+
-                (_meter.Pets.FromCache?"\n"+T.Localize("Last known progress; waiting for fresh login data."):""));
+                !confirmed?0:required==0?1:Math.Clamp((double)state.Souls/required,0,1),AppIcon.Image,p.Name);
         }).ToArray();
         if(!_list.Items.OfType<Row>().SequenceEqual(nextRows))_list.ItemsSource=nextRows;
         SizeToContent=SizeToContent.Height;

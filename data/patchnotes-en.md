@@ -1,3 +1,8 @@
+## CatScratch v3.0.4-beta.3
+
+- Keeps open tooltips above overlays when the foreground protection restores CatScratch, without taking keyboard focus.
+- Pet tracker tooltips now contain only the pet name; the farming monster and soul progress remain in the row.
+
 ## CatScratch v3.0.4-beta.2
 
 - Pet tracker rows now show the farming monster; the pet name remains in the tooltip. Freshly seen sources take priority, with current-region and attacked-source fallbacks.

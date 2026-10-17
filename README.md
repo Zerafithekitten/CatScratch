@@ -7,7 +7,7 @@ A separate, always-on-top Windows DPS meter for **AION 2**, by Zerafithekitten. 
 | Channel | Current version | What it includes |
 | --- | --- | --- |
 | **Stable** | **[v3.0.3](https://github.com/Zerafithekitten/CatScratch/releases/tag/v3.0.3)** | Independent control panel, reworked Pet tracker with five recommendations, custom colors and transparency, event timeline and favorites, effective healing and the complete tested Beta feature set. |
-| **Beta** | [v3.0.4-beta.2](https://github.com/Zerafithekitten/CatScratch/releases/tag/v3.0.4-beta.2) | Adds farming-monster names, a collection-data login hint and independent Pet sound controls. |
+| **Beta** | [v3.0.4-beta.3](https://github.com/Zerafithekitten/CatScratch/releases/tag/v3.0.4-beta.3) | Adds farming-monster names, a collection-data login hint and independent Pet sound controls. |
 
 English is the default. German, Russian and French are also available. Screenshots use synthetic sample data; names and numbers are examples. All features described below are included in **Stable v3.0.3** unless a limitation is stated.
 
