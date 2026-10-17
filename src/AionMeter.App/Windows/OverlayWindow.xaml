@@ -418,8 +418,8 @@
                         </Button>
                         <Button x:Name="LastPlayedButton" Style="{StaticResource ToolIcon}" Content="&#xE716;" Click="LastPlayedWith_Click" ToolTip="{Binding T.LastPlayedWithLabel}" AutomationProperties.Name="{Binding T.LastPlayedWithLabel}"/>
                         <Button x:Name="CompactHistory" Style="{StaticResource ToolIcon}" Content="&#xE8A5;" Click="Segments_Click" ToolTip="{Binding T.Literal13}"/>
-                        <Button Style="{StaticResource ToolIcon}" Content="&#xE8BD;" Click="Chat_Click" ToolTip="{Binding T.Literal14}"/>
-                        <Button Style="{StaticResource ToolIcon}" Content="&#xE8A1;" Click="PatchNotes_Click" ToolTip="Patch notes"/>
+                        <Button x:Name="ChatExportButton" Style="{StaticResource ToolIcon}" Content="&#xE8BD;" Click="Chat_Click" ToolTip="{Binding T.Literal14}"/>
+                        <Button x:Name="PatchNotesButton" Style="{StaticResource ToolIcon}" Content="&#xE8A1;" Click="PatchNotes_Click" ToolTip="Patch notes"/>
                         <Button x:Name="SaveLastFightButton" Style="{StaticResource ToolIcon}" Content="&#xE74E;" Click="SaveLastFight_Click" ToolTip="{Binding T.Literal15}" AutomationProperties.Name="{Binding T.Literal15}" />
                         <Button x:Name="CheckUpdatesButton" Style="{StaticResource ToolIcon}" Content="&#xE895;" Click="CheckUpdates_Click" ToolTip="{Binding T.Literal16}" AutomationProperties.Name="{Binding T.Literal16}"/>
                         <!-- Boss timers: always visible, shows the next respawn -->

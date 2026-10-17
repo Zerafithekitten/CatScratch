@@ -1,3 +1,9 @@
+## CatScratch v3.0.1-beta.14
+
+- Reworked the vertical control panel with a clear branding/header area and a uniform four-by-four action grid.
+- Grouped damage mode and background opacity into their own bottom row; removed uneven wrapping and scattered columns.
+- Kept the horizontal layout and all original button actions. Switching orientations preserves controls, tooltips, transparency and screen alignment.
+
 ## CatScratch v3.0.1-beta.13
 
 - Added Settings > Help & symbols: a read-only English/German icon guide with functions, state explanations and your configured shortcuts.

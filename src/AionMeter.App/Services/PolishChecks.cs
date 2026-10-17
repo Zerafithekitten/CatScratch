@@ -74,8 +74,22 @@ internal static class PolishChecks
             meter.Settings.WindowOpacity=oldOpacity;meter.Settings.BackgroundOpacity=oldBackground;
             meter.Settings.ControlsLayout=ControlsLayout.Vertical;permanentPanel.ApplyAppearance();permanentPanel.UpdateLayout();
             check(permanentPanel.Width==176 && exitButton.IsVisible && permanentPanel.SettingsButton.IsVisible,"Compact vertical panel retains Settings and Exit controls");
+            var actionGrid=permanentPanel.VerticalActions!;
+            check(actionGrid.Children.Count==16 && actionGrid.ColumnDefinitions.Count==4 && actionGrid.RowDefinitions.Count==4
+                && actionGrid.Children.OfType<FrameworkElement>().All(c=>c.ActualWidth==28 && c.ActualHeight==24)
+                && actionGrid.Children.OfType<FrameworkElement>().Select(c=>(Grid.GetRow(c),Grid.GetColumn(c))).Distinct().Count()==16,
+                "Vertical panel uses sixteen equally sized actions in a complete four-by-four grid");
             meter.Settings.ControlsLayout=ControlsLayout.Horizontal;permanentPanel.ApplyAppearance();permanentPanel.UpdateLayout();
             check(permanentPanel.Width==400,"Panel can return to the compact horizontal layout");
+            for(var i=0;i<2;i++)
+            {
+                meter.Settings.ControlsLayout=ControlsLayout.Vertical;permanentPanel.ApplyAppearance();permanentPanel.UpdateLayout();
+                meter.Settings.ControlsLayout=ControlsLayout.Horizontal;permanentPanel.ApplyAppearance();permanentPanel.UpdateLayout();
+            }
+            check(Window.GetWindow((Button)detachedOverlay.FindName("PersonalCombatButton"))==permanentPanel
+                && Window.GetWindow((Button)detachedOverlay.FindName("PetTrackerButton"))==permanentPanel
+                && exitButton.IsVisible && permanentPanel.SettingsButton.IsVisible,
+                "Repeated orientation changes retain module toggles, Settings and the sole Exit button without duplicating controls");
             var screen=System.Windows.Forms.Screen.PrimaryScreen!;
             check(WindowPresentation.Area(permanentPanel,screen)==screen.Bounds,"Control panel placement uses full screen bounds including the taskbar edge");
             var area=new Rect(-1920,0,1920,1080);var panelBounds=new Rect(-1000,400,420,64);

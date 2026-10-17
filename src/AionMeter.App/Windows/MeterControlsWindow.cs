@@ -15,6 +15,13 @@ internal sealed class MeterControlsWindow : Window
     private Border _backdrop=null!;
     private Grid? _header;
     private WrapPanel? _buttons;
+    private Grid? _verticalActions;
+    private Grid? _verticalFooter;
+    private StackPanel? _caption;
+    private FrameworkElement? _personalButton,_petButton,_meterPin;
+    private UIElement[] _horizontalItems=[];
+    private readonly Dictionary<FrameworkElement,(double Width,double Height,Thickness Margin,HorizontalAlignment Alignment)> _horizontalSizing=[];
+    internal Grid? VerticalActions=>_verticalActions;
     private ControlsLayout? _layout;
     private ControlsAnchor? _anchor;
     private bool _aligning;
@@ -62,7 +69,11 @@ internal sealed class MeterControlsWindow : Window
         ((Panel)RestoreButton.Parent).Children.Remove(RestoreButton);
         buttons.Children.Add(RestoreButton);
         SettingsButton=settingsButton;
-        var root=new StackPanel();root.Children.Add(header);root.Children.Add(buttons);root.Children.Add(update);
+        _verticalActions=new Grid {Margin=new(8,3,8,0),Visibility=Visibility.Collapsed};
+        for(var i=0;i<4;i++){_verticalActions.ColumnDefinitions.Add(new(){Width=new(1,GridUnitType.Star)});_verticalActions.RowDefinitions.Add(new(){Height=new(26)});}
+        _verticalFooter=new Grid {Margin=new(8,5,8,7),Visibility=Visibility.Collapsed};
+        _verticalFooter.ColumnDefinitions.Add(new(){Width=GridLength.Auto});_verticalFooter.ColumnDefinitions.Add(new(){Width=new(1,GridUnitType.Star)});
+        var root=new StackPanel();root.Children.Add(header);root.Children.Add(buttons);root.Children.Add(_verticalActions);root.Children.Add(_verticalFooter);root.Children.Add(update);
         SetFrame(root);
         _header=(Grid)header;_buttons=(WrapPanel)buttons;
         foreach(var button in _buttons.Children.OfType<System.Windows.Controls.Primitives.ButtonBase>())
@@ -72,6 +83,13 @@ internal sealed class MeterControlsWindow : Window
         }
         foreach(var slider in _buttons.Children.OfType<Slider>())slider.Width=40;
         foreach(var button in _header.Children.OfType<Button>()){button.Width=20;button.Height=20;}
+        _caption=_header.Children.OfType<StackPanel>().Single(p=>p.Name=="ShellCaption");
+        _personalButton=_caption.Children.OfType<FrameworkElement>().Single(p=>p.Name=="PersonalCombatButton");
+        _petButton=_caption.Children.OfType<FrameworkElement>().Single(p=>p.Name=="PetTrackerButton");
+        _meterPin=WindowPinning.ButtonFor(overlay)!;
+        _horizontalItems=_buttons.Children.Cast<UIElement>().ToArray();
+        foreach(var item in _horizontalItems.OfType<FrameworkElement>().Concat([_personalButton,_petButton]))
+            _horizontalSizing[item]=(item.Width,item.Height,item.Margin,item.HorizontalAlignment);
         SizeToContent=SizeToContent.Height;Height=double.NaN;ApplyLayout();
     }
 
@@ -113,15 +131,52 @@ internal sealed class MeterControlsWindow : Window
             foreach(FrameworkElement child in _header.Children)
             {
                 var caption=child.Name=="ShellCaption";
-                Grid.SetRow(child,vertical&&!caption?1:0);
-                if(caption){Grid.SetColumnSpan(child,vertical?6:1);child.LayoutTransform=vertical?new ScaleTransform(.8,.8):Transform.Identity;}
-                if(child.Name=="ShellClockPanel"){Grid.SetColumn(child,vertical?0:1);Grid.SetColumnSpan(child,vertical?2:1);}
+                Grid.SetRow(child,vertical&&!caption&&child.Name!="ShellHideButton"?1:0);
+                if(caption){Grid.SetColumnSpan(child,vertical?5:1);child.LayoutTransform=Transform.Identity;}
+                if(child.Name=="ShellClockPanel"){Grid.SetColumn(child,vertical?0:1);Grid.SetColumnSpan(child,vertical?3:1);}
+                if(child.Name=="ShellClickButton")Grid.SetColumn(child,vertical?3:2);
+                if(child.Name=="ShellSettingsButton")Grid.SetColumn(child,vertical?4:3);
+                if(child.Name=="ShellPin")Grid.SetColumn(child,vertical?5:4);
             }
-            _buttons.Orientation=vertical?Orientation.Vertical:Orientation.Horizontal;
-            _buttons.Height=vertical?140:double.NaN;
-            _buttons.HorizontalAlignment=vertical?HorizontalAlignment.Center:HorizontalAlignment.Stretch;
+            ArrangeActions(vertical);
         }
         if(_anchor!=_settings.ControlsAnchor){_anchor=_settings.ControlsAnchor;AlignToScreen();}
+    }
+
+    private static void Detach(FrameworkElement element)
+    {
+        if(element.Parent is Panel parent)parent.Children.Remove(element);
+    }
+
+    private void ArrangeActions(bool vertical)
+    {
+        if(_buttons is null || _verticalActions is null || _verticalFooter is null || _caption is null)return;
+        foreach(var item in _horizontalSizing.Keys)Detach(item);
+        _verticalActions.Children.Clear();_verticalFooter.Children.Clear();
+        _buttons.Visibility=vertical?Visibility.Collapsed:Visibility.Visible;
+        _verticalActions.Visibility=_verticalFooter.Visibility=vertical?Visibility.Visible:Visibility.Collapsed;
+        if(!vertical)
+        {
+            foreach(var (item,size) in _horizontalSizing){item.Width=size.Width;item.Height=size.Height;item.Margin=size.Margin;item.HorizontalAlignment=size.Alignment;}
+            foreach(var item in _horizontalItems)_buttons.Children.Add(item);
+            _caption.Children.Add(_personalButton!);_caption.Children.Add(_petButton!);
+            return;
+        }
+        FrameworkElement Item(string name)=>_horizontalItems.OfType<FrameworkElement>().Single(c=>c.Name==name);
+        var actions=new[]{Item("DeathRecapButton"),_personalButton!,_petButton!,RestoreButton,
+            Item("BossRecordsButton"),Item("LastPlayedButton"),Item("CompactHistory"),Item("DetailsLink"),
+            Item("ChatExportButton"),Item("PatchNotesButton"),Item("SaveLastFightButton"),Item("CheckUpdatesButton"),
+            Item("BossTimersLink"),Item("RestartButton"),Item("LockButton"),_meterPin!};
+        for(var i=0;i<actions.Length;i++)
+        {
+            var action=actions[i];action.Width=28;action.Height=24;action.Margin=new(0);action.HorizontalAlignment=HorizontalAlignment.Center;
+            Grid.SetColumn(action,i%4);Grid.SetRow(action,i/4);_verticalActions.Children.Add(action);
+        }
+        var mode=_horizontalItems.OfType<FrameworkElement>().Single(c=>Equals(c.Tag,"damage-mode"));
+        mode.Height=22;mode.Margin=new(0);Grid.SetColumn(mode,0);Grid.SetRow(mode,0);_verticalFooter.Children.Add(mode);
+        var slider=_horizontalItems.OfType<Slider>().Single();
+        slider.Width=double.NaN;slider.Margin=new(8,0,0,0);slider.HorizontalAlignment=HorizontalAlignment.Stretch;
+        Grid.SetColumn(slider,1);Grid.SetRow(slider,0);_verticalFooter.Children.Add(slider);
     }
 
     internal static Rect AlignedBounds(Rect bounds,Rect area,ControlsAnchor anchor)
