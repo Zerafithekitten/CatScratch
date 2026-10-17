@@ -4,6 +4,7 @@ public sealed partial class UiText
 {
     private static readonly Dictionary<string,(string De,string Ru,string Fr)> LayoutComparisonText=new()
     {
+        ["Briefly return to character selection or log in again."]=("Wechsle kurz zur Charakterauswahl oder logge dich erneut ein.","Ненадолго вернитесь к выбору персонажа или войдите в игру заново.","Revenez brièvement à la sélection du personnage ou reconnectez-vous."),
         ["Nearby pets"]=("Pets in Sichtweite","Питомцы поблизости","Familiers à proximité"),
         ["Nearby first"]=("Sichtweite zuerst","Сначала ближайшие","Proches en premier"),
         ["Pets in this region"]=("Pets in diesem Gebiet","Питомцы этого региона","Familiers de cette région"),
