@@ -856,7 +856,7 @@ public partial class App : Application
         ShowSettings();_settingsWindow!.SelectEvents();
     }
     internal void PreviewEventSound(EventSoundPreference sound,double volume)=>(_eventSoundPlayer??=new()).Play(sound,volume,preview:true);
-    internal void RefreshPetSettings(){if(_petWindow is { } window){window.Width=Math.Clamp(_meter.Settings.PetModuleWidth,240,360);window.Refresh();}}
+    internal void RefreshPetSettings(){if(_petWindow is { } window){window.Width=Math.Clamp(_meter.Settings.PetModuleWidth,150,1600);window.Refresh();}}
     internal void RefreshEventSettings()
     {
         _eventSchedule?.Reload();

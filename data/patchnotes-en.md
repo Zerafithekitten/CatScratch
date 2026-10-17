@@ -1,3 +1,9 @@
+## CatScratch v3.0.1-beta.21
+
+- Saving Settings now applies changes without closing the window. Use the X to close; unsaved changes are discarded.
+- Restored Pet tracker width adjustment with a corner resize grip and a wider range in Settings > Pets. Width is saved between starts.
+- Updates now refresh icons for existing desktop, Start menu and taskbar shortcuts targeting the updated installation. Shortcuts to other copies are left unchanged.
+
 ## CatScratch v3.0.1-beta.20
 
 - Made the vertical control panel narrower with tighter, aligned icon rows and subtle vertical separators between its four columns. Horizontal layout is unchanged.

@@ -78,7 +78,7 @@ public partial class SettingsWindow : Window
         Module("Show pet tracker",meter.Settings.ShowPetTrackerModule,v=>_moduleDraft.ShowPetTrackerModule=v);
         Module("Sound on collection / level up",meter.Settings.PetNotify,v=>_moduleDraft.PetNotify=v);
         modules.Children.Add(new TextBlock {Text=T.Localize("Window width"),Margin=new Thickness(0,6,0,4)});
-        var petWidth=new Slider {Minimum=240,Maximum=360,Value=Math.Clamp(meter.Settings.PetModuleWidth,240,360),Style=(Style)FindResource("GoldSlider")};
+        var petWidth=new Slider {Minimum=150,Maximum=1600,Value=Math.Clamp(meter.Settings.PetModuleWidth,150,1600),Style=(Style)FindResource("GoldSlider")};
         petWidth.ValueChanged+=(_,e)=>_moduleDraft.PetModuleWidth=e.NewValue;modules.Children.Add(petWidth);
         var recap=new CheckBox {Content=T.Localize("Show death recap"),IsChecked=meter.Settings.ShowDeathRecapModule,Style=(Style)FindResource("DarkCheck")};
         recap.Click+=(_,_)=>_moduleDraft.ShowDeathRecapModule=recap.IsChecked==true;
@@ -321,7 +321,7 @@ public partial class SettingsWindow : Window
 
         _meter.ApplySettings();
         if (captureChanged) _meter.RestartCapture();
-        Close();
+        _controlPanelPreferences.MarkSaved();
         AppHost.Current.OnSettingsChanged(dpsVisibilityChanged);
         AppHost.Current.RefreshPresentation();
         AppHost.Current.RefreshEventSettings();

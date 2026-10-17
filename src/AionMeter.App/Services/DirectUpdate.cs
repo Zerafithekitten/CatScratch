@@ -84,6 +84,7 @@ internal static class DirectUpdate
         try
         {
             UpdatePackage.Apply(AppContext.BaseDirectory, target, backup);
+            if(checkResult is null)ShortcutIcons.Refresh(target);
         }
         catch (Exception error)
         {

@@ -355,7 +355,6 @@
       </TabControl>
       <Border Grid.Row="2" BorderBrush="{StaticResource Line}" BorderThickness="0,1,0,0" Padding="20,12">
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-          <Button Style="{StaticResource GhostButton}" Content="{Binding Cancel, Source={x:Static s:UiText.Current}}" Click="Cancel_Click" Margin="0,0,8,0" />
           <Button Style="{StaticResource PrimaryButton}" Content="{Binding Save, Source={x:Static s:UiText.Current}}" Click="Save_Click" />
         </StackPanel>
       </Border>

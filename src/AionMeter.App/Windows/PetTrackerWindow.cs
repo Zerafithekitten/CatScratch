@@ -1,5 +1,7 @@
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
+using System.Windows.Input;
 using System.Windows.Markup;
 using System.Windows.Media;
 using AionMeter.App.Services;
@@ -20,6 +22,7 @@ public sealed class PetTrackerWindow:Window,IDisplayAppearance
     private readonly DockPanel _root;
     private readonly Button _close;
     private readonly Button _pin;
+    private readonly Thumb _resize;
     private Dictionary<int,int> _lastLevels=[];
     private EventSoundPlayer? _sounds;
 
@@ -32,8 +35,8 @@ public sealed class PetTrackerWindow:Window,IDisplayAppearance
     {
         _meter=meter;_catalog=PetCatalog.Load(MeterService.DataDirectory);
         AppIcon.Apply(this);Title="CatScratch · "+T.Localize("Pet tracker");
-        MinWidth=240;MinHeight=52;MaxHeight=340;SizeToContent=SizeToContent.Height;
-        Width=double.IsFinite(meter.Settings.PetModuleWidth)?Math.Clamp(meter.Settings.PetModuleWidth,MinWidth,360):300;
+        MinWidth=150;MaxWidth=1600;MinHeight=52;MaxHeight=340;SizeToContent=SizeToContent.Height;
+        Width=double.IsFinite(meter.Settings.PetModuleWidth)?Math.Clamp(meter.Settings.PetModuleWidth,MinWidth,MaxWidth):300;
         Left=Math.Clamp(double.IsFinite(meter.Settings.PetModuleLeft)?meter.Settings.PetModuleLeft:140,SystemParameters.VirtualScreenLeft,SystemParameters.VirtualScreenLeft+SystemParameters.VirtualScreenWidth-MinWidth);
         Top=Math.Clamp(double.IsFinite(meter.Settings.PetModuleTop)?meter.Settings.PetModuleTop:140,SystemParameters.VirtualScreenTop,SystemParameters.VirtualScreenTop+SystemParameters.VirtualScreenHeight-MinHeight);
         WindowStyle=WindowStyle.None;ResizeMode=ResizeMode.CanResize;Topmost=true;ShowInTaskbar=false;Background=Brushes.Transparent;
@@ -59,7 +62,16 @@ public sealed class PetTrackerWindow:Window,IDisplayAppearance
         <ControlTemplate xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" TargetType="ListBoxItem"><ContentPresenter HorizontalAlignment="Stretch"/></ControlTemplate>
         """)));
         root.Children.Add(_list);
-        _shell=new(){Child=root,CornerRadius=new(8),Background=Brush("#DF20242A"),BorderBrush=Brush("#60616A76"),BorderThickness=new(1)};Content=_shell;
+        _shell=new(){Child=root,CornerRadius=new(8),Background=Brush("#DF20242A"),BorderBrush=Brush("#60616A76"),BorderThickness=new(1)};
+        _shell.Child=null;
+        var frame=new Grid();frame.Children.Add(root);
+        _resize=new Thumb {Width=12,Height=12,HorizontalAlignment=HorizontalAlignment.Right,VerticalAlignment=VerticalAlignment.Bottom,Cursor=Cursors.SizeWE};
+        _resize.Template=(ControlTemplate)XamlReader.Parse("""
+        <ControlTemplate xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" TargetType="Thumb"><Grid Background="Transparent"><Path Data="M 4,10 L 10,4 M 8,10 L 10,8" Stroke="#8099AABB" StrokeThickness="1"/></Grid></ControlTemplate>
+        """);
+        _resize.DragDelta+=(_,e)=>{Width=Math.Clamp(ActualWidth+e.HorizontalChange,MinWidth,MaxWidth);meter.Settings.PetModuleWidth=Width;};
+        _resize.DragCompleted+=(_,_)=>meter.Settings.Save();
+        frame.Children.Add(_resize);_shell.Child=frame;Content=_shell;
 
         meter.Pets.Changed+=Changed;
         Closed+=(_,_)=>{_closed=true;meter.Pets.Changed-=Changed;_sounds?.Dispose();meter.Settings.PetModuleWidth=Width;meter.Settings.PetModuleLeft=Left;meter.Settings.PetModuleTop=Top;meter.Settings.Save();};
@@ -101,6 +113,7 @@ public sealed class PetTrackerWindow:Window,IDisplayAppearance
         _root.Margin=enabled?new(0):new(5);
         _shell.Background=enabled?Brushes.Transparent:Brush("#DF20242A");_shell.BorderThickness=enabled?new(0):new(1);
         _close.Visibility=_pin.Visibility=enabled?Visibility.Collapsed:Visibility.Visible;
+        _resize.Visibility=enabled?Visibility.Collapsed:Visibility.Visible;
 
         SizeToContent=SizeToContent.Height;
     }

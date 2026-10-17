@@ -7,6 +7,7 @@ namespace AionMeter.App.Windows;
 internal sealed class ControlPanelSettingsPanel : StackPanel
 {
     internal bool Changed {get;private set;}
+    internal void MarkSaved()=>Changed=false;
     internal static string L(string en,string de)=>UiText.Current.Code=="de"?de:UiText.Current.Localize(en);
     internal ControlPanelSettingsPanel(AppSettings draft)
     {
