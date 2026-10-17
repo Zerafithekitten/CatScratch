@@ -27,6 +27,28 @@
         <Setter Property="Width" Value="190" />
         <Setter Property="TextWrapping" Value="Wrap" />
       </Style>
+      <Style TargetType="TabItem">
+        <Setter Property="Foreground" Value="{DynamicResource CustomBrush_A9B8C7}" />
+        <Setter Property="Template">
+          <Setter.Value>
+            <ControlTemplate TargetType="TabItem">
+              <StackPanel MinWidth="150" MaxWidth="180">
+                <Border x:Name="Group" BorderBrush="{DynamicResource CustomBrush_414A56}" BorderThickness="0,1,0,0" Margin="6,10,6,5" Padding="0,7,0,0" IsHitTestVisible="False">
+                  <TextBlock Text="{Binding Path=(s:SettingsNavigation.GroupTitle), RelativeSource={RelativeSource TemplatedParent}}" Foreground="{DynamicResource CustomBrush_C49AF5}" FontSize="10.5" FontWeight="SemiBold" TextWrapping="Wrap" />
+                </Border>
+                <Border x:Name="Tab" Background="Transparent" CornerRadius="6" Padding="12,7" Margin="0,0,0,2">
+                  <ContentPresenter ContentSource="Header" />
+                </Border>
+              </StackPanel>
+              <ControlTemplate.Triggers>
+                <Trigger Property="s:SettingsNavigation.GroupTitle" Value="{x:Null}"><Setter TargetName="Group" Property="Visibility" Value="Collapsed" /></Trigger>
+                <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Tab" Property="Background" Value="{DynamicResource CustomBrush_2B3038}" /></Trigger>
+                <Trigger Property="IsSelected" Value="True"><Setter TargetName="Tab" Property="Background" Value="{DynamicResource CustomBrush_30333D}" /><Setter Property="Foreground" Value="{DynamicResource CustomBrush_C49AF5}" /></Trigger>
+              </ControlTemplate.Triggers>
+            </ControlTemplate>
+          </Setter.Value>
+        </Setter>
+      </Style>
       <Style TargetType="ComboBox" BasedOn="{StaticResource MeterComboBox}">
         <Setter Property="MinWidth" Value="180" />
         <Setter Property="Height" Value="26" />

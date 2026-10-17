@@ -90,6 +90,8 @@ public partial class SettingsWindow : Window
         var orderedTabs=new[]{"general","appearance","profiles","combat","events","pets","hotkeys","history","capture","updates","feedback","help"}.Select(Tab).ToArray();
         SettingsTabs.Items.Clear();
         foreach(var tab in orderedTabs)SettingsTabs.Items.Add(tab);
+        var groupStarts=new[]{"general","combat","hotkeys","updates"};
+        for(var group=0;group<groupStarts.Length;group++)SettingsNavigation.SetGroupTitle(Tab(groupStarts[group]),SettingsNavigation.Title(group));
         SelectTab("appearance");
         foreach (var tab in SettingsTabs.Items.OfType<TabItem>())
             if (tab.Content is ScrollViewer viewer && viewer.Content is FrameworkElement content)
