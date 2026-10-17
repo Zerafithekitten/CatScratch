@@ -1,8 +1,8 @@
 CatScratch — AION 2 for Windows
 
 RELEASE CHANNELS
-Stable: v3.0.0
-Previous Beta: v2.6.0-beta.2 (included in Stable 3.0.0)
+Stable: v3.0.1
+Previous Beta: v3.0.1-beta.25 (included in Stable 3.0.1)
 Downloads: https://github.com/Zerafithekitten/CatScratch/releases
 The current GitHub README describes availability by channel.
 
@@ -16,13 +16,13 @@ GETTING STARTED
 
 METER AND CONTROLS
 Track your own damage while solo and confirmed current party members while grouped.
-Rows show class, name, CP, GS, DPS, damage and share. Received damage is separate.
+Rows show class emblems, name, CP, GS, DPS and share, with class-colored backgrounds. Received damage is separate.
 Unknown values appear as dashes. Group-search room values need a received roster.
-Personal combat shows self healing and healing of others in a collapsible section.
+Personal combat shows HP-confirmed effective self healing and healing of others, excluding overheal. An asterisk marks incomplete confirmed totals; a dash means no amount could be confirmed.
 An optional boss HP panel uses received health data. RTT is a passive TCP estimate.
 Resize the meter, adjust opacity and scale, or use compact/normal layouts.
 Click-through removes the outer frame and controls while keeping statistics visible.
-Settings and the tray menu remain clickable. The main window X exits the whole app.
+The permanent control panel stays clickable and contains the version, module controls and single Settings gear. Its X is the only in-app Exit action. The DPS display can be disabled independently. Choose horizontal/vertical layout, anchors, pin and transparency under Settings > Appearance > Control panel. Save keeps Settings open; X closes and discards later unsaved edits.
 
 DEFAULT SHORTCUTS — change them in Settings > Hotkeys
 Shift+F4: toggle death recap
@@ -38,7 +38,7 @@ Click a shortcut field, press the desired combination and Save.
 App shortcuts pause while Settings is active.
 
 BOSS PERSONAL BESTS
-Open the small trophy icon in the DPS meter.
+Open the small trophy icon in the control panel.
 Real dungeon/world boss victories can improve six independent permanent bests:
 highest DPS, damage, strongest hit and healing; fewest own deaths and least damage taken.
 Records are separate for each character/server/class and are not limited to ten fights.
@@ -53,24 +53,23 @@ Stream mode masks displayed and copied names; original local files remain unchan
 
 DEATH RECAP
 The tombstone icon or Shift+F4 enables/disables the module.
-On death, show received damage from the last ten seconds with attackers and skills.
+On death, show the five latest received hits from the last ten seconds, with attackers, skills and red damage values. The compact window starts in the upper half of the screen.
 Fresh positive own HP or a map reload dismisses the recap. It is not saved across restarts.
 Two recorded resurrection methods were tested; a third still lacks a recording.
 
 FIGHT HISTORY
 Statistics selects live, current-session and saved fights.
-Boss personal bests and Last played with use their own dedicated meter buttons.
+Boss personal bests and Last played with use their own dedicated control-panel buttons.
 Press Save after combat to keep a full fight. Automatic saving is disabled by default.
 Full saved fights retain the ten newest records. Boss bests and recent players are independent.
 Test fights cannot be saved as real fights or populate permanent personal records.
 
 PETS, EVENTS AND SOUNDS
-The paw button toggles the compact pet tracker for personally attacked pet-source monsters.
-Keep the three most recently attacked pets with soul counts and next-level progress.
+The control-panel paw toggles the Pet tracker. Show at most five incomplete pets, prioritizing fresh source monsters in sight and then the supported current region. Level-3 pets are hidden everywhere and disappear after the final confirmed soul loot. If no supported location is known, up to three incomplete recently attacked sources provide a fallback. Supported regions: Verteron, Altgard and Chaotic Lower Reshanta. No exact-distance ranking or game-memory access is used. Width is adjustable in Settings > Pets and using the bottom-right grip.
 Saved progress is character-scoped; ~ marks last-known counts pending fresh login data.
 Events and enabled boss timers within the next hour appear as movable cards.
 Started entries leave Upcoming and appear exclusively in the movable Started events module.
-Use the Upcoming clock button to reopen it. Its position and open state are saved independently.
+The Upcoming clock opens the 24-hour event timeline. Enable Started events separately in Settings > Events; its placement and visibility are saved independently. Timeline favorites persist and have a subtle gold frame. Event/PvP/Boss use distinct colors.
 Events: Open! + 3-minute countdown; Spacetime Rift: Open! + 10-minute countdown.
 Bosses: Spawned for 2 minutes, without a countdown. Expired entries disappear automatically.
 Boss observations can be estimates.
@@ -81,8 +80,7 @@ UPDATES
 Choose Stable or Beta in Settings > Updates.
 With automatic updates enabled, check shortly after startup and every ten minutes.
 Download, verify and extract updates in the background while the current meter runs.
-The notice and restart button appear only when preparation is complete.
-Click Restart to update to apply prepared files and restart. No automatic restart occurs.
+A small green Update! button appears separately above the control panel only when preparation is complete. It does not change panel position or size. Click it to apply prepared files and restart. No automatic restart occurs.
 Both installed and portable copies support in-app updates in a writable folder.
 Preserve userdata; remove old backups, staging and ZIP only after successful new startup.
 Failed updates retain recovery files. Temporary update data uses userdata/temp/updates.

@@ -2,14 +2,14 @@
 
 A separate, always-on-top Windows DPS meter for **AION 2**, by Zerafithekitten. Track your own fights and confirmed party members in a compact dark gray interface with restrained purple accents and cat-paw branding.
 
-[Download Stable](https://github.com/Zerafithekitten/CatScratch/releases/latest) · [Beta release history](https://github.com/Zerafithekitten/CatScratch/releases) · [Release history](https://github.com/Zerafithekitten/CatScratch/releases) · [Report a bug / request a feature](https://github.com/Zerafithekitten/CatScratch/issues/new/choose)
+[Download Stable](https://github.com/Zerafithekitten/CatScratch/releases/latest) · [Release history](https://github.com/Zerafithekitten/CatScratch/releases) · [Report a bug / request a feature](https://github.com/Zerafithekitten/CatScratch/issues/new/choose)
 
 | Channel | Current version | What it includes |
 | --- | --- | --- |
 | **Stable** | **[v3.0.1](https://github.com/Zerafithekitten/CatScratch/releases/tag/v3.0.1)** | Independent control panel, reworked Pet tracker with five recommendations, custom colors and transparency, event timeline and favorites, effective healing and the complete tested Beta feature set. |
 | **Beta** | [Previous: v3.0.1-beta.25](https://github.com/Zerafithekitten/CatScratch/releases/tag/v3.0.1-beta.25) | Promoted to Stable 3.0.1. No newer Beta is currently required for these features. |
 
-English is the default. German, Russian and French are also available. Screenshots use synthetic sample data; names and numbers are examples. Some previews retain earlier Beta version labels. All features described below are included in **Stable v3.0.1** unless a limitation is stated.
+English is the default. German, Russian and French are also available. Screenshots use synthetic sample data; names and numbers are examples. All features described below are included in **Stable v3.0.1** unless a limitation is stated.
 
 ## Contents
 
@@ -62,11 +62,11 @@ You can hide the combat display under **Settings > Appearance > Modules > Show D
 
 The meter tracks your own damage while solo and confirmed current party members while grouped. Compact rows show class emblems, class-colored background fills, name, DPS, damage share, Combat Power (**CP**) and Gear Score (**GS**). Missing values appear as dashes. Incoming damage is shown separately in red.
 
-The collapsible **Personal combat** section shows self healing and healing of others. An optional boss HP panel uses received health data. The header shows the Europe/Berlin clock and fight duration; the footer includes party DPS and a passive RTT estimate.
+The collapsible **Personal combat** section shows self healing and healing of others. An optional boss HP panel uses received health data. A small **Enrage time** bar appears only for a received deadline matching that boss; it represents the server boss time limit, not a predicted enrage mechanic. The control panel shows the Europe/Berlin clock and fight duration; the combat display footer retains party DPS and a passive RTT estimate.
 
 **Effective self healing and healing of others.** Both personal-combat values count only HP gains confirmed by nearby health updates, excluding overhealing. Recognized direct group heals and healing-over-time ticks are supported. An asterisk marks an incomplete confirmed subtotal; a dash means healing occurred but none could be confirmed. Missing or ambiguous HP data, overlapping healers and concurrent damage are excluded rather than estimated. The tooltip explains the marker. Existing reported-healing fields in saved statistics and boss records retain their original meaning; the personal-combat display uses separate effective values.
 
-<img src="docs/screenshots/meter.png" alt="Current CatScratch DPS meter with class bars, CP/GS and toolbar shortcuts" width="420" />
+<img src="docs/screenshots/meter.png" alt="Stable CatScratch combat display with class bars, CP/GS and an independent position pin" width="420" />
 
 Automatic fight-end detection is available in the combat settings. Resize the meter down to 260 px, adjust opacity and UI scale (75–150%), or switch between compact and normal layouts. Click-through hides the frame and controls while keeping statistics readable. Settings remain clickable.
 
@@ -92,7 +92,7 @@ Group information must actually arrive from the game. CatScratch cannot reconstr
 
 ## Permanent boss personal bests
 
-Open the **small trophy icon** in the DPS meter. Search the bundled catalog of real dungeon bosses and world bosses, including bosses for which you have no record yet.
+Open the **small trophy icon** in the CatScratch control panel. Search the bundled catalog of real dungeon bosses and world bosses, including bosses for which you have no record yet.
 
 Each boss retains **six independent best values**, separately for each character, server and class:
 
@@ -117,7 +117,7 @@ A record requires a confirmed real boss kill, usable own-character data, a known
 
 ## Last played with
 
-Open the **player icon beside the trophy**. The local list keeps confirmed teammates, newest first, separately for each own character/server.
+Open the **player icon beside the trophy in the control panel**. The local list keeps confirmed teammates, newest first, separately for each own character/server.
 
 Compact rows show name, class, server, last-played time and the last received **CP / GS**, without expandable equipment panels. Every player has an individual **copy-name button**. Repeated appearances update an existing entry rather than adding duplicates. The list persists across restarts and has no ten-player limit.
 
@@ -139,7 +139,7 @@ It closes when fresh positive own HP or a map reload confirms the character is a
 
 <details><summary>Color settings and picker previews (Beta)</summary>
 
-<img src="docs/screenshots/interface-colors.png" alt="Appearance settings with custom accent, background and text colors" width="760" />
+<img src="docs/screenshots/interface-colors.png" alt="Appearance settings using an example custom blue accent palette" width="760" />
 
 <img src="docs/screenshots/color-picker.png" alt="Saturation and brightness field with a rainbow hue strip" width="304" />
 
@@ -237,15 +237,17 @@ With automatic updates enabled, CatScratch checks shortly after startup and **ev
 
 The small green **Update!** notice appears **only after the update is fully prepared**, in a separate popup above the control panel. It follows and hides with the panel, without changing the panel position or dimensions. Click it to apply the prepared files and restart; CatScratch does not restart automatically.
 
+<img src="docs/screenshots/update-notice.png" alt="Small green Update! button shown separately above the control panel" width="72" />
+
 After a successful new startup, the old backup, staged payload and downloaded ZIP are removed. Failed updates retain recovery files. Settings, saved fights, personal bests, recent players and captures are preserved. Update staging stays under `userdata/temp/updates`; a writable program folder is required.
 
-When a Beta is promoted and its Stable build starts, Beta subscribers automatically return to the Stable update channel. A later deliberate switch back to Beta is respected until the next Stable transition.
+When a Beta is promoted and its Stable build starts, Beta subscribers automatically return to the Stable update channel. A later deliberate switch back to Beta is respected until the next Stable transition. The installed version then shows **3.0.1** without a beta suffix.
 
 Use **Check now** in Settings or **Check for updates** in the tray menu for a manual check. Automatic checking and preparation can be disabled in Settings. CatScratch also reduces data-loading allocations and moves optional startup work behind the first meter display.
 
 ## Patchnotes
 
-Open **Patch notes** from the meter or Settings. Versions are listed **on the left**, newest first. Each version shows only its own changes, with a **clickable contents overview** above detailed explanations. Repeated older notes in cumulative release bodies are omitted from that version's view.
+Open **Patch notes** from the control panel or Settings. Versions are listed **on the left**, newest first. Each version shows only its own changes, with a **clickable contents overview** above detailed explanations. Repeated older notes in cumulative release bodies are omitted from that version's view.
 
 **The last ten versions are available.** The version sidebar is scrollable when space is limited. Stable shows Stable releases; the Beta channel also includes beta versions. Bundled notes work offline; **Refresh from GitHub** updates the history.
 
@@ -345,6 +347,7 @@ Use **Report a bug / request a feature** in Settings > Feedback, or [open an iss
 
 ## Limitations
 
+- Pet suggestions use sight and supported regions, not measured proximity. Missing map or collection data remains unknown; the tracker does not read game memory or provide exact own-player distances.
 - Missing or unreceived server data can leave names, CP/GS, damage or deaths incomplete. The meter filters results to your confirmed character and party, rather than displaying every nearby player.
 - Death recap needs fresh health or map data to confirm revival. Two recorded resurrection paths have been tested; a third method still lacks a supplied recording.
 - RTT is a passive TCP estimate. Delayed acknowledgements and local accelerators can affect it or expose only a proxy connection.
