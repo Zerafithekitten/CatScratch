@@ -1,3 +1,9 @@
+## CatScratch v3.0.4-beta.4
+
+- Added Settings > Pets > Tracking mode: choose Nearby & region or Pet on hit.
+- Pet on hit shows only your three most recent personally attacked, incomplete pet sources. Regional mode remains the default; completed pets stay hidden in both modes.
+- The selected mode is saved with Settings and overlay profiles, and switches without restarting capture.
+
 ## CatScratch v3.0.4-beta.3
 
 - Keeps open tooltips above overlays when the foreground protection restores CatScratch, without taking keyboard focus.
