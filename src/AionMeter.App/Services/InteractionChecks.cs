@@ -601,13 +601,15 @@ internal static class InteractionChecks
             windows.Add(petWindow);petWindow.Show();
             var petList=Descendants(petWindow).OfType<System.Windows.Controls.ListBox>().First();
             Check(petList.Items.Count==0,"Pet tracker waits for a confirmed own baseline");
-            Check(Descendants(petWindow).OfType<System.Windows.Controls.TextBlock>().Any(t=>t.Text=="Pet progress data not received yet."),"Empty tracker preserves unknown collection state rather than inventing missing pets");
+            Check(Descendants(petWindow).OfType<System.Windows.Controls.TextBlock>().Any(t=>t.Text.StartsWith("Pet progress data not received yet.") && t.Text.Contains("character selection")),"Empty tracker explains character selection or relog without inventing missing pets");
             meter.Pets.Observe(new Core.Events.SelfIdentifiedEvent(1,1,"Sample self",2305,Core.Events.GameClass.Cleric));
             meter.Pets.Observe(new Core.Game.PetCollectionEvent(2,new Dictionary<int,Core.Game.PetState>{{1193,new(1193,1,10)}}));
             meter.Pets.Observe(new Core.Events.NpcSeenEvent(2,7,2400455));
             meter.Pets.Observe(new Core.Events.DamageEvent(2,1,7,17010000,100,Core.Events.HitFlags.None));
             petWindow.Refresh();
             Check(petList.Items.OfType<Windows.PetTrackerWindow.Row>().Single(x=>x.Definition.Id==1193).Progress=="10/25","Pet window renders the confirmed Global 10/25 baseline");
+            var farmRow=petList.Items.OfType<Windows.PetTrackerWindow.Row>().Single(x=>x.Definition.Id==1193);
+            Check(farmRow.Name==meter.Data.NpcName(2400455) && farmRow.Tooltip.Contains(farmRow.Definition.Name),"Pet rows show the attacked farming monster and retain the pet name in their tooltip");
             meter.Pets.Observe(new Core.Game.PetSoulEvent(3,new Dictionary<int,int>{{1193,1}}));petWindow.Refresh();
             Check(petList.Items.OfType<Windows.PetTrackerWindow.Row>().Single(x=>x.Definition.Id==1193).Progress=="11/25","Pet window updates to 11/25 from the verified soul delta");
             Check(petList.Items.Count==1 && petList.Items.OfType<Windows.PetTrackerWindow.Row>().Single().Fill==11d/25,"Only the personally attacked pet is shown with exact next-level progress");
@@ -639,6 +641,9 @@ internal static class InteractionChecks
             Check(petLocations.Select(l=>l.PetId).Distinct().Count()==156 && petLocations.All(l=>petCatalog.Any(p=>p.Id==l.PetId) && l.MapId is 1010 or 1110 or 20
                 && l.Points.All(p=>double.IsFinite(p.X)&&double.IsFinite(p.Y))),"Offline pet locations contain only matched known pets and valid source-map coordinates");
             meter.Pets.Observe(new Core.Events.ZoneChangedEvent(25,1110,"Altgard",false));petWindow.Refresh();
+            var earth=petCatalog.Single(p=>p.Id==1165);
+            Check(PetFarmNames.Resolve(earth,meter.Data,petLocations,1110,[],[],[])==meter.Data.NpcName(2400823),"Regional farming names use the current map rather than another faction's source");
+            Check(PetFarmNames.Resolve(earth,meter.Data,petLocations,1110,[2100653],[],[])==meter.Data.NpcName(2100653),"A freshly seen farming monster takes precedence over the regional fallback");
             Check(petList.Items.Count is >0 and <=5 && meter.Pets.AttackedTargetId==0
                 && petList.Items.OfType<Windows.PetTrackerWindow.Row>().All(p=>p.Progress!="MAX"),"The Pet tracker recommends incomplete current-region pets without any attack");
             meter.Pets.Observe(new Core.Events.NpcSeenEvent(DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),77,2400455));petWindow.Refresh();

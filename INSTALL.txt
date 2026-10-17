@@ -2,7 +2,7 @@ CatScratch — AION 2 for Windows
 
 RELEASE CHANNELS
 Stable: v3.0.3
-Beta: v3.0.4-beta.1 (Pet sound selection, volume and preview)
+Beta: v3.0.4-beta.2 (Pet sound selection, volume and preview)
 Downloads: https://github.com/Zerafithekitten/CatScratch/releases
 The current GitHub README describes availability by channel.
 

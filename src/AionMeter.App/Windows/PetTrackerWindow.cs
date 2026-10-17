@@ -99,7 +99,8 @@ public sealed class PetTrackerWindow:Window,IDisplayAppearance
         }
         var codes=_meter.Pets.AttackedNpcCodes();
         var now=DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
-        var seenCodes=_meter.Pets.Nearby().Npcs.Where(n=>n.TimeMs<=now && now-n.TimeMs<=30000).Select(n=>n.NpcCode).ToHashSet();
+        var seen=_meter.Pets.Nearby().Npcs.Where(n=>n.TimeMs<=now && now-n.TimeMs<=30000).OrderByDescending(n=>n.TimeMs).Select(n=>n.NpcCode).Distinct().ToArray();
+        var seenCodes=seen.ToHashSet();
         var nearbyPets=_catalog.Where(p=>p.Sources.Any(s=>seenCodes.Contains(s.NpcCode))||_meter.Pets.Farms(p.Id).Any(f=>seenCodes.Contains(f.NpcCode))).Select(p=>p.Id).ToHashSet();
         var suggestions=PetRecommendations.Select(_locations,_meter.Pets.MapId,states,confirmed,nearbyPets);
         var region=_locations.FirstOrDefault(l=>l.MapId==_meter.Pets.MapId)?.Region;
@@ -116,8 +117,9 @@ public sealed class PetTrackerWindow:Window,IDisplayAppearance
         {
             var state=states.GetValueOrDefault(p.Id,new(p.Id,0,0));
             var required=state.Level switch{0=>5,1=>25,2=>75,_=>0};
-            return new Row(p,(nearbyPets.Contains(p.Id)?"⌖ ":"")+p.Name,!confirmed?"—":required==0?"MAX":(_meter.Pets.FromCache?"~":"")+$"{state.Souls}/{required}",
-                !confirmed?0:required==0?1:Math.Clamp((double)state.Souls/required,0,1),AppIcon.Image,p.Name+
+            var monster=PetFarmNames.Resolve(p,_meter.Data,_locations,_meter.Pets.MapId,seen,codes,_meter.Pets.Farms(p.Id));
+            return new Row(p,(nearbyPets.Contains(p.Id)?"⌖ ":"")+monster,!confirmed?"—":required==0?"MAX":(_meter.Pets.FromCache?"~":"")+$"{state.Souls}/{required}",
+                !confirmed?0:required==0?1:Math.Clamp((double)state.Souls/required,0,1),AppIcon.Image,monster+"\n"+p.Name+
                 (suggestions.FirstOrDefault(s=>s.PetId==p.Id) is { } suggestion?"\n"+T.Localize(suggestion.Nearby?"Monster seen nearby; no attack required.":"Recorded farming location in this region; exact distance is not confirmed.")+"\n"+T.Localize("Souls needed for next level")+": "+suggestion.Needed:"")+
                 (_meter.Pets.FromCache?"\n"+T.Localize("Last known progress; waiting for fresh login data."):""));
         }).ToArray();

@@ -1,3 +1,9 @@
+## CatScratch v3.0.4-beta.2
+
+- Pet tracker rows now show the farming monster; the pet name remains in the tooltip. Freshly seen sources take priority, with current-region and attacked-source fallbacks.
+- Missing collection data now explains returning to character selection or logging in again, in all four languages.
+- Keeps the five-pet limit, completed-pet filtering, soul progress and independent sound controls.
+
 ## CatScratch v3.0.4-beta.1
 
 - Added Chime, Bell and Ping selection, independent 0–100% volume and a preview button in Settings > Pets.
