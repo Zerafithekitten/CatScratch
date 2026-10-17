@@ -6,10 +6,10 @@ A separate, always-on-top Windows DPS meter for **AION 2**, by Zerafithekitten. 
 
 | Channel | Current version | What it includes |
 | --- | --- | --- |
-| **Stable** | **[v3.0.2](https://github.com/Zerafithekitten/CatScratch/releases/tag/v3.0.2)** | Independent control panel, reworked Pet tracker with five recommendations, custom colors and transparency, event timeline and favorites, effective healing and the complete tested Beta feature set. |
+| **Stable** | **[v3.0.3](https://github.com/Zerafithekitten/CatScratch/releases/tag/v3.0.3)** | Independent control panel, reworked Pet tracker with five recommendations, custom colors and transparency, event timeline and favorites, effective healing and the complete tested Beta feature set. |
 | **Beta** | [Previous: v3.0.1-beta.25](https://github.com/Zerafithekitten/CatScratch/releases/tag/v3.0.1-beta.25) | Promoted to Stable 3.0.1. No newer Beta is currently required for these features. |
 
-English is the default. German, Russian and French are also available. Screenshots use synthetic sample data; names and numbers are examples. All features described below are included in **Stable v3.0.1** unless a limitation is stated.
+English is the default. German, Russian and French are also available. Screenshots use synthetic sample data; names and numbers are examples. All features described below are included in **Stable v3.0.3** unless a limitation is stated.
 
 ## Contents
 
@@ -241,7 +241,7 @@ The small green **Update!** notice appears **only after the update is fully prep
 
 After a successful new startup, the old backup, staged payload and downloaded ZIP are removed. Failed updates retain recovery files. Settings, saved fights, personal bests, recent players and captures are preserved. Update staging stays under `userdata/temp/updates`; a writable program folder is required.
 
-When a Beta is promoted and its Stable build starts, Beta subscribers automatically return to the Stable update channel. A later deliberate switch back to Beta is respected until the next Stable transition. The installed version then shows the Stable number, currently **3.0.2** without a beta suffix.
+When a Beta is promoted and its Stable build starts, Beta subscribers automatically return to the Stable update channel. A later deliberate switch back to Beta is respected until the next Stable transition. The installed version then shows the Stable number, currently **3.0.3** without a beta suffix.
 
 Use **Check now** in Settings or **Check for updates** in the tray menu for a manual check. Automatic checking and preparation can be disabled in Settings. CatScratch also reduces data-loading allocations and moves optional startup work behind the first meter display.
 
@@ -284,6 +284,8 @@ Record a combination in **Settings > Hotkeys** and save. Defaults:
 The all-window shortcut restores the previously open windows and their positions. App shortcuts pause while Settings is active. The main window's **X exits the entire program**; show/hide shortcuts only change visibility. The tray menu remains available in click-through mode.
 
 <details><summary>Settings preview</summary>
+
+The Settings sidebar groups related pages under **General & appearance**, **Game modules**, **Controls & data** and **Updates & help**, with clear headings and dividing lines. The topic order stays consistent in all four languages.
 
 <img src="docs/screenshots/settings.png" alt="Current CatScratch settings in the meter's dark gray and purple style" width="760" />
 

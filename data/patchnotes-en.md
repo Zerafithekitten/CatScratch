@@ -1,3 +1,31 @@
+## CatScratch v3.0.3
+
+This Stable update makes the central Settings navigation easier to scan. The existing CatScratch styling and DPS meter layout are preserved, and all settings retain their current values and behavior.
+
+### SETTINGS — ORGANIZED BY TOPIC
+
+The left sidebar now follows a fixed topic-based order rather than mixing general options, individual modules and support tools:
+
+- **General & appearance:** General, Appearance, Overlay profiles.
+- **Game modules:** Combat, Events, Pets.
+- **Controls & data:** Hotkeys, History, Capture & data.
+- **Updates & help:** Updates, Feedback, Help & symbols.
+
+Each group has a clear heading in the current accent color and a horizontal dividing line. Compact spacing keeps all twelve tabs visible at the normal window height; the sidebar remains scrollable in smaller windows. Headings are translated for English, German, French and Russian, while the topic order stays consistent between languages.
+
+### EXISTING SETTINGS BEHAVIOR PRESERVED
+
+- Appearance remains the initially selected page, so the familiar display controls stay directly accessible.
+- Events shortcuts and invalid-color focus use stable section identifiers, keeping navigation correct after the reorder.
+- Save continues to apply and persist changes without closing Settings. The X closes the window and discards later unsaved edits.
+- Profiles, module visibility, capture, hotkeys, updates and feedback retain their existing functions. No preference reset or migration is required.
+- The combat display, class colors, statistics, control panel and other overlay modules retain their existing layout.
+
+### VALIDATION
+
+- The application built without warnings or errors, and all 1,127 integrated interaction checks passed after the sidebar changes.
+- The grouped sidebar was rendered and visually checked at the standard window size.
+- The release pipeline additionally runs core tests, window/shutdown checks, color persistence, optional game companion checks and the direct update test before publishing the downloads.
 ## CatScratch v3.0.2
 
 This Stable maintenance update keeps the complete 3.0.1 feature set and existing CatScratch layout. It corrects three edge cases found during a broader review of updates, capture restarts and module behavior. Your settings, saved fights, boss personal bests, recent teammates and pet collection progress are retained.

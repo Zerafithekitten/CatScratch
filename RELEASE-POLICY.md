@@ -1,5 +1,7 @@
 # Release policy
 
+On 2026-10-17 the owner explicitly authorized publishing the grouped, reordered Settings navigation directly to Stable as **3.0.3**, with detailed release notes.
+
 On 2026-10-17 the owner explicitly authorized publishing the completed stability review corrections directly to Stable as **3.0.2**, with detailed release notes.
 
 On 2026-10-17 the owner explicitly authorized promoting the complete v3.0.1-beta.25 stand to Stable as **3.0.1**. Publish detailed notes covering every change since Stable 3.0.0, with prominent Main CatScratch Panel and Pet Tracker Rework headings. Keep the automatic Beta-to-Stable update-channel transition.
