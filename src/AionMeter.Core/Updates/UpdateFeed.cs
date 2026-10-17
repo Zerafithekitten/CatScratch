@@ -74,6 +74,7 @@ public sealed class UpdateFeed : IDisposable
     {
         using var doc = JsonDocument.Parse(json);
         var r = doc.RootElement;
+        if (r.ValueKind != JsonValueKind.Object) return null;
         if (Bool(r, "draft") || (!includeBeta && Bool(r, "prerelease"))) return null;
         var tag = Str(r, "tag_name");
         if (ReleaseVersion.Parse(tag) is not { } identity) return null;
@@ -85,11 +86,13 @@ public sealed class UpdateFeed : IDisposable
         {
             foreach (var a in assets.EnumerateArray())
             {
+                if (a.ValueKind != JsonValueKind.Object) continue;
                 var name = Str(a, "name");
                 var url = Str(a, "browser_download_url");
                 if (name.Length == 0 || url.Length == 0) continue;
                 var digest = Str(a, "digest");
-                var asset = new ReleaseAsset(name, a.TryGetProperty("size", out var size) ? size.GetInt64() : 0, url,
+                if (!a.TryGetProperty("size", out var size) || size.ValueKind != JsonValueKind.Number || !size.TryGetInt64(out var bytes) || bytes <= 0) continue;
+                var asset = new ReleaseAsset(name, bytes, url,
                     digest.StartsWith("sha256:", StringComparison.OrdinalIgnoreCase) ? digest[7..].ToLowerInvariant() : null);
                 if (name.EndsWith(".exe", StringComparison.OrdinalIgnoreCase) && name.Contains("Setup", StringComparison.OrdinalIgnoreCase))
                     installer ??= asset;
@@ -105,6 +108,7 @@ public sealed class UpdateFeed : IDisposable
     public static ReleaseInfo? ParseList(string json)
     {
         using var document = JsonDocument.Parse(json);
+        if (document.RootElement.ValueKind != JsonValueKind.Array) throw new JsonException("Expected a release list.");
         return document.RootElement.EnumerateArray().Select(r => Parse(r.GetRawText(), includeBeta: true))
             .OfType<ReleaseInfo>().OrderByDescending(r => r.Identity).FirstOrDefault();
     }
@@ -121,6 +125,7 @@ public sealed class UpdateFeed : IDisposable
         if (response.StatusCode == HttpStatusCode.NotFound) return [];
         response.EnsureSuccessStatusCode();
         using var document = JsonDocument.Parse(await response.Content.ReadAsStringAsync(timeout.Token).ConfigureAwait(false));
+        if (document.RootElement.ValueKind != JsonValueKind.Array) throw new JsonException("Expected a release list.");
         return ReleaseNotePage.Latest(document.RootElement.EnumerateArray()
             .Select(r => Parse(r.GetRawText(), channel == UpdateChannel.Beta)).OfType<ReleaseInfo>()
             .Select(r => new ReleaseNotePage(r.Tag, r.Notes)), channel);

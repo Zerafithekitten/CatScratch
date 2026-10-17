@@ -105,7 +105,7 @@ public sealed class PetCollection
     public int MapId {get{lock(_gate)return _mapId;}}
     public void InvalidateLocation()
     {
-        lock(_gate){_mapId=0;_position=null;_npcs.Clear();_dead.Clear();_attacked=0;_attackedCodes.Clear();Revision++;}
+        lock(_gate){_mapId=0;_position=null;_npcs.Clear();_dead.Clear();_drops.Clear();_attacked=0;_attackedCodes.Clear();Revision++;}
         Changed?.Invoke();
     }
     private readonly Dictionary<uint,NpcSeenEvent> _npcs=[];

@@ -87,6 +87,16 @@ internal static class Release250Checks
                 var result=await updater.CheckAsync();
                 Check(updater.Latest?.Tag=="v2.4.8" && (updater.CurrentIdentity.Beta is null || result==UpdateCheckResult.Available),"Stable returns the published stable build and supports returning from beta");
             }
+            var stoppedServer=new UpdateServer(next);
+            using(var stopped=new Updater(new AppSettings {Transient=true,CheckUpdates=false,UpdateChannel="Stable"},new UpdateFeed("test",stoppedServer,"https://example.test/releases/latest")))
+            {
+                var notifications=0;stopped.Changed+=()=>notifications++;
+                var pending=stopped.CheckAsync();await stoppedServer.FirstRequest.Task;
+                stopped.Dispose();stopped.Dispose();
+                await pending.WaitAsync(TimeSpan.FromSeconds(2));
+                Check(notifications==0 && stopped.Latest is null,"Shutdown cancels an in-flight update check without late UI notifications");
+                Check(await stopped.CheckAsync()==UpdateCheckResult.Failed && stoppedServer.Requests.Count==1,"A disposed updater cannot start another request");
+            }
             WindowPresentation.Attach(window);window.Show();window.Hide();
             var width=window.Width;WindowPresentation.SetScale(1.25);
             Check(((FrameworkElement)window.Content).LayoutTransform is ScaleTransform {ScaleX:1.25,ScaleY:1.25} && window.Width==width,"UI scaling changes text and icons without rewriting window width");

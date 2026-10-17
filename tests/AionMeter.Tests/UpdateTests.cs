@@ -6,6 +6,28 @@ namespace AionMeter.Tests;
 
 public class UpdateTests
 {
+    [Theory]
+    [InlineData("null")]
+    [InlineData("[]")]
+    [InlineData("42")]
+    public void Non_release_entries_are_ignored(string json) => Assert.Null(UpdateFeed.Parse(json));
+
+    [Theory]
+    [InlineData("null")]
+    [InlineData("\"large\"")]
+    [InlineData("9223372036854775808")]
+    [InlineData("1.5")]
+    [InlineData("-1")]
+    [InlineData("0")]
+    public void Invalid_asset_sizes_do_not_break_release_checks(string size)
+    {
+        var json = "{\"tag_name\":\"v3.0.2\",\"assets\":[null,{\"name\":\"CatScratch-win-x64.zip\",\"browser_download_url\":\"https://example.test/package\",\"size\":" + size + "}]}";
+        var release = UpdateFeed.Parse(json);
+        Assert.NotNull(release);
+        Assert.Null(release.Portable);
+        Assert.Equal("v3.0.2", UpdateFeed.ParseList("[null," + json + "]")!.Tag);
+    }
+
     // Shape of GitHub's /releases/latest answer (trimmed), as the meter receives it.
     private const string Release = """
         {"tag_name":"v0.2.0","html_url":"https://github.com/o/r/releases/tag/v0.2.0","draft":false,"prerelease":false,

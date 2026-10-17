@@ -73,10 +73,10 @@ public sealed class Updater : IDisposable
     /// <summary>Raised on the UI thread after every check and when a version is skipped.</summary>
     public event Action? Changed;
 
-    /// <summary>Automatic checks: the first shortly after start, then every few hours, while the setting is on.</summary>
+    /// <summary>Automatic checks: the first shortly after start, then every ten minutes, while the setting is on.</summary>
     public void Start()
     {
-        if (_timer is not null) return;
+        if (_disposed || _timer is not null) return;
         _timer = new DispatcherTimer(DispatcherPriority.Background) { Interval = FirstCheckDelay };
         _timer.Tick += (_, _) =>
         {
@@ -89,6 +89,7 @@ public sealed class Updater : IDisposable
     /// <summary>Asks GitHub now. <see cref="UpdateCheckResult.Available"/> also for a skipped version (the user asked).</summary>
     public async Task<UpdateCheckResult> CheckAsync()
     {
+        if (_disposed) return UpdateCheckResult.Failed;
         if (_running is { } running) return await running;
         _running = RunCurrentChannelAsync();
         try
@@ -107,7 +108,7 @@ public sealed class Updater : IDisposable
         {
             var revision = _channelRevision;
             var result = await RunCheckAsync(Channel, revision);
-            if (revision == _channelRevision) return result;
+            if (_disposed || revision == _channelRevision) return result;
         }
     }
 
@@ -115,8 +116,8 @@ public sealed class Updater : IDisposable
     {
         try
         {
-            var latest = await _feed.GetLatestAsync(channel);
-            if (revision != _channelRevision) return UpdateCheckResult.UpToDate;
+            var latest = await _feed.GetLatestAsync(channel, _lifetime.Token);
+            if (_disposed || revision != _channelRevision) return UpdateCheckResult.UpToDate;
             Latest = latest;
             LastError = null;
             if (_preparedTag is not null && _preparedTag != latest?.Tag) CancelPreparation();
@@ -128,14 +129,14 @@ public sealed class Updater : IDisposable
         }
         catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException or JsonException or InvalidOperationException)
         {
-            if (revision != _channelRevision) return UpdateCheckResult.UpToDate;
+            if (_disposed || revision != _channelRevision) return UpdateCheckResult.UpToDate;
             LastError = ex is TaskCanceledException ? "timeout" : ex.Message;
             Log.Info($"Update check failed: {LastError}");
             return UpdateCheckResult.Failed;
         }
         finally
         {
-            Changed?.Invoke();
+            if (!_disposed) Changed?.Invoke();
         }
     }
 
@@ -179,6 +180,7 @@ public sealed class Updater : IDisposable
     /// <summary>Downloads, verifies and extracts only. Live program files and the running meter are untouched.</summary>
     public Task<bool> PrepareAsync(ReleaseInfo release)
     {
+        if (_disposed) return Task.FromResult(false);
         if (IsReady(release)) return Task.FromResult(true);
         if (_preparation is not null && _preparingTag == release.Tag) return _preparation;
         CancelPreparation();
@@ -315,8 +317,12 @@ public sealed class Updater : IDisposable
         }
     }
 
+    private bool _disposed;
     public void Dispose()
     {
+        if (_disposed) return;
+        _disposed = true;
+        Changed = null;
         _timer?.Stop();
         // Keep a launched stage: its helper owns cleanup after the new program acknowledges startup.
         if (!_launching) CancelPreparation();

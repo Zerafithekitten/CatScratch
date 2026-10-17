@@ -64,6 +64,20 @@ public class PetCollectionTests
         tracker.Observe(new PetSoulDropEvent(10,7,534660209,1));tracker.Observe(new PetSoulDropEvent(11,8,534660210,1));
         tracker.Observe(PetPackets.Souls(12,Delta)!);Assert.Empty(tracker.Farms(1193));
     }
+    [Fact] public void CaptureRestartCannotAttributeOldLootToAReusedActor()
+    {
+        var tracker=new PetCollection();tracker.Observe(Own());tracker.Observe(PetPackets.Collection(1,Baseline)!);
+        tracker.Observe(new NpcSeenEvent(2,7,2400455));
+        tracker.Observe(new PetSoulDropEvent(10,7,534660209,1));
+        tracker.InvalidateLocation();
+        tracker.Observe(new NpcSeenEvent(11,7,2400707));
+        tracker.Observe(PetPackets.Souls(12,Delta)!);
+        Assert.Empty(tracker.Farms(1193));
+        Assert.True(tracker.Confirmed);
+        tracker.Observe(new PetSoulDropEvent(20,7,534660209,1));
+        tracker.Observe(PetPackets.Souls(21,Delta)!);
+        Assert.Equal(2400707,tracker.Farms(1193).Single().NpcCode);
+    }
     [Fact] public void ConfirmedUniqueLootLearnsTheFarmAndDeadNpcsLeaveTheNearbyView()
     {
         var tracker=new PetCollection();tracker.Observe(Own());tracker.Observe(PetPackets.Collection(1,Baseline)!);
