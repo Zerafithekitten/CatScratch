@@ -1,3 +1,124 @@
+## CatScratch v3.0.1
+
+This Stable release brings together the complete 3.0.1 Beta series through beta.25. It replaces Stable 3.0.0 and includes the new independent control panel, the reworked Pet tracker, interface customization, the 24-hour event planner, effective personal healing and the fixes tested during this Beta cycle. Existing local preferences and records are retained.
+
+Jump to: [Main CatScratch Panel](#main-catscratch-panel--your-new-control-center) · [Pet Tracker Rework](#pet-tracker-rework--five-focused-recommendations) · [Colors and transparency](#interface-colors-transparency-and-mario-party) · [Events](#24-hour-event-timeline-and-favorites) · [Healing](#effective-self-healing-and-healing-others) · [Updates](#updates-restarts-and-moving-from-beta-to-stable)
+
+### MAIN CATSCRATCH PANEL — YOUR NEW CONTROL CENTER
+
+The CatScratch control panel is now a permanent, separate part of the overlay. It keeps the controls available even when you hide the DPS display or enable click-through. The combat display and the controls can be placed independently.
+
+#### All general controls in one place
+
+- The installed version appears underneath the CatScratch name in the control panel. Stable installations display **3.0.1**, without a beta suffix.
+- General header and footer actions now live in the panel: module toggles, personal combat, Pets, boss personal bests, recent players, statistics, fight details, exports, patch notes, saving, update checks, timers, reset, damage mode and background opacity.
+- The Settings gear remains directly accessible in the panel. You no longer have to restore the DPS display or remember a shortcut just to open Settings.
+- The panel's **X** is the only in-app action that exits CatScratch. The visible Exit control was removed from the DPS display and the tray Exit entry was removed. Closing an individual auxiliary module only closes that module.
+- The panel stays clickable during global click-through so you retain access to Settings, visibility controls and Exit.
+
+#### Compact horizontal and vertical layouts
+
+- Choose the orientation under **Settings > Appearance > Control panel**. The horizontal layout keeps its compact toolbar arrangement.
+- The vertical layout now uses four aligned symbol columns, tighter rows and subtle vertical separators. Its panel width is reduced to **132 logical pixels**, replacing the uneven wrapping and excessive gaps from early Beta builds.
+- Damage mode and background opacity have their own bottom row instead of being scattered among the module icons. Icons retain their actions and tooltips when you change orientation.
+- The panel supports free placement and nine screen anchors: corners, edge centers and screen center. It can reach the full screen edge, including positions around the taskbar area.
+- Dragging changes the saved positioning mode to free placement. Choosing an anchor or orientation in Settings is applied when you press Save.
+- Panel placement, orientation, alignment and pin state are saved and included in overlay profiles. The DPS display retains its own dimensions and location.
+
+#### Independent DPS display and position pins
+
+- **Settings > Appearance > Modules > Show DPS meter** can disable only the combat display while capture and the other enabled modules continue running.
+- Restore the combat display with its panel button, tray control or configured shortcut; the default DPS-display shortcut remains **Shift+F5**.
+- Automatic visibility and Show/hide all respect a deliberately disabled DPS display rather than turning it back on unexpectedly.
+- The DPS meter's position pin is back at the upper right of the actual DPS display. The panel's pin controls only the panel. Both pins remain independent and preserve click-through behavior.
+- The existing compact combat rows remain: class emblems, class-colored background fills, DPS, contribution percentage, CP/GS when received and red incoming damage. General controls were moved without replacing those combat statistics.
+
+### PET TRACKER REWORK — FIVE FOCUSED RECOMMENDATIONS
+
+The Pet tracker can now recommend useful pets without requiring you to attack a monster first. It uses the confirmed current region and freshly received source-monster announcements, while keeping the overlay compact and preserving unknown collection data.
+
+#### Sight and region recommendations
+
+- The tracker displays **at most five recommendations**. Freshly recognized pet-source monsters in sight take priority; the remaining entries are suggestions for the current supported region.
+- A **⌖** marker identifies a pet whose source monster was freshly observed. A regional entry means a recorded farming source exists in that region; it does not mean that monster is currently beside your character.
+- Region-based recommendations support **Verteron, Altgard and Chaotic Lower Reshanta**. The offline location data contains **156 matched pets**, complementing the existing confirmed Global monster-source mappings for **165 pets**.
+- The source data is bundled with CatScratch and does not need a website request whenever the overlay refreshes. The map records are attributed to AION 2 Pets / Wikily; region identifiers were cross-checked against the Global map index.
+- These are sight- and region-based recommendations, **not the five closest pets by measured distance**. Reliable continuous own-player coordinates and a verified map-pixel conversion are not available, so no exact distances, navigation arrows or player radar are displayed.
+- CatScratch remains passive. This release does not add game-memory access, game input automation or outgoing game packets for positioning.
+
+#### Completed pets stay out of the way
+
+- Pets confirmed at **level 3** are excluded from every Pet tracker view, including the recently attacked-source fallback.
+- When the final soul loot confirms completion, the pet disappears immediately. You do not have to restart CatScratch or change areas to remove it.
+- If no supported location or fresh nearby source is known, the tracker can fall back to the three most recently attacked incomplete pets. Completed pets no longer occupy one of those slots.
+- The Global progression remains **5 souls to unlock, then 25 and 75** for the following levels. Rows show the current soul count and progress toward the next level; the tooltip explains how many souls are still needed.
+
+#### Honest progress and current location context
+
+- Recommendations require a confirmed own collection baseline. Missing collection information is not treated as an empty collection or as proof that every pet is missing.
+- Progress remains saved per character. A **~** prefix identifies last-known cached counts until fresh collection data arrives. A new baseline replaces those cached values rather than adding them twice.
+- Map changes, character changes and capture resets clear old location context. The previous region and its nearby monsters are not silently reused after a disconnect or teleport.
+- Fresh sightings are time-limited, dead recognized NPCs leave the nearby list, and recently attacked sources retain their separate fallback role.
+- The open module refreshes its location recommendations regularly. Unchanged rows are not rebound unnecessarily, which preserves scrolling while you inspect the list.
+- Pet width can be adjusted under **Settings > Pets**, with a wider **150–1600 logical-pixel** range. A small bottom-right grip also adjusts width directly; the selected width is saved between starts. The grip is hidden during click-through.
+
+#### INTERFACE COLORS, TRANSPARENCY AND MARIO PARTY
+
+- **Settings > Appearance > Interface colors** lets you customize the accent, general background and text colors. Semantic class, healing, damage, event-type and favorite colors retain their distinct meanings.
+- The color picker now uses a saturation/brightness field and a rainbow hue strip. You can also enter RGB hex values, use presets and preview your selection before saving.
+- Keyboard support includes arrow-key adjustments, Space to switch between the color field and hue control, and Shift for larger steps.
+- Valid low-contrast choices are allowed: the contrast warning is advisory and no longer blocks Save without explanation. Invalid hex input is brought into view for correction.
+- Saved palettes apply across open windows and persist after restarting. Fixes prevent cached meter surfaces from restoring an old color after click-through changes or Restore default colors.
+- Background opacity now reaches **0%** for the DPS meter and control panel. The extra dark meter surface follows the setting too, rather than remaining opaque behind the adjustable layer. Text and icons do not receive an additional background-only fade.
+- Display opacity and background opacity remain separate controls. Panel transparency, saved palettes and position anchors continue to work together.
+- The small **?** next to Restore default colors enables the optional **Mario Party** mode. After Save, a seamless rainbow wallpaper scrolls across general window backgrounds on a **12-second loop**, with smooth transitions instead of abrupt color jumps.
+- Restore default colors and Save stops Mario Party and returns to the standard palette. Semantic combat colors, class colors, event colors and gold favorite frames are preserved.
+
+#### 24-HOUR EVENT TIMELINE AND FAVORITES
+
+- The clock in Upcoming events opens a compact **24-hour horizontal timeline**, with a separate track for each event type and times for the selected region.
+- The planner includes scheduled event types and known next world-boss spawns. Its height was tightened to avoid a large empty lower area.
+- Star an event type to save it as a favorite. Its timeline occurrences and matching overlay cards receive a thin, softly glowing **gold frame**.
+- Favorites are independent of which events you show in the overlay and which reminder sounds you enable; favoriting does not silently change those preferences.
+- Event categories are easier to distinguish: **Event is turquoise, PvP lavender and Boss orange**.
+- The planner refreshes every minute while open and refreshes when reopened. It uses the bundled community schedule and selected region; it is not a live feed of official schedule changes.
+- Started events retain their separate module: normal events remain Open for 3 minutes, Spacetime Rift for 10 minutes, and bosses show Spawned for 2 minutes. Started entries leave Upcoming rather than appearing in both places.
+
+#### EFFECTIVE SELF HEALING AND HEALING OTHERS
+
+- Both values in Personal combat now show **HP-confirmed effective healing**, excluding overhealing. A reported heal amount alone is not counted as proof of restored health.
+- Supported direct group heals previously carried in damage-shaped packets are now recognized as healing events. Healing-over-time ticks use the same confirmation rules; damage totals are not inflated by those heals.
+- Only a matching, sufficiently fresh and unambiguous HP increase is credited. Overlapping healers, concurrent damage and missing or inconsistent HP evidence are left unconfirmed instead of being guessed.
+- A **\*** marks an incomplete confirmed subtotal. A **dash** means healing was reported but no amount could be confirmed, or the necessary effective-healing field is unavailable. Tooltips explain the distinction.
+- Existing raw healing and self-healing fields in historical statistics retain their original meaning. Personal combat uses separate effective values; older saved records are not retroactively converted into verified healing.
+
+#### BOSS HP AND ENRAGE TIME
+
+- The boss HP display uses a refined rounded fill with separate HP and percentage columns, improving readability in narrow meter layouts.
+- A small **Enrage time** bar appears underneath when the server supplies a matching deadline for the current boss. It updates from that deadline and clears when it expires or the boss/timer context resets.
+- This label represents the received boss time limit. It is **not a separately verified enrage-mechanic prediction**. An instance-wide timer is never substituted for a missing boss deadline.
+- When the small boss countdown is displayed, the same boss countdown is not duplicated in the header; a separate valid instance timer may still appear there.
+
+#### SETTINGS, HELP AND WINDOW RELIABILITY
+
+- Pressing **Save** now persists and applies changes while keeping the same Settings window open. Use its **X** to close it; later unsaved draft edits are discarded. The closing Cancel button was removed.
+- Saving a panel layout also clears its pending-change marker, so an unrelated later Save does not reapply an old layout choice after you have moved the panel.
+- **Settings > Help & symbols** provides a read-only icon guide with functions, state explanations and your saved shortcuts. The guide is available in English and German and does not execute the example actions.
+- Visible overlay windows now recover their native always-on-top ordering if a game or display change places them behind other windows. Recovery uses no activation, movement or resizing.
+- Hidden modules remain hidden. While you use CatScratch Settings or another interactive CatScratch dialog, the recovery routine does not force display modules over it.
+- Current screenshots and the GitHub feature guide were updated during this Beta cycle, including the revised Pet tracker. Captures and personal gameplay data are not included in release downloads.
+
+#### UPDATES, RESTARTS AND MOVING FROM BETA TO STABLE
+
+- Automatic update checks still run shortly after startup and **every ten minutes** when enabled. Available packages are downloaded, verified and extracted in the background while the current version keeps running.
+- A prepared update appears as a small, **green Update! button in a separate popup above the control panel**. The text fits its compact button and is no longer clipped.
+- The notice follows the panel and hides with it. Showing or removing it does not expand, move or re-anchor the panel. Clicking it uses the existing prepared-update restart action.
+- CatScratch does not restart without your update click. After the new version successfully starts, the old backup, staged payload and downloaded archive are cleaned up; failed updates retain recovery files.
+- Direct updates now refresh icons for existing desktop, Start menu and pinned-taskbar shortcuts that target the updated installation. The installer also requests a Windows icon-association refresh. A shortcut targeting a different old copy is not redirected or deleted.
+- On the first successful start of **3.0.1 Stable**, Beta subscribers automatically return to the **Stable** update channel. The displayed version becomes **3.0.1**, with no beta suffix.
+- If you deliberately select Beta again later, that selection survives normal restarts until a future Stable promotion. The public Beta branch and previous prereleases remain available; this release does not add a password gate.
+- Local settings, saved fights, boss personal bests, recent players, pet progress and debug captures remain preserved through the update.
+
 ## CatScratch v3.0.1-beta.25
 
 - Limited the Pet tracker to five recommendations, with fresh sources in sight taking priority over regional suggestions. No exact-distance ranking is implied.

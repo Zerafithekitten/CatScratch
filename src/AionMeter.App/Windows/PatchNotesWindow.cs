@@ -123,8 +123,9 @@ public sealed class PatchNotesWindow : Window
             }
             foreach (var (text, heading) in ReleaseNotes.Lines(line, "en"))
             {
-                var block = new TextBlock { Text = text, TextWrapping = TextWrapping.Wrap, FontSize = heading ? 14 : 12, LineHeight = 19,
-                    Margin = heading ? new(0,8,0,8) : new(0,0,8,6), FontWeight = heading ? FontWeights.SemiBold : FontWeights.Normal,
+                var majorHeading=heading && line.StartsWith("### ",StringComparison.Ordinal);
+                var block = new TextBlock { Text = text, TextWrapping = TextWrapping.Wrap, FontSize = majorHeading ? 18 : heading ? 14 : 12, LineHeight = majorHeading ? 24 : 19,
+                    Margin = majorHeading ? new(0,16,0,10) : heading ? new(0,8,0,8) : new(0,0,8,6), FontWeight = heading ? FontWeights.SemiBold : FontWeights.Normal,
                     Foreground = heading ? ThemeColors.Brush("#C49AF5") : Foreground };
                 _notes.Children.Add(block);
                 if (heading && Regex.IsMatch(line, @"^#{3,6}\s+"))

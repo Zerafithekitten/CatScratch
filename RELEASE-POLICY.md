@@ -1,5 +1,7 @@
 # Release policy
 
+On 2026-10-17 the owner explicitly authorized promoting the complete v3.0.1-beta.25 stand to Stable as **3.0.1**. Publish detailed notes covering every change since Stable 3.0.0, with prominent Main CatScratch Panel and Pet Tracker Rework headings. Keep the automatic Beta-to-Stable update-channel transition.
+
 On 2026-10-16 the owner explicitly authorized promoting the complete current Beta feature set to Stable as **3.0.0**, superseding the earlier planned 2.6.0 Stable version. First separate Updates and Feedback into their own central Settings tabs. Publish detailed Stable notes covering all changes since Stable 2.5.5, and retain the automatic Beta-to-Stable channel transition.
 
 On 2026-10-16 the owner reviewed the local polish build and explicitly authorized publishing it as v2.6.0-beta.2 after error checks. General backgrounds stay neutral gray; purple is reserved for branding and restrained accents. Preserve class colors and full-row player progress fills. Stable remains unchanged.

@@ -2,18 +2,19 @@
 
 A separate, always-on-top Windows DPS meter for **AION 2**, by Zerafithekitten. Track your own fights and confirmed party members in a compact dark gray interface with restrained purple accents and cat-paw branding.
 
-[Download Stable](https://github.com/Zerafithekitten/CatScratch/releases/latest) · [Download Beta](https://github.com/Zerafithekitten/CatScratch/releases/tag/v3.0.1-beta.25) · [Release history](https://github.com/Zerafithekitten/CatScratch/releases) · [Report a bug / request a feature](https://github.com/Zerafithekitten/CatScratch/issues/new/choose)
+[Download Stable](https://github.com/Zerafithekitten/CatScratch/releases/latest) · [Beta release history](https://github.com/Zerafithekitten/CatScratch/releases) · [Release history](https://github.com/Zerafithekitten/CatScratch/releases) · [Report a bug / request a feature](https://github.com/Zerafithekitten/CatScratch/issues/new/choose)
 
 | Channel | Current version | What it includes |
 | --- | --- | --- |
-| **Stable** | **[v3.0.0](https://github.com/Zerafithekitten/CatScratch/releases/tag/v3.0.0)** | Complete tested Beta feature set: compact class-colored rows, central settings with separate Updates/Feedback tabs, position pins, overlay profiles, boss comparisons, compact recap, quiet game companion and safer preferences. |
-| **Beta** | [Last prerelease: v3.0.1-beta.25](https://github.com/Zerafithekitten/CatScratch/releases/tag/v3.0.1-beta.25) | Optional DPS meter display, custom interface colors and Mario Party, the 24-hour event timeline with persistent favorites, and HP-confirmed effective healing of others. |
+| **Stable** | **[v3.0.1](https://github.com/Zerafithekitten/CatScratch/releases/tag/v3.0.1)** | Independent control panel, reworked Pet tracker with five recommendations, custom colors and transparency, event timeline and favorites, effective healing and the complete tested Beta feature set. |
+| **Beta** | [Previous: v3.0.1-beta.25](https://github.com/Zerafithekitten/CatScratch/releases/tag/v3.0.1-beta.25) | Promoted to Stable 3.0.1. No newer Beta is currently required for these features. |
 
-English is the default. German, Russian and French are also available. Screenshots show **v3.0.1-beta.9** with synthetic sample data; names and numbers are examples. Features exclusive to the current Beta are labeled below. Stable remains **v3.0.0**.
+English is the default. German, Russian and French are also available. Screenshots use synthetic sample data; names and numbers are examples. Some previews retain earlier Beta version labels. All features described below are included in **Stable v3.0.1** unless a limitation is stated.
 
 ## Contents
 
 - [Getting started](#getting-started)
+- [CatScratch control panel](#catscratch-control-panel)
 - [DPS meter and fight details](#dps-meter-and-fight-details)
 - [Group-search statistics](#group-search-statistics)
 - [Permanent boss personal bests](#permanent-boss-personal-bests)
@@ -43,7 +44,19 @@ English is the default. German, Russian and French are also available. Screensho
 4. Teleport or change zones once while the meter is running so it receives fresh character information.
 5. Use borderless windowed mode to keep the overlay visible above the game.
 
-Both Setup and portable installations support in-app updates. Your settings and local records are kept in `userdata` beside the program. The installed version appears underneath the CatScratch title; the footer is reserved for module buttons.
+Both Setup and portable installations support in-app updates. Your settings and local records are kept in `userdata` beside the program. The installed version appears underneath the CatScratch title in the separate control panel, which holds the module and general controls.
+
+## CatScratch control panel
+
+The permanent control panel holds the version, single Settings gear and general controls independently of the DPS display. It stays clickable during global click-through. Its X is the only in-app Exit action; auxiliary module close buttons only close their own window.
+
+Choose horizontal or compact vertical orientation, nine screen anchors or free placement under **Settings > Appearance > Control panel**. The vertical layout uses four tight symbol columns with subtle separators. Panel position, alignment, transparency and pin state are saved independently and included in overlay profiles. The DPS position pin stays on the DPS display itself.
+
+You can hide the combat display under **Settings > Appearance > Modules > Show DPS meter** and continue using Pets, events and capture. Restore the display from the panel, tray or its shortcut. The panel remains your direct Settings access point.
+
+<img src="docs/screenshots/control-panel-horizontal.png" alt="Stable CatScratch horizontal control panel with version and general controls" width="400" />
+
+<img src="docs/screenshots/control-panel-vertical.png" alt="Compact vertical CatScratch control panel with four symbol columns" width="132" />
 
 ## DPS meter and fight details
 
@@ -51,7 +64,7 @@ The meter tracks your own damage while solo and confirmed current party members 
 
 The collapsible **Personal combat** section shows self healing and healing of others. An optional boss HP panel uses received health data. The header shows the Europe/Berlin clock and fight duration; the footer includes party DPS and a passive RTT estimate.
 
-**Beta: effective self healing and healing of others.** Both personal-combat values count only HP gains confirmed by nearby health updates count, excluding overhealing. Recognized direct group heals and healing-over-time ticks are supported. An asterisk marks an incomplete confirmed subtotal; a dash means healing occurred but none could be confirmed. Missing or ambiguous HP data, overlapping healers and concurrent damage are excluded rather than estimated. The tooltip explains the marker. Existing reported-healing fields in saved statistics and boss records retain their original meaning; the personal-combat display uses separate effective values.
+**Effective self healing and healing of others.** Both personal-combat values count only HP gains confirmed by nearby health updates, excluding overhealing. Recognized direct group heals and healing-over-time ticks are supported. An asterisk marks an incomplete confirmed subtotal; a dash means healing occurred but none could be confirmed. Missing or ambiguous HP data, overlapping healers and concurrent damage are excluded rather than estimated. The tooltip explains the marker. Existing reported-healing fields in saved statistics and boss records retain their original meaning; the personal-combat display uses separate effective values.
 
 <img src="docs/screenshots/meter.png" alt="Current CatScratch DPS meter with class bars, CP/GS and toolbar shortcuts" width="420" />
 
@@ -122,7 +135,7 @@ It closes when fresh positive own HP or a map reload confirms the character is a
 
 ## Interface colors
 
-**Available in Beta.** Settings > Appearance > Interface colors lets you choose accent, background and text colors using a saturation/brightness field, a rainbow hue strip, swatches or #RRGGBB. The preview is a draft: Save applies the colors across open windows and keeps them for the next start; Cancel leaves the saved palette unchanged. Restore default colors returns to the gray/lavender CatScratch palette after Save. Low contrast is shown as advice and does not prevent saving a valid color choice. For a small Easter egg, the **?** beside Restore default colors enables **Mario Party!**: a continuous rainbow wallpaper scrolls across the general window backgrounds in a seamless 12-second loop after Save, including after restart. Restore default colors and Save stops the mode. Class, healing, damage, event-type and golden favorite colors keep their meaning; the purple paw stays unchanged.
+**Available in Stable.** Settings > Appearance > Interface colors lets you choose accent, background and text colors using a saturation/brightness field, a rainbow hue strip, swatches or #RRGGBB. The preview is a draft: Save applies the colors across open windows and keeps them for the next start; Closing with X discards later unsaved palette edits. Restore default colors returns to the gray/lavender CatScratch palette after Save. Low contrast is shown as advice and does not prevent saving a valid color choice. For a small Easter egg, the **?** beside Restore default colors enables **Mario Party!**: a continuous rainbow wallpaper scrolls across the general window backgrounds in a seamless 12-second loop after Save, including after restart. Restore default colors and Save stops the mode. Class, healing, damage, event-type and golden favorite colors keep their meaning; the purple paw stays unchanged.
 
 <details><summary>Color settings and picker previews (Beta)</summary>
 
@@ -180,11 +193,11 @@ The bundled catalog contains confirmed Global monster-source mappings for 165 pe
 
 ## Events, boss timers and sounds
 
-Use the **single gear in the DPS meter > Events** for event visibility, region, selection, module widths, opacity, boss reminders and all event sounds. Event modules no longer have their own gear. Use Save to apply or Cancel to discard these options; sound previews and custom audio selection stay inside the same Settings window.
+Use the **single gear in the control panel > Events** for event visibility, region, selection, module widths, opacity, boss reminders and all event sounds. Event modules no longer have their own gear. Use Save to apply these options while Settings stays open; closing with X discards later unsaved edits; sound previews and custom audio selection stay inside the same Settings window.
 
 Selected events and enabled world-boss timers within the next hour appear as compact movable cards. Both modules restore their own positions and open states.
 
-The DPS meter is the single taskbar entry; display modules do not add separate taskbar/Alt-Tab entries or native Windows Snap frame styles. Each display module has a matching position pin at the upper right. Pinning prevents dragging without changing button interaction or click-through. Pin states survive restarting and are stored with optional overlay profiles; unpin to move a module again.
+The CatScratch control panel is the single taskbar entry; display modules do not add separate taskbar/Alt-Tab entries or native Windows Snap frame styles. Each display module has a matching position pin at the upper right. Pinning prevents dragging without changing button interaction or click-through. Pin states survive restarting and are stored with optional overlay profiles; unpin to move a module again.
 
 **Upcoming and Started are separate.** At the start, an entry leaves Upcoming and moves into the movable **Started events** module. Enable that module in Settings > Events; drag its header or cards to place it, and use its X to close it. Click-through and show/hide all windows work for both modules.
 
@@ -194,9 +207,9 @@ The DPS meter is the single taskbar entry; display modules do not add separate t
 | Spacetime Rift | **Open!** + remaining countdown | 10 minutes |
 | Boss | **Spawned**, no countdown | 2 minutes |
 
-**Beta: 24-hour timeline.** The clock in Upcoming opens a horizontal planner with a separate track for each event. It shows all scheduled event types in the selected region and known next world-boss spawns. Star an event to persist it as a favorite: its timeline markers and matching overlay cards receive a thin, softly glowing gold frame. Favorites do not change overlay selection or reminder sounds. Events are turquoise, PvP lavender and bosses orange. Times use the selected region, including daylight-saving changes. The planner refreshes automatically every minute while open and immediately when reopened. It uses the bundled community schedule, rather than fetching live schedule changes; event times are not officially confirmed.
+**24-hour timeline.** The clock in Upcoming opens a horizontal planner with a separate track for each event. It shows all scheduled event types in the selected region and known next world-boss spawns. Star an event to persist it as a favorite: its timeline markers and matching overlay cards receive a thin, softly glowing gold frame. Favorites do not change overlay selection or reminder sounds. Events are turquoise, PvP lavender and bosses orange. Times use the selected region, including daylight-saving changes. The planner refreshes automatically every minute while open and immediately when reopened. It uses the bundled community schedule, rather than fetching live schedule changes; event times are not officially confirmed.
 
-<img src="docs/screenshots/event-timeline.png" alt="Compact 24-hour horizontal event timeline with separate event tracks and gold-framed favorites (Beta)" width="1100" />
+<img src="docs/screenshots/event-timeline.png" alt="Compact 24-hour horizontal event timeline with separate event tracks and gold-framed favorites " width="1100" />
 
 Expired entries disappear automatically. While an event is active, a later recurrence with the same name is held out of Upcoming; its next start returns after the active entry expires.
 
@@ -222,7 +235,7 @@ Choose **Stable** or **Beta** in **Settings > Updates**. Stable is the default d
 
 With automatic updates enabled, CatScratch checks shortly after startup and **every ten minutes**. It downloads, verifies and extracts an available update in the background while the current meter keeps running.
 
-The meter message, restart button and notification appear **only after the update is fully prepared**. There is no download step left for the user: click **Restart to update** to apply the prepared files and restart. CatScratch does not restart automatically.
+The small green **Update!** notice appears **only after the update is fully prepared**, in a separate popup above the control panel. It follows and hides with the panel, without changing the panel position or dimensions. Click it to apply the prepared files and restart; CatScratch does not restart automatically.
 
 After a successful new startup, the old backup, staged payload and downloaded ZIP are removed. Failed updates retain recovery files. Settings, saved fights, personal bests, recent players and captures are preserved. Update staging stays under `userdata/temp/updates`; a writable program folder is required.
 
@@ -242,15 +255,15 @@ Open **Patch notes** from the meter or Settings. Versions are listed **on the le
 
 ## Help & symbols
 
-**Beta:** Settings > Help & symbols explains the panel and module icons, their functions and states, using your saved shortcuts. The guide is read-only and available in English and German.
+Settings > Help & symbols explains the panel and module icons, their functions and states, using your saved shortcuts. The guide is read-only and available in English and German.
 
-Settings > Appearance > Control panel offers compact horizontal and vertical layouts, nine screen anchors and free placement. The panel can reach the full screen edge and follows display/background opacity. Dragging switches to free placement. Save applies changes; Cancel discards them. Layout and alignment are included in overlay profiles.
+Settings > Appearance > Control panel offers compact horizontal and vertical layouts, nine screen anchors and free placement. The panel can reach the full screen edge and follows display/background opacity. Dragging switches to free placement. Save applies changes while Settings stays open; closing with X discards later unsaved edits. Layout and alignment are included in overlay profiles.
 
 ## Controls and shortcuts
 
-**Beta: optional DPS display.** Settings > Appearance > Modules > Show DPS meter hides combat statistics while capture and other modules continue. The permanent CatScratch control panel contains the version and general buttons, keeps Settings directly available, and provides a DPS display toggle even with global click-through enabled. Its X is the only in-app Exit action. Panel and meter have independently saved placement and pins. The tray icon and configured DPS meter shortcut (Shift+F5 by default) also restore the meter. The choice persists across restarts and is included in overlay profiles. Automatic visibility and Show/hide all respect a disabled display.
+**Optional DPS display.** Settings > Appearance > Modules > Show DPS meter hides combat statistics while capture and other modules continue. The permanent CatScratch control panel contains the version and general buttons, keeps Settings directly available, and provides a DPS display toggle even with global click-through enabled. Its X is the only in-app Exit action. Panel and meter have independently saved placement and pins. The tray icon and configured DPS meter shortcut (Shift+F5 by default) also restore the meter. The choice persists across restarts and is included in overlay profiles. Automatic visibility and Show/hide all respect a disabled display.
 
-The single meter gear opens central Settings. Updates and Feedback have separate tabs; General contains test mode, language and the optional game companion. Event and pet options apply with Save while Settings stays open; close with X to discard later unsaved edits.
+The single control-panel gear opens central Settings. Updates and Feedback have separate tabs; General contains test mode, language and the optional game companion. Event and pet options apply with Save while Settings stays open; close with X to discard later unsaved edits.
 
 Record a combination in **Settings > Hotkeys** and save. Defaults:
 
@@ -302,7 +315,7 @@ This keeps the watcher separate from the program files that an update replaces, 
 - The watcher does not capture game traffic, download updates, upload files, read chat or ask for account credentials. Network capture and normal update checks belong to the meter after it starts.
 - The task runs for the signed-in user with the highest available privileges, matching CatScratch's existing administrator requirement. It does not create a SYSTEM service or store your Windows password.
 - The shipped local script uses `-ExecutionPolicy Bypass` for its own PowerShell process. CatScratch does not change the machine-wide PowerShell execution policy. Managed Windows restrictions may still prevent it from running; failed setup is reported rather than silently enabling the option.
-- Scripts and configuration are kept locally in `userdata/game-start`. You can inspect the [watcher source](https://github.com/Zerafithekitten/CatScratch/blob/v3.0.0/src/AionMeter.App/Services/GameLifetime.cs) and [windowless launcher source](https://github.com/Zerafithekitten/CatScratch/blob/v3.0.0/src/AionMeter.App/Launcher/GameWatcherLauncher.cs).
+- Scripts and configuration are kept locally in `userdata/game-start`. You can inspect the [watcher source](https://github.com/Zerafithekitten/CatScratch/blob/v3.0.1/src/AionMeter.App/Services/GameLifetime.cs) and [windowless launcher source](https://github.com/Zerafithekitten/CatScratch/blob/v3.0.1/src/AionMeter.App/Launcher/GameWatcherLauncher.cs).
 
 ### Why no PowerShell window should appear
 

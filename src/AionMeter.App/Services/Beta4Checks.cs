@@ -73,6 +73,12 @@ internal static class Beta4Checks
         Check(beta.ApplyReleaseTransition(ReleaseVersion.Parse("2.5.2")!) && beta.UpdateChannel == "Stable", "The next promoted Stable version moves Beta subscribers back again");
         var optedStable = new AppSettings { Transient = true, UpdateChannel = "Stable", LastStartedRelease = "2.5.1-beta.5", SkippedUpdate = "keep" };
         Check(!optedStable.ApplyReleaseTransition(final) && optedStable.UpdateChannel == "Stable" && optedStable.SkippedUpdate == "keep", "Existing Stable subscriptions are preserved without clearing unrelated skip preferences");
+        var stable301=ReleaseVersion.Parse("3.0.1")!;
+        var promotion301=new AppSettings {UpdateChannel="Beta",LastStartedRelease="3.0.1-beta.25"};
+        Check(promotion301.ApplyReleaseTransition(stable301) && promotion301.UpdateChannel=="Stable" && promotion301.LastStartedRelease=="3.0.1",
+            "The complete 3.0.1 Beta series promotes to Stable with the final display version and update channel");
+        promotion301.UpdateChannel="Beta";
+        Check(!promotion301.ApplyReleaseTransition(stable301) && promotion301.UpdateChannel=="Beta","Choosing Beta again after 3.0.1 promotion survives ordinary restarts");
         var language = UiText.Current.Code; var stream = StreamNames.Enabled;
         using var meter = new MeterService(new AppSettings { Transient = true, DownloadIcons = false }, null);
         var overlay = new OverlayWindow(meter, false);
