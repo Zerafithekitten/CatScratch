@@ -11,6 +11,35 @@ internal static class WindowPresentation
     private static readonly Dictionary<Window, ScaleTransform> Windows = [];
     private static readonly Dictionary<Window,(double Width,double Height)> Limits=[];
     private static readonly HashSet<Window> NativeDragging=[];
+    [DllImport("user32.dll")] private static extern nint GetForegroundWindow();
+    [DllImport("user32.dll")] private static extern uint GetWindowThreadProcessId(nint window,out uint process);
+    [DllImport("user32.dll")] private static extern nint GetWindow(nint window,uint command);
+    [DllImport("user32.dll")] [return:MarshalAs(UnmanagedType.Bool)] private static extern bool IsWindowVisible(nint window);
+
+    // Games can reorder topmost windows after activation or a display-mode change. Recover only
+    // our visible overlays, without activating them, moving them, or showing hidden modules.
+    internal static void MaintainTopmost()
+    {
+        var foreground=GetForegroundWindow();
+        GetWindowThreadProcessId(foreground,out var process);
+        if(process==(uint)Environment.ProcessId)return; // Keep Settings and interactive dialogs above overlays.
+        foreach(var window in Windows.Keys.ToArray())RestoreTopmost(window);
+    }
+    internal static bool RestoreTopmost(Window window)
+    {
+        if(!window.Topmost || !window.IsVisible || window.WindowState==WindowState.Minimized)return false;
+        var handle=new WindowInteropHelper(window).Handle;
+        if(handle==0)return false;
+        var covered=((long)NativeMethods.GetWindowLongPtr(handle,NativeMethods.GWL_EXSTYLE)&8)==0;
+        for(var previous=GetWindow(handle,3);!covered && previous!=0;previous=GetWindow(previous,3)) // GW_HWNDPREV
+        {
+            if(!IsWindowVisible(previous))continue;
+            if(((long)NativeMethods.GetWindowLongPtr(previous,NativeMethods.GWL_EXSTYLE)&8)==0)break;
+            GetWindowThreadProcessId(previous,out var owner);
+            covered=owner!=(uint)Environment.ProcessId;
+        }
+        return covered && NativeMethods.SetWindowPos(handle,(nint)(-1),0,0,0,0,0x0013); // HWND_TOPMOST; no move, size or activation.
+    }
     public static double Scale { get; private set; } = 1;
     public static bool Enabled { get; set; } = true;
     [StructLayout(LayoutKind.Sequential)] private struct NativeRect { public int Left,Top,Right,Bottom; }

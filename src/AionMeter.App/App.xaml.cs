@@ -456,6 +456,7 @@ public partial class App : Application
         _overlay.Refresh(); // The permanent panel also needs current fight, save and update state.
         if (++_ticks % 5 == 0)
         {
+            WindowPresentation.MaintainTopmost();
             _tray?.Update(_overlay.IsVisible, _meter.Settings.ClickThrough, _meter.DemoRunning ? "demo" : _meter.CaptureStatus.Message);
             CheckBossAlerts();
             CheckEventSounds();

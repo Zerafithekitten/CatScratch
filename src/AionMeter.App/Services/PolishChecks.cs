@@ -59,6 +59,16 @@ internal static class PolishChecks
         {
             detachedOverlay.MoveControlsTo(permanentPanel);
             detachedOverlay.Show();permanentPanel.Show();detachedOverlay.Refresh();permanentPanel.UpdateLayout();
+            var panelHandle=new System.Windows.Interop.WindowInteropHelper(permanentPanel).Handle;
+            var boundsBefore=WindowPresentation.PhysicalBounds(permanentPanel);
+            NativeMethods.SetWindowPos(panelHandle,(nint)(-2),0,0,0,0,0x0013);
+            check(WindowPresentation.RestoreTopmost(permanentPanel)
+                && ((long)NativeMethods.GetWindowLongPtr(panelHandle,NativeMethods.GWL_EXSTYLE)&8)!=0
+                && WindowPresentation.PhysicalBounds(permanentPanel)==boundsBefore,
+                "Native topmost recovery restores a demoted panel without moving or resizing it");
+            permanentPanel.Hide();
+            check(!WindowPresentation.RestoreTopmost(permanentPanel) && !permanentPanel.IsVisible,"Topmost recovery never reveals a hidden module");
+            permanentPanel.Show();
             var exitButton=(Button)detachedOverlay.FindName("ShellHideButton");
             var version=(TextBlock)detachedOverlay.FindName("InstalledVersionText");
             check(Window.GetWindow(exitButton)==permanentPanel && Window.GetWindow(version)==permanentPanel,"Version and the sole CatScratch Exit button move to the permanent control panel");

@@ -1,3 +1,8 @@
+## CatScratch v3.0.1-beta.22
+
+- Hotfix: recover visible overlays that lose their always-on-top position after game activation or display changes.
+- Recovery keeps position, size and click-through unchanged, does not activate the overlays, and leaves hidden modules hidden. CatScratch dialogs keep priority while you use them.
+
 ## CatScratch v3.0.1-beta.21
 
 - Saving Settings now applies changes without closing the window. Use the X to close; unsaved changes are discarded.
