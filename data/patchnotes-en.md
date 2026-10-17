@@ -1,3 +1,9 @@
+## CatScratch v3.0.4-beta.1
+
+- Added Chime, Bell and Ping selection, independent 0–100% volume and a preview button in Settings > Pets.
+- Pet notification sound preferences are applied and retained with Save; unsaved edits are discarded when Settings is closed.
+- Existing installations keep Chime at 50% volume. Event sounds remain independent.
+
 ## CatScratch v3.0.3
 
 This Stable update makes the central Settings navigation easier to scan. The existing CatScratch styling and DPS meter layout are preserved, and all settings retain their current values and behavior.
