@@ -273,7 +273,10 @@ public static class SampleRenderer
                 goto case "settings";
             case "settings":
                 var settingsWindow = new SettingsWindow(meter) { Width = o.Width ?? 760, Height = o.Height ?? 660 };
-                if (int.TryParse(o.Tab,out var settingsTab)) ((System.Windows.Controls.TabControl)settingsWindow.FindName("SettingsTabs")).SelectedIndex=settingsTab;
+                // Keep existing numeric screenshot selectors stable when the sidebar is reordered.
+                string[] tabIds=["appearance","combat","hotkeys","history","capture","general","updates","feedback","events","pets","profiles","help"];
+                if (int.TryParse(o.Tab,out var settingsTab) && settingsTab>=0 && settingsTab<tabIds.Length) settingsWindow.SelectTab(tabIds[settingsTab]);
+                else if(o.Tab is not null && tabIds.Contains(o.Tab)) settingsWindow.SelectTab(o.Tab);
                 host = settingsWindow;
                 refresh = () => { };
                 break;

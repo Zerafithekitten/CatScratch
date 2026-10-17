@@ -58,7 +58,7 @@ public partial class SettingsWindow : Window
         InitializeComponent();
         BrandIcon.Source=AppIcon.Image;
         _themePanel=new ThemeSettingsPanel(meter.Settings.Theme);
-        if(((TabItem)SettingsTabs.Items[0]).Content is ScrollViewer {Content:Panel appearance})
+        if(Tab("appearance").Content is ScrollViewer {Content:Panel appearance})
             appearance.Children.Insert(1,new Border{Child=_themePanel,Style=(Style)FindResource("Section")});
         foreach(var tab in SettingsTabs.Items.OfType<TabItem>().Where(t=>t.Tag is "updates" or "feedback"))
             tab.Header=T.Localize((string)tab.Header);
@@ -67,7 +67,7 @@ public partial class SettingsWindow : Window
         _eventDraft=cards.CreatePreferencesDraft();
         _moduleDraft=meter.Settings.CreateDraft();
         _controlPanelPreferences=new ControlPanelSettingsPanel(_moduleDraft);
-        if(((TabItem)SettingsTabs.Items[0]).Content is ScrollViewer {Content:Panel appearancePanel})
+        if(Tab("appearance").Content is ScrollViewer {Content:Panel appearancePanel})
             appearancePanel.Children.Insert(1,new Border {Child=_controlPanelPreferences,Style=(Style)FindResource("Section")});
         SettingsTabs.Items.Add(new TabItem {Header=T.Localize("Events"),Tag="events",Padding=new Thickness(12,10,12,10),Content=new ScrollViewer {VerticalScrollBarVisibility=ScrollBarVisibility.Auto,HorizontalScrollBarVisibility=ScrollBarVisibility.Disabled,Padding=new Thickness(14,0,0,0),Content=new EventsSettingsPanel(_eventDraft,()=>{},(sound,volume)=>{if(!meter.Settings.Transient)AppHost.Current.PreviewEventSound(sound,volume);})}});
         var modules=new StackPanel();
@@ -82,11 +82,15 @@ public partial class SettingsWindow : Window
         petWidth.ValueChanged+=(_,e)=>_moduleDraft.PetModuleWidth=e.NewValue;modules.Children.Add(petWidth);
         var recap=new CheckBox {Content=T.Localize("Show death recap"),IsChecked=meter.Settings.ShowDeathRecapModule,Style=(Style)FindResource("DarkCheck")};
         recap.Click+=(_,_)=>_moduleDraft.ShowDeathRecapModule=recap.IsChecked==true;
-        if(((TabItem)SettingsTabs.Items[1]).Content is ScrollViewer {Content:Panel combat})combat.Children.Add(new Border {Child=recap,Style=(Style)FindResource("Section")});
+        if(Tab("combat").Content is ScrollViewer {Content:Panel combat})combat.Children.Add(new Border {Child=recap,Style=(Style)FindResource("Section")});
         SettingsTabs.Items.Add(new TabItem {Header=T.Localize("Pets"),Tag="pets",Padding=new Thickness(12,10,12,10),Content=new ScrollViewer {VerticalScrollBarVisibility=ScrollBarVisibility.Auto,HorizontalScrollBarVisibility=ScrollBarVisibility.Auto,Padding=new Thickness(14,0,0,0),Content=new Border {Child=modules,Style=(Style)FindResource("Section"),VerticalAlignment=VerticalAlignment.Top}}});
-        SettingsTabs.Items.Add(new TabItem {Header=T.Localize("Overlay profiles"),Padding=new Thickness(12,10,12,10),Content=new ScrollViewer {VerticalScrollBarVisibility=ScrollBarVisibility.Auto,HorizontalScrollBarVisibility=ScrollBarVisibility.Auto,Padding=new Thickness(14,0,0,0),Content=new OverlayProfilesPanel()}});
+        SettingsTabs.Items.Add(new TabItem {Header=T.Localize("Overlay profiles"),Tag="profiles",Padding=new Thickness(12,10,12,10),Content=new ScrollViewer {VerticalScrollBarVisibility=ScrollBarVisibility.Auto,HorizontalScrollBarVisibility=ScrollBarVisibility.Auto,Padding=new Thickness(14,0,0,0),Content=new OverlayProfilesPanel()}});
         // Fold secondary sections and reflow rows instead of forcing a wide inner canvas.
         SettingsTabs.Items.Add(new TabItem {Header=ControlPanelSettingsPanel.L("Help & symbols","Hilfe & Symbole"),Tag="help",Padding=new Thickness(12,10,12,10),Content=new ScrollViewer {VerticalScrollBarVisibility=ScrollBarVisibility.Auto,HorizontalScrollBarVisibility=ScrollBarVisibility.Disabled,Padding=new Thickness(14,0,0,0),Content=new SymbolHelpPanel(meter.Settings)}});
+        var orderedTabs=new[]{"general","appearance","profiles","combat","events","pets","hotkeys","history","capture","updates","feedback","help"}.Select(Tab).ToArray();
+        SettingsTabs.Items.Clear();
+        foreach(var tab in orderedTabs)SettingsTabs.Items.Add(tab);
+        SelectTab("appearance");
         foreach (var tab in SettingsTabs.Items.OfType<TabItem>())
             if (tab.Content is ScrollViewer viewer && viewer.Content is FrameworkElement content)
             {
@@ -207,7 +211,9 @@ public partial class SettingsWindow : Window
     }
 
     private static UiText T => UiText.Current;
-    internal void SelectEvents()=>SettingsTabs.SelectedItem=SettingsTabs.Items.OfType<TabItem>().First(t=>Equals(t.Tag,"events"));
+    private TabItem Tab(string id)=>SettingsTabs.Items.OfType<TabItem>().Single(t=>Equals(t.Tag,id));
+    internal void SelectTab(string id)=>SettingsTabs.SelectedItem=Tab(id);
+    internal void SelectEvents()=>SelectTab("events");
 
     private void RecordHotkey(object sender, KeyEventArgs e)
     {
@@ -238,7 +244,7 @@ public partial class SettingsWindow : Window
     private async void Save_Click(object sender, RoutedEventArgs e)
     {
         var s = _meter.Settings;
-        if(!_themePanel.TryGet(out var theme)){SettingsTabs.SelectedIndex=0;_themePanel.FocusInvalidColor();return;}
+        if(!_themePanel.TryGet(out var theme)){SelectTab("appearance");_themePanel.FocusInvalidColor();return;}
         var follow=FollowGameCheck.IsChecked==true;
         var game=GameExecutableText.Text;
         try

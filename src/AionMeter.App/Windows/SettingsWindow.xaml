@@ -65,7 +65,7 @@
             </Grid>
           </ControlTemplate>
         </TabControl.Template>
-        <TabItem Header="{Binding Literal17, Source={x:Static s:UiText.Current}}" Padding="12,10">
+        <TabItem Header="{Binding Literal17, Source={x:Static s:UiText.Current}}" Tag="appearance" Padding="12,10">
           <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Padding="14,0,0,0">
             <StackPanel>
               <Border Style="{StaticResource Section}">
@@ -139,7 +139,7 @@
             </StackPanel>
           </ScrollViewer>
         </TabItem>
-        <TabItem Header="{Binding Literal28, Source={x:Static s:UiText.Current}}" Padding="12,10">
+        <TabItem Header="{Binding Literal28, Source={x:Static s:UiText.Current}}" Tag="combat" Padding="12,10">
           <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Padding="14,0,0,0">
             <StackPanel>
               <Border Style="{StaticResource Section}">
@@ -175,7 +175,7 @@
             </StackPanel>
           </ScrollViewer>
         </TabItem>
-        <TabItem Header="{Binding Literal33, Source={x:Static s:UiText.Current}}" Padding="12,10">
+        <TabItem Header="{Binding Literal33, Source={x:Static s:UiText.Current}}" Tag="hotkeys" Padding="12,10">
           <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Padding="14,0,0,0">
             <StackPanel>
               <Border Style="{StaticResource Section}">
@@ -211,7 +211,7 @@
             </StackPanel>
           </ScrollViewer>
         </TabItem>
-        <TabItem Header="{Binding Literal34, Source={x:Static s:UiText.Current}}" Padding="12,10">
+        <TabItem Header="{Binding Literal34, Source={x:Static s:UiText.Current}}" Tag="history" Padding="12,10">
           <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Padding="14,0,0,0">
             <StackPanel>
               <Border Style="{StaticResource Section}">
@@ -239,7 +239,7 @@
             </StackPanel>
           </ScrollViewer>
         </TabItem>
-        <TabItem Header="{Binding Literal37, Source={x:Static s:UiText.Current}}" Padding="12,10">
+        <TabItem Header="{Binding Literal37, Source={x:Static s:UiText.Current}}" Tag="capture" Padding="12,10">
           <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Padding="14,0,0,0">
             <StackPanel>
               <Border Style="{StaticResource Section}">
@@ -277,7 +277,7 @@
             </StackPanel>
           </ScrollViewer>
         </TabItem>
-        <TabItem Header="{Binding Literal38, Source={x:Static s:UiText.Current}}" Padding="12,10">
+        <TabItem Header="{Binding Literal38, Source={x:Static s:UiText.Current}}" Tag="general" Padding="12,10">
           <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Padding="14,0,0,0">
             <StackPanel>
               <Border Style="{StaticResource Section}">
