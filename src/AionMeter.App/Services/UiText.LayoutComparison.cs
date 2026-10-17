@@ -4,6 +4,11 @@ public sealed partial class UiText
 {
     private static readonly Dictionary<string,(string De,string Ru,string Fr)> LayoutComparisonText=new()
     {
+        ["Tracking mode"]=("Tracking-Modus","Режим отслеживания","Mode de suivi"),
+        ["Nearby & region"]=("Sichtweite & Gebiet","Поблизости и регион","Proximité et région"),
+        ["Pet on hit"]=("Pet bei Treffer","Питомец при ударе","Familier à l’attaque"),
+        ["Pet on hit shows only your three most recent incomplete attacked sources."]=("Pet bei Treffer zeigt nur die drei zuletzt selbst angegriffenen Quellen unvollständiger Pets.","Только три последних атакованных вами источника незавершённых питомцев.","Affiche uniquement vos trois dernières sources attaquées de familiers incomplets."),
+        ["Attack a pet-source monster to see its progress."]=("Greife einen Pet-Quellgegner an, um den Fortschritt zu sehen.","Атакуйте монстра — источник питомца, чтобы увидеть прогресс.","Attaquez un monstre source de familier pour voir sa progression."),
         ["Briefly return to character selection or log in again."]=("Wechsle kurz zur Charakterauswahl oder logge dich erneut ein.","Ненадолго вернитесь к выбору персонажа или войдите в игру заново.","Revenez brièvement à la sélection du personnage ou reconnectez-vous."),
         ["Nearby pets"]=("Pets in Sichtweite","Питомцы поблизости","Familiers à proximité"),
         ["Nearby first"]=("Sichtweite zuerst","Сначала ближайшие","Proches en premier"),

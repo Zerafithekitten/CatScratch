@@ -13,7 +13,7 @@ public static class OverlayProfiles
     private static readonly string[] Fields=["ControlsLayout","ControlsAnchor","ControlsLeft","ControlsTop","OverlayLeft","OverlayTop","OverlayWidth","OverlayHeight","CompactMode","UiScale",
         "WindowOpacity","BackgroundOpacity","Locked","ClickThrough","OverlayVisible","ShowDpsMeterModule","RowSize","MaxRows","ShowGear","ShowCombatPower",
         "ShowBossPanel","ShowPersonalCombatModule","PersonalCombatCollapsed","ShowHealingDone","ShowDeathRecapModule",
-        "ShowPetTrackerModule","PetModuleLeft","PetModuleTop","PetModuleWidth","PetModuleHeight"];
+        "ShowPetTrackerModule","PetOnHitOnly","PetModuleLeft","PetModuleTop","PetModuleWidth","PetModuleHeight"];
     private static string PathName=>Path.Combine(AppSettings.AppDataDir,"overlay-profiles.json");
     public static List<OverlayProfile> Load()
     {

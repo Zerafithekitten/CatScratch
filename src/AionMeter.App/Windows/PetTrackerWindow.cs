@@ -102,13 +102,15 @@ public sealed class PetTrackerWindow:Window,IDisplayAppearance
         var seen=_meter.Pets.Nearby().Npcs.Where(n=>n.TimeMs<=now && now-n.TimeMs<=30000).OrderByDescending(n=>n.TimeMs).Select(n=>n.NpcCode).Distinct().ToArray();
         var seenCodes=seen.ToHashSet();
         var nearbyPets=_catalog.Where(p=>p.Sources.Any(s=>seenCodes.Contains(s.NpcCode))||_meter.Pets.Farms(p.Id).Any(f=>seenCodes.Contains(f.NpcCode))).Select(p=>p.Id).ToHashSet();
-        var suggestions=PetRecommendations.Select(_locations,_meter.Pets.MapId,states,confirmed,nearbyPets);
-        var region=_locations.FirstOrDefault(l=>l.MapId==_meter.Pets.MapId)?.Region;
+        var onHit=_meter.Settings.PetOnHitOnly;
+        var suggestions=onHit?Array.Empty<PetRecommendation>():PetRecommendations.Select(_locations,_meter.Pets.MapId,states,confirmed,nearbyPets);
+        var region=onHit?null:_locations.FirstOrDefault(l=>l.MapId==_meter.Pets.MapId)?.Region;
         var byId=_catalog.ToDictionary(p=>p.Id);
         var pets=suggestions.Count>0?suggestions.Where(s=>byId.ContainsKey(s.PetId)).Select(s=>byId[s.PetId]).ToArray():
             region is not null?[]:codes.SelectMany(npc=>_catalog.Where(p=>p.Sources.Any(s=>s.NpcCode==npc)||_meter.Pets.Farms(p.Id).Any(f=>f.NpcCode==npc)))
                 .DistinctBy(p=>p.Id).Where(p=>!confirmed || states.GetValueOrDefault(p.Id,new(p.Id,0,0)).Level<3).Take(3).ToArray();
         _status.Text=!confirmed?T.Localize("Pet progress data not received yet.")+" "+T.Localize("Briefly return to character selection or log in again."):
+            onHit?T.Localize(pets.Length>0?"Pet on hit":"Attack a pet-source monster to see its progress."):
             suggestions.Count>0?T.Localize(nearbyPets.Overlaps(suggestions.Select(s=>s.PetId))?"Nearby first":"Pets in this region")+(region is null?"":" · "+region):
             region is not null?T.Localize("No incomplete pets with known locations in this region."):
             pets.Length>0?"":T.Localize("Waiting for a known region or nearby monsters.");
@@ -117,8 +119,8 @@ public sealed class PetTrackerWindow:Window,IDisplayAppearance
         {
             var state=states.GetValueOrDefault(p.Id,new(p.Id,0,0));
             var required=state.Level switch{0=>5,1=>25,2=>75,_=>0};
-            var monster=PetFarmNames.Resolve(p,_meter.Data,_locations,_meter.Pets.MapId,seen,codes,_meter.Pets.Farms(p.Id));
-            return new Row(p,(nearbyPets.Contains(p.Id)?"⌖ ":"")+monster,!confirmed?"—":required==0?"MAX":(_meter.Pets.FromCache?"~":"")+$"{state.Souls}/{required}",
+            var monster=PetFarmNames.Resolve(p,_meter.Data,_locations,onHit?0:_meter.Pets.MapId,onHit?[]:seen,codes,_meter.Pets.Farms(p.Id));
+            return new Row(p,(!onHit && nearbyPets.Contains(p.Id)?"⌖ ":"")+monster,!confirmed?"—":required==0?"MAX":(_meter.Pets.FromCache?"~":"")+$"{state.Souls}/{required}",
                 !confirmed?0:required==0?1:Math.Clamp((double)state.Souls/required,0,1),AppIcon.Image,p.Name);
         }).ToArray();
         if(!_list.Items.OfType<Row>().SequenceEqual(nextRows))_list.ItemsSource=nextRows;

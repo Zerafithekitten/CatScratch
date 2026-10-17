@@ -80,6 +80,7 @@ public sealed class AppSettings
     public bool ShowPetTrackerModule {get;set;}
     public int PetGoal {get;set;}
     public bool PetNotify {get;set;}
+    public bool PetOnHitOnly {get;set;}
     public string PetSound {get;set;}="Chime";
     public double PetSoundVolume {get;set;}=.5;
     public double PetModuleWidth {get;set;}=300;

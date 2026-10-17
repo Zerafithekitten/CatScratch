@@ -76,6 +76,11 @@ public partial class SettingsWindow : Window
         void Module(string label,bool value,Action<bool> change){var field=new CheckBox {Content=T.Localize(label),IsChecked=value,Style=(Style)FindResource("DarkCheck"),Margin=new Thickness(0,0,0,10)};field.Click+=(_,_)=>change(field.IsChecked==true);modules.Children.Add(field);}
 
         Module("Show pet tracker",meter.Settings.ShowPetTrackerModule,v=>_moduleDraft.ShowPetTrackerModule=v);
+        modules.Children.Add(new TextBlock {Text=T.Localize("Tracking mode"),Margin=new Thickness(0,4,0,5)});
+        var petMode=new ComboBox {Tag="pet-tracking-mode",ItemsSource=new[]{T.Localize("Nearby & region"),T.Localize("Pet on hit")},SelectedIndex=_moduleDraft.PetOnHitOnly?1:0,Margin=new Thickness(0,0,0,5)};
+        petMode.SelectionChanged+=(_,_)=>_moduleDraft.PetOnHitOnly=petMode.SelectedIndex==1;
+        modules.Children.Add(petMode);
+        modules.Children.Add(new TextBlock {Text=T.Localize("Pet on hit shows only your three most recent incomplete attacked sources."),TextWrapping=TextWrapping.Wrap,Foreground=ThemeColors.Brush("#A9B8C7"),FontSize=11,Margin=new Thickness(0,0,0,12)});
         Module("Sound on collection / level up",meter.Settings.PetNotify,v=>_moduleDraft.PetNotify=v);
         modules.Children.Add(new PetSoundSettingsPanel(_moduleDraft,(sound,volume)=>{if(!meter.Settings.Transient)AppHost.Current.PreviewEventSound(sound,volume);}));
         modules.Children.Add(new TextBlock {Text=T.Localize("Window width"),Margin=new Thickness(0,6,0,4)});
@@ -323,6 +328,7 @@ public partial class SettingsWindow : Window
         _cards.ApplyPreferences(_eventDraft);
         var petVisibilityChanged=s.ShowPetTrackerModule!=_moduleDraft.ShowPetTrackerModule;
         s.PetNotify=_moduleDraft.PetNotify;
+        s.PetOnHitOnly=_moduleDraft.PetOnHitOnly;
         s.PetSound=_moduleDraft.PetSound;
         s.PetSoundVolume=_moduleDraft.PetSoundVolume;
         s.PetModuleWidth=_moduleDraft.PetModuleWidth;

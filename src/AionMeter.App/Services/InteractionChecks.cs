@@ -648,6 +648,14 @@ internal static class InteractionChecks
                 && petList.Items.OfType<Windows.PetTrackerWindow.Row>().All(p=>p.Progress!="MAX"),"The Pet tracker recommends incomplete current-region pets without any attack");
             meter.Pets.Observe(new Core.Events.NpcSeenEvent(DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),77,2400455));petWindow.Refresh();
             Check(petList.Items.OfType<Windows.PetTrackerWindow.Row>().First().Definition.Id==1193,"Freshly seen pet monsters move their pet to the top without an attack");
+            meter.Settings.PetOnHitOnly=true;petWindow.Refresh();
+            Check(petList.Items.Count==0,"Pet on hit does not populate rows from region or sightings alone");
+            meter.Pets.Observe(new Core.Events.DamageEvent(DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),1,77,17010000,100,Core.Events.HitFlags.None));petWindow.Refresh();
+            Check(petList.Items.OfType<Windows.PetTrackerWindow.Row>().Single().Name==meter.Data.NpcName(2400455),"Pet on hit displays the personally attacked source inside a supported region");
+            meter.Pets.Observe(new Core.Game.PetCollectionEvent(27,new Dictionary<int,Core.Game.PetState>{{1193,new(1193,3,0)}}));petWindow.Refresh();
+            Check(petList.Items.Count==0,"Pet on hit excludes completed pets just like region mode");
+            meter.Settings.PetOnHitOnly=false;petWindow.Refresh();
+            Check(petList.Items.Count is >0 and <=5,"Switching back to region mode restores recommendations without restarting capture");
             meter.Pets.InvalidateLocation();petWindow.Refresh();
             Check(petList.Items.Count==0,"Disconnecting clears regional and nearby recommendations instead of retaining the old location");
             petWindow.Close();
