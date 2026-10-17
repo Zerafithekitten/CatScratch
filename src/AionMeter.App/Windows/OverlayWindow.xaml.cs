@@ -75,7 +75,7 @@ public partial class OverlayWindow : Window, IDisplayAppearance
         // label (the timer stays).
         MouseEnter += (_, _) =>
         {
-            if (_settings.CompactMode) return;
+            if (_settings.CompactMode || ControlsDetached) return;
             TitleText.Visibility = Visibility.Collapsed;
             LabelPanel.Visibility = Visibility.Collapsed;
             Toolbar.Visibility = Visibility.Visible;
@@ -108,6 +108,44 @@ public partial class OverlayWindow : Window, IDisplayAppearance
 
     private bool _displayOnly;
     internal bool DisplayOnly=>_displayOnly;
+    internal bool ControlsDetached {get;private set;}
+    internal void MoveControlsTo(MeterControlsWindow panel)
+    {
+        if(ControlsDetached)return;
+        ControlsDetached=true;
+        Toolbar.Visibility=Visibility.Collapsed;
+        ((Panel)ShellHeader.Parent).Children.Remove(ShellHeader);
+        ((Panel)FooterControls.Parent).Children.Remove(FooterControls);
+        ((Panel)UpdateBanner.Parent).Children.Remove(UpdateBanner);
+        var buttons=new WrapPanel {Margin=new(8,0,8,6)};
+        while(FooterControls.Children.Count>0){var child=FooterControls.Children[0];FooterControls.Children.RemoveAt(0);buttons.Children.Add(child);}
+        // Additional controls previously available only in the expanded meter toolbar.
+        foreach(var control in new UIElement[]{Toolbar.Children[0],RestartButton,LockButton,OpacitySlider})
+        {((Panel)((FrameworkElement)control).Parent).Children.Remove(control);buttons.Children.Add(control);}
+        BossTimersLink.Style=(Style)FindResource("ToolIcon");BossTimersLink.Content="\uE121";BossTimersLink.Margin=new(0);
+        DetailsLink.Style=(Style)FindResource("ToolIcon");DetailsLink.Content="\uE9D9";
+        HistoryLink.Visibility=Visibility.Collapsed;
+        var panelPin=WindowPinning.CreateButton(panel,_settings,"controls");
+        if(panelPin.Parent is Panel pinParent)pinParent.Children.Remove(panelPin);
+        ShellPin.Content=panelPin;
+        buttons.Children.Add(WindowPinning.ButtonFor(this)!);
+        panel.AttachControls(this,ShellHeader,buttons,UpdateBanner,ShellSettingsButton);
+        RefreshControlPanel();
+    }
+
+    internal void RefreshControlPanel()
+    {
+        SaveLastFightButton.IsEnabled=_meter.CanSaveLastFight;
+        _vm.WallClock=TimerCards.Berlin(DateTimeOffset.UtcNow).ToString("HH:mm",System.Globalization.CultureInfo.InvariantCulture);
+        if(!ControlsDetached)return;
+        ShellCaption.Visibility=ShellTitle.Visibility=ShellPaw.Visibility=Visibility.Visible;
+        ShellTitle.FontSize=16;ShellClockPanel.Visibility=Visibility.Visible;
+        PersonalCombatButton.Visibility=PetTrackerButton.Visibility=ShellClickButton.Visibility=Visibility.Visible;
+        ShellSettingsButton.Visibility=ShellHideButton.Visibility=ShellPin.Visibility=Visibility.Visible;
+        CompactHistory.Visibility=BossTimersLink.Visibility=DetailsLink.Visibility=Visibility.Visible;
+        HistoryLink.Visibility=Visibility.Collapsed;
+        WindowPinning.SetDisplayOnly(this,false);
+    }
     private Brush? _shellBackground, _shellBorder, _frameBorder;
     private System.Windows.Media.Effects.Effect? _frameEffect;
     private Visibility _toolbarVisibility;
@@ -115,7 +153,7 @@ public partial class OverlayWindow : Window, IDisplayAppearance
     private bool _showingPartyPreview;
     public void SetDisplayOnly(bool enabled)
     {
-        if (!enabled && !_displayOnly) return;
+        if (!enabled && !_displayOnly){if(ControlsDetached)RefreshControlPanel();return;}
         if (enabled && !_displayOnly)
         {
             _shellBackground=OuterShell.Background; _shellBorder=OuterShell.BorderBrush;
@@ -140,6 +178,7 @@ public partial class OverlayWindow : Window, IDisplayAppearance
         PlayerScroll.VerticalScrollBarVisibility=enabled ? ScrollBarVisibility.Hidden : ScrollBarVisibility.Auto;
         Toolbar.Visibility=enabled ? Visibility.Collapsed : _toolbarVisibility;
         MarioPartyBackdrop.Refresh(this);
+        if(ControlsDetached)RefreshControlPanel();
     }
 
     /// <summary>Called by the app's UI timer (≈5 Hz).</summary>
@@ -336,7 +375,7 @@ public partial class OverlayWindow : Window, IDisplayAppearance
 
     private void Update_Click(object sender, RoutedEventArgs e)
     {
-        if (_drag.JustDragged) return;
+        if (!ControlsDetached && _drag.JustDragged) return;
         if (_meter.Updates.Ready is { } ready && _meter.Updates.RestartPrepared(ready)) AppHost.Current.ExitProgram();
         else AppHost.Current.ShowUpdate();
     }
@@ -765,7 +804,7 @@ public partial class OverlayWindow : Window, IDisplayAppearance
 
     private void Timers_Click(object sender, RoutedEventArgs e)
     {
-        if (!_drag.JustDragged) AppHost.Current.ShowBossTimers();
+        if (ControlsDetached || !_drag.JustDragged) AppHost.Current.ShowBossTimers();
     }
 
     private long _timersLabelAt;

@@ -2,12 +2,12 @@
 
 A separate, always-on-top Windows DPS meter for **AION 2**, by Zerafithekitten. Track your own fights and confirmed party members in a compact dark gray interface with restrained purple accents and cat-paw branding.
 
-[Download Stable](https://github.com/Zerafithekitten/CatScratch/releases/latest) · [Download Beta](https://github.com/Zerafithekitten/CatScratch/releases/tag/v3.0.1-beta.11) · [Release history](https://github.com/Zerafithekitten/CatScratch/releases) · [Report a bug / request a feature](https://github.com/Zerafithekitten/CatScratch/issues/new/choose)
+[Download Stable](https://github.com/Zerafithekitten/CatScratch/releases/latest) · [Download Beta](https://github.com/Zerafithekitten/CatScratch/releases/tag/v3.0.1-beta.12) · [Release history](https://github.com/Zerafithekitten/CatScratch/releases) · [Report a bug / request a feature](https://github.com/Zerafithekitten/CatScratch/issues/new/choose)
 
 | Channel | Current version | What it includes |
 | --- | --- | --- |
 | **Stable** | **[v3.0.0](https://github.com/Zerafithekitten/CatScratch/releases/tag/v3.0.0)** | Complete tested Beta feature set: compact class-colored rows, central settings with separate Updates/Feedback tabs, position pins, overlay profiles, boss comparisons, compact recap, quiet game companion and safer preferences. |
-| **Beta** | [Last prerelease: v3.0.1-beta.11](https://github.com/Zerafithekitten/CatScratch/releases/tag/v3.0.1-beta.11) | Optional DPS meter display, custom interface colors and Mario Party, the 24-hour event timeline with persistent favorites, and HP-confirmed effective healing of others. |
+| **Beta** | [Last prerelease: v3.0.1-beta.12](https://github.com/Zerafithekitten/CatScratch/releases/tag/v3.0.1-beta.12) | Optional DPS meter display, custom interface colors and Mario Party, the 24-hour event timeline with persistent favorites, and HP-confirmed effective healing of others. |
 
 English is the default. German, Russian and French are also available. Screenshots show **v3.0.1-beta.9** with synthetic sample data; names and numbers are examples. Features exclusive to the current Beta are labeled below. Stable remains **v3.0.0**.
 
@@ -241,7 +241,7 @@ Open **Patch notes** from the meter or Settings. Versions are listed **on the le
 
 ## Controls and shortcuts
 
-**Beta: optional DPS display.** Settings > Appearance > Modules > Show DPS meter hides combat statistics while capture and other modules continue. A small movable CatScratch bar keeps Settings directly available and provides a restore button, even with global click-through enabled. The tray icon and configured DPS meter shortcut (Shift+F5 by default) also restore the meter. The choice persists across restarts and is included in overlay profiles. Automatic visibility and Show/hide all respect a disabled display.
+**Beta: optional DPS display.** Settings > Appearance > Modules > Show DPS meter hides combat statistics while capture and other modules continue. The permanent CatScratch control panel contains the version and general buttons, keeps Settings directly available, and provides a DPS display toggle even with global click-through enabled. Its X is the only in-app Exit action. Panel and meter have independently saved placement and pins. The tray icon and configured DPS meter shortcut (Shift+F5 by default) also restore the meter. The choice persists across restarts and is included in overlay profiles. Automatic visibility and Show/hide all respect a disabled display.
 
 The single meter gear opens central Settings. Updates and Feedback have separate tabs; General contains test mode, language and the optional game companion. Event and pet options apply with Save and are discarded with Cancel.
 

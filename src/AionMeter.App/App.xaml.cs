@@ -318,6 +318,7 @@ public partial class App : Application
         _meter.StartCapture();
 
         _overlay = new OverlayWindow(_meter);
+        _overlay.ShowInTaskbar=false;
         if(e.Args.Contains("--show"))settings.ShowDpsMeterModule=true; // explicit request re-enables the display
         if (settings.ShowDpsMeterModule && (settings.OverlayVisible || e.Args.Contains("--show"))) _overlay.Show();
         else
@@ -452,7 +453,7 @@ public partial class App : Application
         UpdateAutoVisibility();
         SyncMeterControls();
         SyncDeathRecap();
-        if (_overlay.IsVisible) _overlay.Refresh();
+        _overlay.Refresh(); // The permanent panel also needs current fight, save and update state.
         if (++_ticks % 5 == 0)
         {
             _tray?.Update(_overlay.IsVisible, _meter.Settings.ClickThrough, _meter.DemoRunning ? "demo" : _meter.CaptureStatus.Message);
@@ -470,12 +471,12 @@ public partial class App : Application
     private void SyncMeterControls()
     {
         if(_shutdownStarted)return;
-        if(_meter.Settings.ShowDpsMeterModule){_meterControls?.Hide();return;}
         if(_windowVisibility.Hidden)return;
         if(_meterControls is null)
         {
-            _meterControls=new MeterControlsWindow(_meter.Settings,ShowSettings,()=>SetOverlayVisible(true),
-                (left,top)=>{_overlay.Left=left;_overlay.Top=top;});
+            _meterControls=new MeterControlsWindow(_meter.Settings,ShowSettings,()=>SetOverlayVisible(!_overlay.IsVisible)) {ShowInTaskbar=true};
+            _overlay.MoveControlsTo(_meterControls);
+            _meterControls.Closing+=(_,_)=>{if(!IsExiting)ExitProgram();};
             _meterControls.Closed+=(_,_)=>_meterControls=null;
         }
         if(!_meterControls.IsVisible)_meterControls.Show();
@@ -641,6 +642,7 @@ public partial class App : Application
         _meter.Settings.OverlayVisible = visible;
         _meter.Settings.Save();
         SyncMeterControls();
+        _meterControls?.RefreshText();
     }
 
     public void ToggleClickThrough()

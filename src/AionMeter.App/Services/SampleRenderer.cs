@@ -84,7 +84,11 @@ public static class SampleRenderer
         switch (o.Window)
         {
             case "meter-controls":
-                host=new MeterControlsWindow(meter.Settings,()=>{},()=>{});refresh=()=>{};break;
+                var controlOverlay=new OverlayWindow(meter,exitOnClose:false);
+                var controlPanel=new MeterControlsWindow(meter.Settings,()=>{},()=>{});
+                controlOverlay.MoveControlsTo(controlPanel);
+                controlPanel.SizeToContent=SizeToContent.Manual;controlPanel.Height=72;
+                host=controlPanel;refresh=controlOverlay.Refresh;break;
             case "color-picker":
                 host=new Window{Width=304,Height=198,Background=ThemeColors.Brush("#20242A"),Content=new Border{Padding=new(12),Child=new Controls.HsvColorPicker(Colors.Red)}};
                 refresh=()=>{};break;
@@ -271,6 +275,8 @@ public static class SampleRenderer
                 refresh = overlay.Refresh;
                 break;
         }
+        if(host is OverlayWindow display && !display.ControlsDetached)
+            display.MoveControlsTo(new MeterControlsWindow(meter.Settings,()=>{},()=>{}));
         Capture(host, refresh, path, o);
     }
 

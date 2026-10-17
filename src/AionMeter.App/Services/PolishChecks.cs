@@ -52,6 +52,23 @@ internal static class PolishChecks
             check(controls.IsVisible && !controlsSettings.ShowDpsMeterModule,"Show/hide all restores the control bar without re-enabling DPS statistics");
         }
         finally{WindowClickThrough.ApplyAll(false);controls.Close();}
+        var detachedOverlay=new OverlayWindow(meter,exitOnClose:false) {Left=-30000,Top=-30000,ShowActivated=false};
+        var permanentPanel=new MeterControlsWindow(meter.Settings,()=>{},()=>{}) {Left=-30000,Top=-30000};
+        try
+        {
+            detachedOverlay.MoveControlsTo(permanentPanel);
+            detachedOverlay.Show();permanentPanel.Show();detachedOverlay.Refresh();permanentPanel.UpdateLayout();
+            var exitButton=(Button)detachedOverlay.FindName("ShellHideButton");
+            var version=(TextBlock)detachedOverlay.FindName("InstalledVersionText");
+            check(Window.GetWindow(exitButton)==permanentPanel && Window.GetWindow(version)==permanentPanel,"Version and the sole CatScratch Exit button move to the permanent control panel");
+            check(Window.GetWindow((Button)detachedOverlay.FindName("DeathRecapButton"))==permanentPanel && Window.GetWindow((Button)detachedOverlay.FindName("SaveLastFightButton"))==permanentPanel,"Module, history and save controls keep their original handlers in the central panel");
+            check(!Visuals(detachedOverlay).OfType<Button>().Any(b=>b.IsVisible && Equals(b.Content,"\uE711")),"DPS combat display has no visible Exit button");
+            WindowClickThrough.ApplyAll(true);detachedOverlay.Refresh();
+            check(permanentPanel.SettingsButton.IsVisible && exitButton.IsVisible,"Central Settings and Exit remain accessible when the DPS meter uses click-through");
+            detachedOverlay.Hide();
+            check(permanentPanel.IsVisible,"The default control panel remains visible independently of the combat display");
+        }
+        finally{WindowClickThrough.ApplyAll(false);permanentPanel.Close();detachedOverlay.Close();}
         cards.Saved.SelectedEvents=["shugo"];
         cards.Saved.Positions["auto-events"]=new(){Left=100,Width=400};
         using(var draft=cards.CreatePreferencesDraft())

@@ -89,6 +89,7 @@ public sealed class TrayIcon : IDisposable
         _demo.Text = t.TrayDemo;
         _replay.Text = t.TrayReplay;
         _exit.Text = t.TrayExit;
+        _exit.Visible = false; // The control panel owns the single in-app Exit button.
         _checkUpdates.Text = t.TrayCheckUpdates;
         if (_updateVersion is not null) _update.Text = string.Format(t.TrayUpdate, _updateVersion);
     }

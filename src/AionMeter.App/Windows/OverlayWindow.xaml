@@ -201,7 +201,7 @@
 
     <Border x:Name="OuterShell" CornerRadius="10" Background="{DynamicResource CustomBrush_DF20242A}" BorderBrush="#60616A76" BorderThickness="1">
     <DockPanel>
-        <Grid DockPanel.Dock="Top" Height="38" Margin="8,2,6,0">
+        <Grid x:Name="ShellHeader" DockPanel.Dock="Top" Height="38" Margin="8,2,6,0">
             <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
             <StackPanel x:Name="ShellCaption" Orientation="Horizontal" VerticalAlignment="Center">
                 <Image x:Name="ShellPaw" Source="/Assets/app.ico" Width="22" Height="22" Margin="0,0,7,0"/>

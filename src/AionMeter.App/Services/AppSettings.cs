@@ -44,6 +44,8 @@ public sealed class AppSettings
     public bool OverlayVisible { get; set; } = true;
     /// <summary>Persistent DPS display choice. Capture and other modules remain active while disabled.</summary>
     public bool ShowDpsMeterModule { get; set; } = true;
+    public double? ControlsLeft {get;set;}
+    public double? ControlsTop {get;set;}
     public Dictionary<string,bool> ModulePins {get;set;}=[];
     /// <summary>Bring the overlay up by itself when a boss is fought nearby or you hit anything.</summary>
     public bool AutoShow { get; set; } = true;

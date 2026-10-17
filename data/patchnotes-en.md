@@ -1,3 +1,10 @@
+## CatScratch v3.0.1-beta.12
+
+- The compact CatScratch control panel is now always available, independently of the DPS combat display.
+- Moved the installed version and general header/footer controls into the panel, retaining the existing combat rows and statistics.
+- The panel X is the only in-app action that exits CatScratch. Removed the DPS display's visible Exit controls and the tray Exit entry.
+- Panel and meter have independent placement and position pins, retained in overlay profiles. Panel controls remain clickable during global click-through.
+
 ## CatScratch v3.0.1-beta.11
 
 - Hiding the DPS meter now leaves a small CatScratch control bar with direct Settings access and a button to restore the meter.
