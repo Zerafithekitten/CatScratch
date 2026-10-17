@@ -201,7 +201,7 @@
     </Window.Resources>
 
     <Border x:Name="OuterShell" CornerRadius="10" BorderBrush="#60616A76" BorderThickness="1">
-    <Border.Background><SolidColorBrush x:Name="ShellBackground" Color="{colors:ThemeColor #20242A}" Opacity="0.9"/></Border.Background>
+    <Border.Background><SolidColorBrush x:Name="ShellBackground" Color="{colors:ThemeColor #DF20242A}" Opacity="0.9"/></Border.Background>
     <DockPanel>
         <Grid x:Name="ShellHeader" DockPanel.Dock="Top" Height="38" Margin="8,2,6,0">
             <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
