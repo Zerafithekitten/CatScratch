@@ -19,6 +19,51 @@ public class EffectiveHealingTests
     private static CombatantSnapshot Own(CombatTracker tracker)=>tracker.Snapshot(null,1500)!.Combatants.Single(c=>c.IsSelf);
 
     [Theory]
+    [InlineData(5000,10000,78500,10000,5000)]
+    [InlineData(10000,10000,78500,10000,0)]
+    [InlineData(5000,10000,1000,6000,1000)]
+    public void Self_healing_counts_only_restored_hp_not_overhealing(long before,long max,long raw,long after,long effective)
+    {
+        var tracker=Start();tracker.Process(new NpcHpEvent(1100,1,before,max,false));
+        tracker.Process(new HealEvent(1200,1,1,17010000,raw,HitFlags.None));
+        tracker.Process(new NpcHpEvent(1250,1,after,max,false));
+        var own=Own(tracker);
+        Assert.Equal(effective,own.EffectiveSelfHealing);Assert.Equal(0,own.UnverifiedSelfHealing);
+        Assert.Equal(raw,own.SelfHealing);Assert.Equal(raw,own.Healing);Assert.Equal(0,own.EffectiveHealingOthers);
+    }
+
+    [Fact]
+    public void Self_healing_without_hp_confirmation_is_not_estimated()
+    {
+        var tracker=Start();tracker.Process(new HealEvent(1200,1,1,17010000,1000,HitFlags.None));
+        Assert.Equal(0,Own(tracker).EffectiveSelfHealing);Assert.Equal(1000,Own(tracker).UnverifiedSelfHealing);
+    }
+
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public void Self_healing_ignores_intervals_with_other_healers_or_damage(bool otherHealer)
+    {
+        var tracker=Start();tracker.Process(new NpcHpEvent(1100,1,5000,10000,false));
+        tracker.Process(new HealEvent(1200,1,1,17010000,1000,HitFlags.None));
+        if(otherHealer)tracker.Process(new HealEvent(1210,3,1,17010000,1000,HitFlags.None));
+        else tracker.Process(new DamageEvent(1210,9,1,2300001,500,HitFlags.None));
+        tracker.Process(new NpcHpEvent(1250,1,otherHealer?7000:5500,10000,false));
+        Assert.Equal(0,Own(tracker).EffectiveSelfHealing);Assert.Equal(1000,Own(tracker).UnverifiedSelfHealing);
+    }
+
+    [Fact]
+    public void Self_healing_ticks_share_the_confirmed_gain_once()
+    {
+        var tracker=Start();tracker.Process(new NpcHpEvent(1100,1,9000,10000,false));
+        tracker.Process(new HealEvent(1200,1,1,17090000,5000,HitFlags.Dot));
+        tracker.Process(new HealEvent(1200,1,1,17090000,7000,HitFlags.Dot));
+        tracker.Process(new NpcHpEvent(1250,1,10000,10000,false));
+        tracker.Process(new NpcHpEvent(1260,1,10000,10000,false));
+        Assert.Equal(1000,Own(tracker).EffectiveSelfHealing);Assert.Equal(0,Own(tracker).UnverifiedSelfHealing);
+    }
+
+    [Theory]
     [InlineData(5726,5790,959,5790,64)] // anonymized HP/amount sequence from the supplied boss recording
     [InlineData(2668,4209,939,3607,939)]
     [InlineData(3607,4209,2761,4209,602)]

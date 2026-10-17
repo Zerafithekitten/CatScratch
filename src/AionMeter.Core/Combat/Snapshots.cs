@@ -35,7 +35,9 @@ public sealed record CombatantSnapshot(
     long SelfHealing = 0,
     int? Deaths = null,
     long? EffectiveHealingOthers = null,
-    long UnverifiedHealingOthers = 0)
+    long UnverifiedHealingOthers = 0,
+    long? EffectiveSelfHealing = null,
+    long UnverifiedSelfHealing = 0)
 {
     /// <summary>The "summons, owner unknown" pseudo-row (see <see cref="Combatant.UnknownSummonsId"/>).</summary>
     [System.Text.Json.Serialization.JsonIgnore]

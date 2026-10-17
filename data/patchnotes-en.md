@@ -1,10 +1,11 @@
-## CatScratch v3.0.1-beta.15
+## CatScratch v3.0.1-beta.16
 
 - Reworked the vertical control panel with a clear branding/header area and a uniform four-by-four action grid.
 - Grouped damage mode and background opacity into their own bottom row; removed uneven wrapping and scattered columns.
 - Kept the horizontal layout and all original button actions. Switching orientations preserves controls, tooltips, transparency and screen alignment.
 - Returned the DPS position pin to the DPS display; the panel keeps only its own independent pin.
 - Refined boss HP with rounded fills and separate HP/percentage columns. Added a small Enrage time bar underneath only when a matching server deadline is available; this is not a separately confirmed enrage timer.
+- Self healing now follows Healing others: only HP-confirmed effective healing is displayed, excluding overhealing. Incomplete confirmed totals are marked with *; unconfirmed amounts are not counted.
 
 ## CatScratch v3.0.1-beta.13
 

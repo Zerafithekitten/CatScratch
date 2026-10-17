@@ -93,6 +93,8 @@ public sealed class Combatant
     public int HitsTaken { get; set; }
     public long Healing { get; set; }
     public long SelfHealing { get; set; }
+    public long EffectiveSelfHealing {get;set;}
+    public long UnverifiedSelfHealing {get;set;}
     public long EffectiveHealingOthers { get; set; }
     public long UnverifiedHealingOthers { get; set; }
     public List<int> DeathOffsetsMs { get; } = new();
@@ -126,6 +128,8 @@ public sealed class Combatant
         HitsTaken += other.HitsTaken;
         Healing += other.Healing;
         SelfHealing += other.SelfHealing;
+        EffectiveSelfHealing+=other.EffectiveSelfHealing;
+        UnverifiedSelfHealing+=other.UnverifiedSelfHealing;
         EffectiveHealingOthers += other.EffectiveHealingOthers;
         UnverifiedHealingOthers += other.UnverifiedHealingOthers;
         foreach (var offset in other.DeathOffsetsMs)

@@ -385,7 +385,15 @@ public sealed partial class CombatTracker
         {
             var c=GetCombatant(enc,source);
             c.Healing+=h.Amount;enc.LastActivityMs=Math.Max(enc.LastActivityMs,h.TimeMs);
-            if(target==source)c.SelfHealing+=h.Amount;
+            if(target==source)
+            {
+                c.SelfHealing+=h.Amount;c.UnverifiedSelfHealing+=h.Amount;
+                if(IsLikelyPlayer(target))confirm=amount=>
+                {
+                    if(!ReferenceEquals(_current,enc)||!enc.IsActive)return;
+                    c.EffectiveSelfHealing+=amount;c.UnverifiedSelfHealing-=h.Amount;
+                };
+            }
             else
             {
                 c.UnverifiedHealingOthers+=h.Amount;
@@ -926,7 +934,7 @@ public sealed partial class CombatTracker
                 c.ActorId, c.Name, c.Class, c.IsSelf,
                 t.Damage, t.Damage / seconds, (double)t.Damage / total,
                 t.Hits, t.Hits > 0 ? (double)t.Crits / t.Hits : 0,
-                t.Max, c.DamageTaken, c.ServerId, c.GearScore, c.CombatPower, c.Healing, c.SelfHealing, c.DeathOffsetsMs.Count, c.EffectiveHealingOthers, c.UnverifiedHealingOthers));
+                t.Max, c.DamageTaken, c.ServerId, c.GearScore, c.CombatPower, c.Healing, c.SelfHealing, c.DeathOffsetsMs.Count, c.EffectiveHealingOthers, c.UnverifiedHealingOthers,c.EffectiveSelfHealing,c.UnverifiedSelfHealing));
         }
         rows.Sort((a, b) => b.Damage.CompareTo(a.Damage));
         // Pets without a known owner are not a player: list them last so they never take a place in the ranking.

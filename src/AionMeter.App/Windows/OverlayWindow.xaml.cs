@@ -236,7 +236,10 @@ public partial class OverlayWindow : Window, IDisplayAppearance
         var own = snapshot?.Combatants.FirstOrDefault(c => c.IsSelf);
         PersonalName.Text = StreamNames.Name(own?.Name ?? _meter.LiveIdentity.Current?.Name ?? "");
         _personalRows[0].Surface.Visibility = _personalRows[1].Surface.Visibility = _settings.ShowHealingDone ? Visibility.Visible : Visibility.Collapsed;
-        _personalRows[0].Value.Text = own is null ? "—" : Format.Grouped(own.SelfHealing);
+        var effectiveSelf=own?.EffectiveSelfHealing;
+        var incompleteSelf=own?.UnverifiedSelfHealing>0;
+        _personalRows[0].Value.Text=effectiveSelf is null||effectiveSelf==0&&incompleteSelf?"—":Format.Grouped(effectiveSelf.Value)+(incompleteSelf?"*":"");
+        _personalRows[0].Surface.ToolTip=UiText.Current.Localize("Effective self healing: only HP-confirmed healing. Overhealing is excluded. * means incomplete data; unverified healing is not counted.");
         var effective=own?.EffectiveHealingOthers;
         var incomplete=own?.UnverifiedHealingOthers>0;
         _personalRows[1].Value.Text=effective is null||effective==0&&incomplete?"—":Format.Grouped(effective.Value)+(incomplete?"*":"");

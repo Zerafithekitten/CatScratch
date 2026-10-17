@@ -536,15 +536,17 @@ internal static class InteractionChecks
             Check(!meter.Settings.ShowPersonalCombatModule,"Personal-combat shortcut independently disables its section");
             meter.Settings.ShowPersonalCombatModule = true;
             meter.Tracker.Process(new AionMeter.Core.Events.DamageEvent(1_000_001,1,500,17010000,100,AionMeter.Core.Events.HitFlags.None));
+            meter.Tracker.Process(new Core.Events.NpcHpEvent(1_000_001,1,5000,10000,false));
             meter.Tracker.Process(new AionMeter.Core.Events.HealEvent(1_000_002,1,1,17010000,78500,AionMeter.Core.Events.HitFlags.None));
+            meter.Tracker.Process(new Core.Events.NpcHpEvent(1_000_002,1,10000,10000,false));
             meter.Tracker.Process(new AionMeter.Core.Events.DamageEvent(1_000_003,500,1,2000000,42850,AionMeter.Core.Events.HitFlags.None));
             activeOverlay.Refresh();
             Check(activeModel.Rows.First(r=>r.IsSelf).DamageTaken==Core.Format.Compact(42850),"The own player row displays received damage separately from outgoing damage");
             Check(activeModel.SegmentId!=segment,"A new fight replaces the finished fight automatically");
             var personalMetrics=(System.Windows.Controls.StackPanel)activeOverlay.FindName("PersonalMetrics");
             var healingGrid=(System.Windows.Controls.Grid)((System.Windows.Controls.Border)personalMetrics.Children[0]).Child;
-            Check(healingGrid.Children.OfType<System.Windows.Controls.TextBlock>().Last().Text == "78,500",
-                "Integrated personal totals display received self healing for the shown fight");
+            Check(healingGrid.Children.OfType<System.Windows.Controls.TextBlock>().Last().Text == "5,000",
+                "Self healing displays only restored HP and excludes the overhealing portion");
             meter.Tracker.Process(new Core.Events.PlayerSeenEvent(1_000_004,777777,"Healed ally",2305,Core.Events.GameClass.Gladiator));
             meter.Tracker.Process(new Core.Events.NpcHpEvent(1_000_005,777777,5726,5790,false));
             meter.Tracker.Process(new Core.Events.HealEvent(1_000_006,1,777777,17800000,959,Core.Events.HitFlags.None));
@@ -555,6 +557,8 @@ internal static class InteractionChecks
             meter.Tracker.Process(new Core.Events.HealEvent(1_000_008,1,777777,17800000,500,Core.Events.HitFlags.None));
             activeOverlay.Refresh();
             Check(othersGrid.Children.OfType<System.Windows.Controls.TextBlock>().Last().Text=="64*","Unverified healing is excluded and marks the visible total as incomplete");
+            meter.Tracker.Process(new Core.Events.HealEvent(1_000_009,1,1,17010000,1000,Core.Events.HitFlags.None));activeOverlay.Refresh();
+            Check(healingGrid.Children.OfType<System.Windows.Controls.TextBlock>().Last().Text=="5,000*","Self healing excludes unconfirmed amounts and marks only the confirmed subtotal");
             foreach (var showHealing in new[] { true, false })
             {
                 meter.Settings.ShowHealingDone=showHealing;

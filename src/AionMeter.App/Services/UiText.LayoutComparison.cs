@@ -5,6 +5,7 @@ public sealed partial class UiText
     private static readonly Dictionary<string,(string De,string Ru,string Fr)> LayoutComparisonText=new()
     {
         ["Modules"]=("Module","Модули","Modules"),
+        ["Effective self healing: only HP-confirmed healing. Overhealing is excluded. * means incomplete data; unverified healing is not counted."]=("Effektive Eigenheilung: nur durch Lebenspunkte bestätigte Heilung, ohne Überheilung. * bedeutet unvollständige Daten; unbestätigte Heilung wird nicht gezählt.","Эффективное самолечение: только подтверждённое изменением HP, без избыточного лечения. * означает неполные данные; неподтверждённое лечение не учитывается.","Soins effectifs sur soi : uniquement les gains de PV confirmés, sans sursoins. * indique des données incomplètes ; les soins non confirmés ne sont pas comptés."),
         ["DPS meter hidden"]=("DPS-Meter ausgeblendet","DPS-метр скрыт","DPS-mètre masqué"),
         ["Show DPS meter"]=("DPS-Meter anzeigen","Показывать DPS-метр","Afficher le DPS-mètre"),
         ["Hides combat statistics but keeps a small CatScratch bar with Settings available. Capture and other modules keep running."]=("Blendet die Kampfanzeige aus. Eine kleine CatScratch-Leiste mit Einstellungen bleibt sichtbar. Erfassung und andere Module laufen weiter.","Скрывает боевые показатели. Панель CatScratch с настройками остаётся видимой. Сбор данных и другие модули продолжают работать.","Masque les statistiques de combat. Une petite barre CatScratch avec les réglages reste visible. La capture et les autres modules continuent."),
