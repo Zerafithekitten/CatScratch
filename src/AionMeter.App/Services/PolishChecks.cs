@@ -13,6 +13,14 @@ internal static class PolishChecks
         var path=Path.Combine(folder,"settings.json");
         try
         {
+            var displaySettings=new AppSettings {ShowDpsMeterModule=false,OverlayVisible=false,Transient=true};
+            JsonSettingsFile.Write(path,displaySettings);
+            var restored=JsonSettingsFile.Read<AppSettings>(path)!;
+            check(!restored.ShowDpsMeterModule && new AppSettings().ShowDpsMeterModule,"Disabled DPS display survives preference reloads; existing installations keep it enabled by default");
+            var displayProfile=OverlayProfiles.Capture("Events only",displaySettings,new TimerCards.State());
+            var profileSettings=new AppSettings();
+            OverlayProfiles.Apply(displayProfile,profileSettings,new TimerCards.State());
+            check(!profileSettings.ShowDpsMeterModule && !profileSettings.OverlayVisible,"Overlay profiles retain a disabled DPS display independently of capture settings");
             JsonSettingsFile.Write(path,new Dictionary<string,int>{{"value",1}});
             JsonSettingsFile.Write(path,new Dictionary<string,int>{{"value",2}});
             File.WriteAllText(path,"{broken");
@@ -46,6 +54,9 @@ internal static class PolishChecks
         try
         {
             window.Show();
+            var dpsCheck=(CheckBox)window.FindName("ShowDpsMeterCheck");
+            dpsCheck.IsChecked=false;
+            check(meter.Settings.ShowDpsMeterModule,"DPS display changes remain drafts until Settings is saved");
             var tabs=(TabControl)window.FindName("SettingsTabs");
             window.UpdateLayout();
             var formLabels=Visuals(window).OfType<TextBlock>().Where(t=>t.IsVisible && !string.IsNullOrWhiteSpace(t.Text) && !InButton(t)).ToArray();
@@ -60,6 +71,7 @@ internal static class PolishChecks
             Change("events","Show upcoming events");Change("pets","Sound on collection / level up");
             check(cards.Saved.EventWindowOpen==oldEvents && meter.Settings.PetNotify==oldPet,"Event and pet controls remain drafts until Save");
             window.Close();
+            check(meter.Settings.ShowDpsMeterModule,"Cancelling Settings preserves the DPS display choice");
             check(cards.Saved.EventWindowOpen==oldEvents && meter.Settings.PetNotify==oldPet,"Closing central Settings discards event and pet edits");
         }
         finally{window.Close();}

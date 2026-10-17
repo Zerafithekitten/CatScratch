@@ -111,6 +111,10 @@ public partial class SettingsWindow : Window
     private void Load()
     {
         var s = _meter.Settings;
+        ModulesTitle.Text=T.Localize("Modules");
+        ShowDpsMeterCheck.Content=T.Localize("Show DPS meter");
+        ShowDpsMeterCheck.IsChecked=s.ShowDpsMeterModule;
+        ShowDpsMeterHint.Text=T.Localize("Only hides the DPS meter. Recording and other modules keep running. Restore it from the tray icon or the DPS meter hotkey.");
         GameStartTitle.Text=T.Localize("AION 2 companion");
         FollowGameCheck.Content=T.Localize("Start and close CatScratch with AION 2");
         FollowGameCheck.IsChecked=s.FollowGame;
@@ -247,6 +251,9 @@ public partial class SettingsWindow : Window
             MessageBox.Show(this,T.Localize("Could not configure automatic game start.")+"\n"+T.Localize(error.Message),"CatScratch",MessageBoxButton.OK,MessageBoxImage.Error);
             return;
         }
+        var dpsVisibilityChanged=s.ShowDpsMeterModule!=(ShowDpsMeterCheck.IsChecked==true);
+        s.ShowDpsMeterModule=ShowDpsMeterCheck.IsChecked==true;
+        if(dpsVisibilityChanged)s.OverlayVisible=s.ShowDpsMeterModule;
         s.Theme=theme;ThemeColors.Apply(theme);
         s.FollowGame=follow; s.GameExecutable=game;
         s.CompactMode = CompactModeCheck.IsChecked == true;
@@ -309,7 +316,7 @@ public partial class SettingsWindow : Window
         _meter.ApplySettings();
         if (captureChanged) _meter.RestartCapture();
         Close();
-        AppHost.Current.OnSettingsChanged();
+        AppHost.Current.OnSettingsChanged(dpsVisibilityChanged);
         AppHost.Current.RefreshPresentation();
         AppHost.Current.RefreshEventSettings();
         AppHost.Current.RefreshPetSettings();

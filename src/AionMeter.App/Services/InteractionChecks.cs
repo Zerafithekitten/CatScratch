@@ -184,6 +184,15 @@ internal static class InteractionChecks
             Check(!grouped.Hidden && first.IsVisible && second.IsVisible && third.IsVisible && later.IsVisible && !hidden.IsVisible,"All-window toggle restores only previously visible windows and skips closed windows");
             Check(placement==(first.Left,first.Top,first.Width,first.Height),"All-window visibility preserves window placement and size");
             Check(HotkeyManager.TryParse(new AppSettings().HotkeyToggleAll,out _,out _),"Default all-window shortcut is a valid configurable key combination");
+            var disabledGroup=new WindowVisibilityGroup();
+            hidden.Hide();
+            disabledGroup.Toggle([hidden],hidden,allowFallback:false);
+            Check(!hidden.IsVisible && !disabledGroup.Hidden,"Show/hide all never opens a disabled DPS meter as an empty-group fallback");
+            disabledGroup.Toggle([first,second],first);
+            disabledGroup.Forget(first);
+            disabledGroup.Restore();
+            Check(!first.IsVisible && second.IsVisible,"Disabling a meter while all modules are hidden removes only that meter from restoration");
+            first.Show();
             var defaults=new AppSettings();
             using (var bossMeter = new MeterService(new AppSettings { Transient=true, DownloadIcons=false, CompactMode=true, ShowBossPanel=true }, null))
             {

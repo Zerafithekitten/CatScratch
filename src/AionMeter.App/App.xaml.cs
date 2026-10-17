@@ -318,7 +318,8 @@ public partial class App : Application
         _meter.StartCapture();
 
         _overlay = new OverlayWindow(_meter);
-        if (settings.OverlayVisible || e.Args.Contains("--show")) _overlay.Show(); // --show: this run only, not saved
+        if(e.Args.Contains("--show"))settings.ShowDpsMeterModule=true; // explicit request re-enables the display
+        if (settings.ShowDpsMeterModule && (settings.OverlayVisible || e.Args.Contains("--show"))) _overlay.Show();
         else
         {
             new WindowInteropHelper(_overlay).EnsureHandle();
@@ -503,7 +504,7 @@ public partial class App : Application
         var engaged = fighting || party.Members.Count > 0;
         var now = Environment.TickCount64;
         if (engaged) _lastEngagedTick = now;
-        if (!s.AutoShow || _windowVisibility.Hidden) return;
+        if (!s.ShowDpsMeterModule || !s.AutoShow || _windowVisibility.Hidden) return;
 
         var canShow = fighting ? fight!.Value.Id != _suppressedFight
             : party.Members.Count > 0 && party.Revision != _suppressedPartyRevision;
@@ -523,7 +524,7 @@ public partial class App : Application
     /// <summary>Up without the user asking: goes away again after the usual idle time (Settings → Overlay).</summary>
     private void ShowByItself()
     {
-        if (_overlay.IsVisible || _windowVisibility.Hidden) return;
+        if (!_meter.Settings.ShowDpsMeterModule || _overlay.IsVisible || _windowVisibility.Hidden) return;
         _overlay.Show();
         _autoShown = true;
         _lastEngagedTick = Environment.TickCount64;
@@ -570,7 +571,7 @@ public partial class App : Application
         _hotkeys.UnregisterAll();
         var s = _meter.Settings;
         _hotkeys.Register(s.HotkeyToggleOverlay, () => SetOverlayVisible(!_overlay.IsVisible));
-        _hotkeys.Register(s.HotkeyToggleAll,()=>_windowVisibility.Toggle(Windows.Cast<Window>(),_overlay));
+        _hotkeys.Register(s.HotkeyToggleAll,()=>_windowVisibility.Toggle(Windows.Cast<Window>(),_overlay,s.ShowDpsMeterModule));
         _hotkeys.Register(s.HotkeyReset, RestartMeter);
         _overlay.ApplyHotkeyTips();
         if (!_hotkeys.Register(s.HotkeyClickThrough, ToggleClickThrough))
@@ -603,8 +604,11 @@ public partial class App : Application
 
     // ------------------------------------------------------------ window management (used by windows via AppHost)
 
-    public void SetOverlayVisible(bool visible)
+    public void SetOverlayVisible(bool visible,bool updateModule=true)
     {
+        if(updateModule)_meter.Settings.ShowDpsMeterModule=visible;
+        visible=visible && _meter.Settings.ShowDpsMeterModule;
+        if(!visible)_windowVisibility.Forget(_overlay);
         if(visible && _windowVisibility.Hidden)_windowVisibility.Restore();
         _autoShown = false; // the user decided: automatic hiding no longer applies
         if (visible)
@@ -696,7 +700,7 @@ public partial class App : Application
         _timerHub?.Reload();
         _startedEvents?.Reload();
         _overlay.ShowLive();_overlay.Refresh();
-        if(_meter.DemoRunning && !_overlay.IsVisible)_overlay.Show();
+        if(_meter.Settings.ShowDpsMeterModule && _meter.DemoRunning && !_overlay.IsVisible && !_windowVisibility.Hidden)_overlay.Show();
     }
     public void RefreshPresentation()
     {
@@ -893,7 +897,7 @@ public partial class App : Application
         if(profile.Started)OpenStartedEvents(false);
         if(_meter.Settings.ShowPetTrackerModule)TogglePetModule();
         if(profile.BossTimers is {Open:true} boss){ShowBossTimers();_timersWindow!.Left=boss.Left;_timersWindow.Top=boss.Top;_timersWindow.Width=Math.Max(_timersWindow.MinWidth,boss.Width);_timersWindow.Height=Math.Max(_timersWindow.MinHeight,boss.Height);WindowPresentation.Constrain(_timersWindow);}
-        SetOverlayVisible(_meter.Settings.OverlayVisible);
+        SetOverlayVisible(_meter.Settings.OverlayVisible,updateModule:false);
         WindowClickThrough.ApplyAll(_meter.Settings.ClickThrough);
         WindowPinning.RefreshAll();
         _overlay.Refresh();_settingsWindow?.Close();
@@ -979,8 +983,9 @@ public partial class App : Application
         }
     }
 
-    public void OnSettingsChanged()
+    public void OnSettingsChanged(bool dpsVisibilityChanged=false)
     {
+        if(dpsVisibilityChanged)SetOverlayVisible(_meter.Settings.ShowDpsMeterModule);
         RegisterHotkeys();
         _overlay.ApplyAppearance();
         _overlay.Refresh();

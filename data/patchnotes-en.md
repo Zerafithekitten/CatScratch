@@ -1,3 +1,10 @@
+## CatScratch v3.0.1-beta.10
+
+- Added Settings > Appearance > Modules > Show DPS meter. Disable the display while capture and other modules keep running.
+- Restore the meter through its tray icon or configured shortcut (Shift+F5 by default). Automatic visibility never overrides a disabled display.
+- The choice persists across restarts and is included in overlay profiles. Save applies it; Cancel discards changes.
+- Show/hide all respects the disabled meter and continues restoring the other modules.
+
 ## CatScratch v3.0.1-beta.9
 
 - Healing others now shows HP-confirmed effective healing and excludes overhealing.

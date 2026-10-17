@@ -70,6 +70,13 @@
             <StackPanel>
               <Border Style="{StaticResource Section}">
                 <StackPanel>
+                  <TextBlock x:Name="ModulesTitle" Style="{StaticResource SectionLabel}" Margin="0,0,0,8" />
+                  <CheckBox x:Name="ShowDpsMeterCheck" Style="{StaticResource DarkCheck}" />
+                  <TextBlock x:Name="ShowDpsMeterHint" Style="{StaticResource Hint}" TextWrapping="Wrap" />
+                </StackPanel>
+              </Border>
+              <Border Style="{StaticResource Section}">
+                <StackPanel>
                   <TextBlock Text="{Binding Literal18, Source={x:Static s:UiText.Current}}" Style="{StaticResource SectionLabel}" Margin="0,0,0,8" />
                   <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
                     <TextBlock Text="{Binding Literal19, Source={x:Static s:UiText.Current}}" Style="{StaticResource Label}" />
