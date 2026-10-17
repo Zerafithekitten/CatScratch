@@ -1,5 +1,6 @@
-## CatScratch v3.0.1-beta.17
+## CatScratch v3.0.1-beta.18
 
+- Made the vertical control panel narrower with tighter, aligned icon rows and subtle vertical separators between its four columns. Horizontal layout is unchanged.
 - Background opacity now reaches 0% for the DPS meter and control panel while keeping text and icons readable.
 - Fixed the extra dark meter backdrop that remained visible when lowering background opacity.
 - Preserved transparent backgrounds across settings, restarts and click-through changes.

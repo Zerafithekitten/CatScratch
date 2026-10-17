@@ -69,9 +69,9 @@ internal sealed class MeterControlsWindow : Window
         ((Panel)RestoreButton.Parent).Children.Remove(RestoreButton);
         buttons.Children.Add(RestoreButton);
         SettingsButton=settingsButton;
-        _verticalActions=new Grid {Margin=new(8,3,8,0),Visibility=Visibility.Collapsed};
-        for(var i=0;i<4;i++){_verticalActions.ColumnDefinitions.Add(new(){Width=new(1,GridUnitType.Star)});_verticalActions.RowDefinitions.Add(new(){Height=new(26)});}
-        _verticalFooter=new Grid {Margin=new(8,5,8,7),Visibility=Visibility.Collapsed};
+        _verticalActions=new Grid {Margin=new(5,1,5,0),Visibility=Visibility.Collapsed};
+        for(var i=0;i<4;i++){_verticalActions.ColumnDefinitions.Add(new(){Width=new(1,GridUnitType.Star)});_verticalActions.RowDefinitions.Add(new(){Height=new(22)});}
+        _verticalFooter=new Grid {Margin=new(5,2,5,4),Visibility=Visibility.Collapsed};
         _verticalFooter.ColumnDefinitions.Add(new(){Width=GridLength.Auto});_verticalFooter.ColumnDefinitions.Add(new(){Width=new(1,GridUnitType.Star)});
         var root=new StackPanel();root.Children.Add(header);root.Children.Add(buttons);root.Children.Add(_verticalActions);root.Children.Add(_verticalFooter);root.Children.Add(update);
         SetFrame(root);
@@ -123,7 +123,7 @@ internal sealed class MeterControlsWindow : Window
         {
             _layout=_settings.ControlsLayout;
             var vertical=_layout==ControlsLayout.Vertical;
-            Width=vertical?176:400;
+            Width=vertical?156:400;
             _header.Height=vertical?double.NaN:34;
             _header.RowDefinitions.Clear();
             if(vertical){_header.RowDefinitions.Add(new(){Height=GridLength.Auto});_header.RowDefinitions.Add(new(){Height=GridLength.Auto});}
@@ -166,9 +166,15 @@ internal sealed class MeterControlsWindow : Window
             Item("BossRecordsButton"),Item("LastPlayedButton"),Item("CompactHistory"),Item("DetailsLink"),
             Item("ChatExportButton"),Item("PatchNotesButton"),Item("SaveLastFightButton"),Item("CheckUpdatesButton"),
             Item("BossTimersLink"),Item("RestartButton"),Item("LockButton")};
+        for(var column=0;column<3;column++)
+        {
+            var separator=new Border {Width=1,Background=ThemeColors.Brush("#414A56"),Opacity=.65,
+                HorizontalAlignment=HorizontalAlignment.Right,Margin=new(0,2,0,2),IsHitTestVisible=false};
+            Grid.SetColumn(separator,column);Grid.SetRowSpan(separator,4);_verticalActions.Children.Add(separator);
+        }
         for(var i=0;i<actions.Length;i++)
         {
-            var action=actions[i];action.Width=28;action.Height=24;action.Margin=new(0);action.HorizontalAlignment=HorizontalAlignment.Center;
+            var action=actions[i];action.Width=22;action.Height=20;action.Margin=new(0);action.HorizontalAlignment=HorizontalAlignment.Center;
             Grid.SetColumn(action,i%4);Grid.SetRow(action,i/4);_verticalActions.Children.Add(action);
         }
         var mode=_horizontalItems.OfType<FrameworkElement>().Single(c=>Equals(c.Tag,"damage-mode"));

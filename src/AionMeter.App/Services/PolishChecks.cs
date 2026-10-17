@@ -80,11 +80,12 @@ internal static class PolishChecks
             meter.Settings.WindowOpacity=oldOpacity;meter.Settings.BackgroundOpacity=oldBackground;
             detachedOverlay.ApplyAppearance();WindowClickThrough.ApplyAll(true);
             meter.Settings.ControlsLayout=ControlsLayout.Vertical;permanentPanel.ApplyAppearance();permanentPanel.UpdateLayout();
-            check(permanentPanel.Width==176 && exitButton.IsVisible && permanentPanel.SettingsButton.IsVisible,"Compact vertical panel retains Settings and Exit controls");
+            check(permanentPanel.Width==156 && exitButton.IsVisible && permanentPanel.SettingsButton.IsVisible,"Compact vertical panel retains Settings and Exit controls");
             var actionGrid=permanentPanel.VerticalActions!;
-            check(actionGrid.Children.Count==15 && actionGrid.ColumnDefinitions.Count==4 && actionGrid.RowDefinitions.Count==4
-                && actionGrid.Children.OfType<FrameworkElement>().All(c=>c.ActualWidth==28 && c.ActualHeight==24)
-                && actionGrid.Children.OfType<FrameworkElement>().Select(c=>(Grid.GetRow(c),Grid.GetColumn(c))).Distinct().Count()==15,
+            check(actionGrid.Children.Count==18 && actionGrid.ColumnDefinitions.Count==4 && actionGrid.RowDefinitions.Count==4
+                && actionGrid.Children.OfType<System.Windows.Controls.Primitives.ButtonBase>().All(c=>c.ActualWidth==22 && c.ActualHeight==20)
+                && actionGrid.Children.OfType<System.Windows.Controls.Primitives.ButtonBase>().Select(c=>(Grid.GetRow(c),Grid.GetColumn(c))).Distinct().Count()==15
+                && actionGrid.Children.OfType<Border>().Count(c=>!c.IsHitTestVisible && Grid.GetRowSpan(c)==4)==3,
                 "Vertical panel uses equally sized actions in a fixed four-column grid without the DPS meter pin");
             var meterPin=WindowPinning.ButtonFor(detachedOverlay)!;
             check(Window.GetWindow(meterPin)==detachedOverlay,"DPS meter position pin belongs to the combat display rather than the control panel");

@@ -92,7 +92,7 @@ public static class SampleRenderer
                 var controlOverlay=new OverlayWindow(meter,exitOnClose:false);
                 var controlPanel=new MeterControlsWindow(meter.Settings,()=>{},()=>{});
                 controlOverlay.MoveControlsTo(controlPanel);
-                controlPanel.SizeToContent=SizeToContent.Manual;controlPanel.Height=o.Window=="meter-controls-vertical"?210:72;
+                controlPanel.SizeToContent=SizeToContent.Manual;controlPanel.Height=o.Window=="meter-controls-vertical"?double.NaN:72;
                 host=controlPanel;refresh=controlOverlay.Refresh;break;
             case "color-picker":
                 host=new Window{Width=304,Height=198,Background=ThemeColors.Brush("#20242A"),Content=new Border{Padding=new(12),Child=new Controls.HsvColorPicker(Colors.Red)}};
