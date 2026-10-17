@@ -12,6 +12,13 @@ internal sealed class MeterControlsWindow : Window
 {
     private readonly AppSettings _settings;
     private readonly TextBlock _status=new();
+    private Border _backdrop=null!;
+    private Grid? _header;
+    private WrapPanel? _buttons;
+    private ControlsLayout? _layout;
+    private ControlsAnchor? _anchor;
+    private bool _aligning;
+    internal double BackgroundOpacity=>_backdrop.Opacity;
     internal Button SettingsButton { get; private set; }
     internal Button RestoreButton { get; }
 
@@ -35,14 +42,16 @@ internal sealed class MeterControlsWindow : Window
         label.Children.Add(new TextBlock {Text="CatScratch",Foreground=ThemeColors.Brush("#C49AF5"),FontSize=13,FontWeight=FontWeights.SemiBold});
         _status.Foreground=ThemeColors.Brush("#A9B8C7");_status.FontSize=10;label.Children.Add(_status);
         header.Children.Add(label);
-        Content=new Border {Child=header,Background=ThemeColors.Brush("#20242A"),BorderBrush=ThemeColors.Brush("#414A56"),BorderThickness=new(1),CornerRadius=new(8)};
+        SetFrame(header);
         // This is the settings access point, so it deliberately stays outside global click-through registration.
         SourceInitialized+=(_,_)=>NativeMethods.SetExStyle(new WindowInteropHelper(this).Handle,
             ShowInTaskbar?0x00040000:NativeMethods.WS_EX_TOOLWINDOW,ShowInTaskbar?NativeMethods.WS_EX_TOOLWINDOW:0x00040000);
         DragAnywhere.Attach(this,dropped:()=>
         {
+            settings.ControlsAnchor=ControlsAnchor.Free;
             settings.ControlsLeft=Left;settings.ControlsTop=Top;settings.Save();moved?.Invoke(Left,Top);
         });
+        Loaded+=(_,_)=>AlignToScreen();SizeChanged+=(_,_)=>AlignToScreen();
         RefreshText();RestorePosition();
     }
 
@@ -54,19 +63,97 @@ internal sealed class MeterControlsWindow : Window
         buttons.Children.Add(RestoreButton);
         SettingsButton=settingsButton;
         var root=new StackPanel();root.Children.Add(header);root.Children.Add(buttons);root.Children.Add(update);
-        Content=new Border {Child=root,Background=ThemeColors.Brush("#20242A"),BorderBrush=ThemeColors.Brush("#414A56"),BorderThickness=new(1),CornerRadius=new(8)};
-        Width=460;SizeToContent=SizeToContent.Height;Height=double.NaN;
+        SetFrame(root);
+        _header=(Grid)header;_buttons=(WrapPanel)buttons;
+        foreach(var button in _buttons.Children.OfType<System.Windows.Controls.Primitives.ButtonBase>())
+        {
+            if(Equals(button.Tag,"damage-mode"))continue;
+            button.Width=20;button.Height=20;button.Margin=new(0);
+        }
+        foreach(var slider in _buttons.Children.OfType<Slider>())slider.Width=40;
+        foreach(var button in _header.Children.OfType<Button>()){button.Width=20;button.Height=20;}
+        SizeToContent=SizeToContent.Height;Height=double.NaN;ApplyLayout();
     }
 
     internal void RefreshText()
     {
+        ApplyAppearance();
         SettingsButton.ToolTip=UiText.Current.TraySettings;
         RestoreButton.ToolTip=(_settings.OverlayVisible?UiText.Current.TrayHide:UiText.Current.Localize("Show DPS meter"))+" · "+_settings.HotkeyToggleOverlay;
         _status.Text=UiText.Current.Localize("DPS meter hidden");
     }
 
+    private void SetFrame(UIElement content)
+    {
+        var root=new Grid();
+        _backdrop=new Border {Background=ThemeColors.Brush("#20242A"),CornerRadius=new(8)};
+        root.Children.Add(_backdrop);
+        root.Children.Add(new Border {Child=content,BorderBrush=ThemeColors.Brush("#414A56"),BorderThickness=new(1),CornerRadius=new(8),Background=Brushes.Transparent});
+        Content=root;ApplyAppearance();
+    }
+
+    internal void ApplyAppearance()
+    {
+        Opacity=Math.Clamp(_settings.WindowOpacity,.4,1);
+        _backdrop.Opacity=Math.Clamp(_settings.BackgroundOpacity,.15,1);
+        ApplyLayout();
+    }
+
+    private void ApplyLayout()
+    {
+        if(_header is null || _buttons is null)return;
+        if(_layout!=_settings.ControlsLayout)
+        {
+            _layout=_settings.ControlsLayout;
+            var vertical=_layout==ControlsLayout.Vertical;
+            Width=vertical?176:400;
+            _header.Height=vertical?double.NaN:34;
+            _header.RowDefinitions.Clear();
+            if(vertical){_header.RowDefinitions.Add(new(){Height=GridLength.Auto});_header.RowDefinitions.Add(new(){Height=GridLength.Auto});}
+            foreach(FrameworkElement child in _header.Children)
+            {
+                var caption=child.Name=="ShellCaption";
+                Grid.SetRow(child,vertical&&!caption?1:0);
+                if(caption){Grid.SetColumnSpan(child,vertical?6:1);child.LayoutTransform=vertical?new ScaleTransform(.8,.8):Transform.Identity;}
+                if(child.Name=="ShellClockPanel"){Grid.SetColumn(child,vertical?0:1);Grid.SetColumnSpan(child,vertical?2:1);}
+            }
+            _buttons.Orientation=vertical?Orientation.Vertical:Orientation.Horizontal;
+            _buttons.Height=vertical?140:double.NaN;
+            _buttons.HorizontalAlignment=vertical?HorizontalAlignment.Center:HorizontalAlignment.Stretch;
+        }
+        if(_anchor!=_settings.ControlsAnchor){_anchor=_settings.ControlsAnchor;AlignToScreen();}
+    }
+
+    internal static Rect AlignedBounds(Rect bounds,Rect area,ControlsAnchor anchor)
+    {
+        if(anchor==ControlsAnchor.Free)return WindowPresentation.Clamp(bounds,area);
+        var x=anchor is ControlsAnchor.TopLeft or ControlsAnchor.CenterLeft or ControlsAnchor.BottomLeft?area.Left:
+            anchor is ControlsAnchor.TopRight or ControlsAnchor.CenterRight or ControlsAnchor.BottomRight?area.Right-bounds.Width:area.Left+(area.Width-bounds.Width)/2;
+        var y=anchor is ControlsAnchor.TopLeft or ControlsAnchor.TopCenter or ControlsAnchor.TopRight?area.Top:
+            anchor is ControlsAnchor.BottomLeft or ControlsAnchor.BottomCenter or ControlsAnchor.BottomRight?area.Bottom-bounds.Height:area.Top+(area.Height-bounds.Height)/2;
+        return WindowPresentation.Clamp(new Rect(x,y,bounds.Width,bounds.Height),area);
+    }
+
+    private void AlignToScreen()
+    {
+        if(!IsLoaded || _aligning || _settings.ControlsAnchor==ControlsAnchor.Free)return;
+        _aligning=true;
+        try
+        {
+            var bounds=WindowPresentation.PhysicalBounds(this);if(bounds.IsEmpty)return;
+            var area=System.Windows.Forms.Screen.FromHandle(new WindowInteropHelper(this).Handle).Bounds;
+            var aligned=AlignedBounds(bounds,new Rect(area.X,area.Y,area.Width,area.Height),_settings.ControlsAnchor);
+            var from=PresentationSource.FromVisual(this)?.CompositionTarget?.TransformFromDevice??Matrix.Identity;
+            var delta=from.Transform(new Vector(aligned.X-bounds.X,aligned.Y-bounds.Y));
+            if(Math.Abs(delta.X)>.1)Left+=delta.X;if(Math.Abs(delta.Y)>.1)Top+=delta.Y;
+            _settings.ControlsLeft=Left;_settings.ControlsTop=Top;
+        }
+        finally{_aligning=false;}
+    }
+
     internal void RestorePosition()
     {
         Left=_settings.ControlsLeft??_settings.OverlayLeft;Top=_settings.ControlsTop??Math.Max(0,_settings.OverlayTop-100);WindowPresentation.Constrain(this);
+        AlignToScreen();
     }
 }

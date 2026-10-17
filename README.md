@@ -2,12 +2,12 @@
 
 A separate, always-on-top Windows DPS meter for **AION 2**, by Zerafithekitten. Track your own fights and confirmed party members in a compact dark gray interface with restrained purple accents and cat-paw branding.
 
-[Download Stable](https://github.com/Zerafithekitten/CatScratch/releases/latest) · [Download Beta](https://github.com/Zerafithekitten/CatScratch/releases/tag/v3.0.1-beta.12) · [Release history](https://github.com/Zerafithekitten/CatScratch/releases) · [Report a bug / request a feature](https://github.com/Zerafithekitten/CatScratch/issues/new/choose)
+[Download Stable](https://github.com/Zerafithekitten/CatScratch/releases/latest) · [Download Beta](https://github.com/Zerafithekitten/CatScratch/releases/tag/v3.0.1-beta.13) · [Release history](https://github.com/Zerafithekitten/CatScratch/releases) · [Report a bug / request a feature](https://github.com/Zerafithekitten/CatScratch/issues/new/choose)
 
 | Channel | Current version | What it includes |
 | --- | --- | --- |
 | **Stable** | **[v3.0.0](https://github.com/Zerafithekitten/CatScratch/releases/tag/v3.0.0)** | Complete tested Beta feature set: compact class-colored rows, central settings with separate Updates/Feedback tabs, position pins, overlay profiles, boss comparisons, compact recap, quiet game companion and safer preferences. |
-| **Beta** | [Last prerelease: v3.0.1-beta.12](https://github.com/Zerafithekitten/CatScratch/releases/tag/v3.0.1-beta.12) | Optional DPS meter display, custom interface colors and Mario Party, the 24-hour event timeline with persistent favorites, and HP-confirmed effective healing of others. |
+| **Beta** | [Last prerelease: v3.0.1-beta.13](https://github.com/Zerafithekitten/CatScratch/releases/tag/v3.0.1-beta.13) | Optional DPS meter display, custom interface colors and Mario Party, the 24-hour event timeline with persistent favorites, and HP-confirmed effective healing of others. |
 
 English is the default. German, Russian and French are also available. Screenshots show **v3.0.1-beta.9** with synthetic sample data; names and numbers are examples. Features exclusive to the current Beta are labeled below. Stable remains **v3.0.0**.
 
@@ -27,6 +27,7 @@ English is the default. German, Russian and French are also available. Screensho
 - [Events, boss timers and sounds](#events-boss-timers-and-sounds)
 - [Updates and release channels](#updates-and-release-channels)
 - [Patchnotes](#patchnotes)
+- [Help & symbols](#help--symbols)
 - [Controls and shortcuts](#controls-and-shortcuts)
 - [Automatic start and close with AION 2](#automatic-start-and-close-with-aion-2)
 - [Languages and stream mode](#languages-and-stream-mode)
@@ -238,6 +239,12 @@ Open **Patch notes** from the meter or Settings. Versions are listed **on the le
 <img src="docs/screenshots/patch-notes.png" alt="Ten patchnotes versions in a left sidebar with clickable contents and individual release notes" width="580" />
 
 [Read all published release notes](https://github.com/Zerafithekitten/CatScratch/releases).
+
+## Help & symbols
+
+**Beta:** Settings > Help & symbols explains the panel and module icons, their functions and states, using your saved shortcuts. The guide is read-only and available in English and German.
+
+Settings > Appearance > Control panel offers compact horizontal and vertical layouts, nine screen anchors and free placement. The panel can reach the full screen edge and follows display/background opacity. Dragging switches to free placement. Save applies changes; Cancel discards them. Layout and alignment are included in overlay profiles.
 
 ## Controls and shortcuts
 

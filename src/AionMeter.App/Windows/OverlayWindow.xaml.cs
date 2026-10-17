@@ -120,6 +120,7 @@ public partial class OverlayWindow : Window, IDisplayAppearance
         var buttons=new WrapPanel {Margin=new(8,0,8,6)};
         while(FooterControls.Children.Count>0){var child=FooterControls.Children[0];FooterControls.Children.RemoveAt(0);buttons.Children.Add(child);}
         // Additional controls previously available only in the expanded meter toolbar.
+        ((FrameworkElement)Toolbar.Children[0]).Tag="damage-mode";
         foreach(var control in new UIElement[]{Toolbar.Children[0],RestartButton,LockButton,OpacitySlider})
         {((Panel)((FrameworkElement)control).Parent).Children.Remove(control);buttons.Children.Add(control);}
         BossTimersLink.Style=(Style)FindResource("ToolIcon");BossTimersLink.Content="\uE121";BossTimersLink.Margin=new(0);

@@ -1,3 +1,10 @@
+## CatScratch v3.0.1-beta.13
+
+- Added Settings > Help & symbols: a read-only English/German icon guide with functions, state explanations and your configured shortcuts.
+- Made the control panel more compact and added horizontal / vertical layouts, nine screen anchors and free placement in Appearance > Control panel.
+- Fixed placement at the full screen edge and applied display/background opacity to the panel while keeping its controls clickable.
+- Panel layout and alignment persist across restarts and overlay profiles. Dragging switches back to free placement; Save/Cancel apply to the new options.
+
 ## CatScratch v3.0.1-beta.12
 
 - The compact CatScratch control panel is now always available, independently of the DPS combat display.

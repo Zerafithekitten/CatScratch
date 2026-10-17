@@ -12,6 +12,8 @@ public enum HistoryMode
     BossesAndLong,
     All,
 }
+public enum ControlsLayout { Horizontal, Vertical }
+public enum ControlsAnchor { Free, TopLeft, TopCenter, TopRight, CenterLeft, Center, CenterRight, BottomLeft, BottomCenter, BottomRight }
 
 public sealed class AppSettings
 {
@@ -46,6 +48,8 @@ public sealed class AppSettings
     public bool ShowDpsMeterModule { get; set; } = true;
     public double? ControlsLeft {get;set;}
     public double? ControlsTop {get;set;}
+    public ControlsLayout ControlsLayout {get;set;}
+    public ControlsAnchor ControlsAnchor {get;set;}
     public Dictionary<string,bool> ModulePins {get;set;}=[];
     /// <summary>Bring the overlay up by itself when a boss is fought nearby or you hit anything.</summary>
     public bool AutoShow { get; set; } = true;

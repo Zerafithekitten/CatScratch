@@ -1,0 +1,72 @@
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Media;
+using AionMeter.App.Services;
+
+namespace AionMeter.App.Windows;
+
+/// <summary>Read-only legend: icons never invoke their real commands.</summary>
+internal sealed class SymbolHelpPanel : StackPanel
+{
+    private static string L(string en,string de)=>ControlPanelSettingsPanel.L(en,de);
+    private static readonly Brush Accent=ThemeColors.Brush("#C49AF5");
+    private const string Grave="M3,14 V6 C3,0 13,0 13,6 V14 Z M1,14 H15 M8,5 V11 M5.5,7.5 H10.5";
+    private const string Trophy="M4,2 H12 V6 C12,8 10,10 8,10 C6,10 4,8 4,6 Z M4,3 H2 V5 C2,7 3,8 5,8 M12,3 H14 V5 C14,7 13,8 11,8 M8,10 V14 M5,14 H11";
+    private const string Pin="M4,1 H10 L9,5 L12,8 H8 V11 L7,14 L6,11 V8 H2 L5,5 Z";
+    internal SymbolHelpPanel(AppSettings s)
+    {
+        Children.Add(new TextBlock {Text=L("Help & symbols","Hilfe & Symbole"),Foreground=Accent,FontSize=16,Margin=new(0,0,0,6)});
+        Children.Add(new TextBlock {Text=L("Read what each symbol does. Shortcuts below reflect your saved settings. These examples do not activate any function.","Hier erfährst du, was die Symbole bewirken. Die Hotkeys entsprechen deinen gespeicherten Einstellungen. Die Beispiele lösen keine Funktion aus."),Foreground=ThemeColors.Brush("#A9B8C7"),TextWrapping=TextWrapping.Wrap,Margin=new(0,0,0,10)});
+        void Group(string en,string de)=>Children.Add(new TextBlock {Text=L(en,de),Foreground=Accent,FontSize=13,FontWeight=FontWeights.SemiBold,Margin=new(0,12,0,7)});
+        void Row(string icon,string en,string de,string bodyEn,string bodyDe,string? shortcut=null,string? path=null,bool paw=false)
+        {
+            var grid=new Grid();grid.ColumnDefinitions.Add(new(){Width=new(30)});grid.ColumnDefinitions.Add(new(){Width=new(1,GridUnitType.Star)});
+            FrameworkElement drawing=paw?new Image {Source=AppIcon.Image,Width=18,Height=18}:
+                path is not null?new System.Windows.Shapes.Path {Data=Geometry.Parse(path),Stroke=Accent,StrokeThickness=1,StrokeLineJoin=PenLineJoin.Round,Stretch=Stretch.Uniform,Width=16,Height=16}:
+                new TextBlock {Text=icon,FontFamily=new(icon.Length==1&&icon[0]>=0xE000?"Segoe Fluent Icons, Segoe MDL2 Assets":"Segoe UI"),FontSize=icon.Length<=1?16:11,FontWeight=FontWeights.SemiBold,Foreground=Accent};
+            drawing.VerticalAlignment=VerticalAlignment.Top;drawing.Margin=new(0,3,7,0);grid.Children.Add(drawing);
+            var text=new StackPanel();Grid.SetColumn(text,1);grid.Children.Add(text);
+            var header=new DockPanel();
+            if(!string.IsNullOrWhiteSpace(shortcut))
+            {
+                var key=new TextBlock {Text=shortcut,FontSize=10,Foreground=Accent,Margin=new(8,0,0,0),VerticalAlignment=VerticalAlignment.Center};DockPanel.SetDock(key,Dock.Right);header.Children.Add(key);
+            }
+            header.Children.Add(new TextBlock {Text=L(en,de),FontSize=12.5,FontWeight=FontWeights.SemiBold,Foreground=ThemeColors.Brush("#EDF2F7"),TextWrapping=TextWrapping.Wrap});text.Children.Add(header);
+            text.Children.Add(new TextBlock {Text=L(bodyEn,bodyDe),FontSize=11.5,Foreground=ThemeColors.Brush("#BCC9D6"),TextWrapping=TextWrapping.Wrap,Margin=new(0,3,0,0)});
+            Children.Add(new Border {Child=grid,Padding=new(9,8,9,8),Margin=new(0,0,0,5),Background=ThemeColors.Brush("#191D23"),BorderBrush=ThemeColors.Brush("#414A56"),BorderThickness=new(1),CornerRadius=new(6)});
+        }
+        Group("Control panel","Bedienpanel");
+        Row("\uE916","Fight duration / clock","Kampfdauer / Uhrzeit","The stopwatch shows fight duration. The clock uses Europe/Berlin time.","Die Stoppuhr zeigt die Kampfdauer. Die Uhrzeit richtet sich nach Europa/Berlin.");
+        Row("\uE713","Settings","Einstellungen","Opens the central settings. Save applies changes; Cancel discards them.","Öffnet die zentralen Einstellungen. Speichern übernimmt Änderungen, Abbrechen verwirft sie.");
+        Row("\uE711","Exit CatScratch","CatScratch beenden","The X in the control panel closes the entire app, capture and all modules. Other module X buttons only close that module.","Das X im Bedienpanel beendet die gesamte App, Erfassung und alle Module. Die X anderer Module schließen nur das jeweilige Modul.");
+        Row("\uE7B3","DPS display","DPS-Anzeige","Shows or hides the combat display. Capture and other modules continue; the control panel remains available.","Blendet die Kampfanzeige ein oder aus. Erfassung und andere Module laufen weiter; das Bedienpanel bleibt erreichbar.",s.HotkeyToggleOverlay);
+        Row("\uE95E","Personal combat","Persönlicher Kampf","Shows or hides self-healing and healing of others inside the DPS meter. Click again to hide the section.","Zeigt oder verbirgt Eigenheilung und Heilung anderer innerhalb des DPS-Meters. Erneutes Klicken blendet den Bereich aus.",s.HotkeyPersonal);
+        Row("","Pet tracker","Pet-Tracker","Toggles the pet progress module. MAX means the selected goal has been reached; ~ marks cached progress.","Schaltet das Pet-Fortschrittsmodul um. MAX bedeutet, dass das gewählte Ziel erreicht ist; ~ kennzeichnet zwischengespeicherten Fortschritt.",s.HotkeyPets,paw:true);
+        Row("\uE7C2","Click-through","Durchklicken","Lets clicks pass through display modules to the game. The crossed cursor marks the enabled state. The control panel and Settings remain clickable.","Leitet Klicks durch Anzeigemodule an das Spiel weiter. Der durchgestrichene Mauszeiger kennzeichnet den aktiven Zustand. Bedienpanel und Einstellungen bleiben bedienbar.",s.HotkeyClickThrough,path:"M2,1 L12,8 L7,8 L5,13 Z");
+        Row("","Pin position","Position anpinnen","Locks only this window's position. A highlighted pin means locked. Panel and meter have separate pins; controls remain usable.","Sperrt nur die Position dieses Fensters. Eine hervorgehobene Stecknadel bedeutet angepinnt. Panel und Meter haben getrennte Pins; Buttons bleiben bedienbar.",path:Pin);
+        Row("","Death recap","Todesrückblick","Enables or disables automatic death recap. Highlighted means enabled; gray means disabled. It shows five recent hits and hides after confirmed revival.","Aktiviert oder deaktiviert den automatischen Todesrückblick. Hervorgehoben bedeutet aktiviert, Grau deaktiviert. Er zeigt fünf letzte Treffer und verschwindet nach bestätigter Wiederbelebung.",s.HotkeyDeathRecap,path:Grave);
+        Row("","Boss personal bests","Persönliche Bossbestwerte","Opens permanently stored independent best values per boss. This is separate from saved fights and the last-run comparison.","Öffnet die dauerhaft gespeicherten, unabhängigen Bestwerte je Boss. Sie sind getrennt von gespeicherten Kämpfen und dem Vergleich mit dem letzten Lauf.",path:Trophy);
+        Row("\uE716","Last played with","Zuletzt zusammengespielt","Shows recent confirmed teammates, classes and received CP/GS. The copy button copies an individual name.","Zeigt zuletzt bestätigte Mitspieler, Klassen und empfangene CP/GS. Der Kopierbutton kopiert den jeweiligen Namen.");
+        Row("\uE8A5","Fight statistics","Kampfstatistiken","Opens live, session and saved fights. Selecting an older fight opens its details separately; the meter stays Live.","Öffnet Live-, Sitzungs- und gespeicherte Kämpfe. Ein früherer Kampf öffnet seine Details separat; das Meter bleibt auf Live.");
+        Row("\uE8BD","Copy / export","Kopieren / Exportieren","Opens chat and image export for the displayed fight. Exports use the current fight data and stream-mode naming.","Öffnet Chat- und Bildexport für den angezeigten Kampf. Exporte verwenden die aktuellen Kampfdaten und Namen des Stream-Modus.");
+        Row("\uE8A1","Patch notes","Patchnotes","Shows the ten newest releases in left-hand version tabs, with each version's own changes.","Zeigt die zehn neuesten Veröffentlichungen als Versionsreiter links, jeweils mit den zugehörigen Änderungen.");
+        Row("\uE74E","Save fight","Kampf speichern","Saves an eligible completed fight locally. Gray means no fight can currently be saved. Full saved fights are limited to the ten newest.","Speichert einen geeigneten abgeschlossenen Kampf lokal. Grau bedeutet, dass derzeit kein Kampf gespeichert werden kann. Vollständige gespeicherte Kämpfe sind auf die zehn neuesten begrenzt.");
+        Row("\uE895","Check for updates","Nach Updates suchen","Checks the selected update channel. The restart notice appears after preparation finishes; clicking Restart to update applies it.","Prüft den gewählten Update-Kanal. Der Neustarthinweis erscheint nach abgeschlossener Vorbereitung; Neustart zum Aktualisieren übernimmt das Update.");
+        Row("\uE121","Boss respawn timers","Boss-Respawnzeiten","Opens observed world-boss respawn timers. This is different from the upcoming-event timeline.","Öffnet beobachtete Respawnzeiten der Weltbosse. Diese Ansicht ist getrennt von der Timeline anstehender Events.",s.HotkeyTimers);
+        Row("\uE9D9","Current fight details","Details zum aktuellen Kampf","Opens the current fight's player statistics, skills, accuracy and defense when fight data is available.","Öffnet bei vorhandenen Kampfdaten die Spielerstatistik des aktuellen Kampfes mit Fähigkeiten, Genauigkeit und Verteidigung.");
+        Row("BOSS","Damage mode: BOSS / ALL","Schadensmodus: BOSS / ALL","Switches outgoing damage between boss targets only and all targets. This changes which damage the meter includes.","Wechselt ausgehenden Schaden zwischen reinen Bosszielen und allen Zielen. Dadurch ändert sich, welchen Schaden das Meter berücksichtigt.");
+        Row("\uE72C","Restart measurement","Messung neu starten","Restarts measurement and capture while retaining known players and bosses. This does not exit CatScratch or reset permanent bests.","Startet Messung und Erfassung neu und behält bekannte Spieler und Bosse. CatScratch wird nicht beendet; dauerhafte Bestwerte bleiben erhalten.",s.HotkeyReset);
+        Row("\uE785","Movement lock","Verschieben sperren","Locks dragging and resizing of the DPS meter. The independent panel position is controlled by its own pin.","Sperrt Verschieben und Größenänderung des DPS-Meters. Die unabhängige Panelposition wird über dessen eigenen Pin gesperrt.");
+        Row("—●","Background opacity","Hintergrund-Deckkraft","The slider changes the background transparency. Settings also offers display opacity for the entire panel and display modules.","Der Regler verändert die Transparenz des Hintergrunds. In den Einstellungen lässt sich außerdem die Deckkraft des gesamten Panels und der Anzeigemodule anpassen.");
+        Group("DPS display","DPS-Anzeige");
+        Row("DPS","DPS, share and class colors","DPS, Anteil und Klassenfarben","DPS is damage per second; the percentage is the player's share. Class emblems and colored row fills identify classes. Click a player for details.","DPS ist Schaden pro Sekunde; der Prozentwert zeigt den Spieleranteil. Klassensymbole und farbige Zeilenfüllungen kennzeichnen Klassen. Ein Klick auf einen Spieler öffnet Details.");
+        Row("CP","CP / GS","CP / GS","Combat Power and Gear Score use received game data. A dash means no usable value has arrived.","Kampfkraft und Ausrüstungswert stammen aus empfangenen Spieldaten. Ein Strich bedeutet, dass kein brauchbarer Wert vorliegt.");
+        Row("*","Healing markers","Heilungsmarkierungen","Healing others counts HP-confirmed effective healing. * means an incomplete confirmed subtotal; a dash means no healing could be confirmed. Overhealing is excluded.","Heilung anderer zählt durch Lebenspunkte bestätigte effektive Heilung. * bedeutet eine unvollständige bestätigte Teilsumme; ein Strich heißt, dass keine Heilung bestätigt werden konnte. Überheilung zählt nicht.");
+        Group("Other modules and shortcuts","Weitere Module und Tastenkürzel");
+        Row("\uE121","Upcoming events / timeline","Anstehende Events / Timeline","The shortcut toggles Upcoming events. Its clock opens the next 24 hours. Started events leave Upcoming and appear only in Started events.","Der Hotkey schaltet anstehende Events um. Deren Uhr öffnet die nächsten 24 Stunden. Gestartete Events verlassen die Vorschau und erscheinen nur unter Gestartete Events.",s.HotkeyEvents);
+        Row("\uE734","Favorite event","Event favorisieren","Stars an event type. Its occurrences and matching overlay cards gain a gold frame. Favorites do not change event selection or sounds.","Markiert einen Eventtyp als Favorit. Seine Termine und passenden Overlay-Karten erhalten einen goldenen Rahmen. Die Auswahl angezeigter Events und Sounds bleibt unverändert.");
+        Row("\uE8C8","Copy name","Namen kopieren","Copies that teammate's name. Stream mode also masks copied names.","Kopiert den Namen dieses Mitspielers. Der Stream-Modus maskiert auch kopierte Namen.");
+        Row("\uE711","Close a module","Modul schließen","An X in a secondary module closes only that window. Only the control panel X exits the entire application.","Ein X in einem Zusatzmodul schließt nur dieses Fenster. Nur das X im Bedienpanel beendet die gesamte Anwendung.");
+        Row("\uE8A7","Show / hide all","Alles ein- / ausblenden","Temporarily hides visible windows, including the control panel. Press again to restore them without enabling a disabled DPS display.","Blendet sichtbare Fenster einschließlich Bedienpanel vorübergehend aus. Erneutes Drücken stellt sie wieder her, ohne eine deaktivierte DPS-Anzeige einzuschalten.",s.HotkeyToggleAll);
+    }
+}

@@ -13,10 +13,11 @@ internal static class PolishChecks
         var path=Path.Combine(folder,"settings.json");
         try
         {
-            var displaySettings=new AppSettings {ShowDpsMeterModule=false,OverlayVisible=false,Transient=true};
+            var displaySettings=new AppSettings {ShowDpsMeterModule=false,OverlayVisible=false,Transient=true,ControlsLayout=ControlsLayout.Vertical,ControlsAnchor=ControlsAnchor.BottomRight};
             JsonSettingsFile.Write(path,displaySettings);
             var restored=JsonSettingsFile.Read<AppSettings>(path)!;
             check(!restored.ShowDpsMeterModule && new AppSettings().ShowDpsMeterModule,"Disabled DPS display survives preference reloads; existing installations keep it enabled by default");
+            check(restored.ControlsLayout==ControlsLayout.Vertical && restored.ControlsAnchor==ControlsAnchor.BottomRight,"Panel orientation and screen position survive settings-file reloads");
             var displayProfile=OverlayProfiles.Capture("Events only",displaySettings,new TimerCards.State());
             var profileSettings=new AppSettings();
             OverlayProfiles.Apply(displayProfile,profileSettings,new TimerCards.State());
@@ -67,6 +68,32 @@ internal static class PolishChecks
             check(permanentPanel.SettingsButton.IsVisible && exitButton.IsVisible,"Central Settings and Exit remain accessible when the DPS meter uses click-through");
             detachedOverlay.Hide();
             check(permanentPanel.IsVisible,"The default control panel remains visible independently of the combat display");
+            var oldOpacity=meter.Settings.WindowOpacity;var oldBackground=meter.Settings.BackgroundOpacity;
+            meter.Settings.WindowOpacity=.55;meter.Settings.BackgroundOpacity=.2;permanentPanel.ApplyAppearance();
+            check(permanentPanel.Opacity==.55 && permanentPanel.BackgroundOpacity==.2,"Control panel applies display opacity and independent background transparency");
+            meter.Settings.WindowOpacity=oldOpacity;meter.Settings.BackgroundOpacity=oldBackground;
+            meter.Settings.ControlsLayout=ControlsLayout.Vertical;permanentPanel.ApplyAppearance();permanentPanel.UpdateLayout();
+            check(permanentPanel.Width==176 && exitButton.IsVisible && permanentPanel.SettingsButton.IsVisible,"Compact vertical panel retains Settings and Exit controls");
+            meter.Settings.ControlsLayout=ControlsLayout.Horizontal;permanentPanel.ApplyAppearance();permanentPanel.UpdateLayout();
+            check(permanentPanel.Width==400,"Panel can return to the compact horizontal layout");
+            var screen=System.Windows.Forms.Screen.PrimaryScreen!;
+            check(WindowPresentation.Area(permanentPanel,screen)==screen.Bounds,"Control panel placement uses full screen bounds including the taskbar edge");
+            var area=new Rect(-1920,0,1920,1080);var panelBounds=new Rect(-1000,400,420,64);
+            check(MeterControlsWindow.AlignedBounds(panelBounds,area,ControlsAnchor.BottomRight)==new Rect(-420,1016,420,64)
+                && MeterControlsWindow.AlignedBounds(panelBounds,area,ControlsAnchor.TopLeft)==new Rect(-1920,0,420,64)
+                && MeterControlsWindow.AlignedBounds(panelBounds,area,ControlsAnchor.TopCenter).X==-1170,
+                "Panel anchors reach exact screen edges and center correctly on monitors with negative coordinates");
+            var source=new AppSettings {ControlsLayout=ControlsLayout.Vertical,ControlsAnchor=ControlsAnchor.BottomRight};
+            var target=new AppSettings();OverlayProfiles.Apply(OverlayProfiles.Capture("Panel",source,new TimerCards.State()),target,new TimerCards.State());
+            check(target.ControlsLayout==ControlsLayout.Vertical && target.ControlsAnchor==ControlsAnchor.BottomRight,"Overlay profiles retain panel orientation and screen alignment");
+            var help=new SymbolHelpPanel(new AppSettings {HotkeyToggleOverlay="Ctrl+Alt+F2"});
+            var helpWindow=new Window {Content=help,Width=800,Height=600};
+            try
+            {
+                helpWindow.Measure(new Size(800,600));helpWindow.Arrange(new Rect(0,0,800,600));
+                check(Visuals(help).OfType<TextBlock>().Any(t=>t.Text=="Ctrl+Alt+F2") && !Visuals(help).OfType<Button>().Any(),"Read-only symbol legend shows the actual configured shortcut without executable action buttons");
+            }
+            finally{helpWindow.Close();}
         }
         finally{WindowClickThrough.ApplyAll(false);permanentPanel.Close();detachedOverlay.Close();}
         cards.Saved.SelectedEvents=["shugo"];
@@ -93,6 +120,10 @@ internal static class PolishChecks
             check(meter.Settings.ShowDpsMeterModule,"DPS display changes remain drafts until Settings is saved");
             var tabs=(TabControl)window.FindName("SettingsTabs");
             window.UpdateLayout();
+            check(Visuals(window).OfType<Button>().Any(b=>b.IsVisible && Equals(b.Content,UiText.Current.Save)),"Appearance settings retain a visible Save action with the new panel controls");
+            var panelPreferences=Visuals(window).OfType<ControlPanelSettingsPanel>().Single();
+            panelPreferences.Children.OfType<ComboBox>().First().SelectedIndex=1;
+            check(panelPreferences.Changed && meter.Settings.ControlsLayout==ControlsLayout.Horizontal,"Panel orientation stays a draft until Save and is discarded by Cancel");
             var formLabels=Visuals(window).OfType<TextBlock>().Where(t=>t.IsVisible && !string.IsNullOrWhiteSpace(t.Text) && !InButton(t)).ToArray();
             check(formLabels.Length>10 && formLabels.All(t=>t.Foreground is System.Windows.Media.SolidColorBrush brush && brush.Color.R+brush.Color.G+brush.Color.B>210),"Settings labels and values remain light on dark expandable sections");
             void Change(string tab,string label)

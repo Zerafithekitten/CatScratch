@@ -45,6 +45,7 @@ public partial class SettingsWindow : Window
         { MessageBox.Show(this, T.Localize("Could not open the browser. Please visit GitHub and choose New issue."), "CatScratch"); }
     }
     private readonly ThemeSettingsPanel _themePanel;
+    private readonly ControlPanelSettingsPanel _controlPanelPreferences;
     private readonly MeterService _meter;
     private readonly TimerCards _cards;
     private readonly TimerCards _eventDraft;
@@ -65,6 +66,9 @@ public partial class SettingsWindow : Window
         _cards=cards;
         _eventDraft=cards.CreatePreferencesDraft();
         _moduleDraft=meter.Settings.CreateDraft();
+        _controlPanelPreferences=new ControlPanelSettingsPanel(_moduleDraft);
+        if(((TabItem)SettingsTabs.Items[0]).Content is ScrollViewer {Content:Panel appearancePanel})
+            appearancePanel.Children.Insert(1,new Border {Child=_controlPanelPreferences,Style=(Style)FindResource("Section")});
         SettingsTabs.Items.Add(new TabItem {Header=T.Localize("Events"),Tag="events",Padding=new Thickness(12,10,12,10),Content=new ScrollViewer {VerticalScrollBarVisibility=ScrollBarVisibility.Auto,HorizontalScrollBarVisibility=ScrollBarVisibility.Disabled,Padding=new Thickness(14,0,0,0),Content=new EventsSettingsPanel(_eventDraft,()=>{},(sound,volume)=>{if(!meter.Settings.Transient)AppHost.Current.PreviewEventSound(sound,volume);})}});
         var modules=new StackPanel();
         modules.Children.Add(new TextBlock {Text=T.Localize("Pet tracker"),FontSize=16,Margin=new Thickness(0,0,0,8)});
@@ -82,6 +86,7 @@ public partial class SettingsWindow : Window
         SettingsTabs.Items.Add(new TabItem {Header=T.Localize("Pets"),Tag="pets",Padding=new Thickness(12,10,12,10),Content=new ScrollViewer {VerticalScrollBarVisibility=ScrollBarVisibility.Auto,HorizontalScrollBarVisibility=ScrollBarVisibility.Auto,Padding=new Thickness(14,0,0,0),Content=new Border {Child=modules,Style=(Style)FindResource("Section"),VerticalAlignment=VerticalAlignment.Top}}});
         SettingsTabs.Items.Add(new TabItem {Header=T.Localize("Overlay profiles"),Padding=new Thickness(12,10,12,10),Content=new ScrollViewer {VerticalScrollBarVisibility=ScrollBarVisibility.Auto,HorizontalScrollBarVisibility=ScrollBarVisibility.Auto,Padding=new Thickness(14,0,0,0),Content=new OverlayProfilesPanel()}});
         // Fold secondary sections and reflow rows instead of forcing a wide inner canvas.
+        SettingsTabs.Items.Add(new TabItem {Header=ControlPanelSettingsPanel.L("Help & symbols","Hilfe & Symbole"),Tag="help",Padding=new Thickness(12,10,12,10),Content=new ScrollViewer {VerticalScrollBarVisibility=ScrollBarVisibility.Auto,HorizontalScrollBarVisibility=ScrollBarVisibility.Disabled,Padding=new Thickness(14,0,0,0),Content=new SymbolHelpPanel(meter.Settings)}});
         foreach (var tab in SettingsTabs.Items.OfType<TabItem>())
             if (tab.Content is ScrollViewer viewer && viewer.Content is FrameworkElement content)
             {
@@ -255,6 +260,7 @@ public partial class SettingsWindow : Window
         s.ShowDpsMeterModule=ShowDpsMeterCheck.IsChecked==true;
         if(dpsVisibilityChanged)s.OverlayVisible=s.ShowDpsMeterModule;
         s.Theme=theme;ThemeColors.Apply(theme);
+        if(_controlPanelPreferences.Changed){s.ControlsLayout=_moduleDraft.ControlsLayout;s.ControlsAnchor=_moduleDraft.ControlsAnchor;}
         s.FollowGame=follow; s.GameExecutable=game;
         s.CompactMode = CompactModeCheck.IsChecked == true;
         if (int.TryParse(WindowWidthText.Text, out var width)) s.OverlayWidth = Math.Clamp(width, 260, 1600);
