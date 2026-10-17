@@ -222,13 +222,19 @@ public class EngineTests
         var limit = t.NextTimer(20_000)!;
         Assert.Equal(InstanceTimerEvent.BossLimit, limit.Kind); // runs out before the dungeon's hour
         Assert.Equal(310_000, limit.EndMs);
+        Assert.NotNull(t.BossTimer(Boss,20_000));
+        Assert.Equal(2,t.NextTimer(20_000,includeBoss:false)!.Kind);
+        Assert.Null(t.BossTimer(Boss+1,20_000));
+        Assert.Null(t.BossTimer(Boss,310_000));
 
         t.Process(new BattleStateEvent(60_000, Boss, false));    // a wipe
         Assert.Equal(2, t.NextTimer(60_000)!.Kind);
+        Assert.Null(t.BossTimer(Boss,60_000));
 
         t.Process(new BossTimeLimitEvent(70_000, Boss, 370_000));
         t.Process(new DeathEvent(200_000, Boss));                 // killed in time
         Assert.Equal(2, t.NextTimer(200_000)!.Kind);
+        Assert.Null(t.BossTimer(Boss,200_000));
     }
 
     [Fact]

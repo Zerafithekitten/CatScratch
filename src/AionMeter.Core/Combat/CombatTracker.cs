@@ -638,15 +638,23 @@ public sealed partial class CombatTracker
 
     /// <summary>The instance countdown that runs out first after <paramref name="nowMs"/> (the dungeon's time limit,
     /// the wait after entering …); null when none is running.</summary>
-    public InstanceTimerEvent? NextTimer(long nowMs)
+    public InstanceTimerEvent? NextTimer(long nowMs,bool includeBoss=true)
     {
         lock (_gate)
         {
             InstanceTimerEvent? next = null;
             foreach (var t in _timers.Values)
-                if (t.EndMs > nowMs && (next is null || t.EndMs < next.EndMs)) next = t;
+                if ((includeBoss || t.Kind!=InstanceTimerEvent.BossLimit) && t.EndMs > nowMs && (next is null || t.EndMs < next.EndMs)) next = t;
             return next;
         }
+    }
+
+    /// <summary>Only a server-provided deadline for this boss; never substitute an instance timer.</summary>
+    public InstanceTimerEvent? BossTimer(uint actorId,long nowMs)
+    {
+        lock(_gate)
+            return _bossLimitActor==actorId && _timers.TryGetValue(InstanceTimerEvent.BossLimit,out var timer)
+                && timer.StartMs<=nowMs && timer.EndMs>nowMs ? timer:null;
     }
 
     /// <summary>A party roster arrived (gear score and combat power of the party). Raised outside the lock.</summary>

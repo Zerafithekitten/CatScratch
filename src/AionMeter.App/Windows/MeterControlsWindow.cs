@@ -18,7 +18,7 @@ internal sealed class MeterControlsWindow : Window
     private Grid? _verticalActions;
     private Grid? _verticalFooter;
     private StackPanel? _caption;
-    private FrameworkElement? _personalButton,_petButton,_meterPin;
+    private FrameworkElement? _personalButton,_petButton;
     private UIElement[] _horizontalItems=[];
     private readonly Dictionary<FrameworkElement,(double Width,double Height,Thickness Margin,HorizontalAlignment Alignment)> _horizontalSizing=[];
     internal Grid? VerticalActions=>_verticalActions;
@@ -86,7 +86,6 @@ internal sealed class MeterControlsWindow : Window
         _caption=_header.Children.OfType<StackPanel>().Single(p=>p.Name=="ShellCaption");
         _personalButton=_caption.Children.OfType<FrameworkElement>().Single(p=>p.Name=="PersonalCombatButton");
         _petButton=_caption.Children.OfType<FrameworkElement>().Single(p=>p.Name=="PetTrackerButton");
-        _meterPin=WindowPinning.ButtonFor(overlay)!;
         _horizontalItems=_buttons.Children.Cast<UIElement>().ToArray();
         foreach(var item in _horizontalItems.OfType<FrameworkElement>().Concat([_personalButton,_petButton]))
             _horizontalSizing[item]=(item.Width,item.Height,item.Margin,item.HorizontalAlignment);
@@ -166,7 +165,7 @@ internal sealed class MeterControlsWindow : Window
         var actions=new[]{Item("DeathRecapButton"),_personalButton!,_petButton!,RestoreButton,
             Item("BossRecordsButton"),Item("LastPlayedButton"),Item("CompactHistory"),Item("DetailsLink"),
             Item("ChatExportButton"),Item("PatchNotesButton"),Item("SaveLastFightButton"),Item("CheckUpdatesButton"),
-            Item("BossTimersLink"),Item("RestartButton"),Item("LockButton"),_meterPin!};
+            Item("BossTimersLink"),Item("RestartButton"),Item("LockButton")};
         for(var i=0;i<actions.Length;i++)
         {
             var action=actions[i];action.Width=28;action.Height=24;action.Margin=new(0);action.HorizontalAlignment=HorizontalAlignment.Center;

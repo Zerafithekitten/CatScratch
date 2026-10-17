@@ -129,7 +129,7 @@ public partial class OverlayWindow : Window, IDisplayAppearance
         var panelPin=WindowPinning.CreateButton(panel,_settings,"controls");
         if(panelPin.Parent is Panel pinParent)pinParent.Children.Remove(panelPin);
         ShellPin.Content=panelPin;
-        buttons.Children.Add(WindowPinning.ButtonFor(this)!);
+        MeterPinHost.Content=WindowPinning.ButtonFor(this)!;
         panel.AttachControls(this,ShellHeader,buttons,UpdateBanner,ShellSettingsButton);
         RefreshControlPanel();
     }
@@ -145,7 +145,7 @@ public partial class OverlayWindow : Window, IDisplayAppearance
         ShellSettingsButton.Visibility=ShellHideButton.Visibility=ShellPin.Visibility=Visibility.Visible;
         CompactHistory.Visibility=BossTimersLink.Visibility=DetailsLink.Visibility=Visibility.Visible;
         HistoryLink.Visibility=Visibility.Collapsed;
-        WindowPinning.SetDisplayOnly(this,false);
+        WindowPinning.SetDisplayOnly(this,_displayOnly);
     }
     private Brush? _shellBackground, _shellBorder, _frameBorder;
     private System.Windows.Media.Effects.Effect? _frameEffect;
@@ -295,6 +295,7 @@ public partial class OverlayWindow : Window, IDisplayAppearance
         ShellTitle.Text = _meter.DemoRunning ? "CatScratch · TEST" : "CatScratch";
         _vm.ShowGear = _settings.ShowGear;
         _vm.ShowCombatPower = _settings.ShowCombatPower ?? _settings.ShowGear;
+        uint? activeBoss=null;
         {
             var now = ClockOverride?.Invoke() ?? DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
             var snap = _meter.Tracker.Snapshot(null, now);
@@ -316,13 +317,15 @@ public partial class OverlayWindow : Window, IDisplayAppearance
                 _vm.SetSegment("live", snap?.StartedAt.ToString("HH:mm"));
             }
             RefreshPersonal(_showingPartyPreview ? null : snap);
+            if(!_showingPartyPreview && snap is {IsActive:true,Boss:not null} && _settings.ShowBossPanel)activeBoss=snap.Boss.ActorId;
         }
         if (!_settings.Transient && !_meter.DemoRunning && _meter.LiveIdentity.ActorId is null)
             foreach (var row in _vm.Rows) row.IsSelf = false;
         if (!_settings.ShowBossPanel) _vm.HasBoss = false;
         // The instance's time limit (or the wait after entering), whatever fight is shown: it is about where you are now.
         var wall = ClockOverride?.Invoke() ?? DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
-        _vm.SetLimit(_meter.Tracker.NextTimer(wall), wall);
+        _vm.SetBossLimit(activeBoss is uint bossId?_meter.Tracker.BossTimer(bossId,wall):null,wall);
+        _vm.SetLimit(_meter.Tracker.NextTimer(wall,includeBoss:!_vm.HasBossLimit), wall);
         if (Environment.TickCount64 - _timersLabelAt >= 1_000) UpdateTimersLabel();
 
         var status = _meter.DemoRunning ? new CaptureStatus(CaptureState.Capturing, UiText.Current.Localize("Test mode · sample data")) : _meter.CaptureStatus;

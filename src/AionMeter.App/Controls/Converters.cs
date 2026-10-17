@@ -4,6 +4,15 @@ using System.Windows.Data;
 
 namespace AionMeter.App.Controls;
 
+/// <summary>Size an unscaled rounded fill from its track width and a bounded fraction.</summary>
+public sealed class FractionWidth : IMultiValueConverter
+{
+    public object Convert(object[] values,Type targetType,object parameter,CultureInfo culture) =>
+        values.Length==2 && values[0] is double width && values[1] is double fraction && double.IsFinite(width) && double.IsFinite(fraction)
+            ? Math.Max(0,width)*Math.Clamp(fraction,0,1):0d;
+    public object[] ConvertBack(object value,Type[] targetTypes,object parameter,CultureInfo culture)=>throw new NotSupportedException();
+}
+
 /// <summary>Clip contrasting identity text to the actual compact damage fill, never paint a separate color block.</summary>
 public sealed class CompactFillClip : IMultiValueConverter
 {

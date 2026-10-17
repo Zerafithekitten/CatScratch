@@ -75,10 +75,16 @@ internal static class PolishChecks
             meter.Settings.ControlsLayout=ControlsLayout.Vertical;permanentPanel.ApplyAppearance();permanentPanel.UpdateLayout();
             check(permanentPanel.Width==176 && exitButton.IsVisible && permanentPanel.SettingsButton.IsVisible,"Compact vertical panel retains Settings and Exit controls");
             var actionGrid=permanentPanel.VerticalActions!;
-            check(actionGrid.Children.Count==16 && actionGrid.ColumnDefinitions.Count==4 && actionGrid.RowDefinitions.Count==4
+            check(actionGrid.Children.Count==15 && actionGrid.ColumnDefinitions.Count==4 && actionGrid.RowDefinitions.Count==4
                 && actionGrid.Children.OfType<FrameworkElement>().All(c=>c.ActualWidth==28 && c.ActualHeight==24)
-                && actionGrid.Children.OfType<FrameworkElement>().Select(c=>(Grid.GetRow(c),Grid.GetColumn(c))).Distinct().Count()==16,
-                "Vertical panel uses sixteen equally sized actions in a complete four-by-four grid");
+                && actionGrid.Children.OfType<FrameworkElement>().Select(c=>(Grid.GetRow(c),Grid.GetColumn(c))).Distinct().Count()==15,
+                "Vertical panel uses equally sized actions in a fixed four-column grid without the DPS meter pin");
+            var meterPin=WindowPinning.ButtonFor(detachedOverlay)!;
+            check(Window.GetWindow(meterPin)==detachedOverlay,"DPS meter position pin belongs to the combat display rather than the control panel");
+            var panelPinned=WindowPinning.IsPinned(permanentPanel);var meterPinned=WindowPinning.IsPinned(detachedOverlay);
+            meterPin.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            check(WindowPinning.IsPinned(detachedOverlay)!=meterPinned && WindowPinning.IsPinned(permanentPanel)==panelPinned,"DPS meter pin locks only the meter and leaves the panel pin unchanged");
+            meterPin.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             meter.Settings.ControlsLayout=ControlsLayout.Horizontal;permanentPanel.ApplyAppearance();permanentPanel.UpdateLayout();
             check(permanentPanel.Width==400,"Panel can return to the compact horizontal layout");
             for(var i=0;i<2;i++)

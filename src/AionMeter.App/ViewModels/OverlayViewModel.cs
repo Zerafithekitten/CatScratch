@@ -311,6 +311,21 @@ public sealed class OverlayViewModel : ObservableObject
     /// <summary>"58.9%"</summary>
     public string BossPercent { get => _bossPercent; set => Set(ref _bossPercent, value); }
     public double BossHpFraction { get => _bossHpFraction; set => Set(ref _bossHpFraction, value); }
+    private bool _hasBossLimit;
+    private double _bossLimitFraction;
+    private string _bossLimitText="";
+    public bool HasBossLimit {get=>_hasBossLimit;private set=>Set(ref _hasBossLimit,value);}
+    public double BossLimitFraction {get=>_bossLimitFraction;private set=>Set(ref _bossLimitFraction,value);}
+    public string BossLimitText {get=>_bossLimitText;private set=>Set(ref _bossLimitText,value);}
+    public string BossLimitLabel=>"Enrage time";
+    public string BossLimitDescription=>T.Code=="de"?"Vom Server empfangenes Boss-Zeitlimit; keine separat bestätigte Enrage-Erkennung.":"Server-provided boss deadline; not a separately confirmed enrage timer.";
+    public void SetBossLimit(InstanceTimerEvent? timer,long nowMs)
+    {
+        HasBossLimit=timer is not null && timer.EndMs>nowMs && timer.EndMs>timer.StartMs;
+        BossLimitFraction=HasBossLimit?Math.Clamp((double)(timer!.EndMs-nowMs)/(timer.EndMs-timer.StartMs),0,1):0;
+        BossLimitText=HasBossLimit?Format.ClockShort(timer!.EndMs-nowMs+999):"";
+        Raise(nameof(BossLimitLabel));Raise(nameof(BossLimitDescription));
+    }
     public string PartyDps { get => _partyDps; set => Set(ref _partyDps, value); }
     public string TotalDamage { get => _totalDamage; set => Set(ref _totalDamage, value); }
     public string Status { get => _status; set => Set(ref _status, value); }

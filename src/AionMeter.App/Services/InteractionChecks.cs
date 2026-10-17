@@ -211,6 +211,29 @@ internal static class InteractionChecks
                     bossMeter.Settings.ShowBossPanel=false;bossOverlay.Refresh();hpPanel.GetBindingExpression(UIElement.VisibilityProperty)?.UpdateTarget();
                     Check(!bossModel.HasBoss && hpPanel.Visibility==Visibility.Collapsed,"Disabling boss HP hides only the HP panel");
                 }
+                try
+                {
+                    Windows.OverlayWindow.ClockOverride=()=>20_000;
+                    bossMeter.Settings.ShowBossPanel=true;bossMeter.Settings.ClickThrough=false;
+                    bossMeter.Tracker.Process(new Core.Events.InstanceTimerEvent(10_000,600092,2,10_000,600_000));
+                    bossOverlay.Refresh();
+                    Check(!bossModel.HasBossLimit,"Dungeon time limits are never substituted for boss deadlines");
+                    bossMeter.Tracker.Process(new Core.Events.BossTimeLimitEvent(20_000,501,320_000));bossOverlay.Refresh();
+                    Check(!bossModel.HasBossLimit,"A nearby different boss cannot populate the current boss deadline bar");
+                    bossMeter.Tracker.Process(new Core.Events.BossTimeLimitEvent(20_000,500,320_000));
+                    Windows.OverlayWindow.ClockOverride=()=>170_000;bossOverlay.Refresh();
+                    Check(bossModel.HasBossLimit && Math.Abs(bossModel.BossLimitFraction-.5)<.001,"Small boss deadline bar uses the matching server timer and counts down its real remaining fraction");
+                    foreach(var width in new[]{260d,420d})
+                    {
+                        bossOverlay.Width=width;bossOverlay.UpdateLayout();
+                        var fill=(System.Windows.Controls.Border)bossOverlay.FindName("BossHpFill");
+                        var track=(System.Windows.Controls.Grid)bossOverlay.FindName("BossHpTrack");
+                        Check(fill.ActualWidth<=track.ActualWidth+.5 && fill.RenderTransform==System.Windows.Media.Transform.Identity,"Boss HP fill remains bounded and keeps unscaled rounded corners at width "+width);
+                    }
+                    bossMeter.Tracker.Process(new Core.Events.BattleStateEvent(180_000,500,false));bossOverlay.Refresh();
+                    Check(!bossModel.HasBossLimit,"Boss deadline bar clears when the boss resets");
+                }
+                finally{Windows.OverlayWindow.ClockOverride=null;}
             }
             var moduleKeys=new[]{defaults.HotkeyToggleOverlay,defaults.HotkeyPersonal,defaults.HotkeyEvents,defaults.HotkeyTimers,defaults.HotkeyPets,defaults.HotkeyToggleAll,defaults.HotkeyClickThrough,defaults.HotkeyReset,defaults.HotkeyDeathRecap};
             Check(moduleKeys.Distinct().Count()==9 && moduleKeys.All(k=>k.StartsWith("Shift+F") && HotkeyManager.TryParse(k,out _,out _)),"Every default shortcut uses Shift and a distinct function key away from WASD");
