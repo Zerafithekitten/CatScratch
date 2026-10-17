@@ -1,6 +1,6 @@
 # Stability review — 2026-10-17
 
-Reviewed the current Stable 3.0.1 source and made the following corrections on `audit/stability-20261017`. These changes have not been released.
+Reviewed the current Stable 3.0.1 source and made the following corrections on `audit/stability-20261017`. The owner subsequently authorized these changes for Stable 3.0.2; see the matching release notes for publication.
 
 ## Corrections
 

@@ -1,3 +1,34 @@
+## CatScratch v3.0.2
+
+This Stable maintenance update keeps the complete 3.0.1 feature set and existing CatScratch layout. It corrects three edge cases found during a broader review of updates, capture restarts and module behavior. Your settings, saved fights, boss personal bests, recent teammates and pet collection progress are retained.
+
+### UPDATE CHECKS — CLEAN SHUTDOWN
+
+- Closing CatScratch now cancels a running release check through the updater's own lifetime token. An unfinished background request cannot subsequently populate release information or notify closed UI subscribers.
+- A stopped updater cannot begin another release check or prepare another update. Repeated cleanup is safe.
+- Startup checking and the ten-minute automatic interval remain unchanged. Prepared updates still require your explicit restart click; this update does not introduce automatic restarts.
+
+### MORE ROBUST RELEASE DATA HANDLING
+
+- Unexpected non-object entries in release responses are ignored safely.
+- Download files with missing, invalid, fractional, zero, negative or overflowing sizes are excluded. They cannot become downloadable update packages or cause an uncaught numeric-conversion error.
+- An invalid release-list structure is reported through the existing handled JSON-error path. A bad file entry does not prevent otherwise valid release notes from being available.
+- Existing package size and SHA-256 verification remains in place.
+
+### PET TRACKER — CAPTURE RESTART CORRECTION
+
+- Restarting packet capture now clears pending soul-drop correlations along with old location and monster context.
+- If the game reuses an actor identifier after the restart, an old soul drop can no longer be incorrectly assigned to a different monster as a learned farming source.
+- Confirmed pet collection progress is preserved. New valid soul drops can still teach their actual farming source normally. The five-recommendation limit, completed-pet filtering and passive-only operation are unchanged.
+
+### VERIFICATION AND COMPATIBILITY
+
+- All 384 core tests passed, including ten new regression cases for these fixes.
+- The Release application build completed without warnings or errors.
+- All 1,127 integrated interaction checks passed, covering Settings, module controls, click-through, pins, profiles, colors and pet presentation. Additional update/channel/preparation, boss-record, event-audio and full-shutdown checks passed.
+- Custom colors and Mario Party settings were verified across separate program starts. The optional game companion passed isolated tests for windowless startup, exact executable matching, one launch per game session and disabling the watcher.
+- The existing compact meter layout and all 3.0.1 modules remain available. Stable subscribers receive this maintenance version normally; existing Beta-to-Stable transition behavior is retained.
+- Automated checks cannot cover every live-game packet or a prolonged in-game session. Dependency vulnerability metadata was unavailable during the local review, so this release does not claim a completed dependency security audit.
 ## CatScratch v3.0.1
 
 This Stable release brings together the complete 3.0.1 Beta series through beta.25. It replaces Stable 3.0.0 and includes the new independent control panel, the reworked Pet tracker, interface customization, the 24-hour event planner, effective personal healing and the fixes tested during this Beta cycle. Existing local preferences and records are retained.
