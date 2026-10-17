@@ -18,6 +18,17 @@ internal static class PolishChecks
             var restored=JsonSettingsFile.Read<AppSettings>(path)!;
             check(!restored.ShowDpsMeterModule && new AppSettings().ShowDpsMeterModule,"Disabled DPS display survives preference reloads; existing installations keep it enabled by default");
             check(restored.ControlsLayout==ControlsLayout.Vertical && restored.ControlsAnchor==ControlsAnchor.BottomRight,"Panel orientation and screen position survive settings-file reloads");
+            var petDraft=displaySettings.CreateDraft();
+            EventSoundPreference? heard=null;double heardVolume=-1;
+            var petAudio=new PetSoundSettingsPanel(petDraft,(sound,volume)=>{heard=sound;heardVolume=volume;});
+            petAudio.Sound.SelectedIndex=2;petAudio.Volume.Value=.23;
+            ((Grid)petAudio.Children[1]).Children.OfType<Button>().Single().RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            check(displaySettings.PetSound=="Chime" && displaySettings.PetSoundVolume==.5 && petDraft.PetSound=="Ping" && petDraft.PetSoundVolume==.23,
+                "Pet sound and volume edits remain isolated from saved preferences");
+            check(heard is {Sound:"Ping",Enabled:true} && heardVolume==.23,"Pet audio preview uses the draft sound and volume even when notifications are disabled");
+            JsonSettingsFile.Write(path,petDraft);
+            var petReload=JsonSettingsFile.Read<AppSettings>(path)!;
+            check(petReload.PetSound=="Ping" && petReload.PetSoundVolume==.23,"Pet sound and independent volume survive preference-file reloads");
             var displayProfile=OverlayProfiles.Capture("Events only",displaySettings,new TimerCards.State());
             var profileSettings=new AppSettings();
             OverlayProfiles.Apply(displayProfile,profileSettings,new TimerCards.State());

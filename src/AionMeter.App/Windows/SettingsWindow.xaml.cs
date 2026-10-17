@@ -77,6 +77,7 @@ public partial class SettingsWindow : Window
 
         Module("Show pet tracker",meter.Settings.ShowPetTrackerModule,v=>_moduleDraft.ShowPetTrackerModule=v);
         Module("Sound on collection / level up",meter.Settings.PetNotify,v=>_moduleDraft.PetNotify=v);
+        modules.Children.Add(new PetSoundSettingsPanel(_moduleDraft,(sound,volume)=>{if(!meter.Settings.Transient)AppHost.Current.PreviewEventSound(sound,volume);}));
         modules.Children.Add(new TextBlock {Text=T.Localize("Window width"),Margin=new Thickness(0,6,0,4)});
         var petWidth=new Slider {Minimum=150,Maximum=1600,Value=Math.Clamp(meter.Settings.PetModuleWidth,150,1600),Style=(Style)FindResource("GoldSlider")};
         petWidth.ValueChanged+=(_,e)=>_moduleDraft.PetModuleWidth=e.NewValue;modules.Children.Add(petWidth);
@@ -322,6 +323,8 @@ public partial class SettingsWindow : Window
         _cards.ApplyPreferences(_eventDraft);
         var petVisibilityChanged=s.ShowPetTrackerModule!=_moduleDraft.ShowPetTrackerModule;
         s.PetNotify=_moduleDraft.PetNotify;
+        s.PetSound=_moduleDraft.PetSound;
+        s.PetSoundVolume=_moduleDraft.PetSoundVolume;
         s.PetModuleWidth=_moduleDraft.PetModuleWidth;
         s.ShowDeathRecapModule=_moduleDraft.ShowDeathRecapModule;
         if(petVisibilityChanged && !s.Transient)AppHost.Current.TogglePetModule();

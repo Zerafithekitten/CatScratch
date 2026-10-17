@@ -94,7 +94,7 @@ public sealed class PetTrackerWindow:Window,IDisplayAppearance
         else
         {
             if(_meter.Settings.PetNotify && _lastLevels.Count>0 && states.Any(p=>p.Value.Level>_lastLevels.GetValueOrDefault(p.Key)))
-                (_sounds??=new()).Play(new EventSoundPreference{Enabled=true,Sound="Chime"},.5);
+                (_sounds??=new()).Play(new EventSoundPreference{Enabled=true,Sound=_meter.Settings.PetSound},_meter.Settings.PetSoundVolume);
             _lastLevels=states.ToDictionary(p=>p.Key,p=>p.Value.Level);
         }
         var codes=_meter.Pets.AttackedNpcCodes();
