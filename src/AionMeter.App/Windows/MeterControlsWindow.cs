@@ -123,7 +123,15 @@ internal sealed class MeterControlsWindow : Window
         {
             _layout=_settings.ControlsLayout;
             var vertical=_layout==ControlsLayout.Vertical;
-            Width=vertical?156:400;
+            Width=vertical?132:400;
+            _header.Margin=vertical?new Thickness(4,1,4,0):new Thickness(8,2,6,0);
+            var paw=(Image)_caption!.Children[0];
+            paw.Width=paw.Height=vertical?16:22;paw.Margin=vertical?new Thickness(0,0,4,0):new Thickness(0,0,7,0);
+            var branding=(StackPanel)_caption.Children[1];
+            ((TextBlock)branding.Children[0]).FontSize=vertical?12:16;
+            ((TextBlock)branding.Children[1]).FontSize=vertical?8:9;
+            var clock=_header.Children.OfType<StackPanel>().Single(p=>p.Name=="ShellClockPanel");
+            foreach(var text in clock.Children.OfType<TextBlock>()){text.FontSize=vertical?8:text==clock.Children[0]?9:10;text.Margin=vertical?new Thickness(2,0,2,0):new Thickness(4,0,4,0);}
             _header.Height=vertical?double.NaN:34;
             _header.RowDefinitions.Clear();
             if(vertical){_header.RowDefinitions.Add(new(){Height=GridLength.Auto});_header.RowDefinitions.Add(new(){Height=GridLength.Auto});}

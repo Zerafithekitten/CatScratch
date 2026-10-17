@@ -80,7 +80,7 @@ internal static class PolishChecks
             meter.Settings.WindowOpacity=oldOpacity;meter.Settings.BackgroundOpacity=oldBackground;
             detachedOverlay.ApplyAppearance();WindowClickThrough.ApplyAll(true);
             meter.Settings.ControlsLayout=ControlsLayout.Vertical;permanentPanel.ApplyAppearance();permanentPanel.UpdateLayout();
-            check(permanentPanel.Width==156 && exitButton.IsVisible && permanentPanel.SettingsButton.IsVisible,"Compact vertical panel retains Settings and Exit controls");
+            check(permanentPanel.Width==132 && exitButton.IsVisible && permanentPanel.SettingsButton.IsVisible,"Compact vertical panel retains Settings and Exit controls");
             var actionGrid=permanentPanel.VerticalActions!;
             check(actionGrid.Children.Count==18 && actionGrid.ColumnDefinitions.Count==4 && actionGrid.RowDefinitions.Count==4
                 && actionGrid.Children.OfType<System.Windows.Controls.Primitives.ButtonBase>().All(c=>c.ActualWidth==22 && c.ActualHeight==20)
