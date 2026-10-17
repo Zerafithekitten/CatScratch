@@ -91,7 +91,7 @@
                   <TextBlock Text="{Binding Literal21, Source={x:Static s:UiText.Current}}" Style="{StaticResource Hint}" TextWrapping="Wrap" />
                   <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
                     <TextBlock Text="{Binding BackgroundOpacity, Source={x:Static s:UiText.Current}}" Style="{StaticResource Label}" />
-                    <Slider x:Name="OpacityValue" Style="{StaticResource GoldSlider}" Width="180" Minimum="0.15" Maximum="1" />
+                    <Slider x:Name="OpacityValue" Style="{StaticResource GoldSlider}" Width="180" Minimum="0" Maximum="1" />
                   </StackPanel>
                 </StackPanel>
               </Border>

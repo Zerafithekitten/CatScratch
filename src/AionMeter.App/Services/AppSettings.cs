@@ -206,7 +206,7 @@ public sealed class AppSettings
                 s.MaxRows = Math.Clamp(s.MaxRows, 1, 20);
                 s.UiScale = Math.Clamp(s.UiScale, .75, 1.5);
                 s.WindowOpacity = Math.Clamp(s.WindowOpacity, .4, 1);
-                s.BackgroundOpacity = Math.Clamp(s.BackgroundOpacity, .15, 1);
+                s.BackgroundOpacity = Math.Clamp(s.BackgroundOpacity, 0, 1);
                 s.LayoutVersion = CurrentLayout;
                 return s;
             }

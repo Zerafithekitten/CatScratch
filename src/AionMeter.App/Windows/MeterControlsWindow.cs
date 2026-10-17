@@ -112,7 +112,7 @@ internal sealed class MeterControlsWindow : Window
     internal void ApplyAppearance()
     {
         Opacity=Math.Clamp(_settings.WindowOpacity,.4,1);
-        _backdrop.Opacity=Math.Clamp(_settings.BackgroundOpacity,.15,1);
+        _backdrop.Opacity=Math.Clamp(_settings.BackgroundOpacity,0,1);
         ApplyLayout();
     }
 

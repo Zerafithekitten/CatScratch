@@ -200,7 +200,8 @@
         </DataTemplate>
     </Window.Resources>
 
-    <Border x:Name="OuterShell" CornerRadius="10" Background="{DynamicResource CustomBrush_DF20242A}" BorderBrush="#60616A76" BorderThickness="1">
+    <Border x:Name="OuterShell" CornerRadius="10" BorderBrush="#60616A76" BorderThickness="1">
+    <Border.Background><SolidColorBrush x:Name="ShellBackground" Color="{colors:ThemeColor #20242A}" Opacity="0.9"/></Border.Background>
     <DockPanel>
         <Grid x:Name="ShellHeader" DockPanel.Dock="Top" Height="38" Margin="8,2,6,0">
             <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
@@ -280,7 +281,7 @@
                         <TextBlock x:Name="LockGlyph" Text="&#xE785;" />
                     </ToggleButton>
 
-                    <Slider x:Name="OpacitySlider" Style="{StaticResource GoldSlider}" Width="52" Minimum="0.15" Maximum="1" Margin="5,0,3,0"
+                    <Slider x:Name="OpacitySlider" Style="{StaticResource GoldSlider}" Width="52" Minimum="0" Maximum="1" Margin="5,0,3,0"
                             ValueChanged="Opacity_Changed" VerticalAlignment="Center" ToolTip="{Binding T.Literal9}" />
                     <Button Style="{StaticResource ToolIcon}" Content="&#xE711;" Click="Hide_Click" ToolTip="{Binding T.Literal5}" />
                 </StackPanel>

@@ -71,7 +71,14 @@ internal static class PolishChecks
             var oldOpacity=meter.Settings.WindowOpacity;var oldBackground=meter.Settings.BackgroundOpacity;
             meter.Settings.WindowOpacity=.55;meter.Settings.BackgroundOpacity=.2;permanentPanel.ApplyAppearance();
             check(permanentPanel.Opacity==.55 && permanentPanel.BackgroundOpacity==.2,"Control panel applies display opacity and independent background transparency");
+            meter.Settings.BackgroundOpacity=0;permanentPanel.ApplyAppearance();detachedOverlay.ApplyAppearance();
+            var shellBrush=(System.Windows.Media.SolidColorBrush)detachedOverlay.FindName("ShellBackground");
+            var frameBrush=(System.Windows.Media.SolidColorBrush)detachedOverlay.FindName("FrameBackground");
+            WindowClickThrough.ApplyAll(false);
+            check(permanentPanel.BackgroundOpacity==0 && shellBrush.Opacity==0 && frameBrush.Opacity==0 && detachedOverlay.Opacity==.55,
+                "Zero background opacity clears both meter backdrops without dimming content further, including after click-through changes");
             meter.Settings.WindowOpacity=oldOpacity;meter.Settings.BackgroundOpacity=oldBackground;
+            detachedOverlay.ApplyAppearance();WindowClickThrough.ApplyAll(true);
             meter.Settings.ControlsLayout=ControlsLayout.Vertical;permanentPanel.ApplyAppearance();permanentPanel.UpdateLayout();
             check(permanentPanel.Width==176 && exitButton.IsVisible && permanentPanel.SettingsButton.IsVisible,"Compact vertical panel retains Settings and Exit controls");
             var actionGrid=permanentPanel.VerticalActions!;

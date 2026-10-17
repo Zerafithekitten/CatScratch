@@ -57,6 +57,7 @@ public partial class OverlayWindow : Window, IDisplayAppearance
 
         OpacitySlider.Value = _settings.BackgroundOpacity;
         FrameBackground.Opacity = _settings.BackgroundOpacity;
+        ShellBackground.Opacity = _settings.BackgroundOpacity;
         ApplyLock();
         ApplyRowSize(_settings.RowSize);
         ApplyCompactLayout();
@@ -406,6 +407,7 @@ public partial class OverlayWindow : Window, IDisplayAppearance
         WindowClickThrough.SetOpacity(_settings.WindowOpacity);
         OpacitySlider.Value = _settings.BackgroundOpacity;
         FrameBackground.Opacity = _settings.BackgroundOpacity;
+        ShellBackground.Opacity = _settings.BackgroundOpacity;
         ApplyRowSize(_settings.RowSize);
         ApplyCompactLayout();
         UpdateModeLabel();
@@ -973,6 +975,7 @@ public partial class OverlayWindow : Window, IDisplayAppearance
     {
         if (FrameBackground is null) return;
         FrameBackground.Opacity = e.NewValue;
+        if (ShellBackground is not null) ShellBackground.Opacity = e.NewValue;
         _settings.BackgroundOpacity = Math.Round(e.NewValue, 2);
     }
 
