@@ -114,6 +114,7 @@ public static class SampleRenderer
             case "pets":
             case "pets-locked":
             case "pets-three":
+            case "pets-region":
             case "pets-three-locked":
                 meter.Settings.PetGoal=2;
                 meter.Pets.Observe(new SelfIdentifiedEvent(start,1,"Sample",2305,GameClass.Cleric));
@@ -125,6 +126,11 @@ public static class SampleRenderer
                     meter.Pets.Observe(new PetCollectionEvent(start,new Dictionary<int,PetState>{{1193,new(1193,1,11)},{1176,new(1176,3,0)},{1047,new(1047,2,41)}}));
                     meter.Pets.Observe(new NpcSeenEvent(start,8,2400707));meter.Pets.Observe(new DamageEvent(start,1,8,17010000,100,HitFlags.None));
                     meter.Pets.Observe(new NpcSeenEvent(start,9,2100453));meter.Pets.Observe(new DamageEvent(start,1,9,17010000,100,HitFlags.None));
+                }
+                if(o.Window=="pets-region")
+                {
+                    meter.Pets.Observe(new ZoneChangedEvent(start,1110,"Altgard",false));
+                    meter.Pets.Observe(new NpcSeenEvent(DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),7,2400455));
                 }
                 var pets=new PetTrackerWindow(meter){Width=o.Width??300};
 

@@ -9,11 +9,13 @@ using AionMeter.Core.Game;
 
 namespace AionMeter.App.Windows;
 
-/// <summary>Compact progress for the pet associated with the own player's last attacked NPC.</summary>
+/// <summary>Compact nearby and current-region pet recommendations, with an attacked-target fallback.</summary>
 public sealed class PetTrackerWindow:Window,IDisplayAppearance
 {
     private readonly MeterService _meter;
     private readonly IReadOnlyList<PetDefinition> _catalog;
+    private readonly IReadOnlyList<PetMapLocation> _locations;
+    private readonly System.Windows.Threading.DispatcherTimer _locationRefresh=new(){Interval=TimeSpan.FromSeconds(2)};
     private readonly ListBox _list=new(){Background=Brushes.Transparent,BorderThickness=new(0),Padding=new(0),MaxHeight=150};
     private readonly TextBlock _status=new(){TextWrapping=TextWrapping.Wrap,Foreground=ThemeColors.Brush("#A9B8C7"),FontSize=11,Margin=new(0,2,0,0)};
 
@@ -33,7 +35,7 @@ public sealed class PetTrackerWindow:Window,IDisplayAppearance
 
     public PetTrackerWindow(MeterService meter)
     {
-        _meter=meter;_catalog=PetCatalog.Load(MeterService.DataDirectory);
+        _meter=meter;_catalog=PetCatalog.Load(MeterService.DataDirectory);_locations=PetCatalog.Locations(MeterService.DataDirectory);
         AppIcon.Apply(this);Title="CatScratch · "+T.Localize("Pet tracker");
         MinWidth=150;MaxWidth=1600;MinHeight=52;MaxHeight=340;SizeToContent=SizeToContent.Height;
         Width=double.IsFinite(meter.Settings.PetModuleWidth)?Math.Clamp(meter.Settings.PetModuleWidth,MinWidth,MaxWidth):300;
@@ -74,6 +76,8 @@ public sealed class PetTrackerWindow:Window,IDisplayAppearance
         frame.Children.Add(_resize);_shell.Child=frame;Content=_shell;
 
         meter.Pets.Changed+=Changed;
+        _locationRefresh.Tick+=(_,_)=>{if(IsVisible)Refresh();};
+        Loaded+=(_,_)=>_locationRefresh.Start();Closed+=(_,_)=>_locationRefresh.Stop();
         Closed+=(_,_)=>{_closed=true;meter.Pets.Changed-=Changed;_sounds?.Dispose();meter.Settings.PetModuleWidth=Width;meter.Settings.PetModuleLeft=Left;meter.Settings.PetModuleTop=Top;meter.Settings.Save();};
         Refresh();
     }
@@ -94,16 +98,29 @@ public sealed class PetTrackerWindow:Window,IDisplayAppearance
             _lastLevels=states.ToDictionary(p=>p.Key,p=>p.Value.Level);
         }
         var codes=_meter.Pets.AttackedNpcCodes();
-        var pets=codes.SelectMany(npc=>_catalog.Where(p=>p.Sources.Any(s=>s.NpcCode==npc)||_meter.Pets.Farms(p.Id).Any(f=>f.NpcCode==npc))).DistinctBy(p=>p.Id).Take(3).ToArray();
-        _status.Text=pets.Length>0 ? confirmed?"":T.Localize("Pet progress data not received yet.") : T.Localize(_meter.Pets.AttackedTargetId==0?"Attack a monster to see pet progress.":"No confirmed pet for this target.");
+        var now=DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+        var seenCodes=_meter.Pets.Nearby().Npcs.Where(n=>n.TimeMs<=now && now-n.TimeMs<=30000).Select(n=>n.NpcCode).ToHashSet();
+        var nearbyPets=_catalog.Where(p=>p.Sources.Any(s=>seenCodes.Contains(s.NpcCode))||_meter.Pets.Farms(p.Id).Any(f=>seenCodes.Contains(f.NpcCode))).Select(p=>p.Id).ToHashSet();
+        var suggestions=PetRecommendations.Select(_locations,_meter.Pets.MapId,states,confirmed,nearbyPets,256);
+        var region=_locations.FirstOrDefault(l=>l.MapId==_meter.Pets.MapId)?.Region;
+        var byId=_catalog.ToDictionary(p=>p.Id);
+        var pets=suggestions.Count>0?suggestions.Where(s=>byId.ContainsKey(s.PetId)).Select(s=>byId[s.PetId]).ToArray():
+            region is not null?[]:codes.SelectMany(npc=>_catalog.Where(p=>p.Sources.Any(s=>s.NpcCode==npc)||_meter.Pets.Farms(p.Id).Any(f=>f.NpcCode==npc))).DistinctBy(p=>p.Id).Take(3).ToArray();
+        _status.Text=!confirmed?T.Localize("Pet progress data not received yet."):
+            suggestions.Count>0?T.Localize(nearbyPets.Overlaps(suggestions.Select(s=>s.PetId))?"Nearby first":"Pets in this region")+(region is null?"":" · "+region):
+            region is not null?T.Localize("No incomplete pets with known locations in this region."):
+            pets.Length>0?"":T.Localize("Waiting for a known region or nearby monsters.");
         _status.Visibility=_status.Text.Length==0?Visibility.Collapsed:Visibility.Visible;
-        _list.ItemsSource=pets.Select(p=>
+        var nextRows=pets.Select(p=>
         {
             var state=states.GetValueOrDefault(p.Id,new(p.Id,0,0));
             var required=state.Level switch{0=>5,1=>25,2=>75,_=>0};
-            return new Row(p,p.Name,!confirmed?"—":required==0?"MAX":(_meter.Pets.FromCache?"~":"")+$"{state.Souls}/{required}",
-                !confirmed?0:required==0?1:Math.Clamp((double)state.Souls/required,0,1),AppIcon.Image,p.Name+(_meter.Pets.FromCache?"\n"+T.Localize("Last known progress; waiting for fresh login data."):""));
+            return new Row(p,(nearbyPets.Contains(p.Id)?"⌖ ":"")+p.Name,!confirmed?"—":required==0?"MAX":(_meter.Pets.FromCache?"~":"")+$"{state.Souls}/{required}",
+                !confirmed?0:required==0?1:Math.Clamp((double)state.Souls/required,0,1),AppIcon.Image,p.Name+
+                (suggestions.FirstOrDefault(s=>s.PetId==p.Id) is { } suggestion?"\n"+T.Localize(suggestion.Nearby?"Monster seen nearby; no attack required.":"Recorded farming location in this region; exact distance is not confirmed.")+"\n"+T.Localize("Souls needed for next level")+": "+suggestion.Needed:"")+
+                (_meter.Pets.FromCache?"\n"+T.Localize("Last known progress; waiting for fresh login data."):""));
         }).ToArray();
+        if(!_list.Items.OfType<Row>().SequenceEqual(nextRows))_list.ItemsSource=nextRows;
         SizeToContent=SizeToContent.Height;
     }
     public void SetDisplayOnly(bool enabled)

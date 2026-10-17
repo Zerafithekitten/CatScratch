@@ -601,7 +601,7 @@ internal static class InteractionChecks
             windows.Add(petWindow);petWindow.Show();
             var petList=Descendants(petWindow).OfType<System.Windows.Controls.ListBox>().First();
             Check(petList.Items.Count==0,"Pet tracker waits for a confirmed own baseline");
-            Check(Descendants(petWindow).OfType<System.Windows.Controls.TextBlock>().Any(t=>t.Text=="Attack a monster to see pet progress."),"Empty tracker shows the attack prompt instead of the outdated zone warning");
+            Check(Descendants(petWindow).OfType<System.Windows.Controls.TextBlock>().Any(t=>t.Text=="Pet progress data not received yet."),"Empty tracker preserves unknown collection state rather than inventing missing pets");
             meter.Pets.Observe(new Core.Events.SelfIdentifiedEvent(1,1,"Sample self",2305,Core.Events.GameClass.Cleric));
             meter.Pets.Observe(new Core.Game.PetCollectionEvent(2,new Dictionary<int,Core.Game.PetState>{{1193,new(1193,1,10)}}));
             meter.Pets.Observe(new Core.Events.NpcSeenEvent(2,7,2400455));
@@ -632,6 +632,16 @@ internal static class InteractionChecks
             Check(petList.Items.OfType<Windows.PetTrackerWindow.Row>().Single().Progress=="~11/25","Restored counters are visibly marked last-known until fresh login data arrives");
             meter.Pets.Observe(new Core.Game.PetCollectionEvent(24,new Dictionary<int,Core.Game.PetState>{{1193,new(1193,1,12)}}));petWindow.Refresh();
             Check(petList.Items.OfType<Windows.PetTrackerWindow.Row>().Single().Progress=="12/25","Fresh login counters replace restored values and remove the cache marker");
+            var petLocations=PetCatalog.Locations(MeterService.DataDirectory);
+            Check(petLocations.Select(l=>l.PetId).Distinct().Count()==156 && petLocations.All(l=>petCatalog.Any(p=>p.Id==l.PetId) && l.MapId is 1010 or 1110 or 20
+                && l.Points.All(p=>double.IsFinite(p.X)&&double.IsFinite(p.Y))),"Offline pet locations contain only matched known pets and valid source-map coordinates");
+            meter.Pets.Observe(new Core.Events.ZoneChangedEvent(25,1110,"Altgard",false));petWindow.Refresh();
+            Check(petList.Items.Count>0 && meter.Pets.AttackedTargetId==0
+                && petList.Items.OfType<Windows.PetTrackerWindow.Row>().All(p=>p.Progress!="MAX"),"The Pet tracker recommends incomplete current-region pets without any attack");
+            meter.Pets.Observe(new Core.Events.NpcSeenEvent(DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),77,2400455));petWindow.Refresh();
+            Check(petList.Items.OfType<Windows.PetTrackerWindow.Row>().First().Definition.Id==1193,"Freshly seen pet monsters move their pet to the top without an attack");
+            meter.Pets.InvalidateLocation();petWindow.Refresh();
+            Check(petList.Items.Count==0,"Disconnecting clears regional and nearby recommendations instead of retaining the old location");
             petWindow.Close();
             Check(CustomEventAudio.IsCustom("Custom WAV") && CustomEventAudio.IsCustom("Custom audio"),"Legacy custom WAV preferences remain compatible with custom audio");
             Check(CustomEventAudio.AllowedDuration(new Duration(TimeSpan.FromSeconds(10))) && !CustomEventAudio.AllowedDuration(new Duration(TimeSpan.FromSeconds(10.001))) && !CustomEventAudio.AllowedDuration(Duration.Automatic),"Audio duration gate accepts exactly ten seconds and rejects longer or unknown duration before playback");

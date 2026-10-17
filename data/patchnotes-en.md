@@ -1,3 +1,9 @@
+## CatScratch v3.0.1-beta.24
+
+- Pet tracker now recommends incomplete pets in supported current regions without requiring an attack. Freshly seen source monsters take priority and mark their pets with a location symbol.
+- Added offline farming records for 156 matched pets across Verteron, Altgard and Chaotic Lower Reshanta, with source attribution. Region records are not guaranteed nearby spawns; exact distances remain unverified and are not shown.
+- Preserved unknown and cached collection states, kept the attacked-target fallback, and cleared old location context on map, character or capture changes. Refreshing unchanged recommendations preserves scrolling.
+
 ## CatScratch v3.0.1-beta.23
 
 - Ready updates now appear as a small, clickable Update! notice above the control panel instead of expanding the panel.

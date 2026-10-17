@@ -2,12 +2,12 @@
 
 A separate, always-on-top Windows DPS meter for **AION 2**, by Zerafithekitten. Track your own fights and confirmed party members in a compact dark gray interface with restrained purple accents and cat-paw branding.
 
-[Download Stable](https://github.com/Zerafithekitten/CatScratch/releases/latest) · [Download Beta](https://github.com/Zerafithekitten/CatScratch/releases/tag/v3.0.1-beta.23) · [Release history](https://github.com/Zerafithekitten/CatScratch/releases) · [Report a bug / request a feature](https://github.com/Zerafithekitten/CatScratch/issues/new/choose)
+[Download Stable](https://github.com/Zerafithekitten/CatScratch/releases/latest) · [Download Beta](https://github.com/Zerafithekitten/CatScratch/releases/tag/v3.0.1-beta.24) · [Release history](https://github.com/Zerafithekitten/CatScratch/releases) · [Report a bug / request a feature](https://github.com/Zerafithekitten/CatScratch/issues/new/choose)
 
 | Channel | Current version | What it includes |
 | --- | --- | --- |
 | **Stable** | **[v3.0.0](https://github.com/Zerafithekitten/CatScratch/releases/tag/v3.0.0)** | Complete tested Beta feature set: compact class-colored rows, central settings with separate Updates/Feedback tabs, position pins, overlay profiles, boss comparisons, compact recap, quiet game companion and safer preferences. |
-| **Beta** | [Last prerelease: v3.0.1-beta.23](https://github.com/Zerafithekitten/CatScratch/releases/tag/v3.0.1-beta.23) | Optional DPS meter display, custom interface colors and Mario Party, the 24-hour event timeline with persistent favorites, and HP-confirmed effective healing of others. |
+| **Beta** | [Last prerelease: v3.0.1-beta.24](https://github.com/Zerafithekitten/CatScratch/releases/tag/v3.0.1-beta.24) | Optional DPS meter display, custom interface colors and Mario Party, the 24-hour event timeline with persistent favorites, and HP-confirmed effective healing of others. |
 
 English is the default. German, Russian and French are also available. Screenshots show **v3.0.1-beta.9** with synthetic sample data; names and numbers are examples. Features exclusive to the current Beta are labeled below. Stable remains **v3.0.0**.
 
@@ -164,17 +164,17 @@ Saving is optional. Press the **save button after combat** to keep a full fight.
 
 ## Pet tracker
 
-**Settings > Pets** contains the pet module toggle, width and collection/level-up sound option. Use Save to apply or Cancel to discard pet edits; the pet overlay has a position pin instead of a settings gear.
+**Settings > Pets** contains the pet module toggle, width and collection/level-up sound option. Save applies changes while Settings stays open; closing with X discards later unsaved edits; the pet overlay has a position pin instead of a settings gear.
 
-Use the **paw button beside the CatScratch title** to toggle the compact pet tracker. Personally attacked, confirmed pet-source monsters add a row with pet name, soul count and a progress bar toward the next level. The three most recently attacked pets are retained, newest first; maxed pets show **MAX**. Soul loot updates the count after a kill.
+Use the **paw button in the control panel** to toggle the compact pet tracker. With confirmed collection data, the module recommends incomplete pets in the current supported region without an attack. Freshly observed, confirmed source monsters take priority and mark their pets with **⌖**. Region recommendations cover Verteron, Altgard and Chaotic Lower Reshanta; completed pets are excluded. The compact list scrolls and shows soul progress toward the next level. If no supported region or nearby source is known, the last three personally attacked sources remain available as a fallback, including **MAX** for completed pets. Soul loot updates the count after a kill.
 
 Progress is saved per character. A **~** prefix marks last-known counts until fresh login data arrives. If no baseline is saved, log into the character once while CatScratch is running; opening an already cached pet menu may not resend the collection. Recent completed local recordings can help recover a missing baseline.
 
-The bundled catalog contains confirmed Global monster-source mappings for 165 pets. Unknown mappings remain explicit. This tracker does not scan nearby creatures or provide radar, distance or location tracking.
+The bundled catalog contains confirmed Global monster-source mappings for 165 pets and locally stored community map locations for 156 matched pets, attributed to [AION 2 Pets / Wikily](https://aion2pets.app/map/). Recommendations use received map IDs and fresh monster announcements, not a scan of game memory. Map-pixel coordinates have not been validated against live player coordinates: no exact distances, navigation arrows or player radar are displayed. A regional recommendation means a recorded farming source in that region, not a guaranteed nearby spawn or soul drop. Region changes and capture resets clear old location context. Unknown collection progress stays unknown; **~** marks cached progress.
 
 <details><summary>Pet tracker preview</summary>
 
-<img src="docs/screenshots/pet-tracker.png" alt="Compact pet tracker with soul counts and progress bars" width="300" />
+<img src="docs/screenshots/pet-tracker-region.png" alt="Compact regional pet recommendations with nearby-source marker and soul counts" width="300" />
 
 </details>
 
@@ -250,7 +250,7 @@ Settings > Appearance > Control panel offers compact horizontal and vertical lay
 
 **Beta: optional DPS display.** Settings > Appearance > Modules > Show DPS meter hides combat statistics while capture and other modules continue. The permanent CatScratch control panel contains the version and general buttons, keeps Settings directly available, and provides a DPS display toggle even with global click-through enabled. Its X is the only in-app Exit action. Panel and meter have independently saved placement and pins. The tray icon and configured DPS meter shortcut (Shift+F5 by default) also restore the meter. The choice persists across restarts and is included in overlay profiles. Automatic visibility and Show/hide all respect a disabled display.
 
-The single meter gear opens central Settings. Updates and Feedback have separate tabs; General contains test mode, language and the optional game companion. Event and pet options apply with Save and are discarded with Cancel.
+The single meter gear opens central Settings. Updates and Feedback have separate tabs; General contains test mode, language and the optional game companion. Event and pet options apply with Save while Settings stays open; close with X to discard later unsaved edits.
 
 Record a combination in **Settings > Hotkeys** and save. Defaults:
 

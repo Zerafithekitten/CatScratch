@@ -1,0 +1,7394 @@
+[
+  {
+    "PetId": 1002,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Krall Armed Soldier",
+    "Points": [
+      {
+        "X": 7981,
+        "Y": 8389
+      },
+      {
+        "X": 8086,
+        "Y": 8475
+      }
+    ]
+  },
+  {
+    "PetId": 1002,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Krall Sentinel",
+    "Points": [
+      {
+        "X": 8500,
+        "Y": 7865
+      },
+      {
+        "X": 8659,
+        "Y": 8102
+      },
+      {
+        "X": 8671,
+        "Y": 8275
+      }
+    ]
+  },
+  {
+    "PetId": 1002,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Mutated Krall Laborer",
+    "Points": [
+      {
+        "X": 10272,
+        "Y": 5788
+      },
+      {
+        "X": 10424,
+        "Y": 5902
+      }
+    ]
+  },
+  {
+    "PetId": 1003,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Canyon Vine Spirit",
+    "Points": [
+      {
+        "X": 9944,
+        "Y": 9655
+      }
+    ]
+  },
+  {
+    "PetId": 1003,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Tainted Vine Specter",
+    "Points": [
+      {
+        "X": 10079,
+        "Y": 11473
+      }
+    ]
+  },
+  {
+    "PetId": 1004,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Patrolling Fossa",
+    "Points": [
+      {
+        "X": 6563,
+        "Y": 9377
+      },
+      {
+        "X": 6360,
+        "Y": 9283
+      },
+      {
+        "X": 6308,
+        "Y": 9445
+      }
+    ]
+  },
+  {
+    "PetId": 1005,
+    "MapId": 20,
+    "Region": "Chaotic Lower Reshanta",
+    "Monster": "Abyss Klaw Mutant",
+    "Points": [
+      {
+        "X": 3341,
+        "Y": 3881
+      },
+      {
+        "X": 3914,
+        "Y": 3388
+      },
+      {
+        "X": 3757,
+        "Y": 3294
+      },
+      {
+        "X": 3629,
+        "Y": 3516
+      },
+      {
+        "X": 3455,
+        "Y": 3243
+      },
+      {
+        "X": 3120,
+        "Y": 3908
+      },
+      {
+        "X": 3203,
+        "Y": 3682
+      },
+      {
+        "X": 3509,
+        "Y": 3758
+      },
+      {
+        "X": 2950,
+        "Y": 3629
+      },
+      {
+        "X": 2902,
+        "Y": 3734
+      }
+    ]
+  },
+  {
+    "PetId": 1006,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Wild Sparkie",
+    "Points": [
+      {
+        "X": 7720,
+        "Y": 7865
+      }
+    ]
+  },
+  {
+    "PetId": 1006,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Meadow Sparkie",
+    "Points": [
+      {
+        "X": 7592,
+        "Y": 7089
+      },
+      {
+        "X": 6253,
+        "Y": 8187
+      }
+    ]
+  },
+  {
+    "PetId": 1006,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Highland Odyle Sparkie",
+    "Points": [
+      {
+        "X": 9000,
+        "Y": 10663
+      },
+      {
+        "X": 9260,
+        "Y": 10686
+      },
+      {
+        "X": 8553,
+        "Y": 10573
+      },
+      {
+        "X": 9232,
+        "Y": 11555
+      },
+      {
+        "X": 8994,
+        "Y": 11096
+      },
+      {
+        "X": 9053,
+        "Y": 9059
+      }
+    ]
+  },
+  {
+    "PetId": 1006,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Aullaeu Forest Sparkie",
+    "Points": [
+      {
+        "X": 7381,
+        "Y": 10279
+      },
+      {
+        "X": 7397,
+        "Y": 10662
+      },
+      {
+        "X": 7357,
+        "Y": 10784
+      },
+      {
+        "X": 7261,
+        "Y": 10690
+      },
+      {
+        "X": 7072,
+        "Y": 10821
+      },
+      {
+        "X": 7142,
+        "Y": 11002
+      },
+      {
+        "X": 6976,
+        "Y": 11069
+      },
+      {
+        "X": 7141,
+        "Y": 11256
+      },
+      {
+        "X": 7271,
+        "Y": 11165
+      },
+      {
+        "X": 7651,
+        "Y": 10159
+      },
+      {
+        "X": 7807,
+        "Y": 10192
+      },
+      {
+        "X": 7770,
+        "Y": 10060
+      },
+      {
+        "X": 7782,
+        "Y": 9900
+      }
+    ]
+  },
+  {
+    "PetId": 1006,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Highland Sparkie",
+    "Points": [
+      {
+        "X": 6779,
+        "Y": 11430
+      }
+    ]
+  },
+  {
+    "PetId": 1007,
+    "MapId": 1110,
+    "Region": "Altgard",
+    "Monster": "Moss Crab",
+    "Points": [
+      {
+        "X": 8805,
+        "Y": 4932
+      },
+      {
+        "X": 8858,
+        "Y": 4571
+      },
+      {
+        "X": 8714,
+        "Y": 4353
+      },
+      {
+        "X": 8556,
+        "Y": 4406
+      },
+      {
+        "X": 8515,
+        "Y": 4235
+      },
+      {
+        "X": 8821,
+        "Y": 4671
+      },
+      {
+        "X": 8877,
+        "Y": 4268
+      }
+    ]
+  },
+  {
+    "PetId": 1007,
+    "MapId": 1110,
+    "Region": "Altgard",
+    "Monster": "Coastal Moss Crab",
+    "Points": [
+      {
+        "X": 12970,
+        "Y": 4175
+      },
+      {
+        "X": 4299,
+        "Y": 13192
+      },
+      {
+        "X": 3618,
+        "Y": 13000
+      },
+      {
+        "X": 4007,
+        "Y": 13204
+      },
+      {
+        "X": 4578,
+        "Y": 13026
+      },
+      {
+        "X": 4555,
+        "Y": 13215
+      },
+      {
+        "X": 3804,
+        "Y": 13245
+      }
+    ]
+  },
+  {
+    "PetId": 1008,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Coastal Odyle Spider",
+    "Points": [
+      {
+        "X": 8568,
+        "Y": 6022
+      }
+    ]
+  },
+  {
+    "PetId": 1010,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Crimson Manduri Fighter",
+    "Points": [
+      {
+        "X": 9930,
+        "Y": 4056
+      },
+      {
+        "X": 9844,
+        "Y": 4222
+      },
+      {
+        "X": 9777,
+        "Y": 3919
+      }
+    ]
+  },
+  {
+    "PetId": 1011,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Small Forest Skyray",
+    "Points": [
+      {
+        "X": 8915,
+        "Y": 6128
+      }
+    ]
+  },
+  {
+    "PetId": 1011,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Ellun River Falls Skyray",
+    "Points": [
+      {
+        "X": 7396,
+        "Y": 9082
+      }
+    ]
+  },
+  {
+    "PetId": 1011,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Tolbas Forest Lake Skyray",
+    "Points": [
+      {
+        "X": 7943,
+        "Y": 9741
+      }
+    ]
+  },
+  {
+    "PetId": 1011,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Canyon Skyray",
+    "Points": [
+      {
+        "X": 9653,
+        "Y": 9591
+      },
+      {
+        "X": 9600,
+        "Y": 9813
+      }
+    ]
+  },
+  {
+    "PetId": 1011,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Cantas Valley Skyray",
+    "Points": [
+      {
+        "X": 6538,
+        "Y": 7078
+      }
+    ]
+  },
+  {
+    "PetId": 1011,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Ellun River Lake Skyray",
+    "Points": [
+      {
+        "X": 7188,
+        "Y": 7798
+      }
+    ]
+  },
+  {
+    "PetId": 1011,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Ridge Skyray",
+    "Points": [
+      {
+        "X": 8357,
+        "Y": 9075
+      }
+    ]
+  },
+  {
+    "PetId": 1011,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Canyon Lake Skyray",
+    "Points": [
+      {
+        "X": 9633,
+        "Y": 10136
+      }
+    ]
+  },
+  {
+    "PetId": 1011,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Lake Skyray",
+    "Points": [
+      {
+        "X": 9524,
+        "Y": 10743
+      }
+    ]
+  },
+  {
+    "PetId": 1011,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Pond Skyray",
+    "Points": [
+      {
+        "X": 10167,
+        "Y": 7652
+      }
+    ]
+  },
+  {
+    "PetId": 1012,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Red Cap Fungie",
+    "Points": [
+      {
+        "X": 6631,
+        "Y": 6782
+      }
+    ]
+  },
+  {
+    "PetId": 1013,
+    "MapId": 20,
+    "Region": "Chaotic Lower Reshanta",
+    "Monster": "Abyss Swarm",
+    "Points": [
+      {
+        "X": 3642,
+        "Y": 4571
+      },
+      {
+        "X": 3819,
+        "Y": 4866
+      },
+      {
+        "X": 3432,
+        "Y": 4424
+      },
+      {
+        "X": 3334,
+        "Y": 4552
+      }
+    ]
+  },
+  {
+    "PetId": 1013,
+    "MapId": 20,
+    "Region": "Chaotic Lower Reshanta",
+    "Monster": "Abyss Aberrant Swarn",
+    "Points": [
+      {
+        "X": 4662,
+        "Y": 3549
+      },
+      {
+        "X": 4573,
+        "Y": 3732
+      },
+      {
+        "X": 4444,
+        "Y": 3563
+      },
+      {
+        "X": 4580,
+        "Y": 3236
+      },
+      {
+        "X": 4449,
+        "Y": 3341
+      },
+      {
+        "X": 4453,
+        "Y": 3229
+      },
+      {
+        "X": 4897,
+        "Y": 3657
+      }
+    ]
+  },
+  {
+    "PetId": 1013,
+    "MapId": 20,
+    "Region": "Chaotic Lower Reshanta",
+    "Monster": "Abyss Swarm Mutant",
+    "Points": [
+      {
+        "X": 3443,
+        "Y": 3728
+      },
+      {
+        "X": 3825,
+        "Y": 3514
+      },
+      {
+        "X": 3926,
+        "Y": 3335
+      },
+      {
+        "X": 3625,
+        "Y": 3445
+      },
+      {
+        "X": 3751,
+        "Y": 3282
+      },
+      {
+        "X": 3691,
+        "Y": 3537
+      },
+      {
+        "X": 3395,
+        "Y": 3286
+      },
+      {
+        "X": 3138,
+        "Y": 3533
+      },
+      {
+        "X": 3069,
+        "Y": 3769
+      },
+      {
+        "X": 2832,
+        "Y": 3609
+      },
+      {
+        "X": 3017,
+        "Y": 3903
+      }
+    ]
+  },
+  {
+    "PetId": 1015,
+    "MapId": 1110,
+    "Region": "Altgard",
+    "Monster": "Unstable Kailin",
+    "Points": [
+      {
+        "X": 12423,
+        "Y": 3924
+      },
+      {
+        "X": 12786,
+        "Y": 4099
+      },
+      {
+        "X": 12387,
+        "Y": 3670
+      },
+      {
+        "X": 12577,
+        "Y": 3968
+      }
+    ]
+  },
+  {
+    "PetId": 1015,
+    "MapId": 1110,
+    "Region": "Altgard",
+    "Monster": "Kailin",
+    "Points": [
+      {
+        "X": 4825,
+        "Y": 8872
+      },
+      {
+        "X": 4610,
+        "Y": 8762
+      },
+      {
+        "X": 4927,
+        "Y": 8674
+      },
+      {
+        "X": 4285,
+        "Y": 8682
+      },
+      {
+        "X": 4167,
+        "Y": 8743
+      },
+      {
+        "X": 6060,
+        "Y": 7554
+      },
+      {
+        "X": 5504,
+        "Y": 7809
+      },
+      {
+        "X": 5776,
+        "Y": 7423
+      },
+      {
+        "X": 5262,
+        "Y": 8049
+      },
+      {
+        "X": 5763,
+        "Y": 7300
+      },
+      {
+        "X": 5682,
+        "Y": 7702
+      },
+      {
+        "X": 5875,
+        "Y": 7322
+      },
+      {
+        "X": 5843,
+        "Y": 7889
+      },
+      {
+        "X": 5478,
+        "Y": 8043
+      },
+      {
+        "X": 9493,
+        "Y": 5825
+      },
+      {
+        "X": 9932,
+        "Y": 5668
+      },
+      {
+        "X": 10014,
+        "Y": 5492
+      },
+      {
+        "X": 10347,
+        "Y": 5540
+      },
+      {
+        "X": 10181,
+        "Y": 5390
+      },
+      {
+        "X": 10233,
+        "Y": 5723
+      },
+      {
+        "X": 10060,
+        "Y": 5796
+      },
+      {
+        "X": 9925,
+        "Y": 5881
+      },
+      {
+        "X": 9148,
+        "Y": 5636
+      },
+      {
+        "X": 8797,
+        "Y": 5477
+      },
+      {
+        "X": 10132,
+        "Y": 5939
+      },
+      {
+        "X": 10477,
+        "Y": 5742
+      },
+      {
+        "X": 9566,
+        "Y": 5641
+      },
+      {
+        "X": 9612,
+        "Y": 5810
+      },
+      {
+        "X": 9771,
+        "Y": 5879
+      },
+      {
+        "X": 9734,
+        "Y": 5997
+      },
+      {
+        "X": 9728,
+        "Y": 5730
+      },
+      {
+        "X": 9736,
+        "Y": 5554
+      },
+      {
+        "X": 9608,
+        "Y": 5545
+      },
+      {
+        "X": 8975,
+        "Y": 5650
+      },
+      {
+        "X": 8948,
+        "Y": 5530
+      },
+      {
+        "X": 9267,
+        "Y": 5717
+      },
+      {
+        "X": 10059,
+        "Y": 5628
+      },
+      {
+        "X": 10213,
+        "Y": 5596
+      }
+    ]
+  },
+  {
+    "PetId": 1016,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Tolbas Slink",
+    "Points": [
+      {
+        "X": 6618,
+        "Y": 9379
+      },
+      {
+        "X": 6343,
+        "Y": 9654
+      }
+    ]
+  },
+  {
+    "PetId": 1016,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Wetland Slink",
+    "Points": [
+      {
+        "X": 7114,
+        "Y": 8010
+      },
+      {
+        "X": 6213,
+        "Y": 8259
+      }
+    ]
+  },
+  {
+    "PetId": 1016,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Eternal Slink",
+    "Points": [
+      {
+        "X": 4229,
+        "Y": 12727
+      },
+      {
+        "X": 3536,
+        "Y": 12906
+      },
+      {
+        "X": 3371,
+        "Y": 12918
+      },
+      {
+        "X": 3786,
+        "Y": 12543
+      },
+      {
+        "X": 3538,
+        "Y": 12566
+      },
+      {
+        "X": 3261,
+        "Y": 12701
+      },
+      {
+        "X": 3340,
+        "Y": 12493
+      },
+      {
+        "X": 4201,
+        "Y": 12510
+      },
+      {
+        "X": 4114,
+        "Y": 12460
+      },
+      {
+        "X": 4016,
+        "Y": 12428
+      }
+    ]
+  },
+  {
+    "PetId": 1017,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Krall Warshaman",
+    "Points": [
+      {
+        "X": 7783,
+        "Y": 8048
+      }
+    ]
+  },
+  {
+    "PetId": 1017,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Modified Krall Healer",
+    "Points": [
+      {
+        "X": 10702,
+        "Y": 6626
+      }
+    ]
+  },
+  {
+    "PetId": 1018,
+    "MapId": 1110,
+    "Region": "Altgard",
+    "Monster": "Varg Berserker",
+    "Points": [
+      {
+        "X": 9567,
+        "Y": 4489
+      }
+    ]
+  },
+  {
+    "PetId": 1018,
+    "MapId": 1110,
+    "Region": "Altgard",
+    "Monster": "Chief's Bodyguard",
+    "Points": [
+      {
+        "X": 9620,
+        "Y": 11324
+      },
+      {
+        "X": 9379,
+        "Y": 11232
+      },
+      {
+        "X": 9705,
+        "Y": 11148
+      },
+      {
+        "X": 9494,
+        "Y": 11458
+      }
+    ]
+  },
+  {
+    "PetId": 1114,
+    "MapId": 1110,
+    "Region": "Altgard",
+    "Monster": "Ashen Spider",
+    "Points": [
+      {
+        "X": 6897,
+        "Y": 8373
+      },
+      {
+        "X": 7879,
+        "Y": 8293
+      },
+      {
+        "X": 6763,
+        "Y": 8642
+      },
+      {
+        "X": 7300,
+        "Y": 9099
+      },
+      {
+        "X": 7404,
+        "Y": 9252
+      },
+      {
+        "X": 7179,
+        "Y": 8853
+      },
+      {
+        "X": 6479,
+        "Y": 9246
+      },
+      {
+        "X": 7672,
+        "Y": 8724
+      },
+      {
+        "X": 7544,
+        "Y": 8492
+      },
+      {
+        "X": 7752,
+        "Y": 8494
+      }
+    ]
+  },
+  {
+    "PetId": 1025,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Marsh Odyle Spider",
+    "Points": [
+      {
+        "X": 8300,
+        "Y": 6787
+      }
+    ]
+  },
+  {
+    "PetId": 1025,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Garden Spider",
+    "Points": [
+      {
+        "X": 9782,
+        "Y": 11257
+      }
+    ]
+  },
+  {
+    "PetId": 1025,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Highland Odyle Spider",
+    "Points": [
+      {
+        "X": 11127,
+        "Y": 10347
+      },
+      {
+        "X": 11029,
+        "Y": 10383
+      },
+      {
+        "X": 11094,
+        "Y": 10107
+      },
+      {
+        "X": 11205,
+        "Y": 10000
+      },
+      {
+        "X": 11135,
+        "Y": 9873
+      }
+    ]
+  },
+  {
+    "PetId": 1022,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Aquascale Crasaur",
+    "Points": [
+      {
+        "X": 7366,
+        "Y": 9053
+      }
+    ]
+  },
+  {
+    "PetId": 1022,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Docile Crasaur",
+    "Points": [
+      {
+        "X": 9610,
+        "Y": 9752
+      }
+    ]
+  },
+  {
+    "PetId": 1022,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Eternal Crasaur",
+    "Points": [
+      {
+        "X": 3923,
+        "Y": 12482
+      },
+      {
+        "X": 4190,
+        "Y": 12771
+      },
+      {
+        "X": 4306,
+        "Y": 12612
+      },
+      {
+        "X": 3676,
+        "Y": 12565
+      },
+      {
+        "X": 3588,
+        "Y": 13016
+      },
+      {
+        "X": 3430,
+        "Y": 12908
+      },
+      {
+        "X": 3426,
+        "Y": 12542
+      },
+      {
+        "X": 3258,
+        "Y": 12734
+      },
+      {
+        "X": 4157,
+        "Y": 12487
+      }
+    ]
+  },
+  {
+    "PetId": 1116,
+    "MapId": 1110,
+    "Region": "Altgard",
+    "Monster": "Withered Branch Spider",
+    "Points": [
+      {
+        "X": 4575,
+        "Y": 6026
+      },
+      {
+        "X": 5149,
+        "Y": 5589
+      },
+      {
+        "X": 5369,
+        "Y": 5694
+      },
+      {
+        "X": 5874,
+        "Y": 5741
+      },
+      {
+        "X": 5805,
+        "Y": 6168
+      },
+      {
+        "X": 5597,
+        "Y": 5530
+      },
+      {
+        "X": 5632,
+        "Y": 6970
+      },
+      {
+        "X": 5905,
+        "Y": 7344
+      },
+      {
+        "X": 5860,
+        "Y": 7474
+      },
+      {
+        "X": 5896,
+        "Y": 6939
+      },
+      {
+        "X": 6386,
+        "Y": 7456
+      },
+      {
+        "X": 6058,
+        "Y": 7167
+      },
+      {
+        "X": 6297,
+        "Y": 7183
+      },
+      {
+        "X": 5753,
+        "Y": 6709
+      },
+      {
+        "X": 9464,
+        "Y": 7417
+      },
+      {
+        "X": 9511,
+        "Y": 6158
+      },
+      {
+        "X": 9751,
+        "Y": 6811
+      },
+      {
+        "X": 9423,
+        "Y": 6990
+      },
+      {
+        "X": 9262,
+        "Y": 7044
+      },
+      {
+        "X": 10748,
+        "Y": 5822
+      },
+      {
+        "X": 11123,
+        "Y": 6149
+      },
+      {
+        "X": 11241,
+        "Y": 6399
+      },
+      {
+        "X": 11624,
+        "Y": 6929
+      },
+      {
+        "X": 11676,
+        "Y": 6535
+      },
+      {
+        "X": 11580,
+        "Y": 6722
+      },
+      {
+        "X": 10850,
+        "Y": 7128
+      },
+      {
+        "X": 10957,
+        "Y": 6784
+      },
+      {
+        "X": 10772,
+        "Y": 5998
+      },
+      {
+        "X": 10651,
+        "Y": 5651
+      },
+      {
+        "X": 11384,
+        "Y": 7241
+      },
+      {
+        "X": 11311,
+        "Y": 7169
+      },
+      {
+        "X": 11113,
+        "Y": 7100
+      },
+      {
+        "X": 11089,
+        "Y": 6991
+      },
+      {
+        "X": 11034,
+        "Y": 6885
+      },
+      {
+        "X": 11811,
+        "Y": 6366
+      },
+      {
+        "X": 10885,
+        "Y": 7342
+      },
+      {
+        "X": 10933,
+        "Y": 7580
+      },
+      {
+        "X": 10927,
+        "Y": 8422
+      },
+      {
+        "X": 11162,
+        "Y": 8534
+      },
+      {
+        "X": 10886,
+        "Y": 7852
+      },
+      {
+        "X": 10976,
+        "Y": 7956
+      },
+      {
+        "X": 10978,
+        "Y": 8283
+      },
+      {
+        "X": 11237,
+        "Y": 9977
+      },
+      {
+        "X": 11288,
+        "Y": 10260
+      },
+      {
+        "X": 11367,
+        "Y": 10336
+      }
+    ]
+  },
+  {
+    "PetId": 1026,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Krall Assault Trooper",
+    "Points": [
+      {
+        "X": 7818,
+        "Y": 8035
+      }
+    ]
+  },
+  {
+    "PetId": 1026,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Modified Krall Warrior",
+    "Points": [
+      {
+        "X": 10325,
+        "Y": 5814
+      }
+    ]
+  },
+  {
+    "PetId": 1026,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Krall Test Subject",
+    "Points": [
+      {
+        "X": 11418,
+        "Y": 5520
+      },
+      {
+        "X": 11282,
+        "Y": 5704
+      }
+    ]
+  },
+  {
+    "PetId": 1027,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Withered Canyon Agrint",
+    "Points": [
+      {
+        "X": 9726,
+        "Y": 10383
+      }
+    ]
+  },
+  {
+    "PetId": 1027,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Thin Agrint",
+    "Points": [
+      {
+        "X": 10276,
+        "Y": 10987
+      },
+      {
+        "X": 9990,
+        "Y": 11277
+      },
+      {
+        "X": 10188,
+        "Y": 11224
+      },
+      {
+        "X": 9827,
+        "Y": 11462
+      },
+      {
+        "X": 10124,
+        "Y": 10971
+      }
+    ]
+  },
+  {
+    "PetId": 1029,
+    "MapId": 20,
+    "Region": "Chaotic Lower Reshanta",
+    "Monster": "Abyss Klaw",
+    "Points": [
+      {
+        "X": 3685,
+        "Y": 4541
+      },
+      {
+        "X": 3535,
+        "Y": 4627
+      },
+      {
+        "X": 3525,
+        "Y": 4193
+      }
+    ]
+  },
+  {
+    "PetId": 1029,
+    "MapId": 20,
+    "Region": "Chaotic Lower Reshanta",
+    "Monster": "Abyss Aberrant Klaw",
+    "Points": [
+      {
+        "X": 4593,
+        "Y": 3571
+      },
+      {
+        "X": 4776,
+        "Y": 3873
+      }
+    ]
+  },
+  {
+    "PetId": 1030,
+    "MapId": 20,
+    "Region": "Chaotic Lower Reshanta",
+    "Monster": "Abyss Nagarant Brawler",
+    "Points": [
+      {
+        "X": 3418,
+        "Y": 3271
+      }
+    ]
+  },
+  {
+    "PetId": 1030,
+    "MapId": 20,
+    "Region": "Chaotic Lower Reshanta",
+    "Monster": "Abyss Nagarant Warrior",
+    "Points": [
+      {
+        "X": 2884,
+        "Y": 3569
+      },
+      {
+        "X": 2947,
+        "Y": 3756
+      }
+    ]
+  },
+  {
+    "PetId": 1031,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Tolbas Konutin Worker",
+    "Points": [
+      {
+        "X": 7120,
+        "Y": 9230
+      }
+    ]
+  },
+  {
+    "PetId": 1033,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Wandering Manduri Fighter",
+    "Points": [
+      {
+        "X": 8017,
+        "Y": 8880
+      },
+      {
+        "X": 8407,
+        "Y": 8979
+      },
+      {
+        "X": 8143,
+        "Y": 8841
+      },
+      {
+        "X": 8086,
+        "Y": 9034
+      },
+      {
+        "X": 8326,
+        "Y": 9109
+      },
+      {
+        "X": 7826,
+        "Y": 8845
+      },
+      {
+        "X": 8223,
+        "Y": 8982
+      },
+      {
+        "X": 7882,
+        "Y": 8735
+      },
+      {
+        "X": 8062,
+        "Y": 8762
+      },
+      {
+        "X": 8143,
+        "Y": 8612
+      },
+      {
+        "X": 7908,
+        "Y": 8941
+      }
+    ]
+  },
+  {
+    "PetId": 1034,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Splendent Hill Sparkie",
+    "Points": [
+      {
+        "X": 6938,
+        "Y": 7205
+      }
+    ]
+  },
+  {
+    "PetId": 1034,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Highland Giant Odyle Sparkie",
+    "Points": [
+      {
+        "X": 8809,
+        "Y": 10761
+      },
+      {
+        "X": 8862,
+        "Y": 10863
+      },
+      {
+        "X": 9264,
+        "Y": 10775
+      },
+      {
+        "X": 9112,
+        "Y": 10714
+      },
+      {
+        "X": 9186,
+        "Y": 10400
+      },
+      {
+        "X": 9456,
+        "Y": 10846
+      },
+      {
+        "X": 9152,
+        "Y": 11599
+      },
+      {
+        "X": 8961,
+        "Y": 11177
+      },
+      {
+        "X": 9088,
+        "Y": 11046
+      },
+      {
+        "X": 8983,
+        "Y": 10440
+      },
+      {
+        "X": 9260,
+        "Y": 10584
+      },
+      {
+        "X": 9126,
+        "Y": 10282
+      },
+      {
+        "X": 8828,
+        "Y": 10632
+      },
+      {
+        "X": 8938,
+        "Y": 10653
+      },
+      {
+        "X": 9004,
+        "Y": 10796
+      }
+    ]
+  },
+  {
+    "PetId": 1034,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Aullaeu Forest Giant Sparkie",
+    "Points": [
+      {
+        "X": 7484,
+        "Y": 10219
+      },
+      {
+        "X": 7787,
+        "Y": 10211
+      },
+      {
+        "X": 7371,
+        "Y": 10677
+      },
+      {
+        "X": 7218,
+        "Y": 10827
+      },
+      {
+        "X": 7122,
+        "Y": 10875
+      },
+      {
+        "X": 6957,
+        "Y": 10859
+      },
+      {
+        "X": 6982,
+        "Y": 11073
+      },
+      {
+        "X": 7141,
+        "Y": 11256
+      },
+      {
+        "X": 7269,
+        "Y": 11135
+      },
+      {
+        "X": 7455,
+        "Y": 11376
+      },
+      {
+        "X": 7782,
+        "Y": 9900
+      }
+    ]
+  },
+  {
+    "PetId": 1034,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Highland Giant Sparkie",
+    "Points": [
+      {
+        "X": 6807,
+        "Y": 11451
+      }
+    ]
+  },
+  {
+    "PetId": 1035,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Foul Skama",
+    "Points": [
+      {
+        "X": 8345,
+        "Y": 6359
+      },
+      {
+        "X": 8580,
+        "Y": 6623
+      }
+    ]
+  },
+  {
+    "PetId": 1035,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Lake Skama",
+    "Points": [
+      {
+        "X": 7510,
+        "Y": 7445
+      }
+    ]
+  },
+  {
+    "PetId": 1035,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Drana Mutated Skama",
+    "Points": [
+      {
+        "X": 9742,
+        "Y": 6649
+      }
+    ]
+  },
+  {
+    "PetId": 1036,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Tail Feather Lupyllini",
+    "Points": [
+      {
+        "X": 11113,
+        "Y": 8490
+      },
+      {
+        "X": 10973,
+        "Y": 8266
+      },
+      {
+        "X": 11393,
+        "Y": 8216
+      },
+      {
+        "X": 11556,
+        "Y": 8504
+      }
+    ]
+  },
+  {
+    "PetId": 1037,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Ellun River Crestlich Male",
+    "Points": [
+      {
+        "X": 7067,
+        "Y": 7604
+      },
+      {
+        "X": 7142,
+        "Y": 7684
+      },
+      {
+        "X": 7395,
+        "Y": 7518
+      },
+      {
+        "X": 7245,
+        "Y": 7641
+      },
+      {
+        "X": 7498,
+        "Y": 7349
+      },
+      {
+        "X": 7050,
+        "Y": 7734
+      }
+    ]
+  },
+  {
+    "PetId": 1037,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Highland Crestlich Male",
+    "Points": [
+      {
+        "X": 9593,
+        "Y": 10929
+      },
+      {
+        "X": 9220,
+        "Y": 11044
+      },
+      {
+        "X": 9396,
+        "Y": 11304
+      },
+      {
+        "X": 9264,
+        "Y": 11283
+      },
+      {
+        "X": 9432,
+        "Y": 11131
+      },
+      {
+        "X": 9334,
+        "Y": 11019
+      },
+      {
+        "X": 9132,
+        "Y": 11125
+      },
+      {
+        "X": 9444,
+        "Y": 10811
+      }
+    ]
+  },
+  {
+    "PetId": 1038,
+    "MapId": 1110,
+    "Region": "Altgard",
+    "Monster": "Baby Canyon Airon",
+    "Points": [
+      {
+        "X": 11262,
+        "Y": 8667
+      },
+      {
+        "X": 11431,
+        "Y": 8517
+      },
+      {
+        "X": 11332,
+        "Y": 8843
+      },
+      {
+        "X": 11149,
+        "Y": 8582
+      },
+      {
+        "X": 11504,
+        "Y": 9010
+      },
+      {
+        "X": 11199,
+        "Y": 8376
+      },
+      {
+        "X": 11928,
+        "Y": 8946
+      },
+      {
+        "X": 11998,
+        "Y": 9129
+      },
+      {
+        "X": 12075,
+        "Y": 9235
+      },
+      {
+        "X": 11606,
+        "Y": 8967
+      },
+      {
+        "X": 11833,
+        "Y": 9725
+      },
+      {
+        "X": 11723,
+        "Y": 9801
+      },
+      {
+        "X": 11702,
+        "Y": 9955
+      },
+      {
+        "X": 11995,
+        "Y": 10010
+      },
+      {
+        "X": 11753,
+        "Y": 10046
+      },
+      {
+        "X": 11880,
+        "Y": 10097
+      },
+      {
+        "X": 11592,
+        "Y": 9249
+      },
+      {
+        "X": 11938,
+        "Y": 9411
+      },
+      {
+        "X": 11620,
+        "Y": 8661
+      }
+    ]
+  },
+  {
+    "PetId": 1038,
+    "MapId": 1110,
+    "Region": "Altgard",
+    "Monster": "Canyon Airon",
+    "Points": [
+      {
+        "X": 11621,
+        "Y": 8668
+      },
+      {
+        "X": 11580,
+        "Y": 8967
+      },
+      {
+        "X": 11217,
+        "Y": 8380
+      },
+      {
+        "X": 11441,
+        "Y": 8527
+      },
+      {
+        "X": 11926,
+        "Y": 8956
+      },
+      {
+        "X": 12085,
+        "Y": 9237
+      },
+      {
+        "X": 11839,
+        "Y": 9730
+      },
+      {
+        "X": 11262,
+        "Y": 8657
+      },
+      {
+        "X": 11734,
+        "Y": 9801
+      },
+      {
+        "X": 11708,
+        "Y": 9965
+      },
+      {
+        "X": 11308,
+        "Y": 8872
+      }
+    ]
+  },
+  {
+    "PetId": 1039,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Stonebeak Crestlich",
+    "Points": [
+      {
+        "X": 6464,
+        "Y": 7529
+      }
+    ]
+  },
+  {
+    "PetId": 1039,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Ellun River Crestlich Female",
+    "Points": [
+      {
+        "X": 7178,
+        "Y": 7585
+      },
+      {
+        "X": 7468,
+        "Y": 7375
+      }
+    ]
+  },
+  {
+    "PetId": 1039,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Highland Crestlich Female",
+    "Points": [
+      {
+        "X": 9372,
+        "Y": 11182
+      }
+    ]
+  },
+  {
+    "PetId": 1040,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Aullaeu Apprentice Shaman",
+    "Points": [
+      {
+        "X": 7546,
+        "Y": 9834
+      },
+      {
+        "X": 7213,
+        "Y": 10126
+      },
+      {
+        "X": 7325,
+        "Y": 9945
+      },
+      {
+        "X": 7360,
+        "Y": 10119
+      }
+    ]
+  },
+  {
+    "PetId": 1041,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Drana Mutated Bat",
+    "Points": [
+      {
+        "X": 10178,
+        "Y": 5993
+      },
+      {
+        "X": 10048,
+        "Y": 6027
+      },
+      {
+        "X": 10104,
+        "Y": 5572
+      }
+    ]
+  },
+  {
+    "PetId": 1042,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Hardhorn Ursus",
+    "Points": [
+      {
+        "X": 6938,
+        "Y": 9660
+      }
+    ]
+  },
+  {
+    "PetId": 1042,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Ridge Ursus",
+    "Points": [
+      {
+        "X": 8507,
+        "Y": 8525
+      },
+      {
+        "X": 8346,
+        "Y": 8531
+      }
+    ]
+  },
+  {
+    "PetId": 1042,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Ridge Violent Ursus",
+    "Points": [
+      {
+        "X": 8519,
+        "Y": 8484
+      },
+      {
+        "X": 8312,
+        "Y": 8554
+      }
+    ]
+  },
+  {
+    "PetId": 1042,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Confused Ursus",
+    "Points": [
+      {
+        "X": 10155,
+        "Y": 11066
+      }
+    ]
+  },
+  {
+    "PetId": 1042,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Hill Ursus",
+    "Points": [
+      {
+        "X": 9060,
+        "Y": 7863
+      },
+      {
+        "X": 8906,
+        "Y": 7590
+      },
+      {
+        "X": 9281,
+        "Y": 7579
+      },
+      {
+        "X": 8995,
+        "Y": 8062
+      }
+    ]
+  },
+  {
+    "PetId": 1045,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Highland Sylphen",
+    "Points": [
+      {
+        "X": 5088,
+        "Y": 6968
+      },
+      {
+        "X": 4994,
+        "Y": 6771
+      },
+      {
+        "X": 9933,
+        "Y": 8768
+      },
+      {
+        "X": 10282,
+        "Y": 8501
+      },
+      {
+        "X": 10386,
+        "Y": 8312
+      },
+      {
+        "X": 10458,
+        "Y": 8937
+      },
+      {
+        "X": 10710,
+        "Y": 9073
+      },
+      {
+        "X": 10673,
+        "Y": 8122
+      },
+      {
+        "X": 9051,
+        "Y": 8641
+      },
+      {
+        "X": 8879,
+        "Y": 8410
+      },
+      {
+        "X": 9143,
+        "Y": 8719
+      }
+    ]
+  },
+  {
+    "PetId": 1045,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Ellun River Sylphen",
+    "Points": [
+      {
+        "X": 8118,
+        "Y": 6855
+      },
+      {
+        "X": 8041,
+        "Y": 7002
+      },
+      {
+        "X": 7458,
+        "Y": 7590
+      },
+      {
+        "X": 7224,
+        "Y": 8170
+      },
+      {
+        "X": 7458,
+        "Y": 8026
+      },
+      {
+        "X": 7570,
+        "Y": 7775
+      },
+      {
+        "X": 8253,
+        "Y": 7291
+      },
+      {
+        "X": 7405,
+        "Y": 8846
+      },
+      {
+        "X": 7123,
+        "Y": 8440
+      },
+      {
+        "X": 6939,
+        "Y": 8503
+      },
+      {
+        "X": 7180,
+        "Y": 8645
+      }
+    ]
+  },
+  {
+    "PetId": 1045,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Aberrant Sylphen",
+    "Points": [
+      {
+        "X": 7476,
+        "Y": 9476
+      },
+      {
+        "X": 7348,
+        "Y": 9578
+      },
+      {
+        "X": 7467,
+        "Y": 9676
+      },
+      {
+        "X": 7715,
+        "Y": 9504
+      }
+    ]
+  },
+  {
+    "PetId": 1045,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Ridge Sylphen",
+    "Points": [
+      {
+        "X": 8001,
+        "Y": 8971
+      },
+      {
+        "X": 8211,
+        "Y": 8851
+      }
+    ]
+  },
+  {
+    "PetId": 1046,
+    "MapId": 1110,
+    "Region": "Altgard",
+    "Monster": "Red Shell Mole",
+    "Points": [
+      {
+        "X": 6600,
+        "Y": 6527
+      }
+    ]
+  },
+  {
+    "PetId": 1046,
+    "MapId": 1110,
+    "Region": "Altgard",
+    "Monster": "Withered Armadon",
+    "Points": [
+      {
+        "X": 6335,
+        "Y": 9129
+      }
+    ]
+  },
+  {
+    "PetId": 1047,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Splendent Armadon",
+    "Points": [
+      {
+        "X": 6994,
+        "Y": 6533
+      }
+    ]
+  },
+  {
+    "PetId": 1047,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Highland Wild Armadon",
+    "Points": [
+      {
+        "X": 9151,
+        "Y": 10443
+      },
+      {
+        "X": 8914,
+        "Y": 10737
+      }
+    ]
+  },
+  {
+    "PetId": 1048,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Marsh Vine Spirit",
+    "Points": [
+      {
+        "X": 7938,
+        "Y": 6399
+      }
+    ]
+  },
+  {
+    "PetId": 1048,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Contaminated Vine Spirit",
+    "Points": [
+      {
+        "X": 7271,
+        "Y": 8491
+      }
+    ]
+  },
+  {
+    "PetId": 1048,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Ridge Forest Spirit",
+    "Points": [
+      {
+        "X": 8189,
+        "Y": 8728
+      },
+      {
+        "X": 8292,
+        "Y": 9034
+      }
+    ]
+  },
+  {
+    "PetId": 1048,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Deep Canyon Forest Spirit",
+    "Points": [
+      {
+        "X": 9725,
+        "Y": 10375
+      }
+    ]
+  },
+  {
+    "PetId": 1049,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Mutated Vine Bundle",
+    "Points": [
+      {
+        "X": 11462,
+        "Y": 9146
+      },
+      {
+        "X": 11229,
+        "Y": 9028
+      },
+      {
+        "X": 11024,
+        "Y": 8858
+      },
+      {
+        "X": 11272,
+        "Y": 8906
+      },
+      {
+        "X": 11349,
+        "Y": 9246
+      }
+    ]
+  },
+  {
+    "PetId": 1049,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Contaminated Vine Bundle",
+    "Points": [
+      {
+        "X": 11349,
+        "Y": 8835
+      },
+      {
+        "X": 11393,
+        "Y": 8691
+      },
+      {
+        "X": 11278,
+        "Y": 8477
+      },
+      {
+        "X": 11551,
+        "Y": 8912
+      }
+    ]
+  },
+  {
+    "PetId": 1050,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Red Stalk Gravi",
+    "Points": [
+      {
+        "X": 10018,
+        "Y": 11458
+      }
+    ]
+  },
+  {
+    "PetId": 1050,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Tolbas Gravi",
+    "Points": [
+      {
+        "X": 6876,
+        "Y": 8931
+      }
+    ]
+  },
+  {
+    "PetId": 1051,
+    "MapId": 1110,
+    "Region": "Altgard",
+    "Monster": "Purifying Forest Magic Gravi",
+    "Points": [
+      {
+        "X": 8817,
+        "Y": 6864
+      },
+      {
+        "X": 8470,
+        "Y": 6814
+      }
+    ]
+  },
+  {
+    "PetId": 1051,
+    "MapId": 1110,
+    "Region": "Altgard",
+    "Monster": "Unstable Gravi",
+    "Points": [
+      {
+        "X": 12842,
+        "Y": 4055
+      },
+      {
+        "X": 12335,
+        "Y": 3876
+      },
+      {
+        "X": 12496,
+        "Y": 3847
+      },
+      {
+        "X": 12355,
+        "Y": 4036
+      },
+      {
+        "X": 12496,
+        "Y": 3981
+      },
+      {
+        "X": 12613,
+        "Y": 4007
+      }
+    ]
+  },
+  {
+    "PetId": 1052,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Ellun River Hill Gravi",
+    "Points": [
+      {
+        "X": 7190,
+        "Y": 7588
+      }
+    ]
+  },
+  {
+    "PetId": 1052,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Large Leaf Gravi",
+    "Points": [
+      {
+        "X": 10049,
+        "Y": 11462
+      }
+    ]
+  },
+  {
+    "PetId": 1053,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Drana Mutated Potcrab",
+    "Points": [
+      {
+        "X": 9750,
+        "Y": 6681
+      },
+      {
+        "X": 10408,
+        "Y": 5923
+      },
+      {
+        "X": 9961,
+        "Y": 6337
+      },
+      {
+        "X": 9512,
+        "Y": 6784
+      }
+    ]
+  },
+  {
+    "PetId": 1053,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Eternal Moss Crab",
+    "Points": [
+      {
+        "X": 3788,
+        "Y": 13495
+      },
+      {
+        "X": 3207,
+        "Y": 13485
+      },
+      {
+        "X": 3453,
+        "Y": 13201
+      },
+      {
+        "X": 3386,
+        "Y": 13119
+      },
+      {
+        "X": 3839,
+        "Y": 13151
+      },
+      {
+        "X": 10084,
+        "Y": 4357
+      },
+      {
+        "X": 9984,
+        "Y": 4261
+      }
+    ]
+  },
+  {
+    "PetId": 1054,
+    "MapId": 1110,
+    "Region": "Altgard",
+    "Monster": "Mumu Watcher",
+    "Points": [
+      {
+        "X": 9578,
+        "Y": 4940
+      },
+      {
+        "X": 9208,
+        "Y": 5060
+      },
+      {
+        "X": 9284,
+        "Y": 4907
+      },
+      {
+        "X": 9089,
+        "Y": 4909
+      },
+      {
+        "X": 9663,
+        "Y": 11724
+      },
+      {
+        "X": 9603,
+        "Y": 11943
+      }
+    ]
+  },
+  {
+    "PetId": 1054,
+    "MapId": 1110,
+    "Region": "Altgard",
+    "Monster": "Gribade Mumu Warrior",
+    "Points": [
+      {
+        "X": 11381,
+        "Y": 8936
+      },
+      {
+        "X": 11549,
+        "Y": 8864
+      },
+      {
+        "X": 11831,
+        "Y": 8897
+      },
+      {
+        "X": 11595,
+        "Y": 8665
+      },
+      {
+        "X": 11995,
+        "Y": 9172
+      },
+      {
+        "X": 11393,
+        "Y": 8750
+      }
+    ]
+  },
+  {
+    "PetId": 1056,
+    "MapId": 1110,
+    "Region": "Altgard",
+    "Monster": "Drana Processing Maintenance Machine",
+    "Points": [
+      {
+        "X": 9407,
+        "Y": 5091
+      },
+      {
+        "X": 9684,
+        "Y": 4847
+      },
+      {
+        "X": 9587,
+        "Y": 4977
+      },
+      {
+        "X": 9686,
+        "Y": 4997
+      }
+    ]
+  },
+  {
+    "PetId": 1056,
+    "MapId": 1110,
+    "Region": "Altgard",
+    "Monster": "Outpost Probe",
+    "Points": [
+      {
+        "X": 4837,
+        "Y": 7892
+      },
+      {
+        "X": 4832,
+        "Y": 7607
+      },
+      {
+        "X": 4914,
+        "Y": 7547
+      }
+    ]
+  },
+  {
+    "PetId": 1056,
+    "MapId": 1110,
+    "Region": "Altgard",
+    "Monster": "Drakan Probe",
+    "Points": [
+      {
+        "X": 5570,
+        "Y": 7639
+      },
+      {
+        "X": 5885,
+        "Y": 7694
+      },
+      {
+        "X": 5606,
+        "Y": 7531
+      }
+    ]
+  },
+  {
+    "PetId": 1056,
+    "MapId": 1110,
+    "Region": "Altgard",
+    "Monster": "Lagta Brigade Seeker",
+    "Points": [
+      {
+        "X": 7808,
+        "Y": 11267
+      },
+      {
+        "X": 8261,
+        "Y": 11146
+      },
+      {
+        "X": 8012,
+        "Y": 11214
+      }
+    ]
+  },
+  {
+    "PetId": 1059,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Giant Stripe Bee",
+    "Points": [
+      {
+        "X": 8517,
+        "Y": 8662
+      },
+      {
+        "X": 8415,
+        "Y": 8490
+      }
+    ]
+  },
+  {
+    "PetId": 1060,
+    "MapId": 1110,
+    "Region": "Altgard",
+    "Monster": "Beach Starturtle",
+    "Points": [
+      {
+        "X": 8827,
+        "Y": 4978
+      },
+      {
+        "X": 8831,
+        "Y": 4598
+      },
+      {
+        "X": 8709,
+        "Y": 4498
+      },
+      {
+        "X": 8496,
+        "Y": 4348
+      },
+      {
+        "X": 8724,
+        "Y": 4922
+      },
+      {
+        "X": 8726,
+        "Y": 5026
+      },
+      {
+        "X": 8748,
+        "Y": 5132
+      },
+      {
+        "X": 8795,
+        "Y": 4801
+      },
+      {
+        "X": 8856,
+        "Y": 4706
+      }
+    ]
+  },
+  {
+    "PetId": 1060,
+    "MapId": 1110,
+    "Region": "Altgard",
+    "Monster": "Starturtle",
+    "Points": [
+      {
+        "X": 10094,
+        "Y": 10154
+      },
+      {
+        "X": 9858,
+        "Y": 9931
+      },
+      {
+        "X": 4048,
+        "Y": 13181
+      },
+      {
+        "X": 4560,
+        "Y": 12979
+      },
+      {
+        "X": 3831,
+        "Y": 13251
+      },
+      {
+        "X": 3634,
+        "Y": 13084
+      },
+      {
+        "X": 4358,
+        "Y": 13206
+      },
+      {
+        "X": 3800,
+        "Y": 12790
+      },
+      {
+        "X": 4615,
+        "Y": 13108
+      }
+    ]
+  },
+  {
+    "PetId": 1061,
+    "MapId": 1110,
+    "Region": "Altgard",
+    "Monster": "Unruly Slime",
+    "Points": [
+      {
+        "X": 8681,
+        "Y": 6604
+      },
+      {
+        "X": 8598,
+        "Y": 6773
+      },
+      {
+        "X": 8738,
+        "Y": 6728
+      },
+      {
+        "X": 8695,
+        "Y": 6835
+      }
+    ]
+  },
+  {
+    "PetId": 1062,
+    "MapId": 20,
+    "Region": "Chaotic Lower Reshanta",
+    "Monster": "Abyss Sulfur Slime",
+    "Points": [
+      {
+        "X": 3462,
+        "Y": 3770
+      },
+      {
+        "X": 3437,
+        "Y": 3271
+      },
+      {
+        "X": 3826,
+        "Y": 3386
+      },
+      {
+        "X": 3046,
+        "Y": 3893
+      },
+      {
+        "X": 2906,
+        "Y": 3664
+      },
+      {
+        "X": 3104,
+        "Y": 3544
+      },
+      {
+        "X": 3572,
+        "Y": 3594
+      }
+    ]
+  },
+  {
+    "PetId": 1063,
+    "MapId": 1110,
+    "Region": "Altgard",
+    "Monster": "Vigilant Oculazen",
+    "Points": [
+      {
+        "X": 9215,
+        "Y": 5366
+      }
+    ]
+  },
+  {
+    "PetId": 1064,
+    "MapId": 1110,
+    "Region": "Altgard",
+    "Monster": "Oculazen",
+    "Points": [
+      {
+        "X": 11322,
+        "Y": 11398
+      },
+      {
+        "X": 11087,
+        "Y": 11406
+      }
+    ]
+  },
+  {
+    "PetId": 1065,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Biruta Wanderer",
+    "Points": [
+      {
+        "X": 7671,
+        "Y": 9486
+      },
+      {
+        "X": 7462,
+        "Y": 9573
+      }
+    ]
+  },
+  {
+    "PetId": 1066,
+    "MapId": 1110,
+    "Region": "Altgard",
+    "Monster": "Faded Papis",
+    "Points": [
+      {
+        "X": 4506,
+        "Y": 7450
+      },
+      {
+        "X": 4686,
+        "Y": 7393
+      },
+      {
+        "X": 4208,
+        "Y": 7522
+      },
+      {
+        "X": 4199,
+        "Y": 7623
+      },
+      {
+        "X": 5033,
+        "Y": 7415
+      },
+      {
+        "X": 4474,
+        "Y": 7587
+      },
+      {
+        "X": 5061,
+        "Y": 6881
+      },
+      {
+        "X": 5194,
+        "Y": 7188
+      },
+      {
+        "X": 4950,
+        "Y": 7149
+      },
+      {
+        "X": 4729,
+        "Y": 6803
+      },
+      {
+        "X": 4556,
+        "Y": 6807
+      },
+      {
+        "X": 4622,
+        "Y": 6652
+      },
+      {
+        "X": 8074,
+        "Y": 8707
+      },
+      {
+        "X": 7842,
+        "Y": 8441
+      },
+      {
+        "X": 7752,
+        "Y": 8630
+      },
+      {
+        "X": 6358,
+        "Y": 9139
+      },
+      {
+        "X": 6378,
+        "Y": 9037
+      },
+      {
+        "X": 6377,
+        "Y": 9337
+      },
+      {
+        "X": 6624,
+        "Y": 9257
+      },
+      {
+        "X": 8263,
+        "Y": 7224
+      },
+      {
+        "X": 9239,
+        "Y": 7879
+      },
+      {
+        "X": 5783,
+        "Y": 7307
+      },
+      {
+        "X": 5393,
+        "Y": 8067
+      },
+      {
+        "X": 5504,
+        "Y": 8074
+      },
+      {
+        "X": 5681,
+        "Y": 7731
+      },
+      {
+        "X": 5027,
+        "Y": 8281
+      },
+      {
+        "X": 6050,
+        "Y": 7374
+      },
+      {
+        "X": 6291,
+        "Y": 7730
+      },
+      {
+        "X": 4774,
+        "Y": 8679
+      },
+      {
+        "X": 4476,
+        "Y": 8568
+      },
+      {
+        "X": 4452,
+        "Y": 8395
+      },
+      {
+        "X": 5795,
+        "Y": 7575
+      },
+      {
+        "X": 6202,
+        "Y": 7580
+      },
+      {
+        "X": 6029,
+        "Y": 7860
+      },
+      {
+        "X": 5893,
+        "Y": 7462
+      },
+      {
+        "X": 5541,
+        "Y": 7298
+      },
+      {
+        "X": 6199,
+        "Y": 7301
+      },
+      {
+        "X": 6163,
+        "Y": 7714
+      },
+      {
+        "X": 10502,
+        "Y": 6560
+      },
+      {
+        "X": 10316,
+        "Y": 6644
+      },
+      {
+        "X": 11312,
+        "Y": 8446
+      },
+      {
+        "X": 11389,
+        "Y": 8533
+      },
+      {
+        "X": 11714,
+        "Y": 9329
+      },
+      {
+        "X": 11558,
+        "Y": 8631
+      },
+      {
+        "X": 11665,
+        "Y": 9436
+      },
+      {
+        "X": 11566,
+        "Y": 9611
+      },
+      {
+        "X": 11612,
+        "Y": 9734
+      },
+      {
+        "X": 11792,
+        "Y": 8914
+      },
+      {
+        "X": 11770,
+        "Y": 9053
+      },
+      {
+        "X": 11555,
+        "Y": 9172
+      },
+      {
+        "X": 11716,
+        "Y": 10488
+      },
+      {
+        "X": 11732,
+        "Y": 10592
+      },
+      {
+        "X": 11928,
+        "Y": 10577
+      },
+      {
+        "X": 11840,
+        "Y": 10516
+      },
+      {
+        "X": 11761,
+        "Y": 10757
+      },
+      {
+        "X": 11816,
+        "Y": 10359
+      },
+      {
+        "X": 11729,
+        "Y": 10258
+      },
+      {
+        "X": 12027,
+        "Y": 10544
+      },
+      {
+        "X": 6545,
+        "Y": 5126
+      },
+      {
+        "X": 6437,
+        "Y": 5088
+      },
+      {
+        "X": 6418,
+        "Y": 5194
+      },
+      {
+        "X": 6226,
+        "Y": 5182
+      },
+      {
+        "X": 6199,
+        "Y": 5290
+      },
+      {
+        "X": 6075,
+        "Y": 5255
+      },
+      {
+        "X": 6556,
+        "Y": 5003
+      },
+      {
+        "X": 6789,
+        "Y": 5010
+      },
+      {
+        "X": 6684,
+        "Y": 5058
+      },
+      {
+        "X": 6964,
+        "Y": 4847
+      },
+      {
+        "X": 7166,
+        "Y": 5227
+      },
+      {
+        "X": 7289,
+        "Y": 5154
+      },
+      {
+        "X": 6908,
+        "Y": 5731
+      },
+      {
+        "X": 6732,
+        "Y": 6130
+      },
+      {
+        "X": 7133,
+        "Y": 5516
+      },
+      {
+        "X": 7115,
+        "Y": 5361
+      },
+      {
+        "X": 7076,
+        "Y": 5177
+      },
+      {
+        "X": 6981,
+        "Y": 5108
+      },
+      {
+        "X": 5840,
+        "Y": 5727
+      },
+      {
+        "X": 6181,
+        "Y": 5073
+      },
+      {
+        "X": 5830,
+        "Y": 6162
+      },
+      {
+        "X": 5693,
+        "Y": 5575
+      },
+      {
+        "X": 5124,
+        "Y": 7400
+      },
+      {
+        "X": 5531,
+        "Y": 7476
+      },
+      {
+        "X": 11603,
+        "Y": 10852
+      },
+      {
+        "X": 11164,
+        "Y": 10429
+      },
+      {
+        "X": 10953,
+        "Y": 10648
+      },
+      {
+        "X": 10876,
+        "Y": 10717
+      },
+      {
+        "X": 10891,
+        "Y": 10333
+      },
+      {
+        "X": 10694,
+        "Y": 10248
+      },
+      {
+        "X": 11608,
+        "Y": 10580
+      },
+      {
+        "X": 11534,
+        "Y": 10658
+      },
+      {
+        "X": 11129,
+        "Y": 9968
+      },
+      {
+        "X": 11092,
+        "Y": 10085
+      },
+      {
+        "X": 10902,
+        "Y": 7616
+      },
+      {
+        "X": 11003,
+        "Y": 8433
+      },
+      {
+        "X": 10969,
+        "Y": 8106
+      },
+      {
+        "X": 10951,
+        "Y": 7762
+      }
+    ]
+  },
+  {
+    "PetId": 1067,
+    "MapId": 1110,
+    "Region": "Altgard",
+    "Monster": "Ore Scorpion",
+    "Points": [
+      {
+        "X": 11028,
+        "Y": 8661
+      },
+      {
+        "X": 10853,
+        "Y": 8937
+      },
+      {
+        "X": 11119,
+        "Y": 8898
+      }
+    ]
+  },
+  {
+    "PetId": 1069,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Hill Stone Spirit",
+    "Points": [
+      {
+        "X": 10982,
+        "Y": 7566
+      },
+      {
+        "X": 11766,
+        "Y": 7289
+      },
+      {
+        "X": 11849,
+        "Y": 7227
+      },
+      {
+        "X": 11424,
+        "Y": 6830
+      },
+      {
+        "X": 12039,
+        "Y": 7323
+      },
+      {
+        "X": 11949,
+        "Y": 6879
+      },
+      {
+        "X": 11450,
+        "Y": 7014
+      },
+      {
+        "X": 11830,
+        "Y": 7055
+      },
+      {
+        "X": 11749,
+        "Y": 6812
+      },
+      {
+        "X": 10959,
+        "Y": 7664
+      },
+      {
+        "X": 11104,
+        "Y": 7556
+      },
+      {
+        "X": 12034,
+        "Y": 7022
+      },
+      {
+        "X": 11384,
+        "Y": 6719
+      },
+      {
+        "X": 12132,
+        "Y": 7398
+      },
+      {
+        "X": 11584,
+        "Y": 7104
+      },
+      {
+        "X": 11654,
+        "Y": 6769
+      },
+      {
+        "X": 11702,
+        "Y": 7010
+      },
+      {
+        "X": 11524,
+        "Y": 7193
+      },
+      {
+        "X": 12189,
+        "Y": 7299
+      }
+    ]
+  },
+  {
+    "PetId": 1071,
+    "MapId": 1110,
+    "Region": "Altgard",
+    "Monster": "Drana Cadaver Insectoid",
+    "Points": [
+      {
+        "X": 6400,
+        "Y": 6927
+      }
+    ]
+  },
+  {
+    "PetId": 1072,
+    "MapId": 1110,
+    "Region": "Altgard",
+    "Monster": "Tog",
+    "Points": [
+      {
+        "X": 4151,
+        "Y": 7411
+      },
+      {
+        "X": 5017,
+        "Y": 7450
+      },
+      {
+        "X": 4789,
+        "Y": 7328
+      },
+      {
+        "X": 4796,
+        "Y": 7118
+      },
+      {
+        "X": 4631,
+        "Y": 7177
+      },
+      {
+        "X": 4651,
+        "Y": 7458
+      },
+      {
+        "X": 4354,
+        "Y": 7279
+      },
+      {
+        "X": 4430,
+        "Y": 7600
+      },
+      {
+        "X": 4472,
+        "Y": 7457
+      }
+    ]
+  },
+  {
+    "PetId": 1073,
+    "MapId": 20,
+    "Region": "Chaotic Lower Reshanta",
+    "Monster": "Abyss Nasty Nepenthes",
+    "Points": [
+      {
+        "X": 4360,
+        "Y": 4870
+      },
+      {
+        "X": 4547,
+        "Y": 4966
+      },
+      {
+        "X": 4517,
+        "Y": 4549
+      },
+      {
+        "X": 4692,
+        "Y": 4689
+      },
+      {
+        "X": 4776,
+        "Y": 4928
+      },
+      {
+        "X": 5379,
+        "Y": 4796
+      },
+      {
+        "X": 5506,
+        "Y": 4578
+      },
+      {
+        "X": 5345,
+        "Y": 4503
+      },
+      {
+        "X": 4828,
+        "Y": 5089
+      },
+      {
+        "X": 5074,
+        "Y": 4595
+      }
+    ]
+  },
+  {
+    "PetId": 1074,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Tolbas Kuru Worker",
+    "Points": [
+      {
+        "X": 7546,
+        "Y": 9587
+      }
+    ]
+  },
+  {
+    "PetId": 1074,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Harsh Kuru Tinkerer",
+    "Points": [
+      {
+        "X": 6862,
+        "Y": 10396
+      },
+      {
+        "X": 6897,
+        "Y": 10607
+      },
+      {
+        "X": 7009,
+        "Y": 10724
+      },
+      {
+        "X": 7033,
+        "Y": 10484
+      },
+      {
+        "X": 7194,
+        "Y": 10520
+      },
+      {
+        "X": 7120,
+        "Y": 10387
+      },
+      {
+        "X": 6795,
+        "Y": 10210
+      },
+      {
+        "X": 6912,
+        "Y": 10121
+      }
+    ]
+  },
+  {
+    "PetId": 1074,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Eternal Kuru Worker",
+    "Points": [
+      {
+        "X": 3772,
+        "Y": 12594
+      },
+      {
+        "X": 4216,
+        "Y": 12552
+      },
+      {
+        "X": 3365,
+        "Y": 12557
+      },
+      {
+        "X": 3777,
+        "Y": 12572
+      }
+    ]
+  },
+  {
+    "PetId": 1075,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Tolbas Kuru Tinkerer",
+    "Points": [
+      {
+        "X": 7512,
+        "Y": 9592
+      }
+    ]
+  },
+  {
+    "PetId": 1075,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Eternal Kuru Tinkerer",
+    "Points": [
+      {
+        "X": 4254,
+        "Y": 12580
+      },
+      {
+        "X": 3773,
+        "Y": 12658
+      },
+      {
+        "X": 3555,
+        "Y": 12610
+      },
+      {
+        "X": 3279,
+        "Y": 12573
+      },
+      {
+        "X": 3407,
+        "Y": 12623
+      },
+      {
+        "X": 3777,
+        "Y": 12572
+      }
+    ]
+  },
+  {
+    "PetId": 1115,
+    "MapId": 1110,
+    "Region": "Altgard",
+    "Monster": "Kuru Overseer",
+    "Points": [
+      {
+        "X": 4645,
+        "Y": 12286
+      },
+      {
+        "X": 4125,
+        "Y": 12319
+      },
+      {
+        "X": 3734,
+        "Y": 12322
+      },
+      {
+        "X": 4523,
+        "Y": 12162
+      },
+      {
+        "X": 4375,
+        "Y": 12162
+      }
+    ]
+  },
+  {
+    "PetId": 1083,
+    "MapId": 20,
+    "Region": "Chaotic Lower Reshanta",
+    "Monster": "Abyss Odyle Mutated Insectoid",
+    "Points": [
+      {
+        "X": 4443,
+        "Y": 4879
+      },
+      {
+        "X": 4834,
+        "Y": 5087
+      },
+      {
+        "X": 5348,
+        "Y": 4510
+      },
+      {
+        "X": 5075,
+        "Y": 4603
+      },
+      {
+        "X": 5385,
+        "Y": 4801
+      },
+      {
+        "X": 5316,
+        "Y": 4643
+      },
+      {
+        "X": 4699,
+        "Y": 4689
+      },
+      {
+        "X": 4782,
+        "Y": 4921
+      }
+    ]
+  },
+  {
+    "PetId": 1084,
+    "MapId": 20,
+    "Region": "Chaotic Lower Reshanta",
+    "Monster": "Root Kalgolem",
+    "Points": [
+      {
+        "X": 4042,
+        "Y": 4230
+      },
+      {
+        "X": 4055,
+        "Y": 3939
+      },
+      {
+        "X": 3881,
+        "Y": 4056
+      },
+      {
+        "X": 4161,
+        "Y": 4210
+      },
+      {
+        "X": 4239,
+        "Y": 4132
+      },
+      {
+        "X": 4155,
+        "Y": 3954
+      }
+    ]
+  },
+  {
+    "PetId": 1117,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Aullaeu Forest Odyle Spider",
+    "Points": [
+      {
+        "X": 7032,
+        "Y": 10918
+      }
+    ]
+  },
+  {
+    "PetId": 1117,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Crimson Spider",
+    "Points": [
+      {
+        "X": 10282,
+        "Y": 3971
+      },
+      {
+        "X": 9897,
+        "Y": 4198
+      },
+      {
+        "X": 9730,
+        "Y": 3980
+      }
+    ]
+  },
+  {
+    "PetId": 1086,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Red Cap Fungen",
+    "Points": [
+      {
+        "X": 6614,
+        "Y": 6804
+      }
+    ]
+  },
+  {
+    "PetId": 1087,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Pino Worker",
+    "Points": [
+      {
+        "X": 7637,
+        "Y": 9787
+      },
+      {
+        "X": 7470,
+        "Y": 9854
+      },
+      {
+        "X": 7329,
+        "Y": 9997
+      },
+      {
+        "X": 7483,
+        "Y": 10312
+      }
+    ]
+  },
+  {
+    "PetId": 1087,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Pino Laborer",
+    "Points": [
+      {
+        "X": 7643,
+        "Y": 9785
+      },
+      {
+        "X": 7439,
+        "Y": 9921
+      },
+      {
+        "X": 7327,
+        "Y": 10004
+      },
+      {
+        "X": 7488,
+        "Y": 10316
+      },
+      {
+        "X": 7490,
+        "Y": 9775
+      }
+    ]
+  },
+  {
+    "PetId": 1088,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Harsh Pino Worker",
+    "Points": [
+      {
+        "X": 7782,
+        "Y": 10239
+      },
+      {
+        "X": 7889,
+        "Y": 10319
+      },
+      {
+        "X": 7559,
+        "Y": 10323
+      },
+      {
+        "X": 7647,
+        "Y": 10106
+      },
+      {
+        "X": 7755,
+        "Y": 9978
+      },
+      {
+        "X": 7870,
+        "Y": 9998
+      }
+    ]
+  },
+  {
+    "PetId": 1089,
+    "MapId": 20,
+    "Region": "Chaotic Lower Reshanta",
+    "Monster": "Abyss Sulfur Skama",
+    "Points": [
+      {
+        "X": 3496,
+        "Y": 3806
+      },
+      {
+        "X": 3814,
+        "Y": 3379
+      },
+      {
+        "X": 3143,
+        "Y": 3872
+      },
+      {
+        "X": 3045,
+        "Y": 3757
+      },
+      {
+        "X": 3174,
+        "Y": 3545
+      },
+      {
+        "X": 2883,
+        "Y": 3638
+      },
+      {
+        "X": 3457,
+        "Y": 3644
+      }
+    ]
+  },
+  {
+    "PetId": 1092,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Air Spirit",
+    "Points": [
+      {
+        "X": 9599,
+        "Y": 9305
+      }
+    ]
+  },
+  {
+    "PetId": 1092,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Eternal Wind Spirit",
+    "Points": [
+      {
+        "X": 3622,
+        "Y": 13138
+      },
+      {
+        "X": 3681,
+        "Y": 13041
+      },
+      {
+        "X": 3859,
+        "Y": 12980
+      },
+      {
+        "X": 3774,
+        "Y": 13231
+      },
+      {
+        "X": 3913,
+        "Y": 13158
+      }
+    ]
+  },
+  {
+    "PetId": 1094,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Wandering Wind Spirit",
+    "Points": [
+      {
+        "X": 10078,
+        "Y": 11465
+      }
+    ]
+  },
+  {
+    "PetId": 1094,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Violent Wind Spirit",
+    "Points": [
+      {
+        "X": 3780,
+        "Y": 13235
+      }
+    ]
+  },
+  {
+    "PetId": 1095,
+    "MapId": 1110,
+    "Region": "Altgard",
+    "Monster": "Whirlwind Spirit",
+    "Points": [
+      {
+        "X": 9598,
+        "Y": 7138
+      }
+    ]
+  },
+  {
+    "PetId": 1095,
+    "MapId": 1110,
+    "Region": "Altgard",
+    "Monster": "Immortal Wind Spirit Guardian",
+    "Points": [
+      {
+        "X": 4075,
+        "Y": 12861
+      },
+      {
+        "X": 4195,
+        "Y": 12667
+      },
+      {
+        "X": 4187,
+        "Y": 12845
+      }
+    ]
+  },
+  {
+    "PetId": 1096,
+    "MapId": 1110,
+    "Region": "Altgard",
+    "Monster": "Flame Spirit",
+    "Points": [
+      {
+        "X": 10063,
+        "Y": 6654
+      }
+    ]
+  },
+  {
+    "PetId": 1096,
+    "MapId": 1110,
+    "Region": "Altgard",
+    "Monster": "Unstable Superior Fire Spirit",
+    "Points": [
+      {
+        "X": 13067,
+        "Y": 3440
+      }
+    ]
+  },
+  {
+    "PetId": 1096,
+    "MapId": 1110,
+    "Region": "Altgard",
+    "Monster": "Immortal Fire Spirit Guardian",
+    "Points": [
+      {
+        "X": 4141,
+        "Y": 12867
+      },
+      {
+        "X": 4305,
+        "Y": 12830
+      },
+      {
+        "X": 4246,
+        "Y": 12676
+      }
+    ]
+  },
+  {
+    "PetId": 1097,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Ferocious Karnif",
+    "Points": [
+      {
+        "X": 6662,
+        "Y": 9520
+      },
+      {
+        "X": 6852,
+        "Y": 9576
+      },
+      {
+        "X": 6957,
+        "Y": 9764
+      },
+      {
+        "X": 7135,
+        "Y": 9562
+      },
+      {
+        "X": 7163,
+        "Y": 9711
+      }
+    ]
+  },
+  {
+    "PetId": 1097,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Tolbas Karnif",
+    "Points": [
+      {
+        "X": 6947,
+        "Y": 8939
+      }
+    ]
+  },
+  {
+    "PetId": 1097,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Ferocious Tolbas Karnif",
+    "Points": [
+      {
+        "X": 7325,
+        "Y": 9134
+      },
+      {
+        "X": 7196,
+        "Y": 9132
+      },
+      {
+        "X": 7249,
+        "Y": 9343
+      },
+      {
+        "X": 7027,
+        "Y": 9262
+      },
+      {
+        "X": 6909,
+        "Y": 8839
+      },
+      {
+        "X": 6876,
+        "Y": 8989
+      }
+    ]
+  },
+  {
+    "PetId": 1097,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Toughmane Highland Karnif",
+    "Points": [
+      {
+        "X": 9067,
+        "Y": 9759
+      }
+    ]
+  },
+  {
+    "PetId": 1097,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Highland Karnif",
+    "Points": [
+      {
+        "X": 10114,
+        "Y": 8767
+      },
+      {
+        "X": 9696,
+        "Y": 8723
+      }
+    ]
+  },
+  {
+    "PetId": 1097,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Tamed Karnif",
+    "Points": [
+      {
+        "X": 10383,
+        "Y": 7908
+      },
+      {
+        "X": 10638,
+        "Y": 7354
+      },
+      {
+        "X": 9687,
+        "Y": 7384
+      },
+      {
+        "X": 9696,
+        "Y": 7215
+      },
+      {
+        "X": 9709,
+        "Y": 7493
+      },
+      {
+        "X": 10649,
+        "Y": 7274
+      },
+      {
+        "X": 10581,
+        "Y": 7468
+      },
+      {
+        "X": 9682,
+        "Y": 7421
+      },
+      {
+        "X": 9700,
+        "Y": 7251
+      }
+    ]
+  },
+  {
+    "PetId": 1098,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Scouting Karnif",
+    "Points": [
+      {
+        "X": 7545,
+        "Y": 8088
+      },
+      {
+        "X": 7994,
+        "Y": 8657
+      },
+      {
+        "X": 7679,
+        "Y": 7945
+      },
+      {
+        "X": 7511,
+        "Y": 8511
+      },
+      {
+        "X": 7730,
+        "Y": 8708
+      }
+    ]
+  },
+  {
+    "PetId": 1098,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Unruly Karnif",
+    "Points": [
+      {
+        "X": 7864,
+        "Y": 7809
+      },
+      {
+        "X": 7961,
+        "Y": 7874
+      }
+    ]
+  },
+  {
+    "PetId": 1098,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Trained Karnif",
+    "Points": [
+      {
+        "X": 8142,
+        "Y": 7958
+      }
+    ]
+  },
+  {
+    "PetId": 1098,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Sensitive Karnif",
+    "Points": [
+      {
+        "X": 8415,
+        "Y": 7887
+      },
+      {
+        "X": 8544,
+        "Y": 7705
+      },
+      {
+        "X": 8527,
+        "Y": 7847
+      }
+    ]
+  },
+  {
+    "PetId": 1101,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Garden Guardian",
+    "Points": [
+      {
+        "X": 10043,
+        "Y": 11269
+      },
+      {
+        "X": 10226,
+        "Y": 11159
+      }
+    ]
+  },
+  {
+    "PetId": 1104,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Hill Manduri",
+    "Points": [
+      {
+        "X": 9090,
+        "Y": 7544
+      },
+      {
+        "X": 8891,
+        "Y": 8044
+      },
+      {
+        "X": 8739,
+        "Y": 7906
+      },
+      {
+        "X": 8969,
+        "Y": 7839
+      },
+      {
+        "X": 9263,
+        "Y": 7737
+      },
+      {
+        "X": 11384,
+        "Y": 7530
+      },
+      {
+        "X": 9521,
+        "Y": 7399
+      }
+    ]
+  },
+  {
+    "PetId": 1104,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Crimson Manduri Slinger",
+    "Points": [
+      {
+        "X": 9768,
+        "Y": 3981
+      }
+    ]
+  },
+  {
+    "PetId": 1105,
+    "MapId": 1110,
+    "Region": "Altgard",
+    "Monster": "Biruta Herbalist",
+    "Points": [
+      {
+        "X": 4925,
+        "Y": 6748
+      },
+      {
+        "X": 4999,
+        "Y": 6657
+      },
+      {
+        "X": 4618,
+        "Y": 6734
+      }
+    ]
+  },
+  {
+    "PetId": 1106,
+    "MapId": 1110,
+    "Region": "Altgard",
+    "Monster": "Search Party Tayga",
+    "Points": [
+      {
+        "X": 11692,
+        "Y": 9126
+      },
+      {
+        "X": 11903,
+        "Y": 9026
+      },
+      {
+        "X": 11775,
+        "Y": 8923
+      }
+    ]
+  },
+  {
+    "PetId": 1106,
+    "MapId": 1110,
+    "Region": "Altgard",
+    "Monster": "Guard Troopers Tayga",
+    "Points": [
+      {
+        "X": 12061,
+        "Y": 9315
+      }
+    ]
+  },
+  {
+    "PetId": 1106,
+    "MapId": 1110,
+    "Region": "Altgard",
+    "Monster": "Tamed Tayga",
+    "Points": [
+      {
+        "X": 9716,
+        "Y": 11695
+      }
+    ]
+  },
+  {
+    "PetId": 1108,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Enhanced Krall Combatant",
+    "Points": [
+      {
+        "X": 7684,
+        "Y": 8405
+      }
+    ]
+  },
+  {
+    "PetId": 1109,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Enhanced Krall Sentry",
+    "Points": [
+      {
+        "X": 7591,
+        "Y": 8369
+      },
+      {
+        "X": 7953,
+        "Y": 8657
+      }
+    ]
+  },
+  {
+    "PetId": 1110,
+    "MapId": 20,
+    "Region": "Chaotic Lower Reshanta",
+    "Monster": "Abyssal Kalgolem",
+    "Points": [
+      {
+        "X": 4459,
+        "Y": 4918
+      },
+      {
+        "X": 5394,
+        "Y": 4993
+      },
+      {
+        "X": 4777,
+        "Y": 4809
+      },
+      {
+        "X": 4503,
+        "Y": 5075
+      },
+      {
+        "X": 4932,
+        "Y": 4529
+      },
+      {
+        "X": 4844,
+        "Y": 4371
+      },
+      {
+        "X": 5561,
+        "Y": 4840
+      },
+      {
+        "X": 5544,
+        "Y": 4529
+      },
+      {
+        "X": 5181,
+        "Y": 4558
+      },
+      {
+        "X": 4384,
+        "Y": 4656
+      },
+      {
+        "X": 5145,
+        "Y": 4828
+      },
+      {
+        "X": 5274,
+        "Y": 4766
+      },
+      {
+        "X": 5279,
+        "Y": 4880
+      }
+    ]
+  },
+  {
+    "PetId": 1159,
+    "MapId": 1110,
+    "Region": "Altgard",
+    "Monster": "Giant Ore Insectoid Adult",
+    "Points": [
+      {
+        "X": 11094,
+        "Y": 9423
+      },
+      {
+        "X": 10957,
+        "Y": 9276
+      }
+    ]
+  },
+  {
+    "PetId": 1209,
+    "MapId": 20,
+    "Region": "Chaotic Lower Reshanta",
+    "Monster": "Thin Sulfur Agrint",
+    "Points": [
+      {
+        "X": 3334,
+        "Y": 3846
+      },
+      {
+        "X": 3444,
+        "Y": 3288
+      },
+      {
+        "X": 3842,
+        "Y": 3378
+      },
+      {
+        "X": 3445,
+        "Y": 3825
+      },
+      {
+        "X": 3047,
+        "Y": 3912
+      },
+      {
+        "X": 3072,
+        "Y": 3782
+      },
+      {
+        "X": 3119,
+        "Y": 3554
+      },
+      {
+        "X": 2967,
+        "Y": 3702
+      }
+    ]
+  },
+  {
+    "PetId": 1140,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Tolbas Forest Targon",
+    "Points": [
+      {
+        "X": 7115,
+        "Y": 9168
+      }
+    ]
+  },
+  {
+    "PetId": 1214,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Contaminated Spirit",
+    "Points": [
+      {
+        "X": 8388,
+        "Y": 6419
+      }
+    ]
+  },
+  {
+    "PetId": 1214,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Distorted Spirit",
+    "Points": [
+      {
+        "X": 9272,
+        "Y": 7025
+      },
+      {
+        "X": 10383,
+        "Y": 7751
+      },
+      {
+        "X": 10084,
+        "Y": 7490
+      },
+      {
+        "X": 8843,
+        "Y": 6900
+      },
+      {
+        "X": 8677,
+        "Y": 6837
+      },
+      {
+        "X": 8516,
+        "Y": 6985
+      },
+      {
+        "X": 11109,
+        "Y": 7107
+      },
+      {
+        "X": 11344,
+        "Y": 7170
+      },
+      {
+        "X": 9845,
+        "Y": 7491
+      },
+      {
+        "X": 10124,
+        "Y": 8027
+      },
+      {
+        "X": 10052,
+        "Y": 8224
+      },
+      {
+        "X": 10053,
+        "Y": 8400
+      },
+      {
+        "X": 10168,
+        "Y": 8334
+      }
+    ]
+  },
+  {
+    "PetId": 1153,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Eternal Drana Mutant",
+    "Points": [
+      {
+        "X": 3796,
+        "Y": 12599
+      },
+      {
+        "X": 4185,
+        "Y": 12556
+      },
+      {
+        "X": 3378,
+        "Y": 12590
+      }
+    ]
+  },
+  {
+    "PetId": 1153,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Crimson Drana Mutant",
+    "Points": [
+      {
+        "X": 10243,
+        "Y": 3882
+      }
+    ]
+  },
+  {
+    "PetId": 1219,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Coastal Zelophi",
+    "Points": [
+      {
+        "X": 7954,
+        "Y": 6339
+      }
+    ]
+  },
+  {
+    "PetId": 1219,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Eternal Zelophi",
+    "Points": [
+      {
+        "X": 3772,
+        "Y": 12979
+      },
+      {
+        "X": 3995,
+        "Y": 12931
+      },
+      {
+        "X": 4118,
+        "Y": 13300
+      }
+    ]
+  },
+  {
+    "PetId": 1200,
+    "MapId": 20,
+    "Region": "Chaotic Lower Reshanta",
+    "Monster": "Abyss Naga Dark Mage",
+    "Points": [
+      {
+        "X": 2865,
+        "Y": 3649
+      }
+    ]
+  },
+  {
+    "PetId": 1124,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Rock Hill Zaif",
+    "Points": [
+      {
+        "X": 8930,
+        "Y": 10087
+      }
+    ]
+  },
+  {
+    "PetId": 1124,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Highland Forest Zaif",
+    "Points": [
+      {
+        "X": 10751,
+        "Y": 9629
+      },
+      {
+        "X": 11073,
+        "Y": 9646
+      },
+      {
+        "X": 10909,
+        "Y": 9562
+      }
+    ]
+  },
+  {
+    "PetId": 1124,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Highland Zaif",
+    "Points": [
+      {
+        "X": 8739,
+        "Y": 11255
+      }
+    ]
+  },
+  {
+    "PetId": 1124,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Hill Zaif",
+    "Points": [
+      {
+        "X": 12032,
+        "Y": 7193
+      },
+      {
+        "X": 11727,
+        "Y": 7057
+      },
+      {
+        "X": 11923,
+        "Y": 7110
+      },
+      {
+        "X": 11099,
+        "Y": 7496
+      },
+      {
+        "X": 11446,
+        "Y": 7143
+      },
+      {
+        "X": 11550,
+        "Y": 6710
+      },
+      {
+        "X": 11364,
+        "Y": 6861
+      },
+      {
+        "X": 11700,
+        "Y": 6780
+      },
+      {
+        "X": 11701,
+        "Y": 7340
+      },
+      {
+        "X": 12153,
+        "Y": 7349
+      },
+      {
+        "X": 12034,
+        "Y": 7386
+      },
+      {
+        "X": 12135,
+        "Y": 7245
+      },
+      {
+        "X": 11917,
+        "Y": 6909
+      }
+    ]
+  },
+  {
+    "PetId": 1168,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Water Spirit",
+    "Points": [
+      {
+        "X": 8896,
+        "Y": 6094
+      }
+    ]
+  },
+  {
+    "PetId": 1168,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Eternal Water Spirit",
+    "Points": [
+      {
+        "X": 3877,
+        "Y": 13049
+      },
+      {
+        "X": 3778,
+        "Y": 13192
+      },
+      {
+        "X": 3664,
+        "Y": 12980
+      }
+    ]
+  },
+  {
+    "PetId": 1169,
+    "MapId": 1110,
+    "Region": "Altgard",
+    "Monster": "Unstable Intermediate Water Spirit",
+    "Points": [
+      {
+        "X": 12782,
+        "Y": 4067
+      }
+    ]
+  },
+  {
+    "PetId": 1169,
+    "MapId": 1110,
+    "Region": "Altgard",
+    "Monster": "Immortal Water Spirit",
+    "Points": [
+      {
+        "X": 4292,
+        "Y": 12668
+      },
+      {
+        "X": 4080,
+        "Y": 12717
+      }
+    ]
+  },
+  {
+    "PetId": 1155,
+    "MapId": 1110,
+    "Region": "Altgard",
+    "Monster": "Water Mist Spirit",
+    "Points": [
+      {
+        "X": 8624,
+        "Y": 6741
+      }
+    ]
+  },
+  {
+    "PetId": 1155,
+    "MapId": 1110,
+    "Region": "Altgard",
+    "Monster": "Unstable Superior Water Spirit",
+    "Points": [
+      {
+        "X": 12452,
+        "Y": 3931
+      }
+    ]
+  },
+  {
+    "PetId": 1155,
+    "MapId": 1110,
+    "Region": "Altgard",
+    "Monster": "Immortal Water Spirit Guardian",
+    "Points": [
+      {
+        "X": 4071,
+        "Y": 12725
+      },
+      {
+        "X": 4301,
+        "Y": 12726
+      }
+    ]
+  },
+  {
+    "PetId": 1164,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Eternal Earth Spirit",
+    "Points": [
+      {
+        "X": 3833,
+        "Y": 12960
+      },
+      {
+        "X": 3890,
+        "Y": 13181
+      },
+      {
+        "X": 3669,
+        "Y": 13172
+      }
+    ]
+  },
+  {
+    "PetId": 1165,
+    "MapId": 1110,
+    "Region": "Altgard",
+    "Monster": "Immortal Earth Spirit",
+    "Points": [
+      {
+        "X": 4326,
+        "Y": 12744
+      },
+      {
+        "X": 4250,
+        "Y": 12872
+      },
+      {
+        "X": 4112,
+        "Y": 12692
+      },
+      {
+        "X": 4115,
+        "Y": 12816
+      }
+    ]
+  },
+  {
+    "PetId": 1166,
+    "MapId": 1110,
+    "Region": "Altgard",
+    "Monster": "Corroded Soil Spirit",
+    "Points": [
+      {
+        "X": 9054,
+        "Y": 6300
+      }
+    ]
+  },
+  {
+    "PetId": 1166,
+    "MapId": 1110,
+    "Region": "Altgard",
+    "Monster": "Immortal Earth Spirit Guardian",
+    "Points": [
+      {
+        "X": 4290,
+        "Y": 12851
+      },
+      {
+        "X": 4320,
+        "Y": 12754
+      },
+      {
+        "X": 4263,
+        "Y": 12651
+      },
+      {
+        "X": 4107,
+        "Y": 12703
+      },
+      {
+        "X": 4107,
+        "Y": 12814
+      }
+    ]
+  },
+  {
+    "PetId": 1213,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Eternal Fire Spirit",
+    "Points": [
+      {
+        "X": 3675,
+        "Y": 13034
+      },
+      {
+        "X": 3816,
+        "Y": 13175
+      },
+      {
+        "X": 3779,
+        "Y": 12987
+      },
+      {
+        "X": 3890,
+        "Y": 12956
+      }
+    ]
+  },
+  {
+    "PetId": 1187,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Violent Fire Spirit",
+    "Points": [
+      {
+        "X": 3896,
+        "Y": 12952
+      },
+      {
+        "X": 3622,
+        "Y": 12984
+      },
+      {
+        "X": 3777,
+        "Y": 12981
+      },
+      {
+        "X": 3814,
+        "Y": 13169
+      }
+    ]
+  },
+  {
+    "PetId": 1192,
+    "MapId": 20,
+    "Region": "Chaotic Lower Reshanta",
+    "Monster": "Abyss Rusty Rotan",
+    "Points": [
+      {
+        "X": 3785,
+        "Y": 4836
+      },
+      {
+        "X": 3413,
+        "Y": 4462
+      }
+    ]
+  },
+  {
+    "PetId": 1192,
+    "MapId": 20,
+    "Region": "Chaotic Lower Reshanta",
+    "Monster": "Abyss Old Blade Rotan",
+    "Points": [
+      {
+        "X": 4434,
+        "Y": 3260
+      },
+      {
+        "X": 4561,
+        "Y": 3252
+      },
+      {
+        "X": 4907,
+        "Y": 3706
+      }
+    ]
+  },
+  {
+    "PetId": 1188,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Highland Vivel",
+    "Points": [
+      {
+        "X": 9034,
+        "Y": 9713
+      },
+      {
+        "X": 8759,
+        "Y": 9660
+      },
+      {
+        "X": 9310,
+        "Y": 9855
+      },
+      {
+        "X": 9316,
+        "Y": 10098
+      }
+    ]
+  },
+  {
+    "PetId": 1147,
+    "MapId": 1110,
+    "Region": "Altgard",
+    "Monster": "Dratona Tinkerer",
+    "Points": [
+      {
+        "X": 4862,
+        "Y": 7865
+      }
+    ]
+  },
+  {
+    "PetId": 1147,
+    "MapId": 1110,
+    "Region": "Altgard",
+    "Monster": "Dratona Supporter",
+    "Points": [
+      {
+        "X": 5703,
+        "Y": 7579
+      },
+      {
+        "X": 5910,
+        "Y": 7794
+      }
+    ]
+  },
+  {
+    "PetId": 1147,
+    "MapId": 1110,
+    "Region": "Altgard",
+    "Monster": "Dratona",
+    "Points": [
+      {
+        "X": 9536,
+        "Y": 5003
+      },
+      {
+        "X": 9223,
+        "Y": 4881
+      },
+      {
+        "X": 9369,
+        "Y": 4955
+      },
+      {
+        "X": 9724,
+        "Y": 4827
+      },
+      {
+        "X": 9558,
+        "Y": 4773
+      }
+    ]
+  },
+  {
+    "PetId": 1163,
+    "MapId": 1110,
+    "Region": "Altgard",
+    "Monster": "Black Ash Basilisk",
+    "Points": [
+      {
+        "X": 6771,
+        "Y": 8811
+      }
+    ]
+  },
+  {
+    "PetId": 1172,
+    "MapId": 1110,
+    "Region": "Altgard",
+    "Monster": "Duduka Worker",
+    "Points": [
+      {
+        "X": 10280,
+        "Y": 11096
+      },
+      {
+        "X": 10031,
+        "Y": 11480
+      }
+    ]
+  },
+  {
+    "PetId": 1173,
+    "MapId": 1110,
+    "Region": "Altgard",
+    "Monster": "Duduka Slinger",
+    "Points": [
+      {
+        "X": 10311,
+        "Y": 11149
+      },
+      {
+        "X": 10223,
+        "Y": 10845
+      },
+      {
+        "X": 9974,
+        "Y": 11403
+      },
+      {
+        "X": 10051,
+        "Y": 11644
+      },
+      {
+        "X": 10028,
+        "Y": 11530
+      }
+    ]
+  },
+  {
+    "PetId": 1194,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Uncontrollable Guardite",
+    "Points": [
+      {
+        "X": 11407,
+        "Y": 9263
+      },
+      {
+        "X": 11109,
+        "Y": 8928
+      },
+      {
+        "X": 11261,
+        "Y": 8952
+      },
+      {
+        "X": 11239,
+        "Y": 9155
+      }
+    ]
+  },
+  {
+    "PetId": 1184,
+    "MapId": 1110,
+    "Region": "Altgard",
+    "Monster": "Drakan Manager",
+    "Points": [
+      {
+        "X": 9258,
+        "Y": 5325
+      },
+      {
+        "X": 9049,
+        "Y": 5291
+      },
+      {
+        "X": 9197,
+        "Y": 5200
+      },
+      {
+        "X": 9356,
+        "Y": 5459
+      }
+    ]
+  },
+  {
+    "PetId": 1184,
+    "MapId": 1110,
+    "Region": "Altgard",
+    "Monster": "Drakan Patrol Watcher",
+    "Points": [
+      {
+        "X": 11804,
+        "Y": 10490
+      },
+      {
+        "X": 11917,
+        "Y": 10356
+      },
+      {
+        "X": 11711,
+        "Y": 10381
+      },
+      {
+        "X": 11891,
+        "Y": 10678
+      },
+      {
+        "X": 11964,
+        "Y": 9871
+      },
+      {
+        "X": 11792,
+        "Y": 10126
+      },
+      {
+        "X": 11809,
+        "Y": 9873
+      },
+      {
+        "X": 12138,
+        "Y": 10008
+      },
+      {
+        "X": 11864,
+        "Y": 10007
+      },
+      {
+        "X": 11991,
+        "Y": 10575
+      },
+      {
+        "X": 11789,
+        "Y": 10592
+      },
+      {
+        "X": 12019,
+        "Y": 10215
+      }
+    ]
+  },
+  {
+    "PetId": 1195,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Dracuni Processing Laborer",
+    "Points": [
+      {
+        "X": 10700,
+        "Y": 6573
+      }
+    ]
+  },
+  {
+    "PetId": 1162,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Eternal Kerubar",
+    "Points": [
+      {
+        "X": 3903,
+        "Y": 13444
+      },
+      {
+        "X": 3381,
+        "Y": 13540
+      },
+      {
+        "X": 3707,
+        "Y": 13457
+      }
+    ]
+  },
+  {
+    "PetId": 1170,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Eternal Kerubian",
+    "Points": [
+      {
+        "X": 3766,
+        "Y": 13392
+      },
+      {
+        "X": 4081,
+        "Y": 13492
+      },
+      {
+        "X": 3441,
+        "Y": 13546
+      },
+      {
+        "X": 3281,
+        "Y": 13384
+      },
+      {
+        "X": 3707,
+        "Y": 13457
+      }
+    ]
+  },
+  {
+    "PetId": 1178,
+    "MapId": 20,
+    "Region": "Chaotic Lower Reshanta",
+    "Monster": "Old Tree Spirit Warrior",
+    "Points": [
+      {
+        "X": 5334,
+        "Y": 4593
+      }
+    ]
+  },
+  {
+    "PetId": 1216,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Corrupted Spirit",
+    "Points": [
+      {
+        "X": 10132,
+        "Y": 9722
+      },
+      {
+        "X": 9902,
+        "Y": 9616
+      }
+    ]
+  },
+  {
+    "PetId": 1216,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Wandering Dark Spirit",
+    "Points": [
+      {
+        "X": 10123,
+        "Y": 11260
+      }
+    ]
+  },
+  {
+    "PetId": 1118,
+    "MapId": 1110,
+    "Region": "Altgard",
+    "Monster": "Black Armor Bee",
+    "Points": [
+      {
+        "X": 10572,
+        "Y": 6755
+      },
+      {
+        "X": 10743,
+        "Y": 6667
+      },
+      {
+        "X": 10432,
+        "Y": 6661
+      },
+      {
+        "X": 5545,
+        "Y": 6828
+      },
+      {
+        "X": 4457,
+        "Y": 5794
+      },
+      {
+        "X": 4695,
+        "Y": 5980
+      },
+      {
+        "X": 5201,
+        "Y": 5572
+      },
+      {
+        "X": 5759,
+        "Y": 7072
+      },
+      {
+        "X": 4503,
+        "Y": 5958
+      },
+      {
+        "X": 4631,
+        "Y": 6123
+      },
+      {
+        "X": 5484,
+        "Y": 7013
+      },
+      {
+        "X": 4444,
+        "Y": 6138
+      },
+      {
+        "X": 4596,
+        "Y": 6293
+      },
+      {
+        "X": 5683,
+        "Y": 6998
+      },
+      {
+        "X": 5551,
+        "Y": 6632
+      },
+      {
+        "X": 5497,
+        "Y": 6143
+      },
+      {
+        "X": 5878,
+        "Y": 6883
+      },
+      {
+        "X": 5437,
+        "Y": 5738
+      },
+      {
+        "X": 5559,
+        "Y": 5784
+      },
+      {
+        "X": 4894,
+        "Y": 6092
+      },
+      {
+        "X": 4972,
+        "Y": 6757
+      },
+      {
+        "X": 4970,
+        "Y": 6914
+      },
+      {
+        "X": 4975,
+        "Y": 7020
+      },
+      {
+        "X": 4849,
+        "Y": 6828
+      }
+    ]
+  },
+  {
+    "PetId": 1119,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Garden Coradon",
+    "Points": [
+      {
+        "X": 10325,
+        "Y": 11628
+      },
+      {
+        "X": 10492,
+        "Y": 10823
+      },
+      {
+        "X": 10379,
+        "Y": 10944
+      },
+      {
+        "X": 10433,
+        "Y": 11318
+      },
+      {
+        "X": 10352,
+        "Y": 11187
+      },
+      {
+        "X": 10155,
+        "Y": 11737
+      },
+      {
+        "X": 10248,
+        "Y": 11509
+      },
+      {
+        "X": 9959,
+        "Y": 11830
+      },
+      {
+        "X": 9848,
+        "Y": 11746
+      },
+      {
+        "X": 10191,
+        "Y": 10884
+      }
+    ]
+  },
+  {
+    "PetId": 1119,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Hill Coradon",
+    "Points": [
+      {
+        "X": 11316,
+        "Y": 7012
+      },
+      {
+        "X": 11204,
+        "Y": 6937
+      },
+      {
+        "X": 10842,
+        "Y": 7511
+      },
+      {
+        "X": 11062,
+        "Y": 7025
+      },
+      {
+        "X": 10880,
+        "Y": 7308
+      },
+      {
+        "X": 10784,
+        "Y": 7705
+      },
+      {
+        "X": 10591,
+        "Y": 7816
+      },
+      {
+        "X": 10144,
+        "Y": 8362
+      },
+      {
+        "X": 10031,
+        "Y": 8336
+      },
+      {
+        "X": 8926,
+        "Y": 7255
+      },
+      {
+        "X": 9597,
+        "Y": 7099
+      },
+      {
+        "X": 10729,
+        "Y": 7564
+      },
+      {
+        "X": 11803,
+        "Y": 6629
+      },
+      {
+        "X": 11865,
+        "Y": 6474
+      },
+      {
+        "X": 12020,
+        "Y": 6801
+      },
+      {
+        "X": 11991,
+        "Y": 6596
+      },
+      {
+        "X": 11284,
+        "Y": 7758
+      },
+      {
+        "X": 9187,
+        "Y": 7102
+      },
+      {
+        "X": 9325,
+        "Y": 7113
+      },
+      {
+        "X": 12066,
+        "Y": 7638
+      },
+      {
+        "X": 10047,
+        "Y": 8078
+      },
+      {
+        "X": 11661,
+        "Y": 7720
+      },
+      {
+        "X": 11444,
+        "Y": 7590
+      },
+      {
+        "X": 12077,
+        "Y": 6440
+      },
+      {
+        "X": 9378,
+        "Y": 6999
+      },
+      {
+        "X": 10109,
+        "Y": 8429
+      },
+      {
+        "X": 8967,
+        "Y": 7181
+      },
+      {
+        "X": 10555,
+        "Y": 7817
+      },
+      {
+        "X": 10746,
+        "Y": 7654
+      },
+      {
+        "X": 10868,
+        "Y": 7414
+      },
+      {
+        "X": 11151,
+        "Y": 6986
+      },
+      {
+        "X": 11334,
+        "Y": 6961
+      },
+      {
+        "X": 10021,
+        "Y": 8043
+      },
+      {
+        "X": 10051,
+        "Y": 8146
+      },
+      {
+        "X": 9959,
+        "Y": 7956
+      },
+      {
+        "X": 9624,
+        "Y": 7147
+      },
+      {
+        "X": 9446,
+        "Y": 7017
+      },
+      {
+        "X": 9292,
+        "Y": 7086
+      },
+      {
+        "X": 9174,
+        "Y": 7050
+      },
+      {
+        "X": 8991,
+        "Y": 7058
+      }
+    ]
+  },
+  {
+    "PetId": 1120,
+    "MapId": 1110,
+    "Region": "Altgard",
+    "Monster": "Unstable Young Kailin",
+    "Points": [
+      {
+        "X": 12481,
+        "Y": 3992
+      },
+      {
+        "X": 12751,
+        "Y": 4060
+      },
+      {
+        "X": 12291,
+        "Y": 3809
+      },
+      {
+        "X": 12470,
+        "Y": 3725
+      }
+    ]
+  },
+  {
+    "PetId": 1120,
+    "MapId": 1110,
+    "Region": "Altgard",
+    "Monster": "Young Kailin",
+    "Points": [
+      {
+        "X": 4825,
+        "Y": 8872
+      },
+      {
+        "X": 4610,
+        "Y": 8762
+      },
+      {
+        "X": 4927,
+        "Y": 8674
+      },
+      {
+        "X": 4285,
+        "Y": 8682
+      },
+      {
+        "X": 4167,
+        "Y": 8743
+      },
+      {
+        "X": 5857,
+        "Y": 7310
+      },
+      {
+        "X": 6073,
+        "Y": 7580
+      },
+      {
+        "X": 5504,
+        "Y": 7809
+      },
+      {
+        "X": 5478,
+        "Y": 8043
+      },
+      {
+        "X": 5682,
+        "Y": 7702
+      },
+      {
+        "X": 9493,
+        "Y": 5825
+      },
+      {
+        "X": 9932,
+        "Y": 5668
+      },
+      {
+        "X": 10014,
+        "Y": 5492
+      },
+      {
+        "X": 10347,
+        "Y": 5540
+      },
+      {
+        "X": 10181,
+        "Y": 5390
+      },
+      {
+        "X": 10233,
+        "Y": 5723
+      },
+      {
+        "X": 10060,
+        "Y": 5796
+      },
+      {
+        "X": 9925,
+        "Y": 5881
+      },
+      {
+        "X": 9148,
+        "Y": 5636
+      },
+      {
+        "X": 8797,
+        "Y": 5477
+      },
+      {
+        "X": 10132,
+        "Y": 5939
+      },
+      {
+        "X": 10477,
+        "Y": 5742
+      },
+      {
+        "X": 9566,
+        "Y": 5641
+      },
+      {
+        "X": 9612,
+        "Y": 5810
+      },
+      {
+        "X": 9771,
+        "Y": 5879
+      },
+      {
+        "X": 9734,
+        "Y": 5997
+      },
+      {
+        "X": 9728,
+        "Y": 5730
+      },
+      {
+        "X": 9736,
+        "Y": 5554
+      },
+      {
+        "X": 9608,
+        "Y": 5545
+      },
+      {
+        "X": 8975,
+        "Y": 5650
+      },
+      {
+        "X": 8948,
+        "Y": 5530
+      },
+      {
+        "X": 9267,
+        "Y": 5717
+      },
+      {
+        "X": 10059,
+        "Y": 5628
+      },
+      {
+        "X": 10213,
+        "Y": 5596
+      }
+    ]
+  },
+  {
+    "PetId": 1121,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Young Wetland Slink",
+    "Points": [
+      {
+        "X": 7095,
+        "Y": 8040
+      },
+      {
+        "X": 6213,
+        "Y": 8259
+      }
+    ]
+  },
+  {
+    "PetId": 1121,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Tolbas Young Slink",
+    "Points": [
+      {
+        "X": 6663,
+        "Y": 9400
+      },
+      {
+        "X": 6337,
+        "Y": 9659
+      },
+      {
+        "X": 6531,
+        "Y": 9498
+      },
+      {
+        "X": 6601,
+        "Y": 9257
+      }
+    ]
+  },
+  {
+    "PetId": 1123,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Baby Horn Ursus",
+    "Points": [
+      {
+        "X": 6712,
+        "Y": 9531
+      },
+      {
+        "X": 7177,
+        "Y": 9563
+      },
+      {
+        "X": 6802,
+        "Y": 9642
+      },
+      {
+        "X": 7075,
+        "Y": 9821
+      }
+    ]
+  },
+  {
+    "PetId": 1123,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Hill Young Ursus",
+    "Points": [
+      {
+        "X": 9060,
+        "Y": 7863
+      },
+      {
+        "X": 8906,
+        "Y": 7590
+      },
+      {
+        "X": 9281,
+        "Y": 7579
+      },
+      {
+        "X": 8995,
+        "Y": 8062
+      }
+    ]
+  },
+  {
+    "PetId": 1125,
+    "MapId": 1110,
+    "Region": "Altgard",
+    "Monster": "Golden Zaif",
+    "Points": [
+      {
+        "X": 11376,
+        "Y": 8639
+      },
+      {
+        "X": 11640,
+        "Y": 8876
+      },
+      {
+        "X": 11654,
+        "Y": 9607
+      },
+      {
+        "X": 11710,
+        "Y": 8955
+      },
+      {
+        "X": 11474,
+        "Y": 8936
+      }
+    ]
+  },
+  {
+    "PetId": 1126,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Cairn Tog",
+    "Points": [
+      {
+        "X": 6929,
+        "Y": 7199
+      }
+    ]
+  },
+  {
+    "PetId": 1126,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Hungry Tog",
+    "Points": [
+      {
+        "X": 6857,
+        "Y": 7861
+      }
+    ]
+  },
+  {
+    "PetId": 1126,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Field Tog",
+    "Points": [
+      {
+        "X": 7779,
+        "Y": 7593
+      },
+      {
+        "X": 7278,
+        "Y": 8128
+      }
+    ]
+  },
+  {
+    "PetId": 1126,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Wild Stripe Tog",
+    "Points": [
+      {
+        "X": 8618,
+        "Y": 10635
+      }
+    ]
+  },
+  {
+    "PetId": 1126,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Hill Tog",
+    "Points": [
+      {
+        "X": 10884,
+        "Y": 7434
+      },
+      {
+        "X": 8579,
+        "Y": 6906
+      },
+      {
+        "X": 8848,
+        "Y": 7727
+      },
+      {
+        "X": 11606,
+        "Y": 7485
+      },
+      {
+        "X": 9815,
+        "Y": 7767
+      },
+      {
+        "X": 9048,
+        "Y": 7591
+      },
+      {
+        "X": 9469,
+        "Y": 7258
+      },
+      {
+        "X": 8784,
+        "Y": 6869
+      },
+      {
+        "X": 11185,
+        "Y": 7805
+      },
+      {
+        "X": 8898,
+        "Y": 6969
+      },
+      {
+        "X": 11378,
+        "Y": 7653
+      },
+      {
+        "X": 11835,
+        "Y": 7656
+      },
+      {
+        "X": 11852,
+        "Y": 6690
+      },
+      {
+        "X": 11781,
+        "Y": 8071
+      },
+      {
+        "X": 8652,
+        "Y": 7492
+      },
+      {
+        "X": 10796,
+        "Y": 7628
+      },
+      {
+        "X": 10609,
+        "Y": 7724
+      },
+      {
+        "X": 12044,
+        "Y": 6732
+      },
+      {
+        "X": 11975,
+        "Y": 8101
+      },
+      {
+        "X": 11986,
+        "Y": 6447
+      },
+      {
+        "X": 11731,
+        "Y": 7928
+      },
+      {
+        "X": 12185,
+        "Y": 7663
+      }
+    ]
+  },
+  {
+    "PetId": 1127,
+    "MapId": 1110,
+    "Region": "Altgard",
+    "Monster": "Faded Odyle Spirit",
+    "Points": [
+      {
+        "X": 12848,
+        "Y": 4040
+      },
+      {
+        "X": 12453,
+        "Y": 3750
+      },
+      {
+        "X": 12572,
+        "Y": 4071
+      },
+      {
+        "X": 12763,
+        "Y": 4179
+      },
+      {
+        "X": 12683,
+        "Y": 3987
+      },
+      {
+        "X": 12413,
+        "Y": 4065
+      },
+      {
+        "X": 12302,
+        "Y": 3857
+      }
+    ]
+  },
+  {
+    "PetId": 1128,
+    "MapId": 1110,
+    "Region": "Altgard",
+    "Monster": "Drana Slime",
+    "Points": [
+      {
+        "X": 7150,
+        "Y": 6888
+      }
+    ]
+  },
+  {
+    "PetId": 1129,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Crimson Drana Swarm",
+    "Points": [
+      {
+        "X": 10211,
+        "Y": 4322
+      }
+    ]
+  },
+  {
+    "PetId": 1130,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Ridge Spider",
+    "Points": [
+      {
+        "X": 8060,
+        "Y": 8716
+      }
+    ]
+  },
+  {
+    "PetId": 1131,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Crimson Mutated Spore",
+    "Points": [
+      {
+        "X": 10250,
+        "Y": 3874
+      }
+    ]
+  },
+  {
+    "PetId": 1134,
+    "MapId": 1110,
+    "Region": "Altgard",
+    "Monster": "Eternal Coradon",
+    "Points": [
+      {
+        "X": 11105,
+        "Y": 10534
+      },
+      {
+        "X": 11113,
+        "Y": 9900
+      },
+      {
+        "X": 11070,
+        "Y": 10266
+      },
+      {
+        "X": 10951,
+        "Y": 10499
+      },
+      {
+        "X": 11136,
+        "Y": 10157
+      },
+      {
+        "X": 11203,
+        "Y": 10433
+      },
+      {
+        "X": 10848,
+        "Y": 10341
+      },
+      {
+        "X": 11128,
+        "Y": 10744
+      }
+    ]
+  },
+  {
+    "PetId": 1135,
+    "MapId": 1110,
+    "Region": "Altgard",
+    "Monster": "Ashen Dionae",
+    "Points": [
+      {
+        "X": 6807,
+        "Y": 8857
+      }
+    ]
+  },
+  {
+    "PetId": 1136,
+    "MapId": 1110,
+    "Region": "Altgard",
+    "Monster": "Rafflesia",
+    "Points": [
+      {
+        "X": 4790,
+        "Y": 8579
+      },
+      {
+        "X": 4505,
+        "Y": 8600
+      },
+      {
+        "X": 4957,
+        "Y": 8471
+      },
+      {
+        "X": 4442,
+        "Y": 8382
+      },
+      {
+        "X": 4763,
+        "Y": 8734
+      },
+      {
+        "X": 5380,
+        "Y": 6338
+      },
+      {
+        "X": 3943,
+        "Y": 12463
+      },
+      {
+        "X": 4216,
+        "Y": 12392
+      },
+      {
+        "X": 4477,
+        "Y": 12452
+      },
+      {
+        "X": 4137,
+        "Y": 12547
+      },
+      {
+        "X": 4455,
+        "Y": 12904
+      },
+      {
+        "X": 4347,
+        "Y": 12883
+      },
+      {
+        "X": 4285,
+        "Y": 12987
+      },
+      {
+        "X": 4180,
+        "Y": 12947
+      },
+      {
+        "X": 3810,
+        "Y": 12933
+      },
+      {
+        "X": 3981,
+        "Y": 12848
+      },
+      {
+        "X": 3696,
+        "Y": 12367
+      },
+      {
+        "X": 11231,
+        "Y": 10386
+      },
+      {
+        "X": 11173,
+        "Y": 10628
+      },
+      {
+        "X": 11052,
+        "Y": 10353
+      },
+      {
+        "X": 10992,
+        "Y": 10191
+      },
+      {
+        "X": 11087,
+        "Y": 10762
+      },
+      {
+        "X": 11255,
+        "Y": 10511
+      }
+    ]
+  },
+  {
+    "PetId": 1136,
+    "MapId": 1110,
+    "Region": "Altgard",
+    "Monster": "Unstable Rafflesia",
+    "Points": [
+      {
+        "X": 12755,
+        "Y": 4046
+      },
+      {
+        "X": 12499,
+        "Y": 3957
+      }
+    ]
+  },
+  {
+    "PetId": 1137,
+    "MapId": 1110,
+    "Region": "Altgard",
+    "Monster": "Mumu Worker",
+    "Points": [
+      {
+        "X": 9233,
+        "Y": 5355
+      }
+    ]
+  },
+  {
+    "PetId": 1137,
+    "MapId": 1110,
+    "Region": "Altgard",
+    "Monster": "Escaped Mumu Worker",
+    "Points": [
+      {
+        "X": 9704,
+        "Y": 5550
+      }
+    ]
+  },
+  {
+    "PetId": 1141,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Marsh Targon",
+    "Points": [
+      {
+        "X": 7863,
+        "Y": 6530
+      },
+      {
+        "X": 8338,
+        "Y": 6426
+      },
+      {
+        "X": 8331,
+        "Y": 6798
+      }
+    ]
+  },
+  {
+    "PetId": 1142,
+    "MapId": 1110,
+    "Region": "Altgard",
+    "Monster": "Consumed Spirit Guardian",
+    "Points": [
+      {
+        "X": 9037,
+        "Y": 6788
+      },
+      {
+        "X": 9191,
+        "Y": 6615
+      }
+    ]
+  },
+  {
+    "PetId": 1143,
+    "MapId": 1110,
+    "Region": "Altgard",
+    "Monster": "Ashen Ursus",
+    "Points": [
+      {
+        "X": 6941,
+        "Y": 9034
+      }
+    ]
+  },
+  {
+    "PetId": 1144,
+    "MapId": 1110,
+    "Region": "Altgard",
+    "Monster": "Mutated Forest Guardian",
+    "Points": [
+      {
+        "X": 7903,
+        "Y": 8961
+      },
+      {
+        "X": 8160,
+        "Y": 8899
+      }
+    ]
+  },
+  {
+    "PetId": 1144,
+    "MapId": 1110,
+    "Region": "Altgard",
+    "Monster": "Unstable Forest Guardian",
+    "Points": [
+      {
+        "X": 13104,
+        "Y": 3558
+      }
+    ]
+  },
+  {
+    "PetId": 1148,
+    "MapId": 1110,
+    "Region": "Altgard",
+    "Monster": "Crash Site Kalgolem",
+    "Points": [
+      {
+        "X": 7161,
+        "Y": 6862
+      }
+    ]
+  },
+  {
+    "PetId": 1186,
+    "MapId": 1110,
+    "Region": "Altgard",
+    "Monster": "Cursed Poison Blood",
+    "Points": [
+      {
+        "X": 8574,
+        "Y": 6535
+      }
+    ]
+  },
+  {
+    "PetId": 1186,
+    "MapId": 1110,
+    "Region": "Altgard",
+    "Monster": "Unstable Poison Blood",
+    "Points": [
+      {
+        "X": 12591,
+        "Y": 3498
+      }
+    ]
+  },
+  {
+    "PetId": 1217,
+    "MapId": 1110,
+    "Region": "Altgard",
+    "Monster": "Congealed Drana",
+    "Points": [
+      {
+        "X": 6403,
+        "Y": 6930
+      }
+    ]
+  },
+  {
+    "PetId": 1157,
+    "MapId": 1110,
+    "Region": "Altgard",
+    "Monster": "Ruins Corpse Cleaner",
+    "Points": [
+      {
+        "X": 8611,
+        "Y": 7413
+      }
+    ]
+  },
+  {
+    "PetId": 1157,
+    "MapId": 1110,
+    "Region": "Altgard",
+    "Monster": "Ferocious Cadaver Cleaner",
+    "Points": [
+      {
+        "X": 11463,
+        "Y": 6070
+      },
+      {
+        "X": 11379,
+        "Y": 6879
+      }
+    ]
+  },
+  {
+    "PetId": 1156,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Bodyguard Teegant",
+    "Points": [
+      {
+        "X": 8566,
+        "Y": 8188
+      }
+    ]
+  },
+  {
+    "PetId": 1207,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Decaying Agrint",
+    "Points": [
+      {
+        "X": 7262,
+        "Y": 8463
+      }
+    ]
+  },
+  {
+    "PetId": 1207,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Old Agrint",
+    "Points": [
+      {
+        "X": 10360,
+        "Y": 11372
+      },
+      {
+        "X": 10200,
+        "Y": 10930
+      },
+      {
+        "X": 10010,
+        "Y": 10981
+      },
+      {
+        "X": 10362,
+        "Y": 11527
+      },
+      {
+        "X": 10420,
+        "Y": 11681
+      },
+      {
+        "X": 10217,
+        "Y": 11631
+      },
+      {
+        "X": 10126,
+        "Y": 11783
+      },
+      {
+        "X": 9894,
+        "Y": 11813
+      },
+      {
+        "X": 9744,
+        "Y": 11734
+      },
+      {
+        "X": 9805,
+        "Y": 11482
+      },
+      {
+        "X": 10537,
+        "Y": 11253
+      },
+      {
+        "X": 10556,
+        "Y": 10833
+      },
+      {
+        "X": 10413,
+        "Y": 11253
+      },
+      {
+        "X": 10230,
+        "Y": 11344
+      },
+      {
+        "X": 10358,
+        "Y": 11036
+      }
+    ]
+  },
+  {
+    "PetId": 1207,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Contaminated Agrint",
+    "Points": [
+      {
+        "X": 11319,
+        "Y": 8608
+      },
+      {
+        "X": 11549,
+        "Y": 8795
+      },
+      {
+        "X": 11295,
+        "Y": 8823
+      }
+    ]
+  },
+  {
+    "PetId": 1207,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Eternal Agrint",
+    "Points": [
+      {
+        "X": 3753,
+        "Y": 12976
+      },
+      {
+        "X": 3981,
+        "Y": 12909
+      },
+      {
+        "X": 3970,
+        "Y": 13232
+      }
+    ]
+  },
+  {
+    "PetId": 1181,
+    "MapId": 1110,
+    "Region": "Altgard",
+    "Monster": "Brax",
+    "Points": [
+      {
+        "X": 10478,
+        "Y": 6667
+      },
+      {
+        "X": 10652,
+        "Y": 6428
+      },
+      {
+        "X": 10565,
+        "Y": 6518
+      },
+      {
+        "X": 10597,
+        "Y": 6791
+      },
+      {
+        "X": 10695,
+        "Y": 6690
+      },
+      {
+        "X": 10860,
+        "Y": 6674
+      },
+      {
+        "X": 10139,
+        "Y": 5330
+      },
+      {
+        "X": 10079,
+        "Y": 5516
+      },
+      {
+        "X": 10141,
+        "Y": 5614
+      },
+      {
+        "X": 10111,
+        "Y": 5797
+      },
+      {
+        "X": 9795,
+        "Y": 5715
+      },
+      {
+        "X": 10432,
+        "Y": 5704
+      },
+      {
+        "X": 10357,
+        "Y": 5625
+      },
+      {
+        "X": 10428,
+        "Y": 5553
+      },
+      {
+        "X": 5133,
+        "Y": 8176
+      }
+    ]
+  },
+  {
+    "PetId": 1201,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Lupyllini Test Subject",
+    "Points": [
+      {
+        "X": 11547,
+        "Y": 6925
+      },
+      {
+        "X": 11920,
+        "Y": 7065
+      },
+      {
+        "X": 11659,
+        "Y": 7059
+      },
+      {
+        "X": 12067,
+        "Y": 7215
+      },
+      {
+        "X": 12102,
+        "Y": 7327
+      },
+      {
+        "X": 11482,
+        "Y": 7113
+      },
+      {
+        "X": 11461,
+        "Y": 6732
+      },
+      {
+        "X": 11063,
+        "Y": 7651
+      }
+    ]
+  },
+  {
+    "PetId": 1201,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Eternal Lupyllini",
+    "Points": [
+      {
+        "X": 3834,
+        "Y": 13301
+      },
+      {
+        "X": 4032,
+        "Y": 13355
+      },
+      {
+        "X": 4069,
+        "Y": 12735
+      },
+      {
+        "X": 3643,
+        "Y": 12964
+      },
+      {
+        "X": 3400,
+        "Y": 13361
+      },
+      {
+        "X": 3519,
+        "Y": 12722
+      }
+    ]
+  },
+  {
+    "PetId": 1174,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Crimson Drana Predator",
+    "Points": [
+      {
+        "X": 9795,
+        "Y": 3977
+      }
+    ]
+  },
+  {
+    "PetId": 1175,
+    "MapId": 1110,
+    "Region": "Altgard",
+    "Monster": "Faded Predator",
+    "Points": [
+      {
+        "X": 10306,
+        "Y": 9429
+      }
+    ]
+  },
+  {
+    "PetId": 1180,
+    "MapId": 1110,
+    "Region": "Altgard",
+    "Monster": "Faded Mutant",
+    "Points": [
+      {
+        "X": 10564,
+        "Y": 9427
+      }
+    ]
+  },
+  {
+    "PetId": 1154,
+    "MapId": 1110,
+    "Region": "Altgard",
+    "Monster": "Faded Mutant Brute",
+    "Points": [
+      {
+        "X": 10282,
+        "Y": 9411
+      }
+    ]
+  },
+  {
+    "PetId": 1161,
+    "MapId": 1110,
+    "Region": "Altgard",
+    "Monster": "Faded Floater",
+    "Points": [
+      {
+        "X": 10523,
+        "Y": 9448
+      }
+    ]
+  },
+  {
+    "PetId": 1179,
+    "MapId": 1110,
+    "Region": "Altgard",
+    "Monster": "Twisted Mutant",
+    "Points": [
+      {
+        "X": 7420,
+        "Y": 6512
+      }
+    ]
+  },
+  {
+    "PetId": 1193,
+    "MapId": 1110,
+    "Region": "Altgard",
+    "Monster": "Rampaging Shulak Cart Worker",
+    "Points": [
+      {
+        "X": 10935,
+        "Y": 8919
+      }
+    ]
+  },
+  {
+    "PetId": 1206,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Divine Ansas",
+    "Points": [
+      {
+        "X": 11071,
+        "Y": 8902
+      }
+    ]
+  },
+  {
+    "PetId": 1197,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Contaminated Guardite",
+    "Points": [
+      {
+        "X": 11378,
+        "Y": 8698
+      }
+    ]
+  },
+  {
+    "PetId": 1171,
+    "MapId": 1110,
+    "Region": "Altgard",
+    "Monster": "Kerubiel",
+    "Points": [
+      {
+        "X": 4174,
+        "Y": 13084
+      },
+      {
+        "X": 4374,
+        "Y": 13233
+      },
+      {
+        "X": 4604,
+        "Y": 13105
+      },
+      {
+        "X": 3677,
+        "Y": 13120
+      },
+      {
+        "X": 3897,
+        "Y": 13202
+      }
+    ]
+  },
+  {
+    "PetId": 1202,
+    "MapId": 1110,
+    "Region": "Altgard",
+    "Monster": "Decomposed Lupyllini",
+    "Points": [
+      {
+        "X": 6395,
+        "Y": 6255
+      },
+      {
+        "X": 6409,
+        "Y": 6599
+      },
+      {
+        "X": 6335,
+        "Y": 6712
+      },
+      {
+        "X": 6362,
+        "Y": 6891
+      },
+      {
+        "X": 6737,
+        "Y": 6731
+      },
+      {
+        "X": 6897,
+        "Y": 6625
+      },
+      {
+        "X": 6501,
+        "Y": 6273
+      },
+      {
+        "X": 6375,
+        "Y": 6457
+      },
+      {
+        "X": 6737,
+        "Y": 6603
+      },
+      {
+        "X": 6607,
+        "Y": 6628
+      },
+      {
+        "X": 6744,
+        "Y": 6446
+      },
+      {
+        "X": 6504,
+        "Y": 7030
+      },
+      {
+        "X": 6621,
+        "Y": 6412
+      },
+      {
+        "X": 6535,
+        "Y": 6468
+      },
+      {
+        "X": 9698,
+        "Y": 5736
+      },
+      {
+        "X": 10135,
+        "Y": 5828
+      },
+      {
+        "X": 9856,
+        "Y": 5937
+      },
+      {
+        "X": 9905,
+        "Y": 5747
+      },
+      {
+        "X": 10511,
+        "Y": 5621
+      },
+      {
+        "X": 9346,
+        "Y": 5715
+      },
+      {
+        "X": 9134,
+        "Y": 5647
+      },
+      {
+        "X": 10223,
+        "Y": 5761
+      },
+      {
+        "X": 9967,
+        "Y": 5919
+      },
+      {
+        "X": 9805,
+        "Y": 5616
+      },
+      {
+        "X": 9630,
+        "Y": 5905
+      },
+      {
+        "X": 9469,
+        "Y": 5800
+      },
+      {
+        "X": 9666,
+        "Y": 5506
+      },
+      {
+        "X": 10080,
+        "Y": 5492
+      },
+      {
+        "X": 9974,
+        "Y": 5352
+      },
+      {
+        "X": 10323,
+        "Y": 5598
+      },
+      {
+        "X": 10409,
+        "Y": 5487
+      },
+      {
+        "X": 9556,
+        "Y": 5672
+      },
+      {
+        "X": 9454,
+        "Y": 5639
+      },
+      {
+        "X": 10148,
+        "Y": 5659
+      },
+      {
+        "X": 9908,
+        "Y": 5558
+      },
+      {
+        "X": 8987,
+        "Y": 5618
+      },
+      {
+        "X": 8890,
+        "Y": 5463
+      },
+      {
+        "X": 8823,
+        "Y": 5592
+      },
+      {
+        "X": 8732,
+        "Y": 5515
+      },
+      {
+        "X": 10388,
+        "Y": 5728
+      },
+      {
+        "X": 10009,
+        "Y": 5642
+      },
+      {
+        "X": 9765,
+        "Y": 5810
+      },
+      {
+        "X": 10088,
+        "Y": 5297
+      },
+      {
+        "X": 10234,
+        "Y": 5509
+      },
+      {
+        "X": 6211,
+        "Y": 7430
+      },
+      {
+        "X": 5614,
+        "Y": 7479
+      },
+      {
+        "X": 5689,
+        "Y": 7838
+      },
+      {
+        "X": 6372,
+        "Y": 7605
+      },
+      {
+        "X": 6198,
+        "Y": 7683
+      },
+      {
+        "X": 6444,
+        "Y": 7415
+      },
+      {
+        "X": 5959,
+        "Y": 7442
+      },
+      {
+        "X": 6082,
+        "Y": 7726
+      },
+      {
+        "X": 6115,
+        "Y": 7555
+      },
+      {
+        "X": 5827,
+        "Y": 7304
+      },
+      {
+        "X": 6654,
+        "Y": 7935
+      },
+      {
+        "X": 6702,
+        "Y": 8074
+      },
+      {
+        "X": 6771,
+        "Y": 8197
+      },
+      {
+        "X": 6502,
+        "Y": 7864
+      },
+      {
+        "X": 6597,
+        "Y": 7832
+      }
+    ]
+  },
+  {
+    "PetId": 1202,
+    "MapId": 1110,
+    "Region": "Altgard",
+    "Monster": "Ferocious Lupyllini",
+    "Points": [
+      {
+        "X": 10307,
+        "Y": 6329
+      }
+    ]
+  },
+  {
+    "PetId": 1218,
+    "MapId": 1110,
+    "Region": "Altgard",
+    "Monster": "Faded Chunk",
+    "Points": [
+      {
+        "X": 10589,
+        "Y": 9463
+      },
+      {
+        "X": 10443,
+        "Y": 9294
+      }
+    ]
+  },
+  {
+    "PetId": 1176,
+    "MapId": 1110,
+    "Region": "Altgard",
+    "Monster": "Addicted Mudthorn",
+    "Points": [
+      {
+        "X": 11057,
+        "Y": 9403
+      },
+      {
+        "X": 10937,
+        "Y": 9167
+      },
+      {
+        "X": 10983,
+        "Y": 9480
+      }
+    ]
+  },
+  {
+    "PetId": 1176,
+    "MapId": 1110,
+    "Region": "Altgard",
+    "Monster": "Remnant of Subspace",
+    "Points": [
+      {
+        "X": 11387,
+        "Y": 11625
+      }
+    ]
+  },
+  {
+    "PetId": 1208,
+    "MapId": 1110,
+    "Region": "Altgard",
+    "Monster": "Unstable Agrint",
+    "Points": [
+      {
+        "X": 13122,
+        "Y": 3741
+      }
+    ]
+  },
+  {
+    "PetId": 1203,
+    "MapId": 1110,
+    "Region": "Altgard",
+    "Monster": "Blades Karnif",
+    "Points": [
+      {
+        "X": 8512,
+        "Y": 7664
+      }
+    ]
+  },
+  {
+    "PetId": 1203,
+    "MapId": 1110,
+    "Region": "Altgard",
+    "Monster": "Tamed Blades Beast",
+    "Points": [
+      {
+        "X": 10052,
+        "Y": 9755
+      },
+      {
+        "X": 10684,
+        "Y": 10093
+      },
+      {
+        "X": 10259,
+        "Y": 10152
+      }
+    ]
+  },
+  {
+    "PetId": 1183,
+    "MapId": 1110,
+    "Region": "Altgard",
+    "Monster": "Soulless Corpse Gnat",
+    "Points": [
+      {
+        "X": 11565,
+        "Y": 6334
+      },
+      {
+        "X": 11571,
+        "Y": 6585
+      },
+      {
+        "X": 11387,
+        "Y": 6452
+      },
+      {
+        "X": 11565,
+        "Y": 6123
+      }
+    ]
+  },
+  {
+    "PetId": 1210,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Forest Agrint",
+    "Points": [
+      {
+        "X": 6724,
+        "Y": 9574
+      },
+      {
+        "X": 7033,
+        "Y": 9664
+      }
+    ]
+  },
+  {
+    "PetId": 1189,
+    "MapId": 1010,
+    "Region": "Verteron",
+    "Monster": "Marauders Zaif",
+    "Points": [
+      {
+        "X": 8458,
+        "Y": 9488
+      },
+      {
+        "X": 8385,
+        "Y": 9303
+      },
+      {
+        "X": 8338,
+        "Y": 9429
+      }
+    ]
+  }
+]

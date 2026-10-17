@@ -12,6 +12,11 @@ public sealed record PetDefinition(int Id,Dictionary<string,string> Names,string
 }
 internal static class PetCatalog
 {
+    internal static IReadOnlyList<AionMeter.Core.Game.PetMapLocation> Locations(string directory)
+    {
+        try {return JsonSerializer.Deserialize<AionMeter.Core.Game.PetMapLocation[]>(File.ReadAllText(Path.Combine(directory,"pets","locations.json"))) ?? [];}
+        catch(Exception ex) when(ex is IOException or JsonException) {Log.Error("Pet locations unavailable",ex);return [];}
+    }
     internal static IReadOnlyList<PetDefinition> Load(string directory)
     {
         try {return JsonSerializer.Deserialize<PetDefinition[]>(File.ReadAllText(Path.Combine(directory,"pets","catalog.json"))) ?? [];}

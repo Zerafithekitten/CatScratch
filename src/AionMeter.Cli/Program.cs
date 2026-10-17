@@ -14,6 +14,7 @@ var data = GameData.Load(dataDir, langAt >= 0 && langAt + 1 < args.Length ? args
 
 return args.FirstOrDefault() switch
 {
+    "petpositions" when args.Length>1=>PetPositions(args[1]),
     "petscan" when args.Length > 1 => PetScan(args[1]),
     "petverify" when args.Length > 2 => PetVerify(args[1],args[2]),
     "devices" => Devices(),
@@ -35,9 +36,37 @@ return args.FirstOrDefault() switch
     _ => Usage(),
 };
 
+int PetPositions(string path)
+{
+    using var replay=new PcapReplaySource(data,path,false);
+    replay.Pipeline.Parser.DecodePetPositions=true;
+    var identity=new LiveIdentity();
+    var own=new HashSet<uint>();var maps=new HashSet<int>();
+    var positions=new Dictionary<uint,List<float[]>>();var npcs=new Dictionary<uint,NpcSeenEvent>();
+    replay.EventDecoded+=e=>
+    {
+        if(identity.Observe(e) is { } self)own.Add(self.ActorId);
+        if(e is SelfIdentifiedEvent identified)own.Add(identified.ActorId);
+        if(e is ZoneChangedEvent zone)maps.Add(zone.MapId);
+        if(e is NpcSeenEvent npc)npcs[npc.ActorId]=npc;
+        if(e is ActorPositionEvent pose)
+        {
+            if(!positions.TryGetValue(pose.ActorId,out var samples))positions[pose.ActorId]=samples=[];
+            if(samples.Count<20000)samples.Add([pose.X,pose.Y,pose.Z]);
+        }
+    };
+    var count=replay.RunToEnd();
+    Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(new {packets=count,maps=maps.ToArray(),ownActors=own.ToArray(),
+        movers=positions.Select(p=>new {actor=p.Key,own=own.Contains(p.Key),npc=npcs.GetValueOrDefault(p.Key)?.NpcCode??0,
+            count=p.Value.Count,first=p.Value.First(),last=p.Value.Last(),min=new[]{p.Value.Min(x=>x[0]),p.Value.Min(x=>x[1]),p.Value.Min(x=>x[2])},max=new[]{p.Value.Max(x=>x[0]),p.Value.Max(x=>x[1]),p.Value.Max(x=>x[2])}}).OrderByDescending(p=>p.count).Take(30),
+        spawns=npcs.Values.Where(n=>n.X!=0||n.Y!=0||n.Z!=0).Select(n=>new{npc=n.NpcCode,n.X,n.Y,n.Z}).Take(30)},new System.Text.Json.JsonSerializerOptions{WriteIndented=true}));
+    return 0;
+}
+
 int Usage()
 {
     Console.WriteLine("""
+        aionmeter-cli petpositions <file.pcap>      inspect server movement and identity coverage without player names
         aionmeter-cli devices                       list Npcap adapters
         aionmeter-cli conns                         show the AION 2 process and its TCP connections
         aionmeter-cli live [seconds] [--record]     capture live, print what was decoded

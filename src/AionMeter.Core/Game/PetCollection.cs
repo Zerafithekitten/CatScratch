@@ -101,6 +101,13 @@ public sealed class PetCollection
     public uint AttackedTargetId {get{lock(_gate)return _attacked;}}
     public int AttackedNpcCode {get{lock(_gate)return _npcs.TryGetValue(_attacked,out var npc)?npc.NpcCode:0;}}
     private ActorPositionEvent? _position;
+    private int _mapId;
+    public int MapId {get{lock(_gate)return _mapId;}}
+    public void InvalidateLocation()
+    {
+        lock(_gate){_mapId=0;_position=null;_npcs.Clear();_dead.Clear();_attacked=0;_attackedCodes.Clear();Revision++;}
+        Changed?.Invoke();
+    }
     private readonly Dictionary<uint,NpcSeenEvent> _npcs=[];
     private readonly HashSet<uint> _dead=[];
     private readonly List<PetSoulDropEvent> _drops=[];
@@ -125,7 +132,7 @@ public sealed class PetCollection
             switch(value)
             {
                 case SelfIdentifiedEvent self when self.Name.Length>0:
-                    if(_name.Length>0 && (_name!=self.Name || _server!=self.ServerId)) {_pets.Clear();Confirmed=false;FromCache=false;_progressAt=0;_progressVersion++;_pending=null;_position=null;_npcs.Clear();_dead.Clear();_drops.Clear();_attacked=0;_attackedCodes.Clear();changed=true;}
+                    if(_name.Length>0 && (_name!=self.Name || _server!=self.ServerId)) {_pets.Clear();Confirmed=false;FromCache=false;_progressAt=0;_progressVersion++;_pending=null;_mapId=0;_position=null;_npcs.Clear();_dead.Clear();_drops.Clear();_attacked=0;_attackedCodes.Clear();changed=true;}
                     _name=self.Name;_server=self.ServerId;
                     _self=self.ActorId;
                     if(_pending is { } buffered){_pets=new(buffered.Pets);Confirmed=true;FromCache=false;_progressAt=buffered.TimeMs;_progressVersion++;_pending=null;changed=true;}
@@ -152,7 +159,7 @@ public sealed class PetCollection
                         }
                     }
                     changed=true;break;
-                case ZoneChangedEvent:_position=null;_npcs.Clear();_dead.Clear();_drops.Clear();changed=_attacked!=0;_attacked=0;break;
+                case ZoneChangedEvent zone:_mapId=zone.MapId;_position=null;_npcs.Clear();_dead.Clear();_drops.Clear();if(zone.MapId>0)_attackedCodes.Clear();changed=true;_attacked=0;break;
                 case NpcSeenEvent npc:
                     if(_npcs.Count>=4096 && !_npcs.ContainsKey(npc.ActorId)){var oldest=_npcs.MinBy(x=>x.Value.TimeMs).Key;_npcs.Remove(oldest);_dead.Remove(oldest);}
                     _npcs[npc.ActorId]=npc;_dead.Remove(npc.ActorId);if(npc.ActorId==_attacked)changed=RememberAttack(npc.ActorId);break;

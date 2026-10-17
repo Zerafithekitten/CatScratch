@@ -4,6 +4,14 @@ public sealed partial class UiText
 {
     private static readonly Dictionary<string,(string De,string Ru,string Fr)> LayoutComparisonText=new()
     {
+        ["Nearby pets"]=("Pets in Sichtweite","Питомцы поблизости","Familiers à proximité"),
+        ["Nearby first"]=("Sichtweite zuerst","Сначала ближайшие","Proches en premier"),
+        ["Pets in this region"]=("Pets in diesem Gebiet","Питомцы этого региона","Familiers de cette région"),
+        ["No incomplete pets with known locations in this region."]=("Keine unvollständigen Pets mit bekanntem Fundort in diesem Gebiet.","Нет незавершённых питомцев с известными местами в этом регионе.","Aucun familier incomplet avec un lieu connu dans cette région."),
+        ["Waiting for a known region or nearby monsters."]=("Warte auf ein bekanntes Gebiet oder Gegner in Sichtweite.","Ожидание известного региона или монстров поблизости.","En attente d’une région connue ou de monstres proches."),
+        ["Monster seen nearby; no attack required."]=("Gegner in Sichtweite erkannt; kein Angriff nötig.","Монстр замечен рядом; атаковать не нужно.","Monstre détecté à proximité ; aucune attaque nécessaire."),
+        ["Recorded farming location in this region; exact distance is not confirmed."]=("Bekannter Fundort in diesem Gebiet; genaue Entfernung nicht bestätigt.","Известное место в этом регионе; точное расстояние не подтверждено.","Lieu connu dans cette région ; distance exacte non confirmée."),
+        ["Souls needed for next level"]=("Fehlende Seelen bis zur nächsten Stufe","Душ до следующего уровня","Âmes manquantes avant le prochain niveau"),
         ["Modules"]=("Module","Модули","Modules"),
         ["Effective self healing: only HP-confirmed healing. Overhealing is excluded. * means incomplete data; unverified healing is not counted."]=("Effektive Eigenheilung: nur durch Lebenspunkte bestätigte Heilung, ohne Überheilung. * bedeutet unvollständige Daten; unbestätigte Heilung wird nicht gezählt.","Эффективное самолечение: только подтверждённое изменением HP, без избыточного лечения. * означает неполные данные; неподтверждённое лечение не учитывается.","Soins effectifs sur soi : uniquement les gains de PV confirmés, sans sursoins. * indique des données incomplètes ; les soins non confirmés ne sont pas comptés."),
         ["DPS meter hidden"]=("DPS-Meter ausgeblendet","DPS-метр скрыт","DPS-mètre masqué"),
