@@ -48,6 +48,25 @@ internal static class PolishChecks
             if(Directory.Exists(folder))Directory.Delete(folder);
         }
         using var cards=new TimerCards(meter,persistent:false);
+        var cubeSettings=new AppSettings {Transient=true,ShowHiddenCubeModule=true};
+        var cubeWindow=new HiddenCubeWindow(cubeSettings){Left=-30000,Top=-30000};
+        try
+        {
+            WindowClickThrough.Attach(cubeWindow,()=>cubeSettings.ClickThrough);cubeWindow.Show();cubeWindow.UpdateLayout();
+            check(Visuals(cubeWindow).OfType<TextBlock>().Any(t=>t.Text=="HIDDEN CUBE DETECTED") && !cubeWindow.ShowInTaskbar && !cubeWindow.ShowActivated,
+                "Cube detection has a compact separate warning without taskbar entries or focus activation");
+            var cubePin=WindowPinning.ButtonFor(cubeWindow)!;cubePin.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            check(WindowPinning.IsPinned(cubeWindow),"Cube alerts have their own independent position pin");
+            WindowClickThrough.ApplyAll(true);
+            var cubeHandle=new System.Windows.Interop.WindowInteropHelper(cubeWindow).Handle;
+            check(((long)NativeMethods.GetWindowLongPtr(cubeHandle,NativeMethods.GWL_EXSTYLE)&NativeMethods.WS_EX_TRANSPARENT)!=0,
+                "Cube warning supports global click-through");
+        }
+        finally{WindowClickThrough.ApplyAll(false);cubeWindow.Close();}
+        var cubeProfile=OverlayProfiles.Capture("Cubes",cubeSettings,new TimerCards.State());var cubeRestored=new AppSettings();
+        OverlayProfiles.Apply(cubeProfile,cubeRestored,new TimerCards.State());
+        check(!new AppSettings().ShowHiddenCubeModule && cubeRestored.ShowHiddenCubeModule && cubeRestored.HiddenCubePositionSaved && cubeRestored.ModulePins.GetValueOrDefault("hidden-cubes"),
+            "Cube detection defaults off and profiles preserve enabled state, placement and pin");
         var controlsSettings=new AppSettings {Transient=true,ShowDpsMeterModule=false,ClickThrough=true,OverlayHeight=540};
         var openedSettings=0;var restoredMeter=0;
         var controls=new MeterControlsWindow(controlsSettings,()=>openedSettings++,()=>restoredMeter++) {Left=-30000,Top=-30000};
@@ -215,9 +234,11 @@ internal static class PolishChecks
                 box.IsChecked=box.IsChecked!=true;
                 box.RaiseEvent(new RoutedEventArgs(CheckBox.ClickEvent));
             }
-            Change("events","Show upcoming events");Change("pets","Sound on collection / level up");
+            Change("events","Show upcoming events");Change("pets","Sound on collection / level up");Change("cubes","Enable hidden cube alerts (experimental)");
+            check(!meter.Settings.ShowHiddenCubeModule,"Cube notification preference stays a draft until Save");
             check(cards.Saved.EventWindowOpen==oldEvents && meter.Settings.PetNotify==oldPet,"Event and pet controls remain drafts until Save");
             window.Close();
+            check(!meter.Settings.ShowHiddenCubeModule,"Closing Settings discards unsaved cube notification changes");
             check(meter.Settings.ShowDpsMeterModule,"Cancelling Settings preserves the DPS display choice");
             check(cards.Saved.EventWindowOpen==oldEvents && meter.Settings.PetNotify==oldPet,"Closing central Settings discards event and pet edits");
         }

@@ -13,6 +13,8 @@ public static class Opcodes
     public const ushort PlayerInfo = 0x4536;     // another player
     public const ushort PlayerInfoOld = 0x4436;  // pre-June-2026 player record
     public const ushort Spawn = 0x4136;          // NPC / summon / effect entity
+    public const ushort WorldObject = 0x3436;    // interactive world objects; confirmed cube variant only is decoded
+    public const ushort WorldObjectState = 0x3536;
     public const ushort Death = 0x4236;
     public const ushort MapLoad = 0x2136;
     public const ushort Teleport = 0x2336;
@@ -37,6 +39,8 @@ public static class Opcodes
         SelfInfo => "SelfInfo",
         PlayerInfo or PlayerInfoOld => "PlayerInfo",
         Spawn => "Spawn",
+        WorldObject => "WorldObject",
+        WorldObjectState => "ObjectState",
         Death => "Death",
         MapLoad => "MapLoad",
         Teleport => "Teleport",

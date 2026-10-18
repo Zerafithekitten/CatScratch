@@ -265,6 +265,10 @@ public static class SampleRenderer
                 host = new PatchNotesWindow(meter.Updates);
                 refresh = () => { };
                 break;
+            case "hidden-cube":
+                host=new HiddenCubeWindow(meter.Settings);
+                refresh=()=>{};
+                break;
             case "settings-party":
                 meter.Settings.Theme=new(MarioParty:true);ThemeColors.Apply(meter.Settings.Theme);
                 goto case "settings";
@@ -274,7 +278,7 @@ public static class SampleRenderer
             case "settings":
                 var settingsWindow = new SettingsWindow(meter) { Width = o.Width ?? 760, Height = o.Height ?? 660 };
                 // Keep existing numeric screenshot selectors stable when the sidebar is reordered.
-                string[] tabIds=["appearance","combat","hotkeys","history","capture","general","updates","feedback","events","pets","profiles","help"];
+                string[] tabIds=["appearance","combat","hotkeys","history","capture","general","updates","feedback","events","pets","profiles","help","cubes"];
                 if (int.TryParse(o.Tab,out var settingsTab) && settingsTab>=0 && settingsTab<tabIds.Length) settingsWindow.SelectTab(tabIds[settingsTab]);
                 else if(o.Tab is not null && tabIds.Contains(o.Tab)) settingsWindow.SelectTab(o.Tab);
                 host = settingsWindow;

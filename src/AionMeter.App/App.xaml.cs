@@ -57,6 +57,7 @@ public partial class App : Application
     private TimerHubWindow? _startedEvents;
     private PetTrackerWindow? _petWindow;
     private DeathRecapWindow? _deathRecapWindow;
+    private HiddenCubeWindow? _hiddenCubeWindow;
     private long _deathRecapStamp;
     private (string Language, bool Stream) _deathRecapAppearance;
     private TimerCards? _timerCards;
@@ -453,6 +454,7 @@ public partial class App : Application
         UpdateAutoVisibility();
         SyncMeterControls();
         SyncDeathRecap();
+        SyncHiddenCubes();
         _overlay.Refresh(); // The permanent panel also needs current fight, save and update state.
         if (++_ticks % 5 == 0)
         {
@@ -481,6 +483,17 @@ public partial class App : Application
             _meterControls.Closed+=(_,_)=>_meterControls=null;
         }
         if(!_meterControls.IsVisible)_meterControls.Show();
+    }
+
+    private void SyncHiddenCubes()
+    {
+        if(_shutdownStarted || !_meter.Settings.ShowHiddenCubeModule || _meter.DemoRunning || _meter.HiddenCubes.Count(DateTimeOffset.UtcNow.ToUnixTimeMilliseconds())==0)
+        {_hiddenCubeWindow?.Close();_hiddenCubeWindow=null;return;}
+        if(_windowVisibility.Hidden || _hiddenCubeWindow is not null)return;
+        var window=_hiddenCubeWindow=new HiddenCubeWindow(_meter.Settings);
+        window.Closed+=(_,_)=>{if(ReferenceEquals(_hiddenCubeWindow,window))_hiddenCubeWindow=null;};
+        WindowClickThrough.Attach(window,()=>_meter.Settings.ClickThrough,()=>_meter.Settings.WindowOpacity);
+        window.Show();_windowVisibility.Track(window);
     }
 
     private void SyncDeathRecap()
@@ -684,6 +697,7 @@ public partial class App : Application
         WindowPinning.RefreshAll();
         var reopenPets=_petWindow?.IsVisible==true;
         _petWindow?.Close();
+        _hiddenCubeWindow?.Close();
         foreach (var w in _breakdowns.Values.ToList()) w.Close();
         _history?.Close();
         _personalBests?.Close();
@@ -905,7 +919,7 @@ public partial class App : Application
     {
         // Validate first, then close displays before restoring saved placement (close handlers write positions).
         OverlayProfiles.Apply(profile,new AppSettings(),new TimerCards.State());
-        _timerHub?.Close();_startedEvents?.Close();_petWindow?.Close();_timersWindow?.Close();_timerCards!.Dispose();
+        _timerHub?.Close();_startedEvents?.Close();_petWindow?.Close();_hiddenCubeWindow?.Close();_timersWindow?.Close();_timerCards!.Dispose();
         OverlayProfiles.Apply(profile,_meter.Settings,_timerCards.Saved);
         var placement=new Rect(_meter.Settings.OverlayLeft,_meter.Settings.OverlayTop,_meter.Settings.OverlayWidth,_meter.Settings.OverlayHeight);
         _meter.ApplySettings();

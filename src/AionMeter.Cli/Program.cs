@@ -14,6 +14,7 @@ var data = GameData.Load(dataDir, langAt >= 0 && langAt + 1 < args.Length ? args
 
 return args.FirstOrDefault() switch
 {
+    "cubes" when args.Length>1=>Cubes(args[1]),
     "petpositions" when args.Length>1=>PetPositions(args[1]),
     "petclientpositions" when args.Length>1=>PetClientPositions(args[1]),
     "petscan" when args.Length > 1 => PetScan(args[1]),
@@ -36,6 +37,21 @@ return args.FirstOrDefault() switch
     "update-check" => UpdateCheck(args.Skip(1).ToArray()),
     _ => Usage(),
 };
+
+int Cubes(string path)
+{
+    using var replay=new PcapReplaySource(data,path,false);
+    var cubes=new HiddenCubes();var seen=0;var cleared=0;var peak=0;
+    replay.EventDecoded+=e=>
+    {
+        var before=cubes.Count(e.TimeMs);cubes.Observe(e);var after=cubes.Count(e.TimeMs);
+        if(e is HiddenCubeSeenEvent)seen++;
+        if(e is HiddenCubeGoneEvent && before>after)cleared++;
+        peak=Math.Max(peak,after);
+    };
+    var packets=replay.RunToEnd();
+    Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(new{packets,seen,cleared,peak}));return 0;
+}
 
 int PetClientPositions(string path)
 {
@@ -133,6 +149,7 @@ int PetPositions(string path)
 int Usage()
 {
     Console.WriteLine("""
+        aionmeter-cli cubes <file.pcap>             count confirmed cube announcements and opening removals
         aionmeter-cli petpositions <file.pcap>      inspect server movement and identity coverage without player names
         aionmeter-cli devices                       list Npcap adapters
         aionmeter-cli conns                         show the AION 2 process and its TCP connections

@@ -127,6 +127,12 @@ public sealed class PacketParser
             case Opcodes.Spawn:
                 ParseSpawn(body);
                 break;
+            case Opcodes.WorldObject:
+                if(HiddenCubePackets.Seen(TimeMs,body) is { } cube)Emit(cube);
+                break;
+            case Opcodes.WorldObjectState:
+                if(HiddenCubePackets.State(TimeMs,body) is { } gone)Emit(gone);
+                break;
             case Opcodes.Death:
                 ParseDeath(body);
                 break;

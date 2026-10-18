@@ -90,10 +90,17 @@ public partial class SettingsWindow : Window
         recap.Click+=(_,_)=>_moduleDraft.ShowDeathRecapModule=recap.IsChecked==true;
         if(Tab("combat").Content is ScrollViewer {Content:Panel combat})combat.Children.Add(new Border {Child=recap,Style=(Style)FindResource("Section")});
         SettingsTabs.Items.Add(new TabItem {Header=T.Localize("Pets"),Tag="pets",Padding=new Thickness(12,10,12,10),Content=new ScrollViewer {VerticalScrollBarVisibility=ScrollBarVisibility.Auto,HorizontalScrollBarVisibility=ScrollBarVisibility.Auto,Padding=new Thickness(14,0,0,0),Content=new Border {Child=modules,Style=(Style)FindResource("Section"),VerticalAlignment=VerticalAlignment.Top}}});
+        var cubes=new StackPanel();
+        cubes.Children.Add(new TextBlock {Text=T.Localize("Hidden cubes"),FontSize=16,Margin=new(0,0,0,10)});
+        var cubeEnabled=new CheckBox {Tag="hidden-cube-enabled",Content=T.Localize("Enable hidden cube alerts (experimental)"),IsChecked=_moduleDraft.ShowHiddenCubeModule,Style=(Style)FindResource("DarkCheck")};
+        cubeEnabled.Click+=(_,_)=>_moduleDraft.ShowHiddenCubeModule=cubeEnabled.IsChecked==true;cubes.Children.Add(cubeEnabled);
+        cubes.Children.Add(new TextBlock {Text=T.Localize("Changes take effect after saving."),TextWrapping=TextWrapping.Wrap,Margin=new(0,8,0,8)});
+        cubes.Children.Add(new TextBlock {Text=T.Localize("Shows a movable alert for the cube type confirmed in recordings. Hides after opening, changing maps or 60 seconds without a fresh announcement. Other cube variants are not yet verified. No reliable player position is available for direction, distance or map placement."),TextWrapping=TextWrapping.Wrap,Foreground=ThemeColors.Brush("#A9B8C7"),FontSize=11});
+        SettingsTabs.Items.Add(new TabItem {Header=T.Localize("Hidden cubes"),Tag="cubes",Padding=new(12,10,12,10),Content=new ScrollViewer {VerticalScrollBarVisibility=ScrollBarVisibility.Auto,HorizontalScrollBarVisibility=ScrollBarVisibility.Disabled,Padding=new(14,0,0,0),Content=new Border {Child=cubes,Style=(Style)FindResource("Section")}}});
         SettingsTabs.Items.Add(new TabItem {Header=T.Localize("Overlay profiles"),Tag="profiles",Padding=new Thickness(12,10,12,10),Content=new ScrollViewer {VerticalScrollBarVisibility=ScrollBarVisibility.Auto,HorizontalScrollBarVisibility=ScrollBarVisibility.Auto,Padding=new Thickness(14,0,0,0),Content=new OverlayProfilesPanel()}});
         // Fold secondary sections and reflow rows instead of forcing a wide inner canvas.
         SettingsTabs.Items.Add(new TabItem {Header=ControlPanelSettingsPanel.L("Help & symbols","Hilfe & Symbole"),Tag="help",Padding=new Thickness(12,10,12,10),Content=new ScrollViewer {VerticalScrollBarVisibility=ScrollBarVisibility.Auto,HorizontalScrollBarVisibility=ScrollBarVisibility.Disabled,Padding=new Thickness(14,0,0,0),Content=new SymbolHelpPanel(meter.Settings)}});
-        var orderedTabs=new[]{"general","appearance","profiles","combat","events","pets","hotkeys","history","capture","updates","feedback","help"}.Select(Tab).ToArray();
+        var orderedTabs=new[]{"general","appearance","profiles","combat","events","pets","cubes","hotkeys","history","capture","updates","feedback","help"}.Select(Tab).ToArray();
         SettingsTabs.Items.Clear();
         foreach(var tab in orderedTabs)SettingsTabs.Items.Add(tab);
         var groupStarts=new[]{"general","combat","hotkeys","updates"};
@@ -329,6 +336,7 @@ public partial class SettingsWindow : Window
         var petVisibilityChanged=s.ShowPetTrackerModule!=_moduleDraft.ShowPetTrackerModule;
         s.PetNotify=_moduleDraft.PetNotify;
         s.PetOnHitOnly=_moduleDraft.PetOnHitOnly;
+        s.ShowHiddenCubeModule=_moduleDraft.ShowHiddenCubeModule;
         s.PetSound=_moduleDraft.PetSound;
         s.PetSoundVolume=_moduleDraft.PetSoundVolume;
         s.PetModuleWidth=_moduleDraft.PetModuleWidth;
