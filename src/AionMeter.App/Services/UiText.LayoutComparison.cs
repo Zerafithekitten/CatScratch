@@ -5,6 +5,14 @@ public sealed partial class UiText
     private static readonly Dictionary<string,(string De,string Ru,string Fr)> LayoutComparisonText=new()
     {
         ["Hidden cubes"]=("Versteckte Würfel","Скрытые кубы","Cubes cachés"),
+        ["Target screen (experimental)"]=("Zielbildschirm (experimentell)","Целевой экран (экспериментально)","Écran cible (expérimental)"),
+        ["Automatic (saved positions)"]=("Automatisch (gespeicherte Positionen)","Автоматически (сохранённые позиции)","Automatique (positions enregistrées)"),
+        ["Screen"]=("Bildschirm","Экран","Écran"),
+        ["Primary"]=("Hauptbildschirm","Основной","Principal"),
+        ["Saved screen unavailable — using primary"]=("Gespeicherter Bildschirm nicht verfügbar – Hauptbildschirm wird genutzt","Сохранённый экран недоступен — используется основной","Écran enregistré indisponible — écran principal utilisé"),
+        ["Save moves open overlays to this screen. New modules use it too; you can still drag them freely. If it is disconnected, the primary screen is used."]=("Speichern verschiebt offene Overlays auf diesen Bildschirm. Neue Module nutzen ihn ebenfalls; sie bleiben frei verschiebbar. Ist er nicht angeschlossen, wird der Hauptbildschirm genutzt.","Сохранение перемещает оверлеи на этот экран. Новые модули также используют его; их можно свободно перемещать. Если экран отключён, используется основной.","Enregistrer déplace les overlays sur cet écran. Les nouveaux modules l’utilisent aussi ; vous pouvez toujours les déplacer librement. S’il est déconnecté, l’écran principal est utilisé."),
+        ["Play a sound when a hidden cube is detected"]=("Ton bei erkanntem versteckten Würfel abspielen","Звук при обнаружении скрытого куба","Jouer un son lorsqu’un cube caché est détecté"),
+        ["No audio selected."]=("Keine Audiodatei ausgewählt.","Аудиофайл не выбран.","Aucun fichier audio sélectionné."),
         ["Show test alert"]=("Testhinweis anzeigen","Показать тестовое оповещение","Afficher une alerte de test"),
         ["Test alert"]=("Testhinweis","Тестовое оповещение","Alerte de test"),
         ["Enable hidden cube alerts (experimental)"]=("Würfel-Hinweise aktivieren (experimentell)","Включить оповещения о кубах (экспериментально)","Activer les alertes de cubes (expérimental)"),

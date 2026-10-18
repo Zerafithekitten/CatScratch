@@ -13,6 +13,30 @@ internal static class WindowPresentation
     private static readonly Dictionary<Window,(double Width,double Height)> Limits=[];
     private static readonly HashSet<Window> NativeDragging=[];
     private static readonly HashSet<ToolTip> OpenTooltips=[];
+    internal static string? PreferredDisplay {get;private set;}
+    internal static void ConfigureDisplay(string? device)=>PreferredDisplay=string.IsNullOrWhiteSpace(device)?null:device;
+    internal static System.Windows.Forms.Screen? PreferredScreen()=>PreferredDisplay is null?null:
+        System.Windows.Forms.Screen.AllScreens.FirstOrDefault(s=>string.Equals(s.DeviceName,PreferredDisplay,StringComparison.OrdinalIgnoreCase))??System.Windows.Forms.Screen.PrimaryScreen;
+    internal static Rect RehomeBounds(Rect bounds,Rect source,Rect target)
+    {
+        var x=Math.Clamp((bounds.Left-source.Left)/Math.Max(1,source.Width-bounds.Width),0,1);
+        var y=Math.Clamp((bounds.Top-source.Top)/Math.Max(1,source.Height-bounds.Height),0,1);
+        return Clamp(new Rect(target.Left+x*Math.Max(0,target.Width-bounds.Width),target.Top+y*Math.Max(0,target.Height-bounds.Height),bounds.Width,bounds.Height),target);
+    }
+    internal static void PlaceOnPreferredScreen(Window window)
+    {
+        if(!Enabled || !window.IsLoaded || window.WindowState!=WindowState.Normal || PreferredScreen() is not { } target)return;
+        var handle=new WindowInteropHelper(window).Handle;if(handle==0)return;
+        var source=System.Windows.Forms.Screen.FromHandle(handle);
+        if(source.DeviceName==target.DeviceName)return;
+        var bounds=PhysicalBounds(window);if(bounds.IsEmpty)return;
+        var oldArea=Area(window,source);var newArea=Area(window,target);
+        var moved=RehomeBounds(bounds,new Rect(oldArea.X,oldArea.Y,oldArea.Width,oldArea.Height),new Rect(newArea.X,newArea.Y,newArea.Width,newArea.Height));
+        NativeMethods.SetWindowPos(handle,0,(int)Math.Round(moved.Left),(int)Math.Round(moved.Top),0,0,0x0015); // no size, Z-order or activation change
+        // WPF may receive a DPI change while crossing monitors; constrain after that change completes.
+        window.Dispatcher.BeginInvoke(()=>{if(window.IsLoaded)Constrain(window);});
+    }
+    internal static void MoveOverlaysToPreferredScreen(){foreach(var window in Windows.Keys.ToArray())PlaceOnPreferredScreen(window);}
     static WindowPresentation()
     {
         EventManager.RegisterClassHandler(typeof(ToolTip),ToolTip.OpenedEvent,new RoutedEventHandler((sender,_)=>
@@ -89,7 +113,7 @@ internal static class WindowPresentation
             if(previous is not null && previous!=root && previous.LayoutTransform==scale)previous.LayoutTransform=Transform.Identity;
             root.LayoutTransform=scale;previous=root;
         }
-        window.Loaded+=(_,_)=>{Layout();Constrain(window);};
+        window.Loaded+=(_,_)=>{Layout();PlaceOnPreferredScreen(window);Constrain(window);};
         window.SizeChanged+=(_,_)=>Constrain(window);
         window.LocationChanged+=(_,_)=>Constrain(window);
         window.Closed+=(_,_)=>{Windows.Remove(window);Limits.Remove(window);NativeDragging.Remove(window);};

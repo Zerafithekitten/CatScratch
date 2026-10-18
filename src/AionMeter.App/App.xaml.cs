@@ -58,6 +58,8 @@ public partial class App : Application
     private PetTrackerWindow? _petWindow;
     private DeathRecapWindow? _deathRecapWindow;
     private HiddenCubeWindow? _hiddenCubeWindow;
+    private EventSoundPlayer? _hiddenCubeSoundPlayer;
+    private long _hiddenCubeSoundVersion;
     private long _deathRecapStamp;
     private (string Language, bool Stream) _deathRecapAppearance;
     private TimerCards? _timerCards;
@@ -284,6 +286,7 @@ public partial class App : Application
         AppDomain.CurrentDomain.UnhandledException += (_, ex) => Log.Error("Fatal exception", ex.ExceptionObject as Exception);
 
         var settings = AppSettings.Load();
+        WindowPresentation.ConfigureDisplay(settings.PreferredDisplay);
         ThemeColors.Apply(settings.Theme);
         settings.AutoHideSeconds = 0;
         settings.ClickThrough = false;
@@ -487,8 +490,13 @@ public partial class App : Application
 
     private void SyncHiddenCubes()
     {
+        var version=_meter.HiddenCubes.DetectionVersion;
+        var newDetection=version!=_hiddenCubeSoundVersion;
+        _hiddenCubeSoundVersion=version;
         if(_shutdownStarted || !_meter.Settings.ShowHiddenCubeModule || _meter.DemoRunning || _meter.HiddenCubes.Count(DateTimeOffset.UtcNow.ToUnixTimeMilliseconds())==0)
         {_hiddenCubeWindow?.Close();_hiddenCubeWindow=null;return;}
+        if(newDetection && _meter.Settings.HiddenCubeSoundEnabled && !string.IsNullOrWhiteSpace(_meter.Settings.HiddenCubeSoundPath))
+            (_hiddenCubeSoundPlayer??=new()).Play(new EventSoundPreference {Enabled=true,Sound="Custom audio",FilePath=_meter.Settings.HiddenCubeSoundPath},_meter.Settings.HiddenCubeSoundVolume);
         if(_windowVisibility.Hidden || _hiddenCubeWindow is not null)return;
         var window=_hiddenCubeWindow=new HiddenCubeWindow(_meter.Settings);
         window.Closed+=(_,_)=>{if(ReferenceEquals(_hiddenCubeWindow,window))_hiddenCubeWindow=null;};
@@ -1064,6 +1072,7 @@ public partial class App : Application
         _hotkeys?.Dispose();
         _tray?.Dispose();
         _eventSoundPlayer?.Dispose();
+        _hiddenCubeSoundPlayer?.Dispose();
         if (_meter is not null)
         {
             try { _meter.Settings.Save(); }

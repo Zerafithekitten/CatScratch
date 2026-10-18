@@ -7,7 +7,7 @@ A separate, always-on-top Windows DPS meter for **AION 2**, by Zerafithekitten. 
 | Channel | Current version | What it includes |
 | --- | --- | --- |
 | **Stable** | **[v3.0.3](https://github.com/Zerafithekitten/CatScratch/releases/tag/v3.0.3)** | Independent control panel, reworked Pet tracker with five recommendations, custom colors and transparency, event timeline and favorites, effective healing and the complete tested Beta feature set. |
-| **Beta** | [v3.0.4-beta.6](https://github.com/Zerafithekitten/CatScratch/releases/tag/v3.0.4-beta.6) | Adds experimental passive Hidden cube alerts, selectable Pet tracking modes, monster names and Pet sound controls. |
+| **Beta** | [v3.0.4-beta.7](https://github.com/Zerafithekitten/CatScratch/releases/tag/v3.0.4-beta.7) | Adds custom Hidden cube alert audio and experimental monitor selection, alongside passive cube alerts and selectable Pet tracking modes. |
 
 English is the default. German, Russian and French are also available. Screenshots use synthetic sample data; names and numbers are examples. All features described below are included in **Stable v3.0.3** unless a limitation is stated.
 
@@ -229,9 +229,15 @@ Optional per-event and pet unlock/level-up sounds support preview and volume set
 
 </details>
 
+## Target screen (Beta, experimental)
+
+Under **Settings > Appearance > Target screen (experimental)**, choose the monitor for CatScratch. **Save** moves the control panel and open overlays to it. New modules and Settings also open there; windows remain freely draggable. The choice survives restart and is independent of overlay profiles. **Automatic (saved positions)** keeps existing placements; an unavailable chosen monitor falls back to the primary screen.
+
 ## Hidden cubes (Beta)
 
 **Beta only:** enable **Settings > Hidden cubes > Enable hidden cube alerts (experimental)** to show a compact, movable **HIDDEN CUBE DETECTED** warning for the cube type confirmed in two recordings. The module is off by default. It supports an independent pin, click-through, saved position and overlay profiles. The warning uses bold red text with gently pulsing exclamation marks. **Show test alert** lets you position and pin a labeled preview even without a detected cube; closing Settings also closes the preview.
+
+Choose an optional **MP3 or WAV** in the same tab, adjust its independent **Volume**, and use **Preview** to listen before saving. One notification plays for each newly detected cube, rather than every repeated announcement. Visual test alerts stay silent. Files must be at most **10 seconds / 10 MB** and remain at their selected location.
 
 Opening the cube or changing context clears the warning; announcements also expire after 60 seconds without a refresh. An announcement confirms that the server sent the object, rather than a measured distance or continued visual presence. Other cube variants, map placement, direction and distance remain unverified. No screenshot capture or game-memory access is used.
 

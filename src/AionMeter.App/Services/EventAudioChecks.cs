@@ -50,7 +50,26 @@ internal static class EventAudioChecks
             Require(error.Visibility==Visibility.Visible && cards.Saved.Sounds["shugo"].FilePath==shortFile,"Invalid audio failure was not handled");
             selected=null;choose.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));await Wait(()=>choose.IsEnabled);
             Require(cards.Saved.Sounds["shugo"].FilePath==shortFile,"Cancellation lost the selected sound");
-            File.WriteAllText(output,JsonSerializer.Serialize(new { Selection=true,Filename=true,Preview=true,LongRejected=true,InvalidRejected=true,PreviousPreserved=true,Cancelled=true }));
+            var original=new AppSettings {Transient=true};var draft=original.CreateDraft();
+            EventSoundPreference? cubeSound=null;double cubeVolume=-1;var cubePreviews=0;
+            selected=shortFile;
+            var cubeAudio=new HiddenCubeSoundPanel(draft,(sound,volume)=>{cubeSound=sound;cubeVolume=volume;cubePreviews++;},()=>selected);
+            Require(await cubeAudio.ChooseAsync() && draft.HiddenCubeSoundPath==shortFile && draft.HiddenCubeSoundEnabled && original.HiddenCubeSoundPath is null && !original.HiddenCubeSoundEnabled,
+                "Cube audio selection must remain a draft and preserve disabled saved preferences");
+            cubeAudio.Volume.Value=.28;await cubeAudio.PreviewAsync();
+            Require(cubePreviews==1 && cubeSound is {Sound:"Custom audio",FilePath:not null} && cubeSound.FilePath==shortFile && cubeVolume==.28,
+                "Cube audio preview must use the selected file and separate draft volume");
+            var settingsFile=Path.Combine(folder,"cube-audio.json");JsonSettingsFile.Write(settingsFile,draft);
+            var reloaded=JsonSettingsFile.Read<AppSettings>(settingsFile)!;
+            Require(reloaded.HiddenCubeSoundEnabled && reloaded.HiddenCubeSoundPath==shortFile && reloaded.HiddenCubeSoundVolume==.28,
+                "Cube audio enablement, file and volume must survive preference reloads");
+            selected=longFile;Require(!await cubeAudio.ChooseAsync() && cubeAudio.Error is not null && draft.HiddenCubeSoundPath==shortFile,
+                "Rejected cube audio must preserve the previous selection");
+            selected=null;Require(!await cubeAudio.ChooseAsync() && draft.HiddenCubeSoundPath==shortFile,"Cancelled cube audio selection must preserve the previous file");
+            File.Delete(shortFile);await cubeAudio.PreviewAsync();
+            Require(cubeAudio.Error is not null && cubePreviews==1,"Missing cube audio must show an error without starting playback");
+            File.WriteAllText(output,JsonSerializer.Serialize(new { Selection=true,Filename=true,Preview=true,LongRejected=true,InvalidRejected=true,PreviousPreserved=true,Cancelled=true,
+                CubeDraft=true,CubePreview=true,CubePersisted=true,CubeRejectedPreserves=true,CubeCancelled=true,CubeMissingHandled=true }));
         }
         finally { window.Close(); }
     }

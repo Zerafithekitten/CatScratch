@@ -37,6 +37,16 @@ public class HiddenCubeTests
         cubes.Observe(new HiddenCubeGoneEvent(5,7));Assert.Equal(0,cubes.Count(5));
         cubes.Observe(new HiddenCubeSeenEvent(6,7,HiddenCubePackets.ConfirmedTemplate));Assert.Equal(0,cubes.Count(6));
     }
+    [Fact] public void NotificationVersionChangesOnlyForNewDetectionsAndNeverRewindsOnReset()
+    {
+        var cubes=new HiddenCubes();Assert.Equal(0,cubes.DetectionVersion);
+        cubes.Observe(new HiddenCubeSeenEvent(1,7,HiddenCubePackets.ConfirmedTemplate));Assert.Equal(1,cubes.DetectionVersion);
+        cubes.Observe(new HiddenCubeSeenEvent(2,7,HiddenCubePackets.ConfirmedTemplate));Assert.Equal(1,cubes.DetectionVersion);
+        cubes.Count(3);cubes.Count(4);Assert.Equal(1,cubes.DetectionVersion);
+        cubes.Observe(new HiddenCubeSeenEvent(5,8,HiddenCubePackets.ConfirmedTemplate));Assert.Equal(2,cubes.DetectionVersion);
+        cubes.Reset();Assert.Equal(2,cubes.DetectionVersion);
+        cubes.Observe(new HiddenCubeSeenEvent(6,7,HiddenCubePackets.ConfirmedTemplate));Assert.Equal(3,cubes.DetectionVersion);
+    }
     [Fact] public void LocationCharacterAndCaptureChangesClearAlerts()
     {
         var cubes=new HiddenCubes();cubes.Observe(new SelfIdentifiedEvent(1,1,"One",1,GameClass.Cleric));

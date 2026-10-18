@@ -68,7 +68,10 @@ public partial class SettingsWindow : Window
         _moduleDraft=meter.Settings.CreateDraft();
         _controlPanelPreferences=new ControlPanelSettingsPanel(_moduleDraft);
         if(Tab("appearance").Content is ScrollViewer {Content:Panel appearancePanel})
+        {
             appearancePanel.Children.Insert(1,new Border {Child=_controlPanelPreferences,Style=(Style)FindResource("Section")});
+            appearancePanel.Children.Insert(1,new Border {Child=new DisplaySettingsPanel(_moduleDraft),Style=(Style)FindResource("Section")});
+        }
         SettingsTabs.Items.Add(new TabItem {Header=T.Localize("Events"),Tag="events",Padding=new Thickness(12,10,12,10),Content=new ScrollViewer {VerticalScrollBarVisibility=ScrollBarVisibility.Auto,HorizontalScrollBarVisibility=ScrollBarVisibility.Disabled,Padding=new Thickness(14,0,0,0),Content=new EventsSettingsPanel(_eventDraft,()=>{},(sound,volume)=>{if(!meter.Settings.Transient)AppHost.Current.PreviewEventSound(sound,volume);})}});
         var modules=new StackPanel();
         modules.Children.Add(new TextBlock {Text=T.Localize("Pet tracker"),FontSize=16,Margin=new Thickness(0,0,0,8)});
@@ -104,6 +107,7 @@ public partial class SettingsWindow : Window
             preview.Closed+=(_,_)=>cubePreview=null;preview.Show();
         };
         cubes.Children.Add(previewCube);
+        cubes.Children.Add(new HiddenCubeSoundPanel(_moduleDraft,(sound,volume)=>{if(!meter.Settings.Transient)AppHost.Current.PreviewEventSound(sound,volume);}));
         Closed+=(_,_)=>cubePreview?.Close();
         cubes.Children.Add(new TextBlock {Text=T.Localize("Changes take effect after saving."),TextWrapping=TextWrapping.Wrap,Margin=new(0,8,0,8)});
         cubes.Children.Add(new TextBlock {Text=T.Localize("Shows a movable alert for the cube type confirmed in recordings. Hides after opening, changing maps or 60 seconds without a fresh announcement. Other cube variants are not yet verified. No reliable player position is available for direction, distance or map placement."),TextWrapping=TextWrapping.Wrap,Foreground=ThemeColors.Brush("#A9B8C7"),FontSize=11});
@@ -126,6 +130,7 @@ public partial class SettingsWindow : Window
                 viewer.SizeChanged += (_, _) => FitContent();
             }
         AppIcon.Apply(this);
+        Loaded+=(_,_)=>WindowPresentation.PlaceOnPreferredScreen(this);
         Controls.DragAnywhere.Attach(this);
         Load();
         foreach (var field in new[] { HkToggle, HkAll, HkReset, HkClick, HkTimers, HkPersonal, HkEvents, HkPets, HkDeathRecap })
@@ -289,6 +294,8 @@ public partial class SettingsWindow : Window
             return;
         }
         var dpsVisibilityChanged=s.ShowDpsMeterModule!=(ShowDpsMeterCheck.IsChecked==true);
+        var displayChanged=!string.Equals(s.PreferredDisplay,_moduleDraft.PreferredDisplay,StringComparison.OrdinalIgnoreCase);
+        s.PreferredDisplay=_moduleDraft.PreferredDisplay;
         s.ShowDpsMeterModule=ShowDpsMeterCheck.IsChecked==true;
         if(dpsVisibilityChanged)s.OverlayVisible=s.ShowDpsMeterModule;
         s.Theme=theme;ThemeColors.Apply(theme);
@@ -348,6 +355,9 @@ public partial class SettingsWindow : Window
         s.PetNotify=_moduleDraft.PetNotify;
         s.PetOnHitOnly=_moduleDraft.PetOnHitOnly;
         s.ShowHiddenCubeModule=_moduleDraft.ShowHiddenCubeModule;
+        s.HiddenCubeSoundEnabled=_moduleDraft.HiddenCubeSoundEnabled;
+        s.HiddenCubeSoundPath=_moduleDraft.HiddenCubeSoundPath;
+        s.HiddenCubeSoundVolume=_moduleDraft.HiddenCubeSoundVolume;
         s.PetSound=_moduleDraft.PetSound;
         s.PetSoundVolume=_moduleDraft.PetSoundVolume;
         s.PetModuleWidth=_moduleDraft.PetModuleWidth;
@@ -363,6 +373,11 @@ public partial class SettingsWindow : Window
         AppHost.Current.RefreshEventSettings();
         AppHost.Current.RefreshPetSettings();
         if (language != UiText.Normalize(s.Language)) AppHost.Current.SetLanguage(language);
+        if(!s.Transient)
+        {
+            WindowPresentation.ConfigureDisplay(s.PreferredDisplay);
+            if(displayChanged){WindowPresentation.MoveOverlaysToPreferredScreen();WindowPresentation.PlaceOnPreferredScreen(this);}
+        }
     }
 
     private void UiScale_Changed(object sender, RoutedPropertyChangedEventArgs<double> e)

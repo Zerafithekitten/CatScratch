@@ -81,7 +81,11 @@ public sealed class AppSettings
     public int PetGoal {get;set;}
     public bool PetNotify {get;set;}
     public bool PetOnHitOnly {get;set;}
+    public string? PreferredDisplay {get;set;}
     public bool ShowHiddenCubeModule {get;set;}
+    public bool HiddenCubeSoundEnabled {get;set;}
+    public string? HiddenCubeSoundPath {get;set;}
+    public double HiddenCubeSoundVolume {get;set;}=.6;
     public bool HiddenCubePositionSaved {get;set;}
     public double HiddenCubeLeft {get;set;}=500;
     public double HiddenCubeTop {get;set;}=180;

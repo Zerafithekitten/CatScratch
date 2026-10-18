@@ -33,6 +33,8 @@ public sealed class HiddenCubes
     private readonly Dictionary<uint,long> _active=[];
     private readonly HashSet<uint> _opened=[];
     private (string Name,int Server)? _own;
+    private long _detectionVersion;
+    public long DetectionVersion {get{lock(_gate)return _detectionVersion;}}
     public void Reset(){lock(_gate){_active.Clear();_opened.Clear();_own=null;}}
     public void Observe(GameEvent value)
     {
@@ -47,7 +49,11 @@ public sealed class HiddenCubes
                     _own=identity;break;
                 case HiddenCubeSeenEvent cube when cube.TemplateId==HiddenCubePackets.ConfirmedTemplate && !_opened.Contains(cube.ActorId):
                     Expire(cube.TimeMs);
-                    if(_active.Count<64 || _active.ContainsKey(cube.ActorId))_active[cube.ActorId]=cube.TimeMs;
+                    if(_active.Count<64 || _active.ContainsKey(cube.ActorId))
+                    {
+                        if(!_active.ContainsKey(cube.ActorId))_detectionVersion++;
+                        _active[cube.ActorId]=cube.TimeMs;
+                    }
                     break;
                 case HiddenCubeGoneEvent gone when _active.Remove(gone.ActorId):
                     if(_opened.Count<4096)_opened.Add(gone.ActorId);

@@ -19,6 +19,23 @@ internal static class PolishChecks
             check(!restored.ShowDpsMeterModule && new AppSettings().ShowDpsMeterModule,"Disabled DPS display survives preference reloads; existing installations keep it enabled by default");
             check(restored.ControlsLayout==ControlsLayout.Vertical && restored.ControlsAnchor==ControlsAnchor.BottomRight,"Panel orientation and screen position survive settings-file reloads");
             var petDraft=displaySettings.CreateDraft();
+            var displayPanel=new DisplaySettingsPanel(petDraft);
+            displayPanel.Screens.SelectedIndex=1;
+            check(petDraft.PreferredDisplay is not null && displaySettings.PreferredDisplay is null,
+                "Target screen selection remains a draft until Save");
+            var sourceScreen=new Rect(-1920,-200,1920,1080);var targetScreen=new Rect(1920,0,2560,1440);
+            var movedScreen=WindowPresentation.RehomeBounds(new Rect(-1850,-100,400,200),sourceScreen,targetScreen);
+            check(targetScreen.Contains(movedScreen) && movedScreen.Size==new Size(400,200),
+                "Screen changes preserve overlay size and keep relative placement inside negative-origin monitor layouts");
+            check(WindowPresentation.RehomeBounds(new Rect(-1920,-200,1920,1080),sourceScreen,new Rect(0,0,1280,720))==new Rect(0,0,1280,720),
+                "Oversized overlays are bounded when moved to a smaller screen");
+            var oldDisplay=WindowPresentation.PreferredDisplay;
+            try
+            {
+                WindowPresentation.ConfigureDisplay("missing-catscratch-test-monitor");
+                check(WindowPresentation.PreferredScreen()?.Primary==true,"A disconnected preferred monitor falls back to the primary screen");
+            }
+            finally{WindowPresentation.ConfigureDisplay(oldDisplay);}
             petDraft.PetOnHitOnly=true;
             EventSoundPreference? heard=null;double heardVolume=-1;
             var petAudio=new PetSoundSettingsPanel(petDraft,(sound,volume)=>{heard=sound;heardVolume=volume;});
@@ -29,7 +46,7 @@ internal static class PolishChecks
             check(heard is {Sound:"Ping",Enabled:true} && heardVolume==.23,"Pet audio preview uses the draft sound and volume even when notifications are disabled");
             JsonSettingsFile.Write(path,petDraft);
             var petReload=JsonSettingsFile.Read<AppSettings>(path)!;
-            check(petReload.PetSound=="Ping" && petReload.PetSoundVolume==.23 && petReload.PetOnHitOnly && !new AppSettings().PetOnHitOnly,"Pet sound, volume and tracking mode survive preference-file reloads; old installations retain region mode");
+            check(petReload.PetSound=="Ping" && petReload.PetSoundVolume==.23 && petReload.PetOnHitOnly && petReload.PreferredDisplay==petDraft.PreferredDisplay && !new AppSettings().PetOnHitOnly,"Pet controls and target monitor survive preference reloads; old installations retain defaults");
             var displayProfile=OverlayProfiles.Capture("Events only",displaySettings,new TimerCards.State());
             var profileSettings=new AppSettings();
             OverlayProfiles.Apply(displayProfile,profileSettings,new TimerCards.State());
@@ -229,6 +246,8 @@ internal static class PolishChecks
             var tabs=(TabControl)window.FindName("SettingsTabs");
             window.UpdateLayout();
             check(Visuals(window).OfType<Button>().Any(b=>b.IsVisible && Equals(b.Content,UiText.Current.Save)),"Appearance settings retain a visible Save action with the new panel controls");
+            foreach(var section in Visuals(window).OfType<Expander>().ToArray())section.IsExpanded=true;
+            window.UpdateLayout();
             var panelPreferences=Visuals(window).OfType<ControlPanelSettingsPanel>().Single();
             panelPreferences.Children.OfType<ComboBox>().First().SelectedIndex=1;
             check(panelPreferences.Changed && meter.Settings.ControlsLayout==ControlsLayout.Horizontal,"Panel orientation stays a draft until Save and is discarded by Cancel");

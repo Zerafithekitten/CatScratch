@@ -1,3 +1,10 @@
+## CatScratch v3.0.4-beta.7
+
+- Added a custom MP3 or WAV notification for Hidden cube alerts, with its own volume slider and audio preview under Settings > Hidden cubes. Audio is optional; a valid file selection enables its draft, and Save applies it.
+- A new cube detection plays the selected sound once. Repeated announcements and visual test alerts do not repeat the notification. Files are limited to 10 seconds and 10 MB and must remain available at the selected location.
+- Added Settings > Appearance > Target screen (experimental). Save moves the control panel and open overlay modules to the chosen monitor; new modules and Settings use it too. Windows remain freely movable afterwards.
+- The screen preference is saved for the next start. Automatic preserves saved window positions; an unavailable selected monitor falls back to the primary screen. Monitor selection stays independent of overlay profiles.
+
 ## CatScratch v3.0.4-beta.6
 
 - Made HIDDEN CUBE DETECTED more prominent with bold red text and softly pulsing exclamation marks on both sides. Animations stop while hidden.
