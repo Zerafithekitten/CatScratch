@@ -1,6 +1,8 @@
-# Release policy
+﻿# Release policy
 
 SUPERSEDING OWNER INSTRUCTION, 2026-10-19: Before every upload, show the owner images of the actual changes and wait for explicit update approval. While developing, check only the added or changed module. Run the full release checks only after that approval. Earlier blanket Beta-upload authorization below no longer permits publishing without this review. The pending Beta 11 workflow was cancelled when this instruction arrived.
+
+On 2026-10-19 the owner explicitly approved promoting the complete 3.0.4 Beta feature set and the reviewed final preview-layout, centered mode-lettering and DPS placement corrections to Stable 3.0.4, with comprehensive patch notes covering all changes since 3.0.3. Update main/GitHub documentation and preserve the separate frozen Light edition.
 
 On 2026-10-17 the owner explicitly authorized publishing the grouped, reordered Settings navigation directly to Stable as **3.0.3**, with detailed release notes.
 

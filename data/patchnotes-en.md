@@ -1,4 +1,86 @@
-﻿## CatScratch v3.0.4-beta.13
+﻿## CatScratch v3.0.4
+
+This Stable release brings the full 3.0.4 Beta feature set to the main CatScratch download, together with the final corrections to Test mode, vertical button lettering and DPS overlay placement. It includes every change from Beta 1–13, the checklist heading cleanup prepared for Beta 11, and the additional reviewed fixes. Existing tasks, fights, pet progress and preferences are retained. CatScratch light is a separate download and is not changed by this release.
+
+### MAIN CATSCRATCH PANEL — COMPACT LAYOUT REWORK
+
+- Choose **Horizontal**, **Vertical rail** or **Grid** in Settings. Grid remains available as its own option; selecting Vertical now produces a narrow rail instead of the old grid arrangement.
+- Buttons are grouped by function, with fine separators between module controls, analysis tools, measurement/display controls and application actions. The death-recap toggle remains first.
+- Horizontal spacing is tighter. The vertical rail uses upright letters stacked under one another for CatScratch and the measurement-mode button, rather than sideways text. Its fight duration and wall clock are hidden to save space.
+- The CatScratch letters are closely spaced. The BOSS/ALL/ONLY lettering fits inside its button, including the final S, and is optically centered.
+- The Checklist has a dedicated highlighted toggle in the permanent panel. Hiding and reopening it does not change task text or completion.
+- The panel remains independent of the DPS display. The DPS position pin still belongs to the meter; the panel has its own position pin. Only the permanent panel's application Exit action closes CatScratch.
+
+### CHECKLIST — DAILY, WEEKLY AND PERSONAL TASKS
+
+Enable **Settings > Checklist > Show checklist**, or use the panel toggle. Choose **1–20 visible task slots** and adjust the window width. The outer window is transparent, with compact tinted task rows for readability.
+
+Type any task on the right and tick its checkbox on the left. Completed text is struck through; unticking immediately restores it. Task text and checkmarks save automatically and survive a restart. Reducing the visible row count retains the hidden rows, including their text and completion, so increasing it restores them.
+
+The starting examples contain two daily and nine weekly tasks: Duty Quests, Field Bosses, Daily Dungeon, Ascension Trial, Battlefield, Sanctuary, PvE Commands, PvP Abyss Commands, Substance Morph, Pass Energy and Daeva Pass EXP. Small **Daily** and **Weekly** headings separate the groups. Extra slots appear under **Other tasks**. Repeated category prefixes have been removed from the example text. The one-time cleanup recognizes the unchanged original examples in supported languages and preserves custom text and completion. These examples are editable reminders, not automatic detection of game progress.
+
+- **Reset countdowns:** Daily and Weekly headings show time until the next configured reset. The tooltip gives the next reset date and local time.
+- **Configurable schedule:** defaults are 07:00 UTC daily and Wednesday at the same UTC hour weekly. Change the hour and weekday under Settings > Checklist and verify them for your server. UTC stays fixed when local daylight-saving time changes.
+- **Optional clearing:** automatic removal of checkmarks is off by default. If enabled, daily reset clears only slots 1–2, and weekly reset clears only slots 3–11. Missed resets while CatScratch was closed are handled on returning. Task text and Other tasks are never cleared by the schedule. Changing the reset preference starts a fresh baseline instead of immediately erasing completion.
+- **Click-through support:** checkbox areas remain clickable while global click-through is on, without taking keyboard focus from the game. Task text and surrounding space still pass clicks through. Unlock to edit the text.
+- The checklist supports its own position pin, saved placement, global show/hide and monitor selection. Its X closes only the checklist. Layout profiles restore layout preferences without replacing personal tasks or checkmarks.
+
+### PET TRACKER — FARMING TARGETS, MODES AND SOUND
+
+- Rows now show the **monster to farm**, making it easier to identify the actual target in the game. The tooltip contains only the associated pet name; soul progress remains visible in the row.
+- Freshly announced source monsters take priority, with current-region and attacked-source fallbacks. Completed pets remain excluded. Regional recommendations retain the five-source limit; a server announcement is not presented as a measured distance.
+- **Settings > Pets > Tracking mode** offers **Nearby & region** and **Pet on hit**. Regional mode remains the default. Pet on hit shows the three most recent incomplete sources personally attacked by the player, without regional recommendations. The selection applies without restarting capture and is retained in layout profiles.
+- If collection information is missing, the tracker explains returning briefly to character selection or logging in again so CatScratch can receive fresh collection data. The hint is available in all four interface languages.
+- Pet collection/level-up notifications now offer **Chime, Bell or Ping**, an independent **0–100% volume** control and a preview button. Existing installations keep Chime at 50%. Save applies the choice; closing Settings discards unsaved changes. Event audio remains independent.
+- Tooltips are reasserted above the overlays when foreground protection restores CatScratch, without activating the application or taking focus from the game.
+
+### HIDDEN CUBES — OPTIONAL PASSIVE ALERT MODULE
+
+Enable **Settings > Hidden cubes > Enable hidden cube alerts (experimental)** to show **HIDDEN CUBE DETECTED** for the cube type confirmed in two approach/open recordings. The module is off by default. It uses a movable, pinnable warning with bold red text and softly pulsing exclamation marks at both ends. Animation stops while the window is hidden.
+
+Opening the detected cube or changing context clears the warning. Announcements expire after 60 seconds without a fresh update, and repeated announcements do not create duplicate windows. Detection means the server announced the supported object; it does not establish an exact distance, direction or continued visual presence. Other cube variants and map placement remain unverified. No game-memory access or screen capture was added.
+
+- **Show test alert** opens a clearly labeled, interactive preview without finding a cube or enabling detection. Repeated preview clicks reuse the same window; closing Settings also closes that test alert.
+- Choose an optional custom **MP3 or WAV**, set its own volume and preview it in the same Settings tab. Files are limited to **10 seconds and 10 MB** and must remain available at the selected location.
+- A new detection plays one notification. Repeated announcements and visual test alerts do not repeatedly play the sound.
+- Placement, pin, global show/hide, click-through and overlay-profile support are retained. The alert X closes its module rather than the application.
+
+### BOSS MEASUREMENT — ONLY BOSS AND DEFEAT ESTIMATES
+
+**ONLY BOSS** is a third option under Settings > Combat. Existing **BOSS** keeps its boss-first measurement with a fallback outside an engaged boss fight; **ALL** keeps measuring all enemy targets. **ONLY BOSS**, labeled **ONLY** on the compact panel, counts damage to the concrete engaged boss actor. It excludes ordinary adds, summoned secondary enemies and other boss actors, and never falls back to trash. Damage from player summons is still attributed to their owner when recognized. Incoming player damage remains available. Changing measurement mode starts a fresh measurement so totals from different filters are not mixed.
+
+A small **estimated remaining boss fight time** appears below the boss HP area. It uses a rolling window of observed boss HP loss, independent of party damage to adds. It can therefore reflect HP loss caused by players whose individual damage packets were not sent to this client. The estimate needs sufficient observations; new targets, healing, stale HP, pauses and completed fights invalidate the current projection rather than displaying a misleading countdown.
+
+When a matching server-provided boss deadline exists, the display compares the estimate against that deadline and indicates whether it is before or after the time limit. **Enrage time remains a server deadline, not a separately confirmed enrage mechanic.** Estimates are projections: changing damage, immunity phases or healing can change the result. Existing class emblems, narrow player rows, class-colored background fills, DPS, percentage share and incoming damage remain in place.
+
+### TEST MODE — EXISTING POSITIONS, ONLY THE REQUESTED WINDOWS
+
+Start Test mode from Settings > General to preview **nine windows**: DPS/personal combat, Pet tracker, Checklist, Hidden cubes, Death recap, Upcoming events, Started events, Statistics and Boss comparison. History, personal-best management, recent teammates, Boss timers management and the event planner no longer open automatically.
+
+- Existing user positions are retained rather than replaced with a stack or an automatic tile layout. Open windows provide their live positions; saved display/event-module positions are used otherwise.
+- **DPS and Settings keep their dimensions. Settings also stays in its current position.** Only previews without a known position are given available space, with compact sizing where needed. User-arranged overlap is not silently rearranged.
+- Previews are clickable and movable: click-through and movement locks are disabled for the preview. Stopping it restores the selected global click-through state.
+- Sample settings, task contents and fights are isolated from real data. No real combat is required, preview edits do not overwrite personal checklist text, and preview windows create no separate taskbar entries.
+- Stopping Test mode closes the previews and restores previously visible real windows without permanently enabling disabled modules.
+
+### WINDOW PLACEMENT, MONITORS AND INTERACTION FIXES
+
+- Fixed the DPS overlay moving upward after a restart. The old startup path used the work area above the taskbar, whereas dragging allowed the full screen. Startup now uses the same shared screen-bounds handling. Repeated restoration at the bottom screen edge preserves the saved position and independent pin. If an old build already saved a shifted position, move it back once after updating.
+- **Settings > Appearance > Target screen (experimental)** selects the monitor for CatScratch. Save moves the panel and open modules, and future windows use the choice. Windows remain movable afterwards. Automatic preserves saved positions; an unavailable monitor falls back to the primary display. This preference is independent of layout profiles.
+- Boss timers is an interactive management window and now remains clickable while overlay click-through is enabled, including after returning to the game. Its X remains usable without unlocking overlays. It keeps a solid background independently of display opacity.
+- Settings Save continues to apply preferences without closing the window. The Settings X closes it and discards unsaved edits.
+
+### STABLE UPDATE AND COMPATIBILITY
+
+The installer, portable ZIP and matching source archive are available together. Existing settings and user data are retained. Beta subscribers automatically return to the Stable update channel when this promoted build starts; a later deliberate switch back to Beta remains possible. Downloading/preparing an update still does not restart CatScratch automatically: the restart remains an explicit user action.
+
+This release is for the full CatScratch application. **CatScratch light 1.0.0 remains unchanged**, uses separate downloads/settings and continues to receive work only when explicitly requested.
+
+### VALIDATION
+
+The release runs the full core test suite, integrated window/interaction checks, complete shutdown, performance checks, event audio, boss records, checklist persistence/click-through, the refined preview lifecycle, repeated DPS position restoration and custom-color persistence across a new process. The Windows publication pipeline also verifies the optional game companion and a direct update with retained user data before publishing the installer, portable ZIP and source archive.
+
+## CatScratch v3.0.4-beta.13
 
 - Fixed the DPS overlay moving upward after restarting: startup now uses the same full-screen placement bounds as manual dragging, preserving bottom-edge positions and the independent position pin.
 - Added compact Daily and Weekly reset countdowns to the Checklist, with configurable UTC hour (default 07:00) and weekly day (default Wednesday). Automatic clearing is opt-in: daily slots 1–2 and weekly slots 3–11 reset, including after an offline period; task text and Other tasks remain intact.

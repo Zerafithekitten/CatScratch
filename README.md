@@ -6,13 +6,13 @@ A separate, always-on-top Windows DPS meter for **AION 2**, by Zerafithekitten. 
 
 | Channel | Current version | What it includes |
 | --- | --- | --- |
-| **Stable** | **[v3.0.3](https://github.com/Zerafithekitten/CatScratch/releases/tag/v3.0.3)** | Independent control panel, reworked Pet tracker with five recommendations, custom colors and transparency, event timeline and favorites, effective healing and the complete tested Beta feature set. |
+| **Stable** | **[v3.0.4](https://github.com/Zerafithekitten/CatScratch/releases/tag/v3.0.4)** | Compact panel layouts, checklist with reset countdowns, Pet tracking modes and sounds, passive Hidden cube alerts, ONLY BOSS, defeat estimates, refined Test mode and DPS placement fixes. |
 | **Beta** | [Previous: v3.0.4-beta.13](https://github.com/Zerafithekitten/CatScratch/releases/tag/v3.0.4-beta.13) | Promoted to Stable 3.0.4, including the latest preview-layout and vertical-label corrections. |
 | **Light** | [v1.0.0](https://github.com/Zerafithekitten/CatScratch/releases/tag/light-v1.0.0) | Separate **DPS meter only** edition with essential settings. Independent ZIP download and settings; no additional CatScratch modules or automatic updater. |
 
 **CatScratch light** is installed separately from the full version. [Download its ZIP](https://github.com/Zerafithekitten/CatScratch/releases/download/light-v1.0.0/CatScratch-light-win-x64.zip) and extract it into its own folder. Light is maintained and updated **only on the owner's explicit request**; normal development continues on full CatScratch.
 
-English is the default. German, Russian and French are also available. Screenshots use synthetic sample data; names and numbers are examples. All features described below are included in **Stable v3.0.3** unless a limitation is stated.
+English is the default. German, Russian and French are also available. Screenshots use synthetic sample data; names and numbers are examples. All features described below are included in **Stable v3.0.4** unless a limitation is stated.
 
 ## Contents
 
@@ -59,7 +59,7 @@ You can hide the combat display under **Settings > Appearance > Modules > Show D
 
 <img src="docs/screenshots/control-panel-horizontal.png" alt="Stable CatScratch horizontal control panel with version and general controls" width="400" />
 
-<img src="docs/screenshots/control-panel-vertical.png" alt="Compact vertical CatScratch control panel with four symbol columns" width="132" />
+<img src="docs/screenshots/control-panel-vertical.png" alt="Narrow vertical CatScratch control panel with centered upright lettering" width="78" />
 
 ## DPS meter and fight details
 
@@ -140,7 +140,7 @@ It closes when fresh positive own HP or a map reload confirms the character is a
 
 **Available in Stable.** Settings > Appearance > Interface colors lets you choose accent, background and text colors using a saturation/brightness field, a rainbow hue strip, swatches or #RRGGBB. The preview is a draft: Save applies the colors across open windows and keeps them for the next start; Closing with X discards later unsaved palette edits. Restore default colors returns to the gray/lavender CatScratch palette after Save. Low contrast is shown as advice and does not prevent saving a valid color choice. For a small Easter egg, the **?** beside Restore default colors enables **Mario Party!**: a continuous rainbow wallpaper scrolls across the general window backgrounds in a seamless 12-second loop after Save, including after restart. Restore default colors and Save stops the mode. Class, healing, damage, event-type and golden favorite colors keep their meaning; the purple paw stays unchanged.
 
-<details><summary>Color settings and picker previews (Beta)</summary>
+<details><summary>Color settings and picker previews</summary>
 
 <img src="docs/screenshots/interface-colors.png" alt="Appearance settings using an example custom blue accent palette" width="760" />
 
@@ -232,23 +232,23 @@ Optional per-event and pet unlock/level-up sounds support preview and volume set
 
 </details>
 
-## Target screen (Beta, experimental)
+## Target screen (experimental)
 
 Under **Settings > Appearance > Target screen (experimental)**, choose the monitor for CatScratch. **Save** moves the control panel and open overlays to it. New modules and Settings also open there; windows remain freely draggable. The choice survives restart and is independent of overlay profiles. **Automatic (saved positions)** keeps existing placements; an unavailable chosen monitor falls back to the primary screen.
 
-## Checklist (Beta)
+## Checklist
 
 Use the **Checklist button in the control panel** to show or hide it without changing task text or checkmarks. Its icon is highlighted while enabled and is explained in **Settings > Help & symbols**. You can also enable **Settings > Checklist > Show checklist**, select **1–20 task slots** and a window width, then **Save**. The module has a transparent outer surface and compact tinted rows. Type a task on the right and use its checkbox on the left to strike it through; uncheck it to undo completion.
 
-Text and checkmarks save automatically and survive restarting CatScratch. Reducing the number of visible rows keeps hidden tasks. Small **Daily** and **Weekly** headings separate the eleven editable examples: two daily and nine weekly tasks from the supplied overview. Category prefixes are omitted from the task rows; extra free slots appear under **Other tasks**. These are sample text, not automatic progress detection or scheduled resets.
+Text and checkmarks save automatically and survive restarting CatScratch. Reducing the number of visible rows keeps hidden tasks. Small **Daily** and **Weekly** headings separate the eleven editable examples: two daily and nine weekly tasks from the supplied overview. Category prefixes are omitted from the task rows; extra free slots appear under **Other tasks**. These are sample text, not automatic progress detection. Reset countdowns and opt-in clearing are described below.
 
 The module has its own pin and X. Checkboxes remain clickable in global click-through mode without taking game keyboard focus. Task text and empty space stay click-through; unlock the mode to edit text. Layout profiles change placement, width and slot count without overwriting task text or completion. Checklist is part of full CatScratch only.
 
-![Compact checklist with editable sample tasks](docs/images/checklist-beta11.png)
+![Compact checklist with editable sample tasks](docs/images/checklist-countdowns-beta13.png)
 
-## Hidden cubes (Beta)
+## Hidden cubes (experimental)
 
-**Beta only:** enable **Settings > Hidden cubes > Enable hidden cube alerts (experimental)** to show a compact, movable **HIDDEN CUBE DETECTED** warning for the cube type confirmed in two recordings. The module is off by default. It supports an independent pin, click-through, saved position and overlay profiles. The warning uses bold red text with gently pulsing exclamation marks. **Show test alert** lets you position and pin a labeled preview even without a detected cube; closing Settings also closes the preview.
+Enable **Settings > Hidden cubes > Enable hidden cube alerts (experimental)** to show a compact, movable **HIDDEN CUBE DETECTED** warning for the cube type confirmed in two recordings. The module is off by default. It supports an independent pin, click-through, saved position and overlay profiles. The warning uses bold red text with gently pulsing exclamation marks. **Show test alert** lets you position and pin a labeled preview even without a detected cube; closing Settings also closes the preview.
 
 Choose an optional **MP3 or WAV** in the same tab, adjust its independent **Volume**, and use **Preview** to listen before saving. One notification plays for each newly detected cube, rather than every repeated announcement. Visual test alerts stay silent. Files must be at most **10 seconds / 10 MB** and remain at their selected location.
 
@@ -266,7 +266,7 @@ The small green **Update!** notice appears **only after the update is fully prep
 
 After a successful new startup, the old backup, staged payload and downloaded ZIP are removed. Failed updates retain recovery files. Settings, saved fights, personal bests, recent players and captures are preserved. Update staging stays under `userdata/temp/updates`; a writable program folder is required.
 
-When a Beta is promoted and its Stable build starts, Beta subscribers automatically return to the Stable update channel. A later deliberate switch back to Beta is respected until the next Stable transition. The installed version then shows the Stable number, currently **3.0.3** without a beta suffix.
+When a Beta is promoted and its Stable build starts, Beta subscribers automatically return to the Stable update channel. A later deliberate switch back to Beta is respected until the next Stable transition. The installed version then shows the Stable number, currently **3.0.4** without a beta suffix.
 
 Use **Check now** in Settings or **Check for updates** in the tray menu for a manual check. Automatic checking and preparation can be disabled in Settings. CatScratch also reduces data-loading allocations and moves optional startup work behind the first meter display.
 
@@ -387,26 +387,26 @@ Requires **.NET 10**. See [GITHUB-RELEASES.md](GITHUB-RELEASES.md) for release b
 
 **GPL-3.0**, based on [cyberbadger6969/aion2-dps-meter](https://github.com/cyberbadger6969/aion2-dps-meter), base revision `414de5c1d5f3d45ce35701bd25229c2dba736bb6`. Keep [LICENSE](LICENSE) and [data/NOTICE.md](data/NOTICE.md) with redistributions. Full source accompanies releases. AION 2 belongs to NCSOFT.
 
-### Compact control panel (Beta 12)
+### Compact control panel (Stable 3.0.4)
 
-Choose Horizontal, Vertical rail or Grid in Settings. Buttons are grouped by function with fine separators. The vertical rail uses upright stacked lettering and omits the clocks.
+Choose Horizontal, Vertical rail or Grid in Settings. Buttons are grouped by function with fine separators. The vertical rail uses upright stacked lettering and omits the clocks. Its mode label is fully visible and centered; Grid remains a separate option.
 
-![Horizontal panel](docs/images/panel-horizontal-beta12.png)
+![Horizontal panel](docs/screenshots/control-panel-horizontal.png)
 
-![Vertical rail](docs/images/panel-vertical-beta12.png) ![Grid panel](docs/images/panel-grid-beta12.png)
+![Vertical rail](docs/screenshots/control-panel-vertical.png) ![Grid panel](docs/images/panel-grid-stable304.png)
 
-### Reset countdowns, module previews and strict boss measurement (Beta 13)
+### Reset countdowns, module previews and strict boss measurement (Stable 3.0.4)
 
 The checklist shows the next Daily and Weekly reset. Configure the UTC hour and weekly day in Settings > Checklist (defaults: 07:00 UTC, Wednesday). Verify these defaults for your server. Automatic clearing is off by default. When enabled, only the checkmarks of daily slots 1–2 and weekly slots 3–11 are cleared at their respective resets, including after an offline period. Custom task text and Other tasks are retained.
 
 ![Checklist reset countdowns](docs/images/checklist-countdowns-beta13.png)
 
-Settings > General > Start test mode opens fourteen movable display and analysis previews using isolated sample data and temporary history. Previously visible windows are restored when test mode stops; real task data and module activation preferences are preserved. Preview positions are remembered separately.
+Settings > General > Start test mode opens seven screen modules plus Statistics and Boss comparison using isolated sample data. Existing user positions are preserved; DPS and Settings keep their dimensions, and Settings stays in place. Only modules without a known position get available space. Previews are clickable and movable. Other menus stay closed. Stopping Test mode restores previously visible real windows and the selected click-through mode without overwriting real tasks or permanently enabling modules.
 
-![Overview of sample module previews](docs/images/module-preview-beta13.png)
+![Overview of sample module previews](docs/images/module-preview-stable304.png)
 
 Settings > Combat offers **ONLY BOSS** alongside the existing BOSS fallback and ALL modes. The panel labels this strict mode **ONLY**. It counts only the concrete engaged boss, excluding adds and other boss actors; switching modes starts a fresh measurement. Boss defeat estimates use rolling observed boss HP loss, so add damage does not inflate the estimate. Insufficient or stale HP data shows Calculating. A matching server deadline permits a time-limit comparison, without claiming a confirmed enrage mechanic.
 
 ![Remaining boss fight estimate](docs/images/boss-estimate-beta13.png)
 
-Beta 13 also fixes the DPS overlay moving upward on restart by using the same screen bounds during startup and dragging. If an older version saved an already shifted position, move the overlay back once after updating.
+Stable 3.0.4 also fixes the DPS overlay moving upward on restart by using the same screen bounds during startup and dragging. If an older version saved an already shifted position, move the overlay back once after updating.

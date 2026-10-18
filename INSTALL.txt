@@ -1,8 +1,8 @@
 ﻿CatScratch — AION 2 for Windows
 
 RELEASE CHANNELS
-Stable: v3.0.3
-Beta: v3.0.4-beta.13 (Reset countdowns, all-module previews, ONLY BOSS, defeat estimates and DPS position fix)
+Stable: v3.0.4
+Previous Beta: v3.0.4-beta.13 — promoted to Stable 3.0.4 with the final reviewed corrections.
 Downloads: https://github.com/Zerafithekitten/CatScratch/releases
 The current GitHub README describes availability by channel.
 

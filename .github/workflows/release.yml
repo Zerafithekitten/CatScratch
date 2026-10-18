@@ -116,6 +116,6 @@ jobs:
           $notesFile = Join-Path $env:RUNNER_TEMP 'release-notes.md'
           Set-Content -LiteralPath $notesFile -Value $section.Groups[1].Value.Trim() -Encoding utf8
           $releaseArgs = @('release','create',$env:RELEASE_TAG,'dist/CatScratch-Setup.exe','dist/CatScratch-win-x64.zip','dist/CatScratch-source.zip','--verify-tag','--notes-file',$notesFile)
-          if ($env:IS_BETA -eq 'True') { $releaseArgs += @('--prerelease','--latest=false') }
+          if ($env:IS_BETA -eq 'True') { $releaseArgs += @('--prerelease','--latest=false') } else { $releaseArgs += '--latest' }
           gh @releaseArgs
           if ($LASTEXITCODE) { throw 'Release publication failed' }
