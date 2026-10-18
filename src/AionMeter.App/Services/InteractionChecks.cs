@@ -414,7 +414,25 @@ internal static class InteractionChecks
             WindowClickThrough.Attach(bossWindow, () => true);
             var bossShell = (System.Windows.Controls.Border)bossWindow.FindName("BossShell");
             Check(bossShell.Background is System.Windows.Media.SolidColorBrush bossBg && bossBg.Color.A == 255,
-                "Boss timers retain a solid background after click-through registration");
+                "Boss timers retain a solid background independently of the overlay lock");
+            bossWindow.Left=-30000;bossWindow.Top=-30000;bossWindow.WindowStartupLocation=WindowStartupLocation.Manual;bossWindow.ShowActivated=false;
+            bossWindow.Show();bossWindow.UpdateLayout();
+            var bossClose=(System.Windows.Controls.Button)bossWindow.FindName("CloseBossButton");
+            var bossHandle=new WindowInteropHelper(bossWindow).Handle;
+            foreach(var locked in new[]{true,false,true})
+            {
+                WindowClickThrough.ApplyAll(locked);WindowClickThrough.SetOpacity(.4);
+                NativeMethods.SendMessage(bossHandle,0x0006,0,0); // WA_INACTIVE, delivered only to our own test window.
+                Check((Style(bossWindow)&(NativeMethods.WS_EX_TRANSPARENT|NativeMethods.WS_EX_NOACTIVATE))==0 && bossWindow.Opacity==1 && bossClose.IsEnabled,
+                    "Boss timer controls remain interactive after deactivation, independently of click-through and opacity: "+locked);
+                var closePoint=bossClose.PointToScreen(new Point(bossClose.ActualWidth/2,bossClose.ActualHeight/2));
+                var packed=(nint)(((int)closePoint.Y&0xffff)<<16|((int)closePoint.X&0xffff));
+                Check(NativeMethods.SendMessage(bossHandle,0x0084,0,packed)==1,
+                    "Windows still treats the inactive Boss timers X as clickable client content: "+locked);
+            }
+            var bossClosed=false;bossWindow.Closed+=(_,_)=>bossClosed=true;
+            bossClose.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Primitives.ButtonBase.ClickEvent));
+            Check(bossClosed && !bossWindow.IsVisible,"The Boss timers X closes its window while the global overlay lock is active");
             var savedCustom = new EventSoundPreference { Sound = "Custom WAV", FilePath = Path.Combine(AppContext.BaseDirectory,"sounds","Chime.wav") };
             cards.Saved.Sounds["shugo"] = savedCustom;
             Check(Windows.EventSoundsWindow.HasCustomFile(savedCustom) && Windows.EventSoundsWindow.CustomSoundLabel(savedCustom)=="Chime.wav", "Custom sound displays its filename and recognizes an existing saved file");

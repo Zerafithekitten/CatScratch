@@ -1,3 +1,9 @@
+## CatScratch v3.0.4-beta.8
+
+- Fixed Boss timers becoming unclickable when global click-through was enabled. This management window now stays interactive like fight history, including after switching back to the game; its X remains available without unlocking the overlays.
+- Boss timers keeps a solid background independently of overlay opacity, while remaining a separate tool window. Display overlays still respect the global click-through setting.
+- Includes Beta 7's custom MP3/WAV Hidden cube notification, volume and preview, plus the explicitly experimental target-screen selector. Added checks for inactive-window close-button hit testing and repeated lock/unlock transitions.
+
 ## CatScratch v3.0.4-beta.7
 
 - Added a custom MP3 or WAV notification for Hidden cube alerts, with its own volume slider and audio preview under Settings > Hidden cubes. Audio is optional; a valid file selection enables its draft, and Save applies it.

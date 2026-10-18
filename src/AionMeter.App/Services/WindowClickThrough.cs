@@ -20,6 +20,8 @@ internal static class WindowClickThrough
     private static readonly Dictionary<Window, State> Windows = [];
     public static void Attach(Window window, Func<bool> enabled, Func<double>? opacity = null)
     {
+        // Boss timers is an interactive management window, like fight history; global lock must not disable its controls.
+        if(window is AionMeter.App.Windows.BossTimersWindow){WindowPresentation.Attach(window);return;}
         if (Windows.ContainsKey(window)) return;
         AppIcon.Apply(window);
         // Only the meter is an application entry. Independently movable modules are tools.

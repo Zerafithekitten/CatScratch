@@ -5,7 +5,7 @@
         xmlns:s="clr-namespace:AionMeter.App.Services"
         Title="{Binding TimersTitle, Source={x:Static s:UiText.Current}}" Width="780" Height="640" MinWidth="600" MinHeight="300"
         WindowStyle="None" WindowStartupLocation="CenterScreen" ResizeMode="CanResize" Background="{DynamicResource CustomBrush_20242A}"
-        Topmost="True" UseLayoutRounding="True" TextOptions.TextFormattingMode="Display"
+        Topmost="True" ShowInTaskbar="False" UseLayoutRounding="True" TextOptions.TextFormattingMode="Display"
         FontFamily="{StaticResource UiFont}" Foreground="{StaticResource Text}" FontSize="12.5">
     <WindowChrome.WindowChrome>
         <WindowChrome CaptionHeight="0" ResizeBorderThickness="6" GlassFrameThickness="0" CornerRadius="0" />
@@ -55,7 +55,7 @@
                     <Button Visibility="Collapsed" x:Name="AlertButton" Style="{StaticResource Chip}" Height="26" MinWidth="78" FontSize="12" Margin="0,0,10,0"
                             Click="Alert_Click" />
                     <ContentControl x:Name="PositionPin"/>
-                    <Button Style="{StaticResource IconButton}" Content="&#xE711;" Click="Close_Click"
+                    <Button x:Name="CloseBossButton" Style="{StaticResource IconButton}" Content="&#xE711;" Click="Close_Click"
                             ToolTip="{Binding TipClose, Source={x:Static s:UiText.Current}}" />
                 </StackPanel>
             </Grid>

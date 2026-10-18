@@ -2,7 +2,7 @@ CatScratch — AION 2 for Windows
 
 RELEASE CHANNELS
 Stable: v3.0.3
-Beta: v3.0.4-beta.7 (Custom Hidden cube audio and experimental target-screen selection)
+Beta: v3.0.4-beta.8 (Boss timers interaction fix, custom Hidden cube audio and experimental target-screen selection)
 Downloads: https://github.com/Zerafithekitten/CatScratch/releases
 The current GitHub README describes availability by channel.
 

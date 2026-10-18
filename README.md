@@ -7,7 +7,7 @@ A separate, always-on-top Windows DPS meter for **AION 2**, by Zerafithekitten. 
 | Channel | Current version | What it includes |
 | --- | --- | --- |
 | **Stable** | **[v3.0.3](https://github.com/Zerafithekitten/CatScratch/releases/tag/v3.0.3)** | Independent control panel, reworked Pet tracker with five recommendations, custom colors and transparency, event timeline and favorites, effective healing and the complete tested Beta feature set. |
-| **Beta** | [v3.0.4-beta.7](https://github.com/Zerafithekitten/CatScratch/releases/tag/v3.0.4-beta.7) | Adds custom Hidden cube alert audio and experimental monitor selection, alongside passive cube alerts and selectable Pet tracking modes. |
+| **Beta** | [v3.0.4-beta.8](https://github.com/Zerafithekitten/CatScratch/releases/tag/v3.0.4-beta.8) | Keeps Boss timers clickable with global click-through enabled; includes custom Hidden cube audio, experimental monitor selection and selectable Pet tracking modes. |
 
 English is the default. German, Russian and French are also available. Screenshots use synthetic sample data; names and numbers are examples. All features described below are included in **Stable v3.0.3** unless a limitation is stated.
 

@@ -804,7 +804,6 @@ public partial class App : Application
             return;
         }
         _timersWindow = new BossTimersWindow(_meter);
-        WindowClickThrough.Attach(_timersWindow, () => _meter.Settings.ClickThrough, () => _meter.Settings.WindowOpacity);
         _timersWindow.Closed += (_, _) => _timersWindow = null;
         _timersWindow.Show();
         _windowVisibility.Track(_timersWindow);
