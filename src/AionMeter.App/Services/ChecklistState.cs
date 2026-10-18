@@ -1,4 +1,4 @@
-namespace AionMeter.App.Services;
+﻿namespace AionMeter.App.Services;
 
 /// <summary>Task contents are user data, independent of overlay layout profiles and Settings drafts.</summary>
 public sealed class ChecklistItem
@@ -30,6 +30,8 @@ internal static class ChecklistState
     }
     internal static void Normalize(AppSettings settings)
     {
+        settings.ChecklistResetHourUtc=Math.Clamp(settings.ChecklistResetHourUtc,0,23);
+        if(!Enum.IsDefined(settings.ChecklistWeeklyResetDay))settings.ChecklistWeeklyResetDay=DayOfWeek.Wednesday;
         settings.ChecklistRows=Math.Clamp(settings.ChecklistRows,1,MaximumSlots);
         settings.ChecklistWidth=double.IsFinite(settings.ChecklistWidth)?Math.Clamp(settings.ChecklistWidth,220,650):320;
         if(settings.ChecklistItems is null || settings.ChecklistItems.Count==0)settings.ChecklistItems=Examples();

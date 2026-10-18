@@ -1,3 +1,12 @@
+﻿## CatScratch v3.0.4-beta.13
+
+- Fixed the DPS overlay moving upward after restarting: startup now uses the same full-screen placement bounds as manual dragging, preserving bottom-edge positions and the independent position pin.
+- Added compact Daily and Weekly reset countdowns to the Checklist, with configurable UTC hour (default 07:00) and weekly day (default Wednesday). Automatic clearing is opt-in: daily slots 1–2 and weekly slots 3–11 reset, including after an offline period; task text and Other tasks remain intact.
+- Test mode opens fourteen movable display and analysis previews with isolated sample tasks, fights and history. Stopping it closes previews and restores previously visible windows without enabling disabled modules. Preview positions are remembered separately.
+- Added ONLY BOSS as a third measurement option. It counts the concrete engaged boss, excluding adds and other boss actors, with no trash fallback. Existing BOSS and ALL modes remain; switching modes starts a fresh measurement.
+- Added estimated remaining boss fight time from rolling boss HP loss, independent of damage to adds. Insufficient, stale or healing HP data shows Calculating instead. A matching server deadline permits a before/after time-limit comparison; this does not confirm an enrage mechanic.
+- Stable and CatScratch light are unchanged.
+
 ## CatScratch v3.0.4-beta.12
 
 - Reworked the control panel into compact Horizontal, Vertical rail and Grid layouts, with matching functional groups and fine separators. The vertical rail uses upright, tightly stacked CatScratch and BOSS/ALL lettering and hides both time displays. The grid remains a separate Settings option.

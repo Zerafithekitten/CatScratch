@@ -1,4 +1,4 @@
-# CatScratch
+﻿# CatScratch
 
 A separate, always-on-top Windows DPS meter for **AION 2**, by Zerafithekitten. Track your own fights and confirmed party members in a compact dark gray interface with restrained purple accents and cat-paw branding.
 
@@ -7,7 +7,7 @@ A separate, always-on-top Windows DPS meter for **AION 2**, by Zerafithekitten. 
 | Channel | Current version | What it includes |
 | --- | --- | --- |
 | **Stable** | **[v3.0.3](https://github.com/Zerafithekitten/CatScratch/releases/tag/v3.0.3)** | Independent control panel, reworked Pet tracker with five recommendations, custom colors and transparency, event timeline and favorites, effective healing and the complete tested Beta feature set. |
-| **Beta** | [v3.0.4-beta.12](https://github.com/Zerafithekitten/CatScratch/releases/tag/v3.0.4-beta.12) | Compact Horizontal, Vertical rail and Grid control-panel layouts; grouped checklist with checkboxes usable during click-through; custom cube audio, experimental monitor selection and selectable Pet tracking modes. |
+| **Beta** | [v3.0.4-beta.13](https://github.com/Zerafithekitten/CatScratch/releases/tag/v3.0.4-beta.13) | Reset countdowns with optional checklist resets, previews of all display/analysis modules, strict ONLY BOSS measurement, boss defeat estimates and a fix for DPS position drift after restarting. |
 
 **Separate edition:** [CatScratch light 1.0.0 — DPS meter only](https://github.com/Zerafithekitten/CatScratch/releases/tag/light-v1.0.0). Independent ZIP download and settings; manual updates only, with development frozen until the owner explicitly requests Light work.
 
@@ -393,3 +393,19 @@ Choose Horizontal, Vertical rail or Grid in Settings. Buttons are grouped by fun
 ![Horizontal panel](docs/images/panel-horizontal-beta12.png)
 
 ![Vertical rail](docs/images/panel-vertical-beta12.png) ![Grid panel](docs/images/panel-grid-beta12.png)
+
+### Reset countdowns, module previews and strict boss measurement (Beta 13)
+
+The checklist shows the next Daily and Weekly reset. Configure the UTC hour and weekly day in Settings > Checklist (defaults: 07:00 UTC, Wednesday). Verify these defaults for your server. Automatic clearing is off by default. When enabled, only the checkmarks of daily slots 1–2 and weekly slots 3–11 are cleared at their respective resets, including after an offline period. Custom task text and Other tasks are retained.
+
+![Checklist reset countdowns](docs/images/checklist-countdowns-beta13.png)
+
+Settings > General > Start test mode opens fourteen movable display and analysis previews using isolated sample data and temporary history. Previously visible windows are restored when test mode stops; real task data and module activation preferences are preserved. Preview positions are remembered separately.
+
+![Overview of sample module previews](docs/images/module-preview-beta13.png)
+
+Settings > Combat offers **ONLY BOSS** alongside the existing BOSS fallback and ALL modes. The panel labels this strict mode **ONLY**. It counts only the concrete engaged boss, excluding adds and other boss actors; switching modes starts a fresh measurement. Boss defeat estimates use rolling observed boss HP loss, so add damage does not inflate the estimate. Insufficient or stale HP data shows Calculating. A matching server deadline permits a time-limit comparison, without claiming a confirmed enrage mechanic.
+
+![Remaining boss fight estimate](docs/images/boss-estimate-beta13.png)
+
+Beta 13 also fixes the DPS overlay moving upward on restart by using the same screen bounds during startup and dragging. If an older version saved an already shifted position, move the overlay back once after updating.

@@ -1,4 +1,4 @@
-using AionMeter.Core.Events;
+﻿using AionMeter.Core.Events;
 using AionMeter.Core.Game;
 
 namespace AionMeter.Core.Combat;
@@ -326,6 +326,13 @@ public sealed partial class CombatTracker
         var npc = _entities.UpsertNpc(target);
         if (npc.Hp == 0) return; // trailing DoT ticks on a corpse must not open a new segment after the kill
 
+        if(Options.TargetMode==TargetMode.StrictBoss)
+        {
+            if(!npc.IsBoss)return;
+            if(_current is {IsActive:true,BossId: { } selected} && selected!=target && IsAlive(selected))return;
+            if(_current is {IsActive:true} previous && (previous.BossId!=target || previous.DamageByTarget.Keys.Any(id=>id!=target)))
+                Finish(EncounterEndReason.Manual,previous.LastDamageMs);
+        }
         if (Options.TargetMode == TargetMode.BossOnly)
         {
             if (_current is { IsActive: true, BossId: not null } && !npc.IsBoss) return; // adds during a boss fight

@@ -1,4 +1,4 @@
-using System.IO;
+﻿using System.IO;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using AionMeter.Core.Combat;
@@ -84,6 +84,12 @@ public sealed class AppSettings
     public string? PreferredDisplay {get;set;}
     public bool ShowChecklistModule {get;set;}
     public bool ChecklistSectionsMigrated {get;set;}
+    public Dictionary<string,CardPlacement> ModulePreviewLayout {get;set;}=[];
+    public bool ChecklistAutoReset {get;set;}
+    public int ChecklistResetHourUtc {get;set;}=7;
+    public DayOfWeek ChecklistWeeklyResetDay {get;set;}=DayOfWeek.Wednesday;
+    public long ChecklistDailyPeriod {get;set;}
+    public long ChecklistWeeklyPeriod {get;set;}
     public int ChecklistRows {get;set;}=11;
     public double ChecklistWidth {get;set;}=320;
     public bool ChecklistPositionSaved {get;set;}

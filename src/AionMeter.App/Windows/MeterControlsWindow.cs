@@ -1,4 +1,4 @@
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Interop;
@@ -282,7 +282,7 @@ internal sealed class MeterControlsWindow : Window
     }
     private sealed class StackedLetters:System.Windows.Data.IValueConverter
     {
-        public object Convert(object value,Type targetType,object parameter,System.Globalization.CultureInfo culture)=>string.Join("\n",(value?.ToString()??"").ToCharArray());
+        public object Convert(object value,Type targetType,object parameter,System.Globalization.CultureInfo culture)=>string.Join("\n",(value?.ToString()=="ONLY BOSS"?"ONLY":value?.ToString()??"").ToCharArray());
         public object ConvertBack(object value,Type targetType,object parameter,System.Globalization.CultureInfo culture)=>throw new NotSupportedException();
     }
     internal static Rect AlignedBounds(Rect bounds,Rect area,ControlsAnchor anchor)

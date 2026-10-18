@@ -1,4 +1,4 @@
-using System.IO;
+﻿using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -94,7 +94,8 @@ public partial class OverlayWindow : Window, IDisplayAppearance
             // Clicking the overlay must never pull keyboard focus away from the game window.
             NativeMethods.SetExStyle(_hwnd, 0, NativeMethods.WS_EX_NOACTIVATE | NativeMethods.WS_EX_TOOLWINDOW);
             ApplyClickThrough();
-            FitToMonitor();
+            // WindowPresentation constrains after Loaded, using the same physical screen
+            // bounds as dragging. A second WorkingArea clamp here caused restart drift.
         };
     }
 
@@ -115,6 +116,7 @@ public partial class OverlayWindow : Window, IDisplayAppearance
     private bool _displayOnly;
     internal bool DisplayOnly=>_displayOnly;
     internal bool ControlsDetached {get;private set;}
+    private readonly BossDefeatEstimate _defeatEstimate=new();
     private MeterControlsWindow? _controlsPanel;
     internal void MoveControlsTo(MeterControlsWindow panel)
     {
@@ -311,9 +313,11 @@ public partial class OverlayWindow : Window, IDisplayAppearance
         _vm.ShowGear = _settings.ShowGear;
         _vm.ShowCombatPower = _settings.ShowCombatPower ?? _settings.ShowGear;
         uint? activeBoss=null;
+        double? defeatSeconds=null;
         {
             var now = ClockOverride?.Invoke() ?? DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
             var snap = _meter.Tracker.Snapshot(null, now);
+            defeatSeconds=_defeatEstimate.Update(snap,now);
             var party = _meter.PartyPreview.Snapshot();
             if (!_meter.PartyPreview.InDungeon && party.Members.Count > 0 &&
                 (snap is null || (party.InRoom && !snap.IsActive)))
@@ -339,7 +343,9 @@ public partial class OverlayWindow : Window, IDisplayAppearance
         if (!_settings.ShowBossPanel) _vm.HasBoss = false;
         // The instance's time limit (or the wait after entering), whatever fight is shown: it is about where you are now.
         var wall = ClockOverride?.Invoke() ?? DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
-        _vm.SetBossLimit(activeBoss is uint bossId?_meter.Tracker.BossTimer(bossId,wall):null,wall);
+        var bossDeadline=activeBoss is uint bossId?_meter.Tracker.BossTimer(bossId,wall):null;
+        _vm.SetBossLimit(bossDeadline,wall);
+        _vm.SetDefeatEstimate(defeatSeconds,bossDeadline is null?null:(bossDeadline.EndMs-wall)/1000.0);
         _vm.SetLimit(_meter.Tracker.NextTimer(wall,includeBoss:!_vm.HasBossLimit), wall);
         if (Environment.TickCount64 - _timersLabelAt >= 1_000) UpdateTimersLabel();
 
@@ -511,8 +517,12 @@ public partial class OverlayWindow : Window, IDisplayAppearance
         ResizeGrip.Visibility = _settings.Locked ? Visibility.Collapsed : Visibility.Visible;
     }
 
-    private void UpdateModeLabel() =>
-        _vm.ModeLabel = _settings.TargetMode == TargetMode.BossOnly ? "BOSS" : "ALL";
+    private void UpdateModeLabel()
+    {
+        _vm.ModeLabel = _settings.TargetMode switch {TargetMode.StrictBoss=>"ONLY",TargetMode.BossOnly=>"BOSS",_=>"ALL"};
+        var mode=DamageModeButton;
+        mode.ToolTip=UiText.Current.Localize("BOSS: bosses, otherwise other enemies. ALL: every enemy. ONLY: the engaged boss only. Switching starts a new measurement.");
+    }
 
     private void EnsureOnScreen()
     {
@@ -524,26 +534,7 @@ public partial class OverlayWindow : Window, IDisplayAppearance
         if (Top + 40 > vt + vh || Top < vt) Top = vt + 160;
     }
 
-    /// <summary>
-    /// Keeps the whole card inside the work area of the monitor it sits on (a taller layout must not hang off the
-    /// bottom edge). Runs once the window has a handle, when the monitor and its DPI are known.
-    /// </summary>
-    private void FitToMonitor()
-    {
-        if (_hwnd == 0) return;
-        var area = System.Windows.Forms.Screen.FromHandle(_hwnd).WorkingArea; // physical pixels
-        var dpi = VisualTreeHelper.GetDpi(this);
-        var left = area.Left / dpi.DpiScaleX;
-        var top = area.Top / dpi.DpiScaleY;
-        var right = area.Right / dpi.DpiScaleX;
-        var bottom = area.Bottom / dpi.DpiScaleY;
-        if (Height > bottom - top) Height = Math.Max(MinHeight, bottom - top);
-        Left = Math.Clamp(Left, left, Math.Max(left, right - Width));
-        Top = Math.Clamp(Top, top, Math.Max(top, bottom - Height));
-        Log.Info($"Overlay placed at {Left:0},{Top:0} {Width:0}x{Height:0} DIP; monitor work area {left:0},{top:0}-{right:0},{bottom:0} DIP (scale {dpi.DpiScaleX})");
-    }
-
-    private void SavePlacement()
+    internal void SavePlacement()
     {
         _settings.OverlayLeft = Left;
         _settings.OverlayTop = Top;
@@ -609,7 +600,7 @@ public partial class OverlayWindow : Window, IDisplayAppearance
 
     private void Mode_Click(object sender, RoutedEventArgs e)
     {
-        _settings.TargetMode = _settings.TargetMode == TargetMode.BossOnly ? TargetMode.All : TargetMode.BossOnly;
+        _settings.TargetMode = (TargetMode)(((int)_settings.TargetMode+1)%3);
         _meter.ApplySettings();
         UpdateModeLabel();
     }

@@ -1,10 +1,12 @@
-namespace AionMeter.Core.Combat;
+﻿namespace AionMeter.Core.Combat;
 
 public enum TargetMode
 {
     /// <summary>Count damage to bosses only; falls back to everything while no boss is engaged.</summary>
     BossOnly,
     All,
+    /// <summary>Only the concrete engaged boss; never fall back to trash or other boss actors.</summary>
+    StrictBoss,
 }
 
 public sealed class MeterOptions

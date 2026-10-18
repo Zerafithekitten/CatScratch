@@ -1,4 +1,4 @@
-using System.IO;
+﻿using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -75,15 +75,31 @@ public static class SampleRenderer
         if (o.Window is not ("party" or "room"))
             meter.Tracker.Process(new InstanceTimerEvent(start, 600092, 2, start - 768_000, start + 2_832_000));
         if (o.Window == "overlay-crowd") fight.FeedCrowd(meter.Tracker, start + 20_000, 124);
-        if(o.Window=="overlay-boss-limit")meter.Tracker.Process(new BossTimeLimitEvent(start,900001,start+300000));
+        if(o.Window is "overlay-boss-limit" or "overlay-boss-estimate")meter.Tracker.Process(new BossTimeLimitEvent(start,900001,start+300000));
         if (o.Window == "history")
             foreach (var entry in meter.History.List().Take(20)) meter.PortraitOf(entry);
         WaitForPortraits(meter);
 
+        ModulePreviewSession? workspace=null;
         Window host;
         Action refresh;
         switch (o.Window)
         {
+            case "preview-workspace":
+                workspace=new ModulePreviewSession(meter.Settings);workspace.Show(offscreen:true);
+                var gallery=new WrapPanel {Margin=new(10)};
+                foreach(var window in workspace.Windows)
+                {
+                    window.UpdateLayout();
+                    var width=Math.Max(1,(int)Math.Ceiling(window.ActualWidth));var height=Math.Max(1,(int)Math.Ceiling(window.ActualHeight));
+                    var bitmap=new RenderTargetBitmap(width,height,96,96,PixelFormats.Pbgra32);bitmap.Render(window);
+                    var card=new StackPanel();
+                    card.Children.Add(new TextBlock {Text=window.Title,FontSize=10,Foreground=ThemeColors.Brush("#C49AF5"),Margin=new(0,0,0,5),TextTrimming=TextTrimming.CharacterEllipsis});
+                    card.Children.Add(new Image {Source=bitmap,Height=175,Stretch=Stretch.Uniform,HorizontalAlignment=HorizontalAlignment.Center});
+                    gallery.Children.Add(new Border {Child=card,Width=245,Height=210,Padding=new(8),Margin=new(4),BorderThickness=new(1),BorderBrush=ThemeColors.Brush("#414A56"),CornerRadius=new(6)});
+                }
+                host=new Window {Width=1040,Height=900,Content=gallery,Background=ThemeColors.Brush("#191D23")};
+                refresh=()=>{};break;
             case "update-notice":
                 var badgeResources=new MeterControlsWindow(meter.Settings,()=>{},()=>{});
                 host=new Window {Width=72,Height=26,Background=Brushes.Transparent,Content=MeterControlsWindow.CreateUpdateNoticeButton(badgeResources)};
@@ -273,11 +289,14 @@ public static class SampleRenderer
                 meter.Settings.ChecklistItems[0].Completed=true;
                 var taskWindow=new ChecklistWindow(meter.Settings);
                 if(o.Window=="checklist-locked")taskWindow.SetDisplayOnly(true);
-                host=taskWindow;refresh=()=>{};break;
+                host=taskWindow;refresh=taskWindow.RefreshResetClock;break;
             case "hidden-cube":
                 host=new HiddenCubeWindow(meter.Settings);
                 refresh=()=>{};
                 break;
+            case "settings-only-boss":
+                meter.Settings.TargetMode=Core.Combat.TargetMode.StrictBoss;
+                goto case "settings";
             case "settings-party":
                 meter.Settings.Theme=new(MarioParty:true);ThemeColors.Apply(meter.Settings.Theme);
                 goto case "settings";
@@ -286,6 +305,7 @@ public static class SampleRenderer
                 goto case "settings";
             case "settings":
                 var settingsWindow = new SettingsWindow(meter) { Width = o.Width ?? 760, Height = o.Height ?? 660 };
+                if(o.Window=="settings-only-boss")settingsWindow.SelectTab("combat");
                 // Keep existing numeric screenshot selectors stable when the sidebar is reordered.
                 string[] tabIds=["appearance","combat","hotkeys","history","capture","general","updates","feedback","events","pets","profiles","help","cubes","checklist"];
                 if (int.TryParse(o.Tab,out var settingsTab) && settingsTab>=0 && settingsTab<tabIds.Length) settingsWindow.SelectTab(tabIds[settingsTab]);
@@ -310,7 +330,18 @@ public static class SampleRenderer
         }
         if(host is OverlayWindow display && !display.ControlsDetached)
             display.MoveControlsTo(new MeterControlsWindow(meter.Settings,()=>{},()=>{}));
+        if(o.Window=="overlay-boss-estimate" && host is OverlayWindow estimateDisplay)
+        {
+            var hp=meter.Tracker.Snapshot(null,start+20000)!.Boss!.Hp;
+            for(var i=0;i<=10;i++)
+            {
+                var at=start+20000+i*1000;OverlayWindow.ClockOverride=()=>at;
+                meter.Tracker.Process(new NpcHpEvent(at,900001,hp+(10-i)*1000000,90000000));
+                estimateDisplay.Refresh();
+            }
+        }
         Capture(host, refresh, path, o);
+        workspace?.Dispose();
     }
 
     /// <summary>
@@ -422,6 +453,15 @@ public static class SampleRenderer
         };
     }
 
+    internal static Core.Combat.FightRecord SeedWorkspace(MeterService meter)
+    {
+        meter.StartDemo(animate:false);
+        var start=DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()-20000;
+        new SampleFight(start,20).FeedUntil(meter.Tracker,start+20000);
+        meter.Tracker.Process(new BossTimeLimitEvent(start,900001,start+300000));
+        FeedTimers(meter);
+        return meter.Tracker.Record(null)!;
+    }
     private const int SampleBossCode = 2701250; // Balhash, a field boss
 
     /// <summary>
@@ -539,7 +579,7 @@ public static class SampleRenderer
         "d30ea101000000ade306fbccc10ea101000000aee3061cfdc60ea101000000afe306bf00d70ea101000000b0e3063501d10ea10100000000" +
         "00";
 
-    private static void FeedTimers(MeterService meter)
+    internal static void FeedTimers(MeterService meter)
     {
         var now = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
         var capturedAt = new DateTimeOffset(2026, 10, 5, 21, 30, 7, 231, TimeSpan.Zero).ToUnixTimeMilliseconds();

@@ -1,4 +1,4 @@
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
@@ -173,7 +173,7 @@ public partial class SettingsWindow : Window
         AutomaticFightEndHint.Text=T.Localize("After inactivity, keep the finished fight until the next fight. Healing and incoming damage count as activity.");
         TestModeSection.Text=T.Localize("Test mode");
         TestModeButton.Content=T.Localize(_meter.DemoRunning?"Stop test mode":"Start test mode");
-        TestModeHint.Text=T.Localize("Use sample fights and pet progress to arrange your modules. Test data is not saved.");
+        TestModeHint.Text=T.Localize("Open all display and analysis modules with sample data. Move them freely across screens. Stop test mode to close previews; enabled modules and your real records stay unchanged.");
         WindowWidthText.Text = s.OverlayWidth.ToString("0");
         WindowHeightText.Text = s.OverlayHeight.ToString("0");
         WindowOpacityValue.Value = s.WindowOpacity;
@@ -190,7 +190,7 @@ public partial class SettingsWindow : Window
         MaxRows.SelectedItem = MaxRows.Items.Cast<int>().OrderBy(n => Math.Abs(n - s.MaxRows)).First();
         OpacityValue.Value = s.BackgroundOpacity;
         RowSizeValue.Value = s.RowSize;
-        Mode.SelectedIndex = s.TargetMode == TargetMode.BossOnly ? 0 : 1;
+        Mode.SelectedIndex = (int)s.TargetMode;
         Idle.Text = s.IdleTimeoutSec.ToString();
         BossIdle.Text = s.BossIdleTimeoutSec.ToString();
         SaveHistory.IsChecked = s.SaveHistory;
@@ -324,7 +324,7 @@ public partial class SettingsWindow : Window
         s.MaxRows = MaxRows.SelectedItem is int rows ? rows : 10;
         s.BackgroundOpacity = Math.Round(OpacityValue.Value, 2);
         s.RowSize = (int)Math.Round(RowSizeValue.Value);
-        s.TargetMode = Mode.SelectedIndex == 1 ? TargetMode.All : TargetMode.BossOnly;
+        s.TargetMode = (AionMeter.Core.Combat.TargetMode)Math.Clamp(Mode.SelectedIndex,0,2);
         if (int.TryParse(Idle.Text, out var idle)) s.IdleTimeoutSec = Math.Clamp(idle, 3, 120);
         if (int.TryParse(BossIdle.Text, out var bossIdle)) s.BossIdleTimeoutSec = Math.Clamp(bossIdle, 5, 300);
         s.SaveHistory = SaveHistory.IsChecked == true;

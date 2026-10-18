@@ -1,4 +1,4 @@
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using AionMeter.App.Services;
@@ -55,7 +55,7 @@ internal sealed class SymbolHelpPanel : StackPanel
         Row("\uE895","Check for updates","Nach Updates suchen","Checks the selected update channel. The restart notice appears after preparation finishes; clicking Restart to update applies it.","Prüft den gewählten Update-Kanal. Der Neustarthinweis erscheint nach abgeschlossener Vorbereitung; Neustart zum Aktualisieren übernimmt das Update.");
         Row("\uE121","Boss respawn timers","Boss-Respawnzeiten","Opens observed world-boss respawn timers. This is different from the upcoming-event timeline.","Öffnet beobachtete Respawnzeiten der Weltbosse. Diese Ansicht ist getrennt von der Timeline anstehender Events.",s.HotkeyTimers);
         Row("\uE9D9","Current fight details","Details zum aktuellen Kampf","Opens the current fight's player statistics, skills, accuracy and defense when fight data is available.","Öffnet bei vorhandenen Kampfdaten die Spielerstatistik des aktuellen Kampfes mit Fähigkeiten, Genauigkeit und Verteidigung.");
-        Row("BOSS","Damage mode: BOSS / ALL","Schadensmodus: BOSS / ALL","Switches outgoing damage between boss targets only and all targets. This changes which damage the meter includes.","Wechselt ausgehenden Schaden zwischen reinen Bosszielen und allen Zielen. Dadurch ändert sich, welchen Schaden das Meter berücksichtigt.");
+        Row("BOSS","Damage mode: BOSS / ALL / ONLY","Schadensmodus: BOSS / ALL / ONLY","BOSS keeps the boss-first fallback. ALL counts every enemy. ONLY counts the concrete engaged boss, excluding adds and other boss actors. Changing mode starts a new measurement.","BOSS behält den Bossmodus mit Ausweichmessung. ALL zählt alle Gegner. ONLY zählt nur den konkreten Boss, ohne Adds und andere Boss-Entitäten. Ein Wechsel startet eine neue Messung.");
         Row("\uE72C","Restart measurement","Messung neu starten","Restarts measurement and capture while retaining known players and bosses. This does not exit CatScratch or reset permanent bests.","Startet Messung und Erfassung neu und behält bekannte Spieler und Bosse. CatScratch wird nicht beendet; dauerhafte Bestwerte bleiben erhalten.",s.HotkeyReset);
         Row("\uE785","Movement lock","Verschieben sperren","Locks dragging and resizing of the DPS meter. The independent panel position is controlled by its own pin.","Sperrt Verschieben und Größenänderung des DPS-Meters. Die unabhängige Panelposition wird über dessen eigenen Pin gesperrt.");
         Row("—●","Background opacity","Hintergrund-Deckkraft","The slider changes the background transparency. Settings also offers display opacity for the entire panel and display modules.","Der Regler verändert die Transparenz des Hintergrunds. In den Einstellungen lässt sich außerdem die Deckkraft des gesamten Panels und der Anzeigemodule anpassen.");

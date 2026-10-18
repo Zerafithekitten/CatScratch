@@ -1,9 +1,20 @@
-namespace AionMeter.App.Services;
+﻿namespace AionMeter.App.Services;
 
 public sealed partial class UiText
 {
     private static readonly Dictionary<string,(string De,string Ru,string Fr)> LayoutComparisonText=new()
     {
+        ["Automatically clear checkmarks at reset"]=("Häkchen beim Reset automatisch entfernen","Автоматически снимать отметки при сбросе","Effacer les coches à la réinitialisation"),
+        ["Reset time (UTC)"]=("Reset-Zeit (UTC)","Время сброса (UTC)","Heure de réinitialisation (UTC)"),
+        ["Weekly reset day"]=("Wöchentlicher Reset-Tag","День еженедельного сброса","Jour de réinitialisation hebdomadaire"),
+        ["Daily: first 2 slots. Weekly: slots 3–11. Other tasks are never reset. Reset times are configurable; check them for your server."]=("Täglich: Plätze 1–2. Wöchentlich: Plätze 3–11. Andere Aufgaben werden nie zurückgesetzt. Reset-Zeiten sind anpassbar; bitte für deinen Server prüfen.","Ежедневно: строки 1–2. Еженедельно: строки 3–11. Другие задачи не сбрасываются. Проверьте время для своего сервера.","Quotidien : lignes 1–2. Hebdomadaire : lignes 3–11. Les autres tâches ne sont jamais réinitialisées. Vérifiez les horaires de votre serveur."),
+        ["Estimated defeat"]=("Restkampfzeit","До победы примерно","Victoire estimée"),
+        ["Calculating…"]=("Berechne …","Расчёт…","Calcul…"),
+        ["Before time limit"]=("Vor Zeitlimit","До лимита времени","Avant la limite"),
+        ["After time limit"]=("Nach Zeitlimit","После лимита времени","Après la limite"),
+        ["Estimate from recent boss HP loss. Pauses and healing can change the result. The deadline comparison does not confirm an enrage mechanic."]=("Schätzung aus dem jüngsten HP-Verlust des Bosses. Pausen und Heilung können das Ergebnis ändern. Der Vergleich mit dem Zeitlimit bestätigt keine Enrage-Mechanik.","Оценка по недавней потере HP босса. Паузы и лечение меняют результат. Сравнение с лимитом не подтверждает механику ярости.","Estimation selon la perte récente de PV du boss. Les pauses et soins modifient le résultat. La comparaison ne confirme pas une mécanique de rage."),
+        ["Open all display and analysis modules with sample data. Move them freely across screens. Stop test mode to close previews; enabled modules and your real records stay unchanged."]=("Öffnet alle Anzeige- und Analyse-Module mit Beispieldaten. Frei auf allen Bildschirmen verschiebbar. Testmodus beenden schließt die Vorschau; aktivierte Module und echte Daten bleiben erhalten.","Открывает все модули отображения и анализа с примерами. Свободно перемещайте их между экранами. Завершение теста закрывает предпросмотр, сохраняя реальные данные и включённые модули.","Ouvre tous les modules avec des exemples. Déplacez-les librement entre les écrans. Arrêter le test ferme les aperçus sans modifier les données ni les modules activés."),
+        ["BOSS: bosses, otherwise other enemies. ALL: every enemy. ONLY: the engaged boss only. Switching starts a new measurement."]=("BOSS: Bosse, sonst andere Gegner. ALL: alle Gegner. ONLY: nur der konkrete Boss. Ein Wechsel startet eine neue Messung.","BOSS: боссы, иначе другие враги. ALL: все враги. ONLY: только текущий босс. Переключение начинает новый замер.","BOSS : boss, sinon autres ennemis. ALL : tous. ONLY : uniquement le boss engagé. Changer de mode lance une nouvelle mesure."),
         ["Daily"]=("Täglich","Ежедневно","Quotidien"),
         ["Vertical rail"]=("Vertikale Leiste","Вертикальная панель","Barre verticale"),
         ["Grid"]=("Raster","Сетка","Grille"),

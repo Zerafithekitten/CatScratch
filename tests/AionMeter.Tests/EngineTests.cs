@@ -1,4 +1,4 @@
-using System.Net;
+﻿using System.Net;
 using AionMeter.Core.Capture;
 using AionMeter.Core.Combat;
 using AionMeter.Core.Events;
@@ -8,6 +8,32 @@ namespace AionMeter.Tests;
 
 public class EngineTests
 {
+    [Fact]
+    public void Strict_boss_ignores_trash_adds_and_other_bosses_but_keeps_incoming_damage()
+    {
+        var t=Tracker(TargetMode.StrictBoss);Setup(t);
+        t.Process(new DamageEvent(1000,Me,Add,16040000,500000,HitFlags.None));
+        Assert.Null(t.Snapshot(null,1000));
+        t.Process(new DamageEvent(2000,Me,Boss,16040000,300000,HitFlags.None));
+        t.Process(new NpcSeenEvent(2100,502,2300243,120000000));
+        t.Process(new DamageEvent(2200,Me,502,16040000,900000,HitFlags.None));
+        t.Process(new DamageEvent(2300,Me,Add,16040000,500000,HitFlags.None));
+        t.Process(new DamageEvent(2400,Add,Me,2100001,200,HitFlags.None));
+        t.Process(new DamageEvent(2500,Pet,Boss,16040000,10000,HitFlags.None));
+        var snap=t.Snapshot(null,3000)!;
+        Assert.Equal(310000,snap.TotalDamage);Assert.Equal(Boss,snap.Boss!.ActorId);
+        Assert.True(snap.BossOnlyDamage);Assert.Equal(200,snap.Combatants.Single(c=>c.IsSelf).DamageTaken);
+    }
+    [Fact]
+    public void Entering_strict_mode_starts_a_clean_boss_segment()
+    {
+        var t=Tracker(TargetMode.All);Setup(t);
+        t.Process(new DamageEvent(1000,Me,Add,16040000,500000,HitFlags.None));
+        t.Options.TargetMode=TargetMode.StrictBoss;
+        t.Process(new DamageEvent(2000,Me,Boss,16040000,300000,HitFlags.None));
+        Assert.Equal(300000,t.Snapshot(null,3000)!.TotalDamage);
+    }
+
     [Fact]
     public void Personal_statistics_reject_non_party_healers_and_recipients()
     {

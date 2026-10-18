@@ -1,4 +1,4 @@
-using System.IO;
+﻿using System.IO;
 using AionMeter.Core;
 using AionMeter.Core.Capture;
 using AionMeter.Core.Combat;
@@ -35,7 +35,7 @@ public sealed class MeterService : IDisposable
     private DemoFightSource? _demo;
     private readonly PetProgressCache? _petProgress;
 
-    public MeterService(AppSettings settings, Func<GameData, IEventSource>? captureFactory, PersonalBestStore? personalBests = null, LastPlayedWithStore? lastPlayedWith = null)
+    public MeterService(AppSettings settings, Func<GameData, IEventSource>? captureFactory, PersonalBestStore? personalBests = null, LastPlayedWithStore? lastPlayedWith = null, string? historyDirectory = null)
     {
         Settings = settings;
         if (!settings.Transient && !settings.BackgroundUpdateDefaultsApplied)
@@ -58,7 +58,7 @@ public sealed class MeterService : IDisposable
         Options.PartyOnly = !settings.Transient;
         Options.MaxSegments = HistoryStore.MaxSavedFights;
         _realTracker = new CombatTracker(Data, Options);
-        History = new HistoryStore(Path.Combine(AppSettings.AppDataDir, "fights"));
+        History = new HistoryStore(historyDirectory ?? Path.Combine(AppSettings.AppDataDir, "fights"));
         PersonalBests = personalBests ?? new PersonalBestStore(Data, settings.Transient ? null : Path.Combine(AppSettings.AppDataDir, "boss-personal-bests.json"));
         LastPlayedWith = lastPlayedWith ?? new LastPlayedWithStore(settings.Transient ? null : Path.Combine(AppSettings.AppDataDir, "last-played-with.json"));
         _realTimers = new BossTimers(Path.Combine(AppSettings.AppDataDir, "boss-timers.json"), Data, DataDirectory, persistent: !settings.Transient);
@@ -312,6 +312,7 @@ public sealed class MeterService : IDisposable
     public void Tick()
     {
         if(_exiting)return;
+        if(!Settings.Transient)ChecklistSchedule.Update(Settings,DateTimeOffset.UtcNow);
         if (DemoRunning && _animateTest && _demo?.IsRunning != true) StartDemoFight();
         // The wall clock means nothing to a recording's timestamps: idle checks wait until the replay is done.
         if (!_replaying) Tracker.Tick(DateTimeOffset.UtcNow.ToUnixTimeMilliseconds());
@@ -349,7 +350,10 @@ public sealed class MeterService : IDisposable
     public void ApplySettings()
     {
         Updates.ApplyPreferences();
+        var oldMode=Options.TargetMode;
         Settings.ApplyTo(Options);
+        if(oldMode!=Options.TargetMode){_realTracker.Reset();_testTracker?.Reset();}
+        if(_testTracker is not null)_testTracker.Options.TargetMode=Options.TargetMode;
         StreamNames.Enabled=Settings.StreamMode;
         WindowPresentation.SetScale(Settings.UiScale);
         Icons.Enabled = Settings.DownloadIcons;

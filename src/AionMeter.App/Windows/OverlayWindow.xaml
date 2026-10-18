@@ -1,4 +1,4 @@
-<Window x:Class="AionMeter.App.Windows.OverlayWindow"
+﻿<Window x:Class="AionMeter.App.Windows.OverlayWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:colors="clr-namespace:AionMeter.App.Services"
         xmlns:c="clr-namespace:AionMeter.App.Controls"
@@ -270,7 +270,7 @@
                            MouseWheel="Title_MouseWheel" ToolTip="{Binding TitleTip}" />
 
                 <StackPanel x:Name="Toolbar" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Left" Visibility="Collapsed">
-                    <Button Style="{StaticResource Chip}" Content="{Binding ModeLabel}" Click="Mode_Click" Margin="0,0,5,0"
+                    <Button x:Name="DamageModeButton" Style="{StaticResource Chip}" Content="{Binding ModeLabel}" Click="Mode_Click" Margin="0,0,5,0"
                             ToolTip="{Binding T.Literal7}" />
                     <Button Visibility="Collapsed" Style="{StaticResource Chip}" Content="{Binding LanguageCode}" Click="Language_Click" Margin="0,0,5,0"
                             ToolTip="{Binding T.SwitchLanguage}" />
@@ -323,7 +323,7 @@
 
             <!-- Rounded, unscaled HP fill with separate non-overlapping value columns. -->
             <Grid x:Name="BossHpPanel" Grid.Row="2" Margin="0,5,0,0" Visibility="{Binding HasBoss, Converter={StaticResource VisibleIf}}">
-                <Grid.RowDefinitions><RowDefinition Height="20"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+                <Grid.RowDefinitions><RowDefinition Height="20"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
                 <Border CornerRadius="5" Background="{DynamicResource CustomBrush_20242A}" BorderBrush="#805E3840" BorderThickness="1">
                     <Grid x:Name="BossHpTrack">
                         <Border x:Name="BossHpFill" CornerRadius="4" Background="{StaticResource HpFill}" HorizontalAlignment="Left">
@@ -346,6 +346,10 @@
                         <TextBlock Grid.Column="1" Text="{Binding BossLimitText}" FontSize="8.5" Foreground="#E4C28A" FontFamily="{StaticResource NumberFont}" VerticalAlignment="Center"/>
                     </Grid>
                 </Grid>
+                <DockPanel Grid.Row="2" Margin="3,2,3,0" ToolTip="{Binding DefeatTip}">
+                    <TextBlock DockPanel.Dock="Right" Text="{Binding DefeatComparison}" Foreground="{Binding DefeatBrush}" FontSize="8" Margin="4,0,0,0"/>
+                    <TextBlock Text="{Binding DefeatText}" Foreground="#A9B8C7" FontSize="8.5" TextTrimming="CharacterEllipsis"/>
+                </DockPanel>
             </Grid>
 
             <!-- Party: the rows share their value column widths -->

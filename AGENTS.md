@@ -1,4 +1,4 @@
-# CatScratch project instructions
+﻿# CatScratch project instructions
 
 ## Separate Light edition: explicit opt-in only
 
@@ -61,3 +61,7 @@ The full-version Checklist is opt-in in Settings > Checklist, with 1–20 compac
 The Checklist toggle belongs in the permanent control panel in both orientations, with its state highlighted and matching icon documented in Help & symbols. Use the remaining fourth-row slot in the vertical panel; do not increase panel height. Toggling visibility must preserve all task text and completion state.
 
 Checklist checkboxes must remain clickable in global click-through mode; task text and surrounding space still pass clicks to the game. Do not take game keyboard focus when toggling completion.
+
+The owner authorized reset countdowns with explicit opt-in automatic clearing on 2026-10-19. Use configurable UTC hour (default 07:00) and weekly day (default Wednesday); clear only daily slots 1–2 and weekly slots 3–11. Preserve task text and all Other tasks. Demo mode opens isolated display/analysis previews, preserving actual module activation and task/history data. ONLY BOSS is a third strict concrete-boss option; preserve existing modes. Defeat estimates use rolling boss HP loss and show no estimate for stale/insufficient data; server deadline comparisons must not claim confirmed enrage detection. No upload until visual approval.
+
+DPS overlay startup must use the shared WindowPresentation screen-bounds constraint, matching manual dragging. Do not restore a separate WorkingArea clamp during SourceInitialized: it moves a bottom-edge overlay upward by the taskbar height on restart. Keep placement regression coverage for repeated startup and detached controls.

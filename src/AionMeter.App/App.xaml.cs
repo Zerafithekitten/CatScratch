@@ -1,4 +1,4 @@
-using System.IO;
+﻿using System.IO;
 using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Threading;
@@ -70,6 +70,9 @@ public partial class App : Application
     private PatchNotesWindow? _patchNotes;
     private readonly Dictionary<object, BreakdownWindow> _breakdowns = new();
     private int _ticks;
+    private ModulePreviewSession? _modulePreview;
+    private bool _previewOverlayWasVisible;
+    private Window[] _previewHiddenWindows=[];
     private bool _shutdownStarted;
     private System.Threading.Timer? _exitDeadline;
     private string? _shutdownCheckPath;
@@ -233,6 +236,20 @@ public partial class App : Application
                 File.WriteAllText(checklistPath,System.Text.Json.JsonSerializer.Serialize(checks));Shutdown();
             }
             catch(Exception error){File.WriteAllText(checklistPath,error.ToString());Shutdown(1);}
+            return;
+        }
+        if(ArgValue(e.Args,"--check-placement") is { } placementPath)
+        {
+            Log.Enabled=false;
+            try{OverlayPlacementChecks.Run(placementPath);Shutdown();}
+            catch(Exception error){File.WriteAllText(placementPath,error.ToString());Shutdown(1);}
+            return;
+        }
+        if(ArgValue(e.Args,"--check-enhancements") is { } enhancementsPath)
+        {
+            Log.Enabled=false;
+            try{EnhancementChecks.Run(enhancementsPath);Shutdown();}
+            catch(Exception error){File.WriteAllText(enhancementsPath,error.ToString());Shutdown(1);}
             return;
         }
         if(ArgValue(e.Args,"--check-panel") is { } panelPath)
@@ -475,7 +492,7 @@ public partial class App : Application
     private void OnTick()
     {
         _meter.Tick();
-        UpdateAutoVisibility();
+        if(_modulePreview is null)UpdateAutoVisibility();
         SyncMeterControls();
         SyncDeathRecap();
         SyncHiddenCubes();
@@ -763,6 +780,27 @@ public partial class App : Application
 
     public void ToggleTestMode()
     {
+        if(_modulePreview is not null)
+        {
+            _modulePreview.Dispose();_modulePreview=null;_meter.StopDemo();
+            foreach(var window in _previewHiddenWindows)if(window.IsLoaded)window.Show();
+            _previewHiddenWindows=[];
+            if(_previewOverlayWasVisible && _meter.Settings.ShowDpsMeterModule)_overlay.Show();
+            _overlay.Refresh();return;
+        }
+        if(!_meter.DemoRunning)
+        {
+            var preview=new ModulePreviewSession(_meter.Settings);
+            try
+            {
+                _previewOverlayWasVisible=_overlay.IsVisible;
+                _previewHiddenWindows=Windows.Cast<Window>().Where(w=>w.IsVisible && w!=_settingsWindow && w!=_meterControls).ToArray();
+                foreach(var window in _previewHiddenWindows)window.Hide();
+                _meter.StartDemo();_modulePreview=preview;preview.Show();_overlay.Hide();
+            }
+            catch{_modulePreview=null;preview.Dispose();_meter.StopDemo();foreach(var window in _previewHiddenWindows)if(window.IsLoaded)window.Show();_previewHiddenWindows=[];throw;}
+            return;
+        }
         var petsVisible=_petWindow?.IsVisible==true;
         var bossWindow=_timersWindow;
         var bossesVisible=bossWindow?.IsVisible==true;
@@ -1096,6 +1134,7 @@ public partial class App : Application
         _exitDeadline ??= new System.Threading.Timer(_ => Environment.Exit(e.ApplicationExitCode), null,
             TimeSpan.FromSeconds(10), Timeout.InfiniteTimeSpan);
         if (_meter is not null) Log.Info("Exiting");
+        _modulePreview?.Dispose();_modulePreview=null;
         _timer?.Stop();
         _gameTimer?.Stop();
         _timerCards?.Dispose();

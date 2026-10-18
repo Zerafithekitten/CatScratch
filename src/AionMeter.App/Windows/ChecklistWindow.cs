@@ -1,4 +1,4 @@
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media;
@@ -14,11 +14,13 @@ internal sealed class ChecklistWindow : Window,IDisplayAppearance
     private readonly DispatcherTimer _save=new(){Interval=TimeSpan.FromMilliseconds(450)};
     private readonly List<(CheckBox Check,TextBox Text)> _fields=[];
     private bool _displayOnly;
+    private readonly DispatcherTimer _resetClock=new(){Interval=TimeSpan.FromSeconds(1)};
+    private readonly Dictionary<bool,TextBlock> _countdowns=[];
     private readonly ChecklistInputSurface _input;
     internal bool DisplayOnly=>_displayOnly;
     internal ChecklistInputSurface InputSurface=>_input;
     internal IReadOnlyList<(CheckBox Check,TextBox Text)> Fields=>_fields;
-    internal string[] SectionHeaders=>_rows.Children.OfType<TextBlock>().Select(t=>t.Text).ToArray();
+    internal string[] SectionHeaders=>_rows.Children.OfType<DockPanel>().SelectMany(p=>p.Children.OfType<TextBlock>().Where(t=>!_countdowns.Values.Contains(t))).Select(t=>t.Text).ToArray();
     internal ScrollViewer TasksScroller {get;}
     internal Button CloseButton {get;}
     internal ChecklistWindow(AppSettings settings)
@@ -44,11 +46,13 @@ internal sealed class ChecklistWindow : Window,IDisplayAppearance
         if(settings.ChecklistPositionSaved && double.IsFinite(settings.ChecklistLeft) && double.IsFinite(settings.ChecklistTop)){Left=settings.ChecklistLeft;Top=settings.ChecklistTop;}
         else {Left=settings.OverlayLeft+40;Top=settings.OverlayTop+40;}
         _save.Tick+=(_,_)=>Flush();
+        _resetClock.Tick+=(_,_)=>RefreshResetClock();
+        IsVisibleChanged+=(_,_)=>{if(IsVisible){RefreshResetClock();_resetClock.Start();}else _resetClock.Stop();};
         Controls.DragAnywhere.Attach(this,dropped:SavePlacement);
         LocationChanged+=(_,_)=>_input.Schedule();SizeChanged+=(_,_)=>_input.Schedule();
         IsVisibleChanged+=(_,_)=>_input.Sync();Loaded+=(_,_)=>_input.Schedule();
         TasksScroller.ScrollChanged+=(_,_)=>_input.Schedule();
-        Closed+=(_,_)=>{_input.Dispose();_save.Stop();SavePlacement();AppHost.Current.ResumeHotkeys();};
+        Closed+=(_,_)=>{_input.Dispose();_save.Stop();_resetClock.Stop();SavePlacement();AppHost.Current.ResumeHotkeys();};
         ApplyPreferences();
     }
     internal void ApplyPreferences()
@@ -58,11 +62,20 @@ internal sealed class ChecklistWindow : Window,IDisplayAppearance
         ChecklistState.Normalize(_settings);Width=_settings.ChecklistWidth;
         if(_fields.Count!=_settings.ChecklistRows)
         {
-            Flush();_rows.Children.Clear();_fields.Clear();
+            Flush();_rows.Children.Clear();_fields.Clear();_countdowns.Clear();
             for(var i=0;i<_settings.ChecklistRows;i++)
             {
                 if(i is 0 or 2 or 11)
-                    _rows.Children.Add(new TextBlock {Text=UiText.Current.Localize(i==0?"Daily":i==2?"Weekly":"Other tasks"),FontSize=9,FontWeight=FontWeights.SemiBold,Foreground=ThemeColors.Brush("#C49AF5"),Margin=new(4,i==0?3:5,0,1)});
+                {
+                    var heading=new DockPanel {Margin=new(4,i==0?3:5,4,1)};
+                    if(i<11)
+                    {
+                        var countdown=new TextBlock {FontSize=9,Foreground=ThemeColors.Brush("#A9B8C7"),VerticalAlignment=VerticalAlignment.Center};
+                        _countdowns[i==2]=countdown;DockPanel.SetDock(countdown,Dock.Right);heading.Children.Add(countdown);
+                    }
+                    heading.Children.Add(new TextBlock {Text=UiText.Current.Localize(i==0?"Daily":i==2?"Weekly":"Other tasks"),FontSize=9,FontWeight=FontWeights.SemiBold,Foreground=ThemeColors.Brush("#C49AF5")});
+                    _rows.Children.Add(heading);
+                }
                 var item=_settings.ChecklistItems[i];
                 var check=new CheckBox {IsChecked=item.Completed,VerticalAlignment=VerticalAlignment.Center,Margin=new(4,0,5,0),Style=(Style)FindResource("DarkCheck"),ToolTip=UiText.Current.Localize("Mark task complete / incomplete")};
                 var text=new TextBox {Text=item.Text,MaxLength=240,Background=Brushes.Transparent,BorderThickness=new(0),Padding=new(1,1,3,1),Foreground=ThemeColors.Brush("#EDF2F7"),CaretBrush=ThemeColors.Brush("#C49AF5"),FontSize=11,VerticalContentAlignment=VerticalAlignment.Center,ToolTip=UiText.Current.Localize("Type a task")};
@@ -80,6 +93,23 @@ internal sealed class ChecklistWindow : Window,IDisplayAppearance
                 _fields.Add((check,text));
             }
             SetDisplayOnly(_displayOnly);
+        }
+    }
+    internal void RefreshResetClock()
+    {
+        var now=DateTimeOffset.UtcNow;
+        ChecklistSchedule.Update(_settings,now);
+        foreach(var (weekly,text) in _countdowns)
+        {
+            text.Text="↻ "+ChecklistSchedule.Countdown(_settings,now,weekly);
+            text.ToolTip=ChecklistSchedule.Next(_settings,now,weekly).ToLocalTime().ToString("ddd dd.MM. HH:mm")+" · "+_settings.ChecklistResetHourUtc.ToString("00")+":00 UTC";
+        }
+        for(var i=0;i<_fields.Count;i++)
+        {
+            var completed=_settings.ChecklistItems[i].Completed;
+            _fields[i].Check.IsChecked=completed;
+            _fields[i].Text.TextDecorations=completed?TextDecorations.Strikethrough:null;
+            _fields[i].Text.Opacity=completed?.6:1;
         }
     }
     private void SavePlacement()

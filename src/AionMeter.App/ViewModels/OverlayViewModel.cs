@@ -1,4 +1,4 @@
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Windows.Media;
 using AionMeter.App.Controls;
 using AionMeter.App.Services;
@@ -318,6 +318,20 @@ public sealed class OverlayViewModel : ObservableObject
     public double BossLimitFraction {get=>_bossLimitFraction;private set=>Set(ref _bossLimitFraction,value);}
     public string BossLimitText {get=>_bossLimitText;private set=>Set(ref _bossLimitText,value);}
     public string BossLimitLabel=>"Enrage time";
+    private string _defeatText="";
+    private string _defeatComparison="";
+    private Brush _defeatBrush=LimitAmber;
+    public string DefeatText {get=>_defeatText;private set=>Set(ref _defeatText,value);}
+    public string DefeatComparison {get=>_defeatComparison;private set=>Set(ref _defeatComparison,value);}
+    public Brush DefeatBrush {get=>_defeatBrush;private set=>Set(ref _defeatBrush,value);}
+    public string DefeatTip=>T.Localize("Estimate from recent boss HP loss. Pauses and healing can change the result. The deadline comparison does not confirm an enrage mechanic.");
+    public void SetDefeatEstimate(double? seconds,double? deadlineSeconds)
+    {
+        DefeatText=T.Localize("Estimated defeat")+" · "+(seconds is {} s?"~"+(s>=86400?">24h":TimeSpan.FromSeconds(Math.Ceiling(s)).ToString(s>=3600?@"h\:mm\:ss":@"m\:ss")):T.Localize("Calculating…"));
+        DefeatComparison=seconds is {} estimate && deadlineSeconds is >0?T.Localize(estimate<deadlineSeconds?"Before time limit":"After time limit"):"";
+        DefeatBrush=seconds is {} e && deadlineSeconds is {} d && e>=d?LiveRed:LimitAmber;
+        Raise(nameof(DefeatTip));
+    }
     public string BossLimitDescription=>T.Code=="de"?"Vom Server empfangenes Boss-Zeitlimit; keine separat bestätigte Enrage-Erkennung.":"Server-provided boss deadline; not a separately confirmed enrage timer.";
     public void SetBossLimit(InstanceTimerEvent? timer,long nowMs)
     {

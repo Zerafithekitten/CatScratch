@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
     <ProjectReference Include="..\AionMeter.Core\AionMeter.Core.csproj" />
@@ -17,7 +17,7 @@
     <Product>CatScratch</Product>
     <AssemblyTitle>CatScratch</AssemblyTitle>
     <ApplicationIcon>Assets\app.ico</ApplicationIcon>
-    <Version>3.0.4-beta.12</Version>
+    <Version>3.0.4-beta.13</Version>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <NoWarn>$(NoWarn);WFO0003</NoWarn>
