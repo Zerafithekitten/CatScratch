@@ -21,10 +21,10 @@ internal sealed class ChecklistSettingsPanel : StackPanel
         var automatic=new CheckBox {Content=T("Automatically clear checkmarks at reset"),IsChecked=draft.ChecklistAutoReset,Style=(Style)FindResource("DarkCheck"),Margin=new(0,8,0,0)};
         automatic.Click+=(_,_)=>draft.ChecklistAutoReset=automatic.IsChecked==true;Children.Add(automatic);
         Children.Add(new TextBlock {Text=T("Reset time (UTC)"),Margin=new(0,8,0,4)});
-        var hour=new ComboBox {ItemsSource=Enumerable.Range(0,24).Select(h=>$"{h:00}:00").ToArray(),SelectedIndex=Math.Clamp(draft.ChecklistResetHourUtc,0,23),Width=120,HorizontalAlignment=HorizontalAlignment.Left};
+        var hour=new ComboBox {ItemsSource=Enumerable.Range(0,24).Select(ChecklistSchedule.HourLabel).ToArray(),SelectedIndex=Math.Clamp(draft.ChecklistResetHourUtc,0,23),Width=120,HorizontalAlignment=HorizontalAlignment.Left};
         hour.SelectionChanged+=(_,_)=>draft.ChecklistResetHourUtc=hour.SelectedIndex;Children.Add(hour);
         Children.Add(new TextBlock {Text=T("Weekly reset day"),Margin=new(0,8,0,4)});
-        var day=new ComboBox {ItemsSource=Enum.GetValues<DayOfWeek>().Select(d=>System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.GetDayName(d)).ToArray(),SelectedIndex=(int)draft.ChecklistWeeklyResetDay,Width=160,HorizontalAlignment=HorizontalAlignment.Left};
+        var day=new ComboBox {ItemsSource=Enum.GetValues<DayOfWeek>().Select(d=>UiText.Current.Culture.DateTimeFormat.GetDayName(d)).ToArray(),SelectedIndex=(int)draft.ChecklistWeeklyResetDay,Width=160,HorizontalAlignment=HorizontalAlignment.Left};
         day.SelectionChanged+=(_,_)=>draft.ChecklistWeeklyResetDay=(DayOfWeek)day.SelectedIndex;Children.Add(day);
         Children.Add(new TextBlock {Text=T("Daily: first 2 slots. Weekly: slots 3–11. Other tasks are never reset. Reset times are configurable; check them for your server."),TextWrapping=TextWrapping.Wrap,FontSize=11,Foreground=ThemeColors.Brush("#A9B8C7"),Margin=new(0,6,0,0)});
         var count=new TextBlock {Margin=new(0,12,0,4)};

@@ -1,4 +1,14 @@
-﻿## CatScratch v3.0.4
+﻿## CatScratch v3.0.5
+
+### CHECKLIST RESET SETTINGS — LANGUAGE AND CLOCK FORMAT HOTFIX
+
+- Reset weekdays now follow the language selected inside CatScratch, independently of Windows. English shows Sunday–Saturday, German Sonntag–Samstag, Russian воскресенье–суббота, and French dimanche–samedi. An English interface on a German Windows installation no longer displays Mittwoch.
+- English reset-time choices use the 12-hour format with AM/PM, including correct midnight (12:00 AM), noon (12:00 PM), and evening values. German, Russian and French keep the 24-hour format.
+- Reset countdown tooltips use the same clock convention and localized weekday/date text. UTC remains the schedule reference; the tooltip also shows the next reset in local time. Countdown durations remain elapsed-time durations, without AM/PM.
+- This changes displayed labels only. Saved UTC hours, weekdays, task text, completion state and automatic-reset preferences are retained. Save continues to apply changes without closing Settings.
+- Includes the complete Stable 3.0.4 feature set. CatScratch light remains unchanged.
+
+## CatScratch v3.0.4
 
 This Stable release brings the full 3.0.4 Beta feature set to the main CatScratch download, together with the final corrections to Test mode, vertical button lettering and DPS overlay placement. It includes every change from Beta 1–13, the checklist heading cleanup prepared for Beta 11, and the additional reviewed fixes. Existing tasks, fights, pet progress and preferences are retained. CatScratch light is a separate download and is not changed by this release.
 

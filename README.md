@@ -6,13 +6,13 @@ A separate, always-on-top Windows DPS meter for **AION 2**, by Zerafithekitten. 
 
 | Channel | Current version | What it includes |
 | --- | --- | --- |
-| **Stable** | **[v3.0.4](https://github.com/Zerafithekitten/CatScratch/releases/tag/v3.0.4)** | Compact panel layouts, checklist with reset countdowns, Pet tracking modes and sounds, passive Hidden cube alerts, ONLY BOSS, defeat estimates, refined Test mode and DPS placement fixes. |
+| **Stable** | **[v3.0.5](https://github.com/Zerafithekitten/CatScratch/releases/tag/v3.0.5)** | Compact panel layouts, checklist with reset countdowns, Pet tracking modes and sounds, passive Hidden cube alerts, ONLY BOSS, defeat estimates, refined Test mode and DPS placement fixes. |
 | **Beta** | [Previous: v3.0.4-beta.13](https://github.com/Zerafithekitten/CatScratch/releases/tag/v3.0.4-beta.13) | Promoted to Stable 3.0.4, including the latest preview-layout and vertical-label corrections. |
 | **Light** | [v1.0.0](https://github.com/Zerafithekitten/CatScratch/releases/tag/light-v1.0.0) | Separate **DPS meter only** edition with essential settings. Independent ZIP download and settings; no additional CatScratch modules or automatic updater. |
 
 **CatScratch light** is installed separately from the full version. [Download its ZIP](https://github.com/Zerafithekitten/CatScratch/releases/download/light-v1.0.0/CatScratch-light-win-x64.zip) and extract it into its own folder. Light is maintained and updated **only on the owner's explicit request**; normal development continues on full CatScratch.
 
-English is the default. German, Russian and French are also available. Screenshots use synthetic sample data; names and numbers are examples. All features described below are included in **Stable v3.0.4** unless a limitation is stated.
+English is the default. German, Russian and French are also available. Screenshots use synthetic sample data; names and numbers are examples. All features described below are included in **Stable v3.0.5** unless a limitation is stated.
 
 ## Contents
 
@@ -266,7 +266,7 @@ The small green **Update!** notice appears **only after the update is fully prep
 
 After a successful new startup, the old backup, staged payload and downloaded ZIP are removed. Failed updates retain recovery files. Settings, saved fights, personal bests, recent players and captures are preserved. Update staging stays under `userdata/temp/updates`; a writable program folder is required.
 
-When a Beta is promoted and its Stable build starts, Beta subscribers automatically return to the Stable update channel. A later deliberate switch back to Beta is respected until the next Stable transition. The installed version then shows the Stable number, currently **3.0.4** without a beta suffix.
+When a Beta is promoted and its Stable build starts, Beta subscribers automatically return to the Stable update channel. A later deliberate switch back to Beta is respected until the next Stable transition. The installed version then shows the Stable number, currently **3.0.5** without a beta suffix.
 
 Use **Check now** in Settings or **Check for updates** in the tray menu for a manual check. Automatic checking and preparation can be disabled in Settings. CatScratch also reduces data-loading allocations and moves optional startup work behind the first meter display.
 
@@ -410,3 +410,7 @@ Settings > Combat offers **ONLY BOSS** alongside the existing BOSS fallback and 
 ![Remaining boss fight estimate](docs/images/boss-estimate-beta13.png)
 
 Stable 3.0.4 also fixes the DPS overlay moving upward on restart by using the same screen bounds during startup and dragging. If an older version saved an already shifted position, move the overlay back once after updating.
+
+Stable 3.0.5 localizes checklist reset weekdays to the selected CatScratch language. English reset times and tooltips use AM/PM; German, Russian and French retain 24-hour times. Saved reset values remain unchanged.
+
+![English checklist reset settings with AM/PM and localized weekday](docs/images/checklist-settings-stable305.png)

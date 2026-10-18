@@ -1,4 +1,4 @@
-using System.IO;
+﻿using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Interop;
@@ -110,6 +110,26 @@ internal static class ChecklistChecks
             panel.ApplyTo(settings);
             check(!settings.ShowChecklistModule,"Saving unchanged Settings does not reopen a checklist closed through X");
             check(!new AppSettings().ShowChecklistModule,"Checklist is opt-in for existing installations");
+            var language=UiText.Current.Code;var systemCulture=System.Globalization.CultureInfo.CurrentCulture;
+            try
+            {
+                System.Globalization.CultureInfo.CurrentCulture=System.Globalization.CultureInfo.GetCultureInfo("de-DE");
+                foreach(var (code,wednesday) in new[]{("en","Wednesday"),("de","Mittwoch"),("ru","среда"),("fr","mercredi")})
+                {
+                    UiText.Use(code);
+                    var localeDraft=new AppSettings{Transient=true,ChecklistResetHourUtc=7,ChecklistWeeklyResetDay=DayOfWeek.Wednesday};
+                    var localized=new ChecklistSettingsPanel(localeDraft).Children.OfType<ComboBox>().ToArray();
+                    check((string)localized[1].Items[(int)DayOfWeek.Wednesday]==wednesday,"Weekdays follow the selected app language, not Windows: "+code);
+                    check((string)localized[0].SelectedItem==(code=="en"?"7:00 AM":"07:00"),"Reset hour follows the selected language clock convention: "+code);
+                    localized[0].SelectedIndex=19;localized[1].SelectedIndex=5;
+                    check(localeDraft.ChecklistResetHourUtc==19 && localeDraft.ChecklistWeeklyResetDay==DayOfWeek.Friday,"Localized labels retain UTC hour and weekday values: "+code);
+                }
+                UiText.Use("en");
+                check(ChecklistSchedule.HourLabel(0)=="12:00 AM" && ChecklistSchedule.HourLabel(12)=="12:00 PM" && ChecklistSchedule.HourLabel(23)=="11:00 PM","English midnight, noon and evening use correct AM/PM labels");
+                check(ChecklistSchedule.ResetTooltip(new AppSettings{ChecklistResetHourUtc=19},DateTimeOffset.UtcNow).Contains("7:00 PM UTC"),"English reset tooltip uses the same AM/PM convention");
+            }
+            finally{UiText.Use(language);System.Globalization.CultureInfo.CurrentCulture=systemCulture;}
+
         }
         finally
         {

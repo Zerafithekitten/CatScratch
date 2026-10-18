@@ -1,7 +1,12 @@
-namespace AionMeter.App.Services;
+﻿namespace AionMeter.App.Services;
 
 internal static class ChecklistSchedule
 {
+    internal static string ClockPattern=>UiText.Current.Code=="en"?"h:mm tt":"HH:mm";
+    internal static string HourLabel(int hour)=>new DateTime(2000,1,1,Math.Clamp(hour,0,23),0,0).ToString(ClockPattern,UiText.Current.Culture);
+    internal static string ResetTooltip(AppSettings settings,DateTimeOffset next)=>
+        next.ToLocalTime().ToString("dddd, d MMM yyyy · "+ClockPattern,UiText.Current.Culture)+" · "+HourLabel(settings.ChecklistResetHourUtc)+" UTC";
+
     internal static DateTimeOffset PeriodStart(DateTimeOffset now,int hour,DayOfWeek? weekly=null)
     {
         var utc=now.UtcDateTime;

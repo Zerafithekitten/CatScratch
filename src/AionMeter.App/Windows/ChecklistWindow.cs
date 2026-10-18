@@ -102,7 +102,7 @@ internal sealed class ChecklistWindow : Window,IDisplayAppearance
         foreach(var (weekly,text) in _countdowns)
         {
             text.Text="↻ "+ChecklistSchedule.Countdown(_settings,now,weekly);
-            text.ToolTip=ChecklistSchedule.Next(_settings,now,weekly).ToLocalTime().ToString("ddd dd.MM. HH:mm")+" · "+_settings.ChecklistResetHourUtc.ToString("00")+":00 UTC";
+            text.ToolTip=ChecklistSchedule.ResetTooltip(_settings,ChecklistSchedule.Next(_settings,now,weekly));
         }
         for(var i=0;i<_fields.Count;i++)
         {

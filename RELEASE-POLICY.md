@@ -35,3 +35,5 @@ The owner authorized beta branch uploads and beta prerelease publication without
 The owner lifted the temporary upload hold and authorized all outstanding changes for the next Beta on 2026-10-14, including compact recent-player CP/GS, background updates and death recap. Stable still requires explicit approval.
 
 Write brief, high-level patch notes for Beta and detailed patch notes for Stable. Add patch notes only for a publication, not for each intermediate change. Publish the matching version's notes as the release body.
+
+On 2026-10-19 the owner explicitly requested Stable hotfix 3.0.5 for English AM/PM checklist reset times and weekdays localized to the selected application language, including the matching reset tooltips. Publish after checks; Light remains unchanged.
