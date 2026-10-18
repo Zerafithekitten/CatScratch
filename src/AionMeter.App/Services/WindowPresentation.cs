@@ -132,7 +132,7 @@ internal static class WindowPresentation
     }
     private static readonly HashSet<Window> Adjusting=[];
     internal static System.Drawing.Rectangle Area(Window window,System.Windows.Forms.Screen screen) =>
-        window is AionMeter.App.Windows.MeterControlsWindow or AionMeter.App.Windows.OverlayWindow or AionMeter.App.Windows.TimerHubWindow or AionMeter.App.Windows.PetTrackerWindow or AionMeter.App.Windows.TimerCardWindow or AionMeter.App.Windows.BossTimersWindow or AionMeter.App.Windows.DeathRecapWindow or AionMeter.App.Windows.HiddenCubeWindow ? screen.Bounds : screen.WorkingArea;
+        window is AionMeter.App.Windows.MeterControlsWindow or AionMeter.App.Windows.OverlayWindow or AionMeter.App.Windows.TimerHubWindow or AionMeter.App.Windows.PetTrackerWindow or AionMeter.App.Windows.TimerCardWindow or AionMeter.App.Windows.BossTimersWindow or AionMeter.App.Windows.DeathRecapWindow or AionMeter.App.Windows.HiddenCubeWindow or AionMeter.App.Windows.ChecklistWindow ? screen.Bounds : screen.WorkingArea;
     public static void Constrain(Window window)
     {
         if(!Enabled || !window.IsLoaded || NativeDragging.Contains(window) || window.WindowState!=WindowState.Normal || !Adjusting.Add(window))return;

@@ -1,3 +1,10 @@
+## CatScratch v3.0.4-beta.9
+
+- Added an optional compact Checklist module under Settings > Checklist, with 1–20 visible task slots and adjustable width. The surrounding window is transparent; individual task rows have tinted backgrounds for readability.
+- Type your own tasks directly in the rows. Checkmarks strike through completed text; unchecking restores it. Text and completion state save automatically and survive restart. Reducing the visible row count keeps hidden tasks.
+- Includes 11 editable starting examples from the supplied daily/weekly overview: two daily and nine weekly tasks. Counts are example text, not automatic game tracking; checkmarks do not reset on a schedule.
+- Supports an independent position pin, saved placement, monitor selection, global show/hide and click-through. Turn click-through off to edit. Profiles restore checklist layout without overwriting personal task text or completion. The checklist closes with CatScratch; CatScratch light is unchanged.
+
 ## CatScratch v3.0.4-beta.8
 
 - Fixed Boss timers becoming unclickable when global click-through was enabled. This management window now stays interactive like fight history, including after switching back to the game; its X remains available without unlocking the overlays.

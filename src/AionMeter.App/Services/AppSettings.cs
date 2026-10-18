@@ -82,6 +82,13 @@ public sealed class AppSettings
     public bool PetNotify {get;set;}
     public bool PetOnHitOnly {get;set;}
     public string? PreferredDisplay {get;set;}
+    public bool ShowChecklistModule {get;set;}
+    public int ChecklistRows {get;set;}=11;
+    public double ChecklistWidth {get;set;}=320;
+    public bool ChecklistPositionSaved {get;set;}
+    public double ChecklistLeft {get;set;}=500;
+    public double ChecklistTop {get;set;}=260;
+    public List<ChecklistItem> ChecklistItems {get;set;}=[];
     public bool ShowHiddenCubeModule {get;set;}
     public bool HiddenCubeSoundEnabled {get;set;}
     public string? HiddenCubeSoundPath {get;set;}

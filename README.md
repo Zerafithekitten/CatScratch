@@ -7,7 +7,7 @@ A separate, always-on-top Windows DPS meter for **AION 2**, by Zerafithekitten. 
 | Channel | Current version | What it includes |
 | --- | --- | --- |
 | **Stable** | **[v3.0.3](https://github.com/Zerafithekitten/CatScratch/releases/tag/v3.0.3)** | Independent control panel, reworked Pet tracker with five recommendations, custom colors and transparency, event timeline and favorites, effective healing and the complete tested Beta feature set. |
-| **Beta** | [v3.0.4-beta.8](https://github.com/Zerafithekitten/CatScratch/releases/tag/v3.0.4-beta.8) | Keeps Boss timers clickable with global click-through enabled; includes custom Hidden cube audio, experimental monitor selection and selectable Pet tracking modes. |
+| **Beta** | [v3.0.4-beta.9](https://github.com/Zerafithekitten/CatScratch/releases/tag/v3.0.4-beta.9) | Adds a compact checklist with up to 20 editable tasks, alongside custom cube audio, experimental monitor selection and selectable Pet tracking modes. |
 
 **Separate edition:** [CatScratch light 1.0.0 — DPS meter only](https://github.com/Zerafithekitten/CatScratch/releases/tag/light-v1.0.0). Independent ZIP download and settings; manual updates only, with development frozen until the owner explicitly requests Light work.
 
@@ -234,6 +234,16 @@ Optional per-event and pet unlock/level-up sounds support preview and volume set
 ## Target screen (Beta, experimental)
 
 Under **Settings > Appearance > Target screen (experimental)**, choose the monitor for CatScratch. **Save** moves the control panel and open overlays to it. New modules and Settings also open there; windows remain freely draggable. The choice survives restart and is independent of overlay profiles. **Automatic (saved positions)** keeps existing placements; an unavailable chosen monitor falls back to the primary screen.
+
+## Checklist (Beta)
+
+Enable **Settings > Checklist > Show checklist**, select **1–20 task slots** and a window width, then **Save**. The module has a transparent outer surface and compact tinted rows. Type a task on the right and use its checkbox on the left to strike it through; uncheck it to undo completion.
+
+Text and checkmarks save automatically and survive restarting CatScratch. Reducing the number of visible rows keeps hidden tasks. Eleven editable examples start the list: two daily and nine weekly tasks from the supplied overview. These are sample text, not automatic progress detection or scheduled resets.
+
+The module has its own pin and X. Global click-through is supported; unlock it before editing. Layout profiles change placement, width and slot count without overwriting task text or completion. Checklist is part of full CatScratch only.
+
+![Compact checklist with editable sample tasks](docs/images/checklist-beta9.png)
 
 ## Hidden cubes (Beta)
 

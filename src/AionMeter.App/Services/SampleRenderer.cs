@@ -265,6 +265,10 @@ public static class SampleRenderer
                 host = new PatchNotesWindow(meter.Updates);
                 refresh = () => { };
                 break;
+            case "checklist":
+                ChecklistState.Normalize(meter.Settings);
+                meter.Settings.ChecklistItems[0].Completed=true;
+                host=new ChecklistWindow(meter.Settings);refresh=()=>{};break;
             case "hidden-cube":
                 host=new HiddenCubeWindow(meter.Settings);
                 refresh=()=>{};
@@ -278,7 +282,7 @@ public static class SampleRenderer
             case "settings":
                 var settingsWindow = new SettingsWindow(meter) { Width = o.Width ?? 760, Height = o.Height ?? 660 };
                 // Keep existing numeric screenshot selectors stable when the sidebar is reordered.
-                string[] tabIds=["appearance","combat","hotkeys","history","capture","general","updates","feedback","events","pets","profiles","help","cubes"];
+                string[] tabIds=["appearance","combat","hotkeys","history","capture","general","updates","feedback","events","pets","profiles","help","cubes","checklist"];
                 if (int.TryParse(o.Tab,out var settingsTab) && settingsTab>=0 && settingsTab<tabIds.Length) settingsWindow.SelectTab(tabIds[settingsTab]);
                 else if(o.Tab is not null && tabIds.Contains(o.Tab)) settingsWindow.SelectTab(o.Tab);
                 host = settingsWindow;

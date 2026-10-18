@@ -64,6 +64,7 @@ internal static class PolishChecks
             foreach(var file in new[]{path,path+".bak"})if(File.Exists(file))File.Delete(file);
             if(Directory.Exists(folder))Directory.Delete(folder);
         }
+        ChecklistChecks.Run(output,check);
         using var cards=new TimerCards(meter,persistent:false);
         var cubeSettings=new AppSettings {Transient=true,ShowHiddenCubeModule=true};
         var cubeWindow=new HiddenCubeWindow(cubeSettings){Left=-30000,Top=-30000};

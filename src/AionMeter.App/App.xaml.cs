@@ -58,6 +58,7 @@ public partial class App : Application
     private PetTrackerWindow? _petWindow;
     private DeathRecapWindow? _deathRecapWindow;
     private HiddenCubeWindow? _hiddenCubeWindow;
+    private ChecklistWindow? _checklistWindow;
     private EventSoundPlayer? _hiddenCubeSoundPlayer;
     private long _hiddenCubeSoundVersion;
     private long _deathRecapStamp;
@@ -151,7 +152,8 @@ public partial class App : Application
             _timersWindow = new BossTimersWindow(_meter);
             _soundWindow = new EventSoundsWindow(_timerCards, (_, _) => { });
             _patchNotes = new PatchNotesWindow(_meter.Updates);
-            foreach (var window in new Window[] { _overlay, _timerHub, _startedEvents, _timersWindow, _soundWindow, _patchNotes })
+            _checklistWindow=new ChecklistWindow(_meter.Settings);
+            foreach (var window in new Window[] { _overlay, _timerHub, _startedEvents, _timersWindow, _soundWindow, _patchNotes, _checklistWindow })
             {
                 window.Left = -30000; window.Top = -30000;
                 window.ShowInTaskbar = false; window.ShowActivated = false; window.Show();
@@ -458,6 +460,7 @@ public partial class App : Application
         SyncMeterControls();
         SyncDeathRecap();
         SyncHiddenCubes();
+        SyncChecklist();
         _overlay.Refresh(); // The permanent panel also needs current fight, save and update state.
         if (++_ticks % 5 == 0)
         {
@@ -488,6 +491,17 @@ public partial class App : Application
         if(!_meterControls.IsVisible)_meterControls.Show();
     }
 
+    private void SyncChecklist()
+    {
+        if(_shutdownStarted)return;
+        if(!_meter.Settings.ShowChecklistModule){_checklistWindow?.Close();return;}
+        if(_checklistWindow is not null){_checklistWindow.ApplyPreferences();return;}
+        if(_windowVisibility.Hidden)return;
+        var window=_checklistWindow=new ChecklistWindow(_meter.Settings);
+        WindowClickThrough.Attach(window,()=>_meter.Settings.ClickThrough,()=>_meter.Settings.WindowOpacity);
+        window.Closed+=(_,_)=>{if(ReferenceEquals(_checklistWindow,window))_checklistWindow=null;};
+        window.Show();_windowVisibility.Track(window);
+    }
     private void SyncHiddenCubes()
     {
         var version=_meter.HiddenCubes.DetectionVersion;

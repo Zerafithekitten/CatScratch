@@ -46,6 +46,7 @@ public partial class SettingsWindow : Window
     }
     private readonly ThemeSettingsPanel _themePanel;
     private readonly ControlPanelSettingsPanel _controlPanelPreferences;
+    private readonly ChecklistSettingsPanel _checklistPreferences;
     private readonly MeterService _meter;
     private readonly TimerCards _cards;
     private readonly TimerCards _eventDraft;
@@ -93,6 +94,8 @@ public partial class SettingsWindow : Window
         recap.Click+=(_,_)=>_moduleDraft.ShowDeathRecapModule=recap.IsChecked==true;
         if(Tab("combat").Content is ScrollViewer {Content:Panel combat})combat.Children.Add(new Border {Child=recap,Style=(Style)FindResource("Section")});
         SettingsTabs.Items.Add(new TabItem {Header=T.Localize("Pets"),Tag="pets",Padding=new Thickness(12,10,12,10),Content=new ScrollViewer {VerticalScrollBarVisibility=ScrollBarVisibility.Auto,HorizontalScrollBarVisibility=ScrollBarVisibility.Auto,Padding=new Thickness(14,0,0,0),Content=new Border {Child=modules,Style=(Style)FindResource("Section"),VerticalAlignment=VerticalAlignment.Top}}});
+        _checklistPreferences=new ChecklistSettingsPanel(_moduleDraft);
+        SettingsTabs.Items.Add(new TabItem {Header=T.Localize("Checklist"),Tag="checklist",Padding=new(12,10,12,10),Content=new ScrollViewer {VerticalScrollBarVisibility=ScrollBarVisibility.Auto,HorizontalScrollBarVisibility=ScrollBarVisibility.Disabled,Padding=new(14,0,0,0),Content=new Border {Child=_checklistPreferences,Style=(Style)FindResource("Section")}}});
         var cubes=new StackPanel();
         cubes.Children.Add(new TextBlock {Text=T.Localize("Hidden cubes"),FontSize=16,Margin=new(0,0,0,10)});
         var cubeEnabled=new CheckBox {Tag="hidden-cube-enabled",Content=T.Localize("Enable hidden cube alerts (experimental)"),IsChecked=_moduleDraft.ShowHiddenCubeModule,Style=(Style)FindResource("DarkCheck")};
@@ -115,7 +118,7 @@ public partial class SettingsWindow : Window
         SettingsTabs.Items.Add(new TabItem {Header=T.Localize("Overlay profiles"),Tag="profiles",Padding=new Thickness(12,10,12,10),Content=new ScrollViewer {VerticalScrollBarVisibility=ScrollBarVisibility.Auto,HorizontalScrollBarVisibility=ScrollBarVisibility.Auto,Padding=new Thickness(14,0,0,0),Content=new OverlayProfilesPanel()}});
         // Fold secondary sections and reflow rows instead of forcing a wide inner canvas.
         SettingsTabs.Items.Add(new TabItem {Header=ControlPanelSettingsPanel.L("Help & symbols","Hilfe & Symbole"),Tag="help",Padding=new Thickness(12,10,12,10),Content=new ScrollViewer {VerticalScrollBarVisibility=ScrollBarVisibility.Auto,HorizontalScrollBarVisibility=ScrollBarVisibility.Disabled,Padding=new Thickness(14,0,0,0),Content=new SymbolHelpPanel(meter.Settings)}});
-        var orderedTabs=new[]{"general","appearance","profiles","combat","events","pets","cubes","hotkeys","history","capture","updates","feedback","help"}.Select(Tab).ToArray();
+        var orderedTabs=new[]{"general","appearance","profiles","combat","events","pets","checklist","cubes","hotkeys","history","capture","updates","feedback","help"}.Select(Tab).ToArray();
         SettingsTabs.Items.Clear();
         foreach(var tab in orderedTabs)SettingsTabs.Items.Add(tab);
         var groupStarts=new[]{"general","combat","hotkeys","updates"};
@@ -354,6 +357,7 @@ public partial class SettingsWindow : Window
         var petVisibilityChanged=s.ShowPetTrackerModule!=_moduleDraft.ShowPetTrackerModule;
         s.PetNotify=_moduleDraft.PetNotify;
         s.PetOnHitOnly=_moduleDraft.PetOnHitOnly;
+        _checklistPreferences.ApplyTo(s);
         s.ShowHiddenCubeModule=_moduleDraft.ShowHiddenCubeModule;
         s.HiddenCubeSoundEnabled=_moduleDraft.HiddenCubeSoundEnabled;
         s.HiddenCubeSoundPath=_moduleDraft.HiddenCubeSoundPath;

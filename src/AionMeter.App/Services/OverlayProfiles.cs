@@ -14,6 +14,7 @@ public static class OverlayProfiles
         "WindowOpacity","BackgroundOpacity","Locked","ClickThrough","OverlayVisible","ShowDpsMeterModule","RowSize","MaxRows","ShowGear","ShowCombatPower",
         "ShowBossPanel","ShowPersonalCombatModule","PersonalCombatCollapsed","ShowHealingDone","ShowDeathRecapModule",
         "ShowPetTrackerModule","PetOnHitOnly","PetModuleLeft","PetModuleTop","PetModuleWidth","PetModuleHeight",
+        "ShowChecklistModule","ChecklistRows","ChecklistWidth","ChecklistPositionSaved","ChecklistLeft","ChecklistTop",
         "ShowHiddenCubeModule","HiddenCubePositionSaved","HiddenCubeLeft","HiddenCubeTop"];
     private static string PathName=>Path.Combine(AppSettings.AppDataDir,"overlay-profiles.json");
     public static List<OverlayProfile> Load()
@@ -41,6 +42,7 @@ public static class OverlayProfiles
         settings.UiScale=Math.Clamp(settings.UiScale,.75,1.5);settings.WindowOpacity=Math.Clamp(settings.WindowOpacity,.4,1);settings.BackgroundOpacity=Math.Clamp(settings.BackgroundOpacity,0,1);
         settings.OverlayWidth=Math.Clamp(settings.OverlayWidth,260,1600);settings.OverlayHeight=Math.Clamp(settings.OverlayHeight,180,1200);
         settings.PetModuleWidth=Math.Clamp(settings.PetModuleWidth,150,1600);settings.PetModuleHeight=Math.Clamp(settings.PetModuleHeight,60,1200);
+        ChecklistState.Normalize(settings);
         settings.RowSize=Math.Clamp(settings.RowSize,AppSettings.MinRowSize,AppSettings.MaxRowSize);settings.MaxRows=Math.Clamp(settings.MaxRows,1,20);
         timers.Positions=profile.Cards.ToDictionary(p=>p.Key,p=>new CardPlacement {Left=p.Value.Left,Top=p.Value.Top,Width=p.Value.Width,Height=p.Value.Height,Open=p.Value.Open});
         timers.EventWindowOpen=profile.Upcoming;timers.StartedEventWindowOpen=profile.Started;timers.EventOpacity=Math.Clamp(profile.EventOpacity,0.1,1);
