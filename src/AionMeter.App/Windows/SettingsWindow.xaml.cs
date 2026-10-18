@@ -94,6 +94,17 @@ public partial class SettingsWindow : Window
         cubes.Children.Add(new TextBlock {Text=T.Localize("Hidden cubes"),FontSize=16,Margin=new(0,0,0,10)});
         var cubeEnabled=new CheckBox {Tag="hidden-cube-enabled",Content=T.Localize("Enable hidden cube alerts (experimental)"),IsChecked=_moduleDraft.ShowHiddenCubeModule,Style=(Style)FindResource("DarkCheck")};
         cubeEnabled.Click+=(_,_)=>_moduleDraft.ShowHiddenCubeModule=cubeEnabled.IsChecked==true;cubes.Children.Add(cubeEnabled);
+        HiddenCubeWindow? cubePreview=null;
+        var previewCube=new Button {Content=T.Localize("Show test alert"),Tag="hidden-cube-preview",Style=(Style)FindResource("GhostButton"),HorizontalAlignment=HorizontalAlignment.Left,Margin=new(0,10,0,4),Padding=new(10,5,10,5)};
+        previewCube.Click+=(_,_)=>
+        {
+            if(cubePreview is not null){cubePreview.Show();return;}
+            var preview=cubePreview=new HiddenCubeWindow(meter.Settings,preview:true);
+            WindowClickThrough.Attach(preview,()=>false,()=>meter.Settings.WindowOpacity);
+            preview.Closed+=(_,_)=>cubePreview=null;preview.Show();
+        };
+        cubes.Children.Add(previewCube);
+        Closed+=(_,_)=>cubePreview?.Close();
         cubes.Children.Add(new TextBlock {Text=T.Localize("Changes take effect after saving."),TextWrapping=TextWrapping.Wrap,Margin=new(0,8,0,8)});
         cubes.Children.Add(new TextBlock {Text=T.Localize("Shows a movable alert for the cube type confirmed in recordings. Hides after opening, changing maps or 60 seconds without a fresh announcement. Other cube variants are not yet verified. No reliable player position is available for direction, distance or map placement."),TextWrapping=TextWrapping.Wrap,Foreground=ThemeColors.Brush("#A9B8C7"),FontSize=11});
         SettingsTabs.Items.Add(new TabItem {Header=T.Localize("Hidden cubes"),Tag="cubes",Padding=new(12,10,12,10),Content=new ScrollViewer {VerticalScrollBarVisibility=ScrollBarVisibility.Auto,HorizontalScrollBarVisibility=ScrollBarVisibility.Disabled,Padding=new(14,0,0,0),Content=new Border {Child=cubes,Style=(Style)FindResource("Section")}}});

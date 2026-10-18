@@ -1,3 +1,9 @@
+## CatScratch v3.0.4-beta.6
+
+- Made HIDDEN CUBE DETECTED more prominent with bold red text and softly pulsing exclamation marks on both sides. Animations stop while hidden.
+- Added Settings > Hidden cubes > Show test alert, so the window can be positioned and pinned without finding a cube. The labeled preview stays interactive and does not enable detection or create a fake cube event.
+- Repeated previews reuse one window; closing Settings also closes the test alert. Placement and pin remain saved.
+
 ## CatScratch v3.0.4-beta.5
 
 - Added an optional, passive Hidden cubes module with a movable, pinnable HIDDEN CUBE DETECTED alert. Enable it under Settings > Hidden cubes; it is off by default.
