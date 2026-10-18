@@ -1,3 +1,9 @@
+## CatScratch v3.0.4-beta.10
+
+- Added a dedicated Checklist button to the permanent control panel. Click it to show or hide the checklist without changing task text or checkmarks; the highlighted icon means enabled.
+- Available in horizontal and vertical layouts, including while global click-through is active. The vertical layout uses its remaining fourth-row slot without increasing panel height.
+- Added the matching icon and explanation to Settings > Help & symbols. Includes Beta 9's compact transparent checklist, 1–20 slots and 11 editable daily/weekly starting tasks. CatScratch light is unchanged.
+
 ## CatScratch v3.0.4-beta.9
 
 - Added an optional compact Checklist module under Settings > Checklist, with 1–20 visible task slots and adjustable width. The surrounding window is transparent; individual task rows have tinted backgrounds for readability.

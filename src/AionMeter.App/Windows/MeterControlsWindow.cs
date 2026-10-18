@@ -203,7 +203,7 @@ internal sealed class MeterControlsWindow : Window
         var actions=new[]{Item("DeathRecapButton"),_personalButton!,_petButton!,RestoreButton,
             Item("BossRecordsButton"),Item("LastPlayedButton"),Item("CompactHistory"),Item("DetailsLink"),
             Item("ChatExportButton"),Item("PatchNotesButton"),Item("SaveLastFightButton"),Item("CheckUpdatesButton"),
-            Item("BossTimersLink"),Item("RestartButton"),Item("LockButton")};
+            Item("BossTimersLink"),Item("RestartButton"),Item("LockButton"),Item("ChecklistButton")};
         for(var column=0;column<3;column++)
         {
             var separator=new Border {Width=1,Background=ThemeColors.Brush("#414A56"),Opacity=.65,

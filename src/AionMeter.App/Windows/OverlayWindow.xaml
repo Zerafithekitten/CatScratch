@@ -425,6 +425,9 @@
                         <Button x:Name="DeathRecapButton" Style="{StaticResource ToolIcon}" Click="DeathRecap_Click">
                             <Path Width="12" Height="12" Stretch="Uniform" Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" StrokeThickness="1" StrokeLineJoin="Round" Data="M3,14 V6 C3,0 13,0 13,6 V14 Z M1,14 H15 M8,5 V11 M5.5,7.5 H10.5"/>
                         </Button>
+                        <Button x:Name="ChecklistButton" Style="{StaticResource ToolIcon}" Click="Checklist_Click">
+                            <Path Width="12" Height="12" Stretch="Uniform" Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" StrokeThickness="1" StrokeLineJoin="Round" Data="M1,1 H4 V4 H1 Z M7,2.5 H15 M1,7 H4 V10 H1 Z M7,8.5 H15 M1,13 H4 V16 H1 Z M7,14.5 H15"/>
+                        </Button>
                         <Button x:Name="BossRecordsButton" Style="{StaticResource ToolIcon}" Click="PersonalBests_Click" ToolTip="{Binding T.BossPersonalBestsLabel}" AutomationProperties.Name="{Binding T.BossPersonalBestsLabel}">
                             <Path Width="12" Height="12" Stretch="Uniform" Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" StrokeThickness="1" StrokeLineJoin="Round" Data="M4,2 H12 V6 C12,8 10,10 8,10 C6,10 4,8 4,6 Z M4,3 H2 V5 C2,7 3,8 5,8 M12,3 H14 V5 C14,7 13,8 11,8 M8,10 V14 M5,14 H11"/>
                         </Button>

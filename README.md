@@ -7,7 +7,7 @@ A separate, always-on-top Windows DPS meter for **AION 2**, by Zerafithekitten. 
 | Channel | Current version | What it includes |
 | --- | --- | --- |
 | **Stable** | **[v3.0.3](https://github.com/Zerafithekitten/CatScratch/releases/tag/v3.0.3)** | Independent control panel, reworked Pet tracker with five recommendations, custom colors and transparency, event timeline and favorites, effective healing and the complete tested Beta feature set. |
-| **Beta** | [v3.0.4-beta.9](https://github.com/Zerafithekitten/CatScratch/releases/tag/v3.0.4-beta.9) | Adds a compact checklist with up to 20 editable tasks, alongside custom cube audio, experimental monitor selection and selectable Pet tracking modes. |
+| **Beta** | [v3.0.4-beta.10](https://github.com/Zerafithekitten/CatScratch/releases/tag/v3.0.4-beta.10) | Adds a compact 20-slot checklist with a dedicated control-panel toggle, alongside custom cube audio, experimental monitor selection and selectable Pet tracking modes. |
 
 **Separate edition:** [CatScratch light 1.0.0 — DPS meter only](https://github.com/Zerafithekitten/CatScratch/releases/tag/light-v1.0.0). Independent ZIP download and settings; manual updates only, with development frozen until the owner explicitly requests Light work.
 
@@ -237,7 +237,7 @@ Under **Settings > Appearance > Target screen (experimental)**, choose the monit
 
 ## Checklist (Beta)
 
-Enable **Settings > Checklist > Show checklist**, select **1–20 task slots** and a window width, then **Save**. The module has a transparent outer surface and compact tinted rows. Type a task on the right and use its checkbox on the left to strike it through; uncheck it to undo completion.
+Use the **Checklist button in the control panel** to show or hide it without changing task text or checkmarks. Its icon is highlighted while enabled and is explained in **Settings > Help & symbols**. You can also enable **Settings > Checklist > Show checklist**, select **1–20 task slots** and a window width, then **Save**. The module has a transparent outer surface and compact tinted rows. Type a task on the right and use its checkbox on the left to strike it through; uncheck it to undo completion.
 
 Text and checkmarks save automatically and survive restarting CatScratch. Reducing the number of visible rows keeps hidden tasks. Eleven editable examples start the list: two daily and nine weekly tasks from the supplied overview. These are sample text, not automatic progress detection or scheduled resets.
 

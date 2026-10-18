@@ -115,6 +115,16 @@ internal static class PolishChecks
         {
             detachedOverlay.MoveControlsTo(permanentPanel);
             detachedOverlay.Show();permanentPanel.Show();detachedOverlay.Refresh();permanentPanel.UpdateLayout();
+            var checklistButton=(Button)detachedOverlay.FindName("ChecklistButton");
+            ChecklistState.Normalize(meter.Settings);
+            var taskText=meter.Settings.ChecklistItems[0].Text;var taskDone=meter.Settings.ChecklistItems[0].Completed;
+            var checklistWasOpen=meter.Settings.ShowChecklistModule;
+            checklistButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            check(Window.GetWindow(checklistButton)==permanentPanel && meter.Settings.ShowChecklistModule!=checklistWasOpen,
+                "The permanent control panel contains a working checklist visibility toggle");
+            checklistButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            check(meter.Settings.ShowChecklistModule==checklistWasOpen && meter.Settings.ChecklistItems[0].Text==taskText && meter.Settings.ChecklistItems[0].Completed==taskDone,
+                "The checklist panel button hides and reopens the module without changing task contents or checkmarks");
             var panelHandle=new System.Windows.Interop.WindowInteropHelper(permanentPanel).Handle;
             var boundsBefore=WindowPresentation.PhysicalBounds(permanentPanel);
             NativeMethods.SetWindowPos(panelHandle,(nint)(-2),0,0,0,0,0x0013);
@@ -180,11 +190,15 @@ internal static class PolishChecks
             meter.Settings.ControlsLayout=ControlsLayout.Vertical;permanentPanel.ApplyAppearance();permanentPanel.UpdateLayout();
             check(permanentPanel.Width==132 && exitButton.IsVisible && permanentPanel.SettingsButton.IsVisible,"Compact vertical panel retains Settings and Exit controls");
             var actionGrid=permanentPanel.VerticalActions!;
-            check(actionGrid.Children.Count==18 && actionGrid.ColumnDefinitions.Count==4 && actionGrid.RowDefinitions.Count==4
+            check(actionGrid.Children.Count==19 && actionGrid.ColumnDefinitions.Count==4 && actionGrid.RowDefinitions.Count==4
                 && actionGrid.Children.OfType<System.Windows.Controls.Primitives.ButtonBase>().All(c=>c.ActualWidth==22 && c.ActualHeight==20)
-                && actionGrid.Children.OfType<System.Windows.Controls.Primitives.ButtonBase>().Select(c=>(Grid.GetRow(c),Grid.GetColumn(c))).Distinct().Count()==15
+                && actionGrid.Children.OfType<System.Windows.Controls.Primitives.ButtonBase>().Select(c=>(Grid.GetRow(c),Grid.GetColumn(c))).Distinct().Count()==16
                 && actionGrid.Children.OfType<Border>().Count(c=>!c.IsHitTestVisible && Grid.GetRowSpan(c)==4)==3,
                 "Vertical panel uses equally sized actions in a fixed four-column grid without the DPS meter pin");
+            checklistButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            check(Window.GetWindow(checklistButton)==permanentPanel && checklistButton.IsVisible && meter.Settings.ShowChecklistModule!=checklistWasOpen,
+                "Checklist remains accessible in the compact vertical panel during global click-through");
+            checklistButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             var meterPin=WindowPinning.ButtonFor(detachedOverlay)!;
             check(Window.GetWindow(meterPin)==detachedOverlay,"DPS meter position pin belongs to the combat display rather than the control panel");
             var panelPinned=WindowPinning.IsPinned(permanentPanel);var meterPinned=WindowPinning.IsPinned(detachedOverlay);

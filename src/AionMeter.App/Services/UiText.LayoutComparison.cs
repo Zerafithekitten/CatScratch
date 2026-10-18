@@ -18,6 +18,7 @@ public sealed partial class UiText
         ["Pass Energy (20/4)"]=("Pass Energie (20/4)","Энергия пропуска (20/4)","Énergie du pass (20/4)"),
         ["Daeva Pass EXP"]=("Pass EXP","Опыт пропуска Даэва","EXP du pass Daeva"),
         ["Checklist"]=("Checkliste","Список задач","Liste de tâches"),
+        ["Hide checklist"]=("Checkliste ausblenden","Скрыть список задач","Masquer la liste de tâches"),
         ["Show checklist"]=("Checkliste anzeigen","Показать список задач","Afficher la liste de tâches"),
         ["Task slots"]=("Aufgabenplätze","Количество задач","Nombre de tâches"),
         ["Type a task"]=("Aufgabe eingeben","Введите задачу","Saisir une tâche"),
