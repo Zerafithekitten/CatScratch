@@ -7,7 +7,7 @@ A separate, always-on-top Windows DPS meter for **AION 2**, by Zerafithekitten. 
 | Channel | Current version | What it includes |
 | --- | --- | --- |
 | **Stable** | **[v3.0.3](https://github.com/Zerafithekitten/CatScratch/releases/tag/v3.0.3)** | Independent control panel, reworked Pet tracker with five recommendations, custom colors and transparency, event timeline and favorites, effective healing and the complete tested Beta feature set. |
-| **Beta** | [v3.0.4-beta.4](https://github.com/Zerafithekitten/CatScratch/releases/tag/v3.0.4-beta.4) | Adds selectable Nearby & region / Pet on hit tracking, farming-monster names and independent Pet sound controls. |
+| **Beta** | [v3.0.4-beta.5](https://github.com/Zerafithekitten/CatScratch/releases/tag/v3.0.4-beta.5) | Adds experimental passive Hidden cube alerts, selectable Pet tracking modes, monster names and Pet sound controls. |
 
 English is the default. German, Russian and French are also available. Screenshots use synthetic sample data; names and numbers are examples. All features described below are included in **Stable v3.0.3** unless a limitation is stated.
 
@@ -228,6 +228,12 @@ Optional per-event and pet unlock/level-up sounds support preview and volume set
 <img src="docs/screenshots/events-settings.png" alt="Central event preferences in the single Settings window" width="760" />
 
 </details>
+
+## Hidden cubes (Beta)
+
+**Beta only:** enable **Settings > Hidden cubes > Enable hidden cube alerts (experimental)** to show a compact, movable **HIDDEN CUBE DETECTED** warning for the cube type confirmed in two recordings. The module is off by default. It supports an independent pin, click-through, saved position and overlay profiles.
+
+Opening the cube or changing context clears the warning; announcements also expire after 60 seconds without a refresh. An announcement confirms that the server sent the object, rather than a measured distance or continued visual presence. Other cube variants, map placement, direction and distance remain unverified. No screenshot capture or game-memory access is used.
 
 ## Updates and release channels
 

@@ -1,6 +1,6 @@
 # Hidden cube prototype — 2026-10-18
 
-Local, unpublished implementation. Detection remains disabled until enabled under Settings > Hidden cubes. The DPS meter layout is unchanged.
+Introduced in v3.0.4-beta.5 as an experimental, opt-in feature. Detection remains disabled until enabled under Settings > Hidden cubes. The DPS meter layout is unchanged.
 
 ## Confirmed protocol evidence
 

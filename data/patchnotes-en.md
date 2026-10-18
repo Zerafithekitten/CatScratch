@@ -1,3 +1,9 @@
+## CatScratch v3.0.4-beta.5
+
+- Added an optional, passive Hidden cubes module with a movable, pinnable HIDDEN CUBE DETECTED alert. Enable it under Settings > Hidden cubes; it is off by default.
+- The confirmed cube type was verified against two approach/open recordings. Alerts clear after opening, context changes or 60 seconds without a fresh announcement; duplicate announcements do not create duplicate windows.
+- Includes click-through, saved placement and overlay-profile support. Other cube variants, map placement, direction and distance are not yet verified; no screen capture or game-memory access was added.
+
 ## CatScratch v3.0.4-beta.4
 
 - Added Settings > Pets > Tracking mode: choose Nearby & region or Pet on hit.
