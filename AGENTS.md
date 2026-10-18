@@ -1,5 +1,9 @@
 # CatScratch project instructions
 
+## Separate Light edition: explicit opt-in only
+
+The owner commissioned CatScratch light on 2026-10-18 as an independent DPS-only public download on branch catscratch-light. Normal work continues only on the original CatScratch branches. Do not modify Light, merge changes into it, update its dependencies, rebuild it or release it unless the owner explicitly requests Light work. This applies even when fixing shared code in the full version. Light has its own executable/settings and manual light-vX.Y.Z downloads; never include it in original Stable/Beta update feeds or installers, and never replace the main Stable latest release with Light. Its initial release is light-v1.0.0.
+
 ## Required visual style
 
 The DPS meter position pin must stay on the DPS combat display, at its upper right. Only the control panel's own position pin belongs in the panel. This is an explicit exception to moving general buttons into the panel; keep both pins independent.
