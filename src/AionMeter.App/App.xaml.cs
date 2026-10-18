@@ -790,13 +790,13 @@ public partial class App : Application
         }
         if(!_meter.DemoRunning)
         {
-            var preview=new ModulePreviewSession(_meter.Settings);
+            var preview=new ModulePreviewSession(_meter.Settings,_timerCards?.Saved);
             try
             {
                 _previewOverlayWasVisible=_overlay.IsVisible;
                 _previewHiddenWindows=Windows.Cast<Window>().Where(w=>w.IsVisible && w!=_settingsWindow && w!=_meterControls).ToArray();
                 foreach(var window in _previewHiddenWindows)window.Hide();
-                _meter.StartDemo();_modulePreview=preview;preview.Show();_overlay.Hide();
+                _meter.StartDemo();_modulePreview=preview;preview.Show(settingsWindow:_settingsWindow,controlsPanel:_meterControls);_overlay.Hide();
             }
             catch{_modulePreview=null;preview.Dispose();_meter.StopDemo();foreach(var window in _previewHiddenWindows)if(window.IsLoaded)window.Show();_previewHiddenWindows=[];throw;}
             return;

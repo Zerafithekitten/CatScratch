@@ -261,11 +261,15 @@ internal sealed class MeterControlsWindow : Window
         mode.ContentTemplate=null;
         if(rail)
         {
-            mode.Width=18;mode.Height=40;mode.Padding=new(0);
+            mode.Width=18;mode.Height=44;mode.Padding=new(0);
             var label=new FrameworkElementFactory(typeof(TextBlock));
             label.SetBinding(TextBlock.TextProperty,new System.Windows.Data.Binding("."){Converter=new StackedLetters()});
             label.SetValue(TextBlock.TextAlignmentProperty,TextAlignment.Center);
             label.SetValue(TextBlock.LineHeightProperty,9.0);
+            label.SetValue(TextBlock.LineStackingStrategyProperty,LineStackingStrategy.BlockLineHeight);
+            // The stacked font leaves more descent below the last glyph than above its caps.
+            // Center the visible lettering, rather than that asymmetric font line box.
+            label.SetValue(TextBlock.RenderTransformProperty,new TranslateTransform(0,1.5));
             mode.ContentTemplate=new DataTemplate{VisualTree=label};
         }
         var slider=_horizontalItems.OfType<Slider>().Single();slider.Width=double.NaN;slider.MinWidth=25;slider.Margin=new(4,0,3,0);slider.HorizontalAlignment=HorizontalAlignment.Stretch;

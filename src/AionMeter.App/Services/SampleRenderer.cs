@@ -98,7 +98,7 @@ public static class SampleRenderer
                     card.Children.Add(new Image {Source=bitmap,Height=175,Stretch=Stretch.Uniform,HorizontalAlignment=HorizontalAlignment.Center});
                     gallery.Children.Add(new Border {Child=card,Width=245,Height=210,Padding=new(8),Margin=new(4),BorderThickness=new(1),BorderBrush=ThemeColors.Brush("#414A56"),CornerRadius=new(6)});
                 }
-                host=new Window {Width=1040,Height=900,Content=gallery,Background=ThemeColors.Brush("#191D23")};
+                host=new Window {Width=1040,Height=Math.Ceiling(workspace.Windows.Count/4.0)*218+20,Content=gallery,Background=ThemeColors.Brush("#191D23")};
                 refresh=()=>{};break;
             case "update-notice":
                 var badgeResources=new MeterControlsWindow(meter.Settings,()=>{},()=>{});

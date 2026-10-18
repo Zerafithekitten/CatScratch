@@ -36,8 +36,22 @@ internal static class EnhancementChecks
         var text=settings.ChecklistItems[0].Text;
         using(var preview=new ModulePreviewSession(settings))
         {
-            preview.Show(offscreen:true);
-            Check(preview.Windows.Count==14 && preview.Windows.All(w=>w.IsVisible),"Test mode opens all fourteen display and analysis previews");
+            using var preferencesMeter=new MeterService(new AppSettings{Transient=true},null);
+            var preferences=new SettingsWindow(preferencesMeter){Width=790,Height=610,Left=-30000,Top=-30000};
+            try
+            {
+                preferences.Show();preferences.UpdateLayout();var size=preferences.RenderSize;var position=new Point(preferences.Left,preferences.Top);
+                preview.Show(offscreen:true,settingsWindow:preferences);
+                Check(preferences.RenderSize==size && new Point(preferences.Left,preferences.Top)==position,"Test mode retains the Settings window size and position");
+            }
+            finally{preferences.Close();}
+            Check(!preview.PreviewSettings.ClickThrough && !preview.PreviewSettings.Locked && preview.Windows.All(w=>((long)NativeMethods.GetWindowLongPtr(new System.Windows.Interop.WindowInteropHelper(w).Handle,NativeMethods.GWL_EXSTYLE)&NativeMethods.WS_EX_TRANSPARENT)==0),"All preview modules are clickable and movement is unlocked");
+            Check(preview.Windows.Count==9 && preview.Windows.All(w=>w.IsVisible),"Test mode opens seven screen modules plus statistics and boss comparison");
+            Check(!preview.Windows.Any(w=>w is HistoryWindow or PersonalBestsWindow or LastPlayedWithWindow or BossTimersWindow or EventScheduleWindow),"Test preview leaves unrelated menus closed");
+            var arranged=preview.ArrangedBounds;
+            Check(arranged["dps"].TopLeft==new Point(settings.OverlayLeft,settings.OverlayTop),"Test mode preserves the user's DPS position");
+            Check(arranged["pets"].TopLeft==new Point(settings.PetModuleLeft,settings.PetModuleTop),"Test mode preserves the user's pet tracker position");
+            Check(preview.Windows.OfType<OverlayWindow>().Single().Width==settings.OverlayWidth && preview.Windows.OfType<OverlayWindow>().Single().Height==settings.OverlayHeight,"Test mode preserves the user's DPS dimensions");
             var display=preview.Windows.OfType<OverlayWindow>().Single();
             var model=(ViewModels.OverlayViewModel)display.DataContext;
             Check(model.Rows.Count>0 && model.HasBoss,"DPS preview immediately shows a sample boss fight");

@@ -173,7 +173,7 @@ public partial class SettingsWindow : Window
         AutomaticFightEndHint.Text=T.Localize("After inactivity, keep the finished fight until the next fight. Healing and incoming damage count as activity.");
         TestModeSection.Text=T.Localize("Test mode");
         TestModeButton.Content=T.Localize(_meter.DemoRunning?"Stop test mode":"Start test mode");
-        TestModeHint.Text=T.Localize("Open all display and analysis modules with sample data. Move them freely across screens. Stop test mode to close previews; enabled modules and your real records stay unchanged.");
+        TestModeHint.Text=T.Localize("Preview screen modules, Statistics and Boss comparison at your existing positions, without click-through. DPS and Settings keep their sizes. Only new modules get a free position. Other menus stay closed.");
         WindowWidthText.Text = s.OverlayWidth.ToString("0");
         WindowHeightText.Text = s.OverlayHeight.ToString("0");
         WindowOpacityValue.Value = s.WindowOpacity;
