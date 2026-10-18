@@ -1,0 +1,54 @@
+name: CatScratch light release
+on:
+  push:
+    tags: ['light-v*']
+permissions:
+  contents: write
+jobs:
+  light:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - name: Validate independent Light identity
+        shell: pwsh
+        run: |
+          if ($env:GITHUB_REF_NAME -notmatch '^light-v([0-9]+\.[0-9]+\.[0-9]+)$') { throw 'Invalid Light tag' }
+          $version = $Matches[1]
+          $project = [xml](Get-Content src/CatScratch.Light/CatScratch.Light.csproj -Raw)
+          if ($project.Project.PropertyGroup.Version -ne $version) { throw 'Light version does not match tag' }
+          "LIGHT_VERSION=$version" >> $env:GITHUB_ENV
+          dotnet test tests/AionMeter.Tests/AionMeter.Tests.csproj -c Release
+          if ($LASTEXITCODE) { throw 'Core tests failed' }
+      - name: Publish standalone DPS payload
+        shell: pwsh
+        run: |
+          dotnet publish src/CatScratch.Light/CatScratch.Light.csproj -c Release -r win-x64 --self-contained true -o dist/light
+          if ($LASTEXITCODE) { throw 'Light publish failed' }
+          foreach ($forbidden in @('CatScratch.exe','CatScratch.dll','CatScratch.GameWatcher.exe','data/pets','sounds','userdata')) {
+            if (Test-Path (Join-Path dist/light $forbidden)) { throw "Full-version payload leaked: $forbidden" }
+          }
+          Copy-Item LICENSE dist/light
+          Copy-Item LIGHT-INSTALL.txt dist/light/INSTALL.txt
+      - name: Verify standalone UI and shutdown
+        shell: pwsh
+        run: |
+          $result = "$env:RUNNER_TEMP/light-check.json"
+          $check = Start-Process "$PWD/dist/light/CatScratch.Light.exe" -ArgumentList @('--verify',("`"$result`"")) -WindowStyle Hidden -PassThru
+          if (-not $check.WaitForExit(20000)) { Stop-Process -Id $check.Id; throw 'Light check timed out' }
+          $check.Refresh()
+          if ($check.ExitCode) { Get-Content "$result.error.txt"; throw 'Light verification failed' }
+          $checks = Get-Content $result -Raw | ConvertFrom-Json
+          if ($checks.Count -lt 14) { throw 'Incomplete Light verification' }
+          $checks
+      - name: Publish separate manual download
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          Compress-Archive -Path dist/light/* -DestinationPath dist/CatScratch-light-win-x64.zip
+          gh release create $env:GITHUB_REF_NAME dist/CatScratch-light-win-x64.zip --verify-tag --title "CatScratch light $env:LIGHT_VERSION — DPS only" --notes-file LIGHT-RELEASE.md --latest=false
+          if ($LASTEXITCODE) { throw 'Light publication failed' }
+

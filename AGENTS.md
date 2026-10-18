@@ -1,3 +1,7 @@
+# CatScratch light branch — explicit opt-in maintenance
+
+This branch is catscratch-light, the standalone DPS-only edition. Work on it, update shared dependencies, merge full-version changes, or publish new Light builds only when the owner explicitly requests Light work. Normal CatScratch development must continue on the original branches. Build only src/CatScratch.Light/CatScratch.Light.csproj for Light; never ship the full app or its auxiliary modules. Light uses independent settings and light-vX.Y.Z release tags, --latest=false, with separate manual downloads and no updater. The original full-version design instructions below apply where relevant; the owner explicitly permits the Light-only single DPS window with its own gear, reset, pin and exit.
+
 # CatScratch project instructions
 
 ## Required visual style

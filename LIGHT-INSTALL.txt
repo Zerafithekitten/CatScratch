@@ -1,0 +1,18 @@
+CatScratch light 1.0.0 — Windows x64 — DPS only
+
+Extract this complete ZIP into a separate folder. Do not overwrite a full CatScratch installation.
+Run CatScratch.Light.exe and accept the administrator prompt. .NET is included.
+Npcap is required separately: https://npcap.com/#download
+Use borderless windowed mode, then teleport or change zones to confirm character/party identity.
+
+Only the DPS window is included. Gear: essential settings. Reset: new fight. Pin: position lock. X: exit.
+Resize with the bottom-right grip. Save applies preferences without closing settings; the gear returns to DPS.
+Preferences: %LOCALAPPDATA%\\CatScratchLight\\settings.json
+No autostart watcher, automatic update checks, recording, fight archives, pets, events or cube alerts.
+Light is maintained only on the owner's explicit request. Updates are separate manual downloads:
+https://github.com/Zerafithekitten/CatScratch/releases
+Look for release names beginning with CatScratch light and tags light-vX.Y.Z.
+
+This is passive packet capture. No game memory access or packet injection.
+Damage visibility depends on the data the game server sends to your client.
+
