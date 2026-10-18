@@ -148,7 +148,7 @@ public partial class OverlayWindow : Window, IDisplayAppearance
         _vm.WallClock=TimerCards.Berlin(DateTimeOffset.UtcNow).ToString("HH:mm",System.Globalization.CultureInfo.InvariantCulture);
         if(!ControlsDetached)return;
         ShellCaption.Visibility=ShellTitle.Visibility=ShellPaw.Visibility=Visibility.Visible;
-        ShellTitle.FontSize=16;ShellClockPanel.Visibility=Visibility.Visible;
+        ShellClockPanel.Visibility=_controlsPanel?.IsVerticalRail==true?Visibility.Collapsed:Visibility.Visible;
         PersonalCombatButton.Visibility=PetTrackerButton.Visibility=ShellClickButton.Visibility=Visibility.Visible;
         ShellSettingsButton.Visibility=ShellHideButton.Visibility=ShellPin.Visibility=Visibility.Visible;
         CompactHistory.Visibility=BossTimersLink.Visibility=DetailsLink.Visibility=Visibility.Visible;
@@ -307,7 +307,7 @@ public partial class OverlayWindow : Window, IDisplayAppearance
         SetupPanel.Visibility = _settings.CompactMode && (_settings.Transient || _meter.DemoRunning || _meter.LiveIdentity.ActorId is not null) ? Visibility.Collapsed : Visibility.Visible;
         if (_settings.ClickThrough) SetupPanel.Visibility = Visibility.Collapsed;
         Title = AppInfo.Name;
-        ShellTitle.Text = _meter.DemoRunning ? "CatScratch · TEST" : "CatScratch";
+        ShellTitle.Text = _controlsPanel?.IsVerticalRail==true?string.Join("\n","CatScratch".ToCharArray()):_meter.DemoRunning ? "CatScratch · TEST" : "CatScratch";
         _vm.ShowGear = _settings.ShowGear;
         _vm.ShowCombatPower = _settings.ShowCombatPower ?? _settings.ShowGear;
         uint? activeBoss=null;
@@ -918,15 +918,14 @@ public partial class OverlayWindow : Window, IDisplayAppearance
         if (_narrowLayoutWidth == Width) return;
         _narrowLayoutWidth = Width;
         var narrow = Width < 360;
-        ShellPaw.Visibility = Width < 300 ? Visibility.Collapsed : Visibility.Visible;
-        ShellTitle.FontSize = Width < 320 ? 12 : 16;
+        if(!ControlsDetached){ShellPaw.Visibility = Width < 300 ? Visibility.Collapsed : Visibility.Visible;ShellTitle.FontSize = Width < 320 ? 12 : 16;}
         Resources["DpsColumnWidth"] = new GridLength(Width < 320 ? 64 : 76);
         Resources["ShareColumnWidth"] = new GridLength(Width < 320 ? 44 : 57);
         PersonalName.MaxWidth = Math.Clamp(Width - 220,40,120);
         Grid.SetRow(FooterControls,1);
         Grid.SetColumn(FooterControls,0);
         Grid.SetColumnSpan(FooterControls,2);
-        ShellClockPanel.Visibility=Width<360?Visibility.Collapsed:Visibility.Visible;
+        if(!ControlsDetached)ShellClockPanel.Visibility=Width<360?Visibility.Collapsed:Visibility.Visible;
         FooterControls.HorizontalAlignment = HorizontalAlignment.Left;
         FooterControls.Margin = new Thickness(0,narrow ? 3 : 0,10,0);
         if (narrow)

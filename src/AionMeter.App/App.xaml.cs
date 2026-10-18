@@ -223,6 +223,25 @@ public partial class App : Application
             catch(Exception error){File.WriteAllText(themeCheckPath+".error.txt",error.ToString());Shutdown(1);}
             return;
         }
+        if(ArgValue(e.Args,"--check-checklist") is { } checklistPath)
+        {
+            Log.Enabled=false;
+            try
+            {
+                var checks=new List<string>();
+                ChecklistChecks.Run(checklistPath,(ok,message)=>{if(!ok)throw new InvalidOperationException(message);checks.Add(message);});
+                File.WriteAllText(checklistPath,System.Text.Json.JsonSerializer.Serialize(checks));Shutdown();
+            }
+            catch(Exception error){File.WriteAllText(checklistPath,error.ToString());Shutdown(1);}
+            return;
+        }
+        if(ArgValue(e.Args,"--check-panel") is { } panelPath)
+        {
+            Log.Enabled=false;
+            try{ControlPanelChecks.Run(panelPath);Shutdown();}
+            catch(Exception error){File.WriteAllText(panelPath,error.ToString());Shutdown(1);}
+            return;
+        }
         if (ArgValue(e.Args, "--check-interaction") is { } checkPath)
         {
             Log.Enabled = false;

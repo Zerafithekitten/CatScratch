@@ -1,3 +1,10 @@
+## CatScratch v3.0.4-beta.12
+
+- Reworked the control panel into compact Horizontal, Vertical rail and Grid layouts, with matching functional groups and fine separators. The vertical rail uses upright, tightly stacked CatScratch and BOSS/ALL lettering and hides both time displays. The grid remains a separate Settings option.
+- Checklist checkboxes now remain clickable during global click-through, without taking keyboard focus. Task text and surrounding space still pass clicks through; unlock to edit tasks.
+- Includes the unpublished Beta 11 checklist cleanup: small Daily/Weekly headings, unprefixed example tasks and an Other tasks section for additional slots. Existing custom tasks and completion are preserved.
+- The DPS meter layout, Stable release and CatScratch light are unchanged.
+
 ## CatScratch v3.0.4-beta.11
 
 - Separated the checklist with small Daily and Weekly headings. The initial two daily and nine weekly example rows no longer repeat category prefixes. Extra free slots appear under Other tasks; headings are hidden when their rows are not visible.

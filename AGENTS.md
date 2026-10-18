@@ -36,7 +36,7 @@ Overlay profiles are optional named layouts managed in their own Settings tab. K
 
 Death recap shows only the five latest received hits, newest first, with red damage values. Keep its compact dark CatScratch panel centered in the upper half of the meter screen by default, above standard resurrection controls. Preserve dragging and automatic hiding after confirmed revival.
 
-Follow RELEASE-POLICY.md. Beta branch uploads and prereleases are authorized without further confirmation. Stable publication requires explicit owner approval. Beta release notes are brief; Stable notes are detailed. Add release notes for a publication, not for every intermediate change.
+Follow RELEASE-POLICY.md. Before any upload, show images of the actual changes and wait for the owner to explicitly approve the update. During development run only focused checks for the changed module; run the complete release checks only after approval. This owner instruction from 2026-10-19 supersedes earlier standing Beta-upload authorization. Stable publication requires explicit owner approval. Beta release notes are brief; Stable notes are detailed. Add release notes for a publication, not for every intermediate change.
 
 Started events belong exclusively to the separate movable Started events module. Normal events show Open! and a remaining 3-minute countdown; Spacetime Rift uses 10 minutes; bosses show Spawned for 2 minutes without a countdown. Persist the module placement/open state independently from Upcoming events.
 
@@ -59,3 +59,5 @@ CatScratch remains exclusively passive: do not add game-memory access for positi
 The full-version Checklist is opt-in in Settings > Checklist, with 1–20 compact task rows and eleven editable daily/weekly starting examples. Preserve the transparent window and tinted row surfaces. Checkmarks reversibly strike through text; task text and completion auto-save and survive restart, row-count reductions and layout-profile application. Never put task text/completion into overlay profiles or add implicit daily/weekly resets. Respect the module pin, global click-through and global show/hide. Light remains unchanged.
 
 The Checklist toggle belongs in the permanent control panel in both orientations, with its state highlighted and matching icon documented in Help & symbols. Use the remaining fourth-row slot in the vertical panel; do not increase panel height. Toggling visibility must preserve all task text and completion state.
+
+Checklist checkboxes must remain clickable in global click-through mode; task text and surrounding space still pass clicks to the game. Do not take game keyboard focus when toggling completion.

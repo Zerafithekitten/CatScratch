@@ -187,11 +187,11 @@ internal static class PolishChecks
                 "Zero background opacity clears both meter backdrops without dimming content further, including after click-through changes");
             meter.Settings.WindowOpacity=oldOpacity;meter.Settings.BackgroundOpacity=oldBackground;
             detachedOverlay.ApplyAppearance();WindowClickThrough.ApplyAll(true);
-            meter.Settings.ControlsLayout=ControlsLayout.Vertical;permanentPanel.ApplyAppearance();permanentPanel.UpdateLayout();
-            check(permanentPanel.Width==132 && exitButton.IsVisible && permanentPanel.SettingsButton.IsVisible,"Compact vertical panel retains Settings and Exit controls");
+            meter.Settings.ControlsLayout=ControlsLayout.Grid;permanentPanel.ApplyAppearance();permanentPanel.UpdateLayout();
+            check(permanentPanel.Width==112 && exitButton.IsVisible && permanentPanel.SettingsButton.IsVisible,"Compact vertical panel retains Settings and Exit controls");
             var actionGrid=permanentPanel.VerticalActions!;
             check(actionGrid.Children.Count==19 && actionGrid.ColumnDefinitions.Count==4 && actionGrid.RowDefinitions.Count==4
-                && actionGrid.Children.OfType<System.Windows.Controls.Primitives.ButtonBase>().All(c=>c.ActualWidth==22 && c.ActualHeight==20)
+                && actionGrid.Children.OfType<System.Windows.Controls.Primitives.ButtonBase>().All(c=>c.ActualWidth==20 && c.ActualHeight==18)
                 && actionGrid.Children.OfType<System.Windows.Controls.Primitives.ButtonBase>().Select(c=>(Grid.GetRow(c),Grid.GetColumn(c))).Distinct().Count()==16
                 && actionGrid.Children.OfType<Border>().Count(c=>!c.IsHitTestVisible && Grid.GetRowSpan(c)==4)==3,
                 "Vertical panel uses equally sized actions in a fixed four-column grid without the DPS meter pin");
@@ -206,7 +206,7 @@ internal static class PolishChecks
             check(WindowPinning.IsPinned(detachedOverlay)!=meterPinned && WindowPinning.IsPinned(permanentPanel)==panelPinned,"DPS meter pin locks only the meter and leaves the panel pin unchanged");
             meterPin.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             meter.Settings.ControlsLayout=ControlsLayout.Horizontal;permanentPanel.ApplyAppearance();permanentPanel.UpdateLayout();
-            check(permanentPanel.Width==400,"Panel can return to the compact horizontal layout");
+            check(permanentPanel.Width==316,"Panel can return to the compact horizontal layout");
             for(var i=0;i<2;i++)
             {
                 meter.Settings.ControlsLayout=ControlsLayout.Vertical;permanentPanel.ApplyAppearance();permanentPanel.UpdateLayout();

@@ -19,10 +19,12 @@ internal sealed class MeterControlsWindow : Window
     private Grid? _verticalActions;
     private Grid? _verticalFooter;
     private StackPanel? _caption;
+    private StackPanel? _layoutRoot;
     private FrameworkElement? _personalButton,_petButton;
     private UIElement[] _horizontalItems=[];
     private readonly Dictionary<FrameworkElement,(double Width,double Height,Thickness Margin,HorizontalAlignment Alignment)> _horizontalSizing=[];
     internal Grid? VerticalActions=>_verticalActions;
+    internal bool IsVerticalRail=>_settings.ControlsLayout==ControlsLayout.Vertical;
     private ControlsLayout? _layout;
     private ControlsAnchor? _anchor;
     private bool _aligning;
@@ -36,6 +38,7 @@ internal sealed class MeterControlsWindow : Window
     internal MeterControlsWindow(AppSettings settings,Action openSettings,Action restore,Action<double,double>? moved=null)
     {
         _settings=settings;
+        UseLayoutRounding=true;SnapsToDevicePixels=true;
         Title="CatScratch";Width=280;Height=48;WindowStyle=WindowStyle.None;ResizeMode=ResizeMode.NoResize;
         AllowsTransparency=true;Background=Brushes.Transparent;Topmost=true;ShowInTaskbar=false;ShowActivated=false;
         FontFamily=new("Segoe UI");Foreground=ThemeColors.Brush("#EDF2F7");
@@ -76,11 +79,11 @@ internal sealed class MeterControlsWindow : Window
         ((Panel)RestoreButton.Parent).Children.Remove(RestoreButton);
         buttons.Children.Add(RestoreButton);
         SettingsButton=settingsButton;
-        _verticalActions=new Grid {Margin=new(5,1,5,0),Visibility=Visibility.Collapsed};
-        for(var i=0;i<4;i++){_verticalActions.ColumnDefinitions.Add(new(){Width=new(1,GridUnitType.Star)});_verticalActions.RowDefinitions.Add(new(){Height=new(22)});}
-        _verticalFooter=new Grid {Margin=new(5,2,5,4),Visibility=Visibility.Collapsed};
+        _verticalActions=new Grid {Margin=new(3,1,3,0),Visibility=Visibility.Collapsed};
+        for(var i=0;i<4;i++){_verticalActions.ColumnDefinitions.Add(new(){Width=new(1,GridUnitType.Star)});_verticalActions.RowDefinitions.Add(new(){Height=new(18)});}
+        _verticalFooter=new Grid {Margin=new(4,1,4,3),Visibility=Visibility.Collapsed};
         _verticalFooter.ColumnDefinitions.Add(new(){Width=GridLength.Auto});_verticalFooter.ColumnDefinitions.Add(new(){Width=new(1,GridUnitType.Star)});
-        var root=new StackPanel();root.Children.Add(header);root.Children.Add(buttons);root.Children.Add(_verticalActions);root.Children.Add(_verticalFooter);
+        var root=_layoutRoot=new StackPanel();root.Children.Add(header);root.Children.Add(buttons);root.Children.Add(_verticalActions);root.Children.Add(_verticalFooter);
         var updateButton=CreateUpdateNoticeButton(this);
         updateButton.Click+=(_,_)=>overlay.OpenReadyUpdate();
         _updateNotice.Child=updateButton;_updateNotice.PlacementTarget=this;
@@ -152,30 +155,56 @@ internal sealed class MeterControlsWindow : Window
         if(_layout!=_settings.ControlsLayout)
         {
             _layout=_settings.ControlsLayout;
-            var vertical=_layout==ControlsLayout.Vertical;
-            Width=vertical?132:400;
-            _header.Margin=vertical?new Thickness(4,1,4,0):new Thickness(8,2,6,0);
-            var paw=(Image)_caption!.Children[0];
-            paw.Width=paw.Height=vertical?16:22;paw.Margin=vertical?new Thickness(0,0,4,0):new Thickness(0,0,7,0);
+            var vertical=_layout==ControlsLayout.Grid;
+            var rail=_layout==ControlsLayout.Vertical;
+            Width=vertical?112:rail?52:316;
+            _layoutRoot!.Orientation=rail?Orientation.Horizontal:Orientation.Vertical;
+            _header.LayoutTransform=rail?new RotateTransform(90):Transform.Identity;
+            _header.Width=rail?304:double.NaN;
+            _header.Margin=rail?new(1,2,0,0):new(3,1,3,0);_header.Height=vertical?40:26;
+            var paw=(Image)_caption!.Children[0];paw.Width=paw.Height=13;paw.Margin=new(0,0,3,0);
+            paw.RenderTransformOrigin=new(.5,.5);paw.RenderTransform=Transform.Identity;
+            _caption.Orientation=rail?Orientation.Vertical:Orientation.Horizontal;
+            _caption.LayoutTransform=rail?new RotateTransform(-90):Transform.Identity;
+            paw.Margin=rail?new(0,0,0,2):new(0,0,3,0);
             var branding=(StackPanel)_caption.Children[1];
-            ((TextBlock)branding.Children[0]).FontSize=vertical?12:16;
-            ((TextBlock)branding.Children[1]).FontSize=vertical?8:9;
+            var title=(TextBlock)branding.Children[0];
+            title.FontSize=rail?9:10.5;title.TextAlignment=rail?TextAlignment.Center:TextAlignment.Left;
+            title.LineHeight=rail?8.5:double.NaN;
+            title.LineStackingStrategy=rail?LineStackingStrategy.BlockLineHeight:LineStackingStrategy.MaxHeight;
+            var version=(TextBlock)branding.Children[1];version.FontSize=rail?6:7;
+            version.Width=rail?24:double.NaN;version.TextWrapping=rail?TextWrapping.Wrap:TextWrapping.NoWrap;
+            version.TextAlignment=rail?TextAlignment.Center:TextAlignment.Left;
             var clock=_header.Children.OfType<StackPanel>().Single(p=>p.Name=="ShellClockPanel");
-            foreach(var text in clock.Children.OfType<TextBlock>()){text.FontSize=vertical?8:text==clock.Children[0]?9:10;text.Margin=vertical?new Thickness(2,0,2,0):new Thickness(4,0,4,0);}
-            _header.Height=vertical?double.NaN:34;
-            _header.RowDefinitions.Clear();
-            if(vertical){_header.RowDefinitions.Add(new(){Height=GridLength.Auto});_header.RowDefinitions.Add(new(){Height=GridLength.Auto});}
+            clock.Visibility=rail?Visibility.Collapsed:Visibility.Visible;
+            foreach(var text in clock.Children.OfType<TextBlock>()){text.FontSize=7.5;text.Margin=new(1,0,1,0);}
+            _header.ColumnDefinitions.Clear();_header.RowDefinitions.Clear();
+            if(vertical)
+            {
+                _header.RowDefinitions.Add(new(){Height=new(22)});_header.RowDefinitions.Add(new(){Height=new(18)});
+                _header.ColumnDefinitions.Add(new(){Width=new(1,GridUnitType.Star)});
+                for(var i=0;i<3;i++)_header.ColumnDefinitions.Add(new(){Width=new(18)});
+            }
+            else
+            {
+                for(var i=0;i<8;i++)_header.ColumnDefinitions.Add(new(){Width=i==3?new(1,GridUnitType.Star):GridLength.Auto});
+            }
             foreach(FrameworkElement child in _header.Children)
             {
-                var caption=child.Name=="ShellCaption";
-                Grid.SetRow(child,vertical&&!caption&&child.Name!="ShellHideButton"?1:0);
-                if(caption){Grid.SetColumnSpan(child,vertical?5:1);child.LayoutTransform=Transform.Identity;}
-                if(child.Name=="ShellClockPanel"){Grid.SetColumn(child,vertical?0:1);Grid.SetColumnSpan(child,vertical?3:1);}
-                if(child.Name=="ShellClickButton")Grid.SetColumn(child,vertical?3:2);
-                if(child.Name=="ShellSettingsButton")Grid.SetColumn(child,vertical?4:3);
-                if(child.Name=="ShellPin")Grid.SetColumn(child,vertical?5:4);
+                Grid.SetRow(child,0);Grid.SetColumnSpan(child,1);
+                switch(child.Name)
+                {
+                    case "ShellCaption":Grid.SetColumn(child,0);Grid.SetColumnSpan(child,vertical?3:1);break;
+                    case "ShellClockPanel":Grid.SetRow(child,vertical?1:0);Grid.SetColumn(child,vertical?0:1);break;
+                    case "ShellClickButton":Grid.SetRow(child,vertical?1:0);Grid.SetColumn(child,vertical?1:4);break;
+                    case "ShellSettingsButton":Grid.SetRow(child,vertical?1:0);Grid.SetColumn(child,vertical?2:5);break;
+                    case "ShellPin":Grid.SetRow(child,vertical?1:0);Grid.SetColumn(child,vertical?3:6);break;
+                    case "ShellHideButton":Grid.SetColumn(child,vertical?3:7);break;
+                }
+                if(child is Button button){button.Width=button.Height=18;button.Margin=new(0);button.Padding=new(0);button.RenderTransformOrigin=new(.5,.5);button.RenderTransform=rail?new RotateTransform(-90):Transform.Identity;}
+                if(child is ContentControl {Content:Button pin}){child.Width=18;pin.Width=pin.Height=18;pin.Margin=new(0);pin.Padding=new(0);pin.RenderTransformOrigin=new(.5,.5);pin.RenderTransform=rail?new RotateTransform(-90):Transform.Identity;}
             }
-            ArrangeActions(vertical);
+            ArrangeActions(vertical,rail);
         }
         if(_anchor!=_settings.ControlsAnchor){_anchor=_settings.ControlsAnchor;AlignToScreen();}
     }
@@ -185,43 +214,77 @@ internal sealed class MeterControlsWindow : Window
         if(element.Parent is Panel parent)parent.Children.Remove(element);
     }
 
-    private void ArrangeActions(bool vertical)
+    private void ArrangeActions(bool vertical,bool rail)
     {
-        if(_buttons is null || _verticalActions is null || _verticalFooter is null || _caption is null)return;
+        if(_buttons is null || _verticalActions is null || _verticalFooter is null || _caption is null || _header is null)return;
         foreach(var item in _horizontalSizing.Keys)Detach(item);
-        _verticalActions.Children.Clear();_verticalFooter.Children.Clear();
+        _buttons.Children.Clear();_verticalActions.Children.Clear();_verticalFooter.Children.Clear();
         _buttons.Visibility=vertical?Visibility.Collapsed:Visibility.Visible;
         _verticalActions.Visibility=_verticalFooter.Visibility=vertical?Visibility.Visible:Visibility.Collapsed;
-        if(!vertical)
-        {
-            foreach(var (item,size) in _horizontalSizing){item.Width=size.Width;item.Height=size.Height;item.Margin=size.Margin;item.HorizontalAlignment=size.Alignment;}
-            foreach(var item in _horizontalItems)_buttons.Children.Add(item);
-            _caption.Children.Add(_personalButton!);_caption.Children.Add(_petButton!);
-            return;
-        }
+        _buttons.Orientation=rail?Orientation.Vertical:Orientation.Horizontal;
+        _buttons.Margin=rail?new(0,2,2,2):new(2,0,2,2);_buttons.Height=rail?double.NaN:20;_buttons.Width=rail?20:double.NaN;
         FrameworkElement Item(string name)=>_horizontalItems.OfType<FrameworkElement>().Single(c=>c.Name==name);
-        var actions=new[]{Item("DeathRecapButton"),_personalButton!,_petButton!,RestoreButton,
-            Item("BossRecordsButton"),Item("LastPlayedButton"),Item("CompactHistory"),Item("DetailsLink"),
-            Item("ChatExportButton"),Item("PatchNotesButton"),Item("SaveLastFightButton"),Item("CheckUpdatesButton"),
-            Item("BossTimersLink"),Item("RestartButton"),Item("LockButton"),Item("ChecklistButton")};
-        for(var column=0;column<3;column++)
+        // Matching functional columns vertically and matching groups from left to right horizontally.
+        var groups=new[]{
+            new[]{Item("DeathRecapButton"),_personalButton!,_petButton!,Item("ChecklistButton")},
+            new[]{Item("CompactHistory"),Item("DetailsLink"),Item("BossRecordsButton"),Item("LastPlayedButton")},
+            new[]{RestoreButton,Item("BossTimersLink"),Item("SaveLastFightButton"),Item("ChatExportButton")},
+            new[]{Item("RestartButton"),Item("LockButton"),Item("PatchNotesButton"),Item("CheckUpdatesButton")}
+        };
+        for(var column=0;column<groups.Length;column++)
         {
-            var separator=new Border {Width=1,Background=ThemeColors.Brush("#414A56"),Opacity=.65,
-                HorizontalAlignment=HorizontalAlignment.Right,Margin=new(0,2,0,2),IsHitTestVisible=false};
-            Grid.SetColumn(separator,column);Grid.SetRowSpan(separator,4);_verticalActions.Children.Add(separator);
+            foreach(var action in groups[column])
+            {
+                action.Width=vertical?20:18;action.Height=18;action.Margin=new(0);action.HorizontalAlignment=HorizontalAlignment.Center;
+                if(action is Control control)control.Padding=new(0);
+                if(vertical){Grid.SetColumn(action,column);Grid.SetRow(action,Array.IndexOf(groups[column],action));_verticalActions.Children.Add(action);}
+                else _buttons.Children.Add(action);
+            }
+            if(column<3)
+            {
+                var separator=new Border {Width=1,Background=ThemeColors.Brush("#414A56"),Opacity=.8,IsHitTestVisible=false};
+                if(vertical)
+                {
+                    separator.HorizontalAlignment=HorizontalAlignment.Right;separator.Margin=new(0,1,0,1);
+                    Grid.SetColumn(separator,column);Grid.SetRowSpan(separator,4);_verticalActions.Children.Add(separator);
+                }
+                else
+                {
+                    separator.Width=rail?12:1;separator.Height=rail?1:12;separator.Margin=new(3);
+                    _buttons.Children.Add(separator);
+                }
+            }
         }
-        for(var i=0;i<actions.Length;i++)
+        var mode=(Button)_horizontalItems.OfType<FrameworkElement>().Single(c=>Equals(c.Tag,"damage-mode"));
+        mode.RenderTransform=Transform.Identity;mode.Width=34;mode.MinWidth=0;mode.Height=18;mode.FontSize=9;mode.Padding=new(2,0,2,0);mode.Margin=new(0);
+        mode.LayoutTransform=rail?new RotateTransform(-90):Transform.Identity;
+        mode.ContentTemplate=null;
+        if(rail)
         {
-            var action=actions[i];action.Width=22;action.Height=20;action.Margin=new(0);action.HorizontalAlignment=HorizontalAlignment.Center;
-            Grid.SetColumn(action,i%4);Grid.SetRow(action,i/4);_verticalActions.Children.Add(action);
+            mode.Width=18;mode.Height=40;mode.Padding=new(0);
+            var label=new FrameworkElementFactory(typeof(TextBlock));
+            label.SetBinding(TextBlock.TextProperty,new System.Windows.Data.Binding("."){Converter=new StackedLetters()});
+            label.SetValue(TextBlock.TextAlignmentProperty,TextAlignment.Center);
+            label.SetValue(TextBlock.LineHeightProperty,9.0);
+            mode.ContentTemplate=new DataTemplate{VisualTree=label};
         }
-        var mode=_horizontalItems.OfType<FrameworkElement>().Single(c=>Equals(c.Tag,"damage-mode"));
-        mode.Height=22;mode.Margin=new(0);Grid.SetColumn(mode,0);Grid.SetRow(mode,0);_verticalFooter.Children.Add(mode);
-        var slider=_horizontalItems.OfType<Slider>().Single();
-        slider.Width=double.NaN;slider.Margin=new(8,0,0,0);slider.HorizontalAlignment=HorizontalAlignment.Stretch;
-        Grid.SetColumn(slider,1);Grid.SetRow(slider,0);_verticalFooter.Children.Add(slider);
+        var slider=_horizontalItems.OfType<Slider>().Single();slider.Width=double.NaN;slider.MinWidth=25;slider.Margin=new(4,0,3,0);slider.HorizontalAlignment=HorizontalAlignment.Stretch;
+        if(vertical)
+        {
+            Grid.SetColumn(mode,0);Grid.SetRow(mode,0);_verticalFooter.Children.Add(mode);
+            Grid.SetColumn(slider,1);Grid.SetRow(slider,0);_verticalFooter.Children.Add(slider);
+        }
+        else
+        {
+            Grid.SetRow(mode,0);Grid.SetColumn(mode,2);_header.Children.Add(mode);
+            Grid.SetRow(slider,0);Grid.SetColumn(slider,3);_header.Children.Add(slider);
+        }
     }
-
+    private sealed class StackedLetters:System.Windows.Data.IValueConverter
+    {
+        public object Convert(object value,Type targetType,object parameter,System.Globalization.CultureInfo culture)=>string.Join("\n",(value?.ToString()??"").ToCharArray());
+        public object ConvertBack(object value,Type targetType,object parameter,System.Globalization.CultureInfo culture)=>throw new NotSupportedException();
+    }
     internal static Rect AlignedBounds(Rect bounds,Rect area,ControlsAnchor anchor)
     {
         if(anchor==ControlsAnchor.Free)return WindowPresentation.Clamp(bounds,area);

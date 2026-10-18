@@ -25,7 +25,7 @@ internal sealed class ChecklistSettingsPanel : StackPanel
         Children.Add(new TextBlock {Text=T("Window width"),Margin=new(0,12,0,4)});
         WindowWidth=new Slider {Minimum=220,Maximum=650,Value=draft.ChecklistWidth,Style=(Style)FindResource("GoldSlider")};
         WindowWidth.ValueChanged+=(_,_)=>draft.ChecklistWidth=WindowWidth.Value;Children.Add(WindowWidth);
-        Children.Add(new TextBlock {Text=T("Save applies the slot count and visibility. Type tasks directly in the checklist; text and checkmarks are saved automatically. Hidden slots retain their tasks. Unlock click-through to edit."),TextWrapping=TextWrapping.Wrap,Foreground=ThemeColors.Brush("#A9B8C7"),FontSize=11,Margin=new(0,12,0,0)});
+        Children.Add(new TextBlock {Text=T("Save applies the slot count and visibility. Type tasks directly in the checklist; text and checkmarks are saved automatically. Hidden slots retain their tasks. Checkboxes work in click-through mode; turn it off to edit task text."),TextWrapping=TextWrapping.Wrap,Foreground=ThemeColors.Brush("#A9B8C7"),FontSize=11,Margin=new(0,12,0,0)});
     }
     internal void ApplyTo(AppSettings settings)
     {

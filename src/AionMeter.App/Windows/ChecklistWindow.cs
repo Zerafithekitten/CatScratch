@@ -14,13 +14,16 @@ internal sealed class ChecklistWindow : Window,IDisplayAppearance
     private readonly DispatcherTimer _save=new(){Interval=TimeSpan.FromMilliseconds(450)};
     private readonly List<(CheckBox Check,TextBox Text)> _fields=[];
     private bool _displayOnly;
+    private readonly ChecklistInputSurface _input;
+    internal bool DisplayOnly=>_displayOnly;
+    internal ChecklistInputSurface InputSurface=>_input;
     internal IReadOnlyList<(CheckBox Check,TextBox Text)> Fields=>_fields;
     internal string[] SectionHeaders=>_rows.Children.OfType<TextBlock>().Select(t=>t.Text).ToArray();
     internal ScrollViewer TasksScroller {get;}
     internal Button CloseButton {get;}
     internal ChecklistWindow(AppSettings settings)
     {
-        _settings=settings;ChecklistState.Normalize(settings);
+        _settings=settings;ChecklistState.Normalize(settings);_input=new(this);
         Title="CatScratch · "+UiText.Current.Localize("Checklist");
         Width=settings.ChecklistWidth;MinWidth=220;MaxWidth=650;SizeToContent=SizeToContent.Height;
         WindowStyle=WindowStyle.None;ResizeMode=ResizeMode.NoResize;AllowsTransparency=true;Background=Brushes.Transparent;
@@ -42,13 +45,16 @@ internal sealed class ChecklistWindow : Window,IDisplayAppearance
         else {Left=settings.OverlayLeft+40;Top=settings.OverlayTop+40;}
         _save.Tick+=(_,_)=>Flush();
         Controls.DragAnywhere.Attach(this,dropped:SavePlacement);
-        Closed+=(_,_)=>{_save.Stop();SavePlacement();AppHost.Current.ResumeHotkeys();};
+        LocationChanged+=(_,_)=>_input.Schedule();SizeChanged+=(_,_)=>_input.Schedule();
+        IsVisibleChanged+=(_,_)=>_input.Sync();Loaded+=(_,_)=>_input.Schedule();
+        TasksScroller.ScrollChanged+=(_,_)=>_input.Schedule();
+        Closed+=(_,_)=>{_input.Dispose();_save.Stop();SavePlacement();AppHost.Current.ResumeHotkeys();};
         ApplyPreferences();
     }
     internal void ApplyPreferences()
     {
         var desiredWidth=double.IsFinite(_settings.ChecklistWidth)?Math.Clamp(_settings.ChecklistWidth,220,650):320;
-        if(_fields.Count==Math.Clamp(_settings.ChecklistRows,1,ChecklistState.MaximumSlots) && Width==desiredWidth)return;
+        if(_fields.Count==Math.Clamp(_settings.ChecklistRows,1,ChecklistState.MaximumSlots) && Width==desiredWidth){if(_displayOnly)_input.Sync();return;}
         ChecklistState.Normalize(_settings);Width=_settings.ChecklistWidth;
         if(_fields.Count!=_settings.ChecklistRows)
         {
@@ -91,6 +97,7 @@ internal sealed class ChecklistWindow : Window,IDisplayAppearance
     {
         _displayOnly=enabled;_header.Visibility=enabled?Visibility.Collapsed:Visibility.Visible;
         foreach(var field in _fields)field.Text.IsReadOnly=enabled;
+        _input.Sync();_input.Schedule();
     }
 }
 

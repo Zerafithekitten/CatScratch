@@ -7,7 +7,7 @@ A separate, always-on-top Windows DPS meter for **AION 2**, by Zerafithekitten. 
 | Channel | Current version | What it includes |
 | --- | --- | --- |
 | **Stable** | **[v3.0.3](https://github.com/Zerafithekitten/CatScratch/releases/tag/v3.0.3)** | Independent control panel, reworked Pet tracker with five recommendations, custom colors and transparency, event timeline and favorites, effective healing and the complete tested Beta feature set. |
-| **Beta** | [v3.0.4-beta.11](https://github.com/Zerafithekitten/CatScratch/releases/tag/v3.0.4-beta.11) | Adds a compact 20-slot checklist with a dedicated control-panel toggle, alongside custom cube audio, experimental monitor selection and selectable Pet tracking modes. |
+| **Beta** | [v3.0.4-beta.12](https://github.com/Zerafithekitten/CatScratch/releases/tag/v3.0.4-beta.12) | Compact Horizontal, Vertical rail and Grid control-panel layouts; grouped checklist with checkboxes usable during click-through; custom cube audio, experimental monitor selection and selectable Pet tracking modes. |
 
 **Separate edition:** [CatScratch light 1.0.0 — DPS meter only](https://github.com/Zerafithekitten/CatScratch/releases/tag/light-v1.0.0). Independent ZIP download and settings; manual updates only, with development frozen until the owner explicitly requests Light work.
 
@@ -241,7 +241,7 @@ Use the **Checklist button in the control panel** to show or hide it without cha
 
 Text and checkmarks save automatically and survive restarting CatScratch. Reducing the number of visible rows keeps hidden tasks. Small **Daily** and **Weekly** headings separate the eleven editable examples: two daily and nine weekly tasks from the supplied overview. Category prefixes are omitted from the task rows; extra free slots appear under **Other tasks**. These are sample text, not automatic progress detection or scheduled resets.
 
-The module has its own pin and X. Global click-through is supported; unlock it before editing. Layout profiles change placement, width and slot count without overwriting task text or completion. Checklist is part of full CatScratch only.
+The module has its own pin and X. Checkboxes remain clickable in global click-through mode without taking game keyboard focus. Task text and empty space stay click-through; unlock the mode to edit text. Layout profiles change placement, width and slot count without overwriting task text or completion. Checklist is part of full CatScratch only.
 
 ![Compact checklist with editable sample tasks](docs/images/checklist-beta11.png)
 
@@ -385,3 +385,11 @@ Use **Report a bug / request a feature** in Settings > Feedback, or [open an iss
 Requires **.NET 10**. See [GITHUB-RELEASES.md](GITHUB-RELEASES.md) for release builds and [INSTALL.txt](INSTALL.txt) for installation and controls. Version tags build and test the Windows app and installer. Packet recordings and userdata are excluded from Git and release archives.
 
 **GPL-3.0**, based on [cyberbadger6969/aion2-dps-meter](https://github.com/cyberbadger6969/aion2-dps-meter), base revision `414de5c1d5f3d45ce35701bd25229c2dba736bb6`. Keep [LICENSE](LICENSE) and [data/NOTICE.md](data/NOTICE.md) with redistributions. Full source accompanies releases. AION 2 belongs to NCSOFT.
+
+### Compact control panel (Beta 12)
+
+Choose Horizontal, Vertical rail or Grid in Settings. Buttons are grouped by function with fine separators. The vertical rail uses upright stacked lettering and omits the clocks.
+
+![Horizontal panel](docs/images/panel-horizontal-beta12.png)
+
+![Vertical rail](docs/images/panel-vertical-beta12.png) ![Grid panel](docs/images/panel-grid-beta12.png)

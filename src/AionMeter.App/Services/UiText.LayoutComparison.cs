@@ -5,6 +5,8 @@ public sealed partial class UiText
     private static readonly Dictionary<string,(string De,string Ru,string Fr)> LayoutComparisonText=new()
     {
         ["Daily"]=("Täglich","Ежедневно","Quotidien"),
+        ["Vertical rail"]=("Vertikale Leiste","Вертикальная панель","Barre verticale"),
+        ["Grid"]=("Raster","Сетка","Grille"),
         ["Other tasks"]=("Weitere Aufgaben","Другие задачи","Autres tâches"),
         ["Weekly"]=("Wöchentlich","Еженедельно","Hebdomadaire"),
         ["5× Duty Quests"]=("5× Pflicht-Quests","5× ежедневные задания","5× quêtes de devoir"),
@@ -25,7 +27,7 @@ public sealed partial class UiText
         ["Type a task"]=("Aufgabe eingeben","Введите задачу","Saisir une tâche"),
         ["Mark task complete / incomplete"]=("Aufgabe abhaken / Häkchen entfernen","Отметить выполненной / невыполненной","Marquer terminée / non terminée"),
         ["Could not save checklist."]=("Checkliste konnte nicht gespeichert werden.","Не удалось сохранить список задач.","Impossible d’enregistrer la liste de tâches."),
-        ["Save applies the slot count and visibility. Type tasks directly in the checklist; text and checkmarks are saved automatically. Hidden slots retain their tasks. Unlock click-through to edit."]=("Speichern übernimmt Zeilenanzahl und Sichtbarkeit. Aufgaben direkt in der Checkliste eingeben; Texte und Häkchen werden automatisch gespeichert. Ausgeblendete Zeilen behalten ihre Aufgaben. Zum Bearbeiten den Durchklick-Modus ausschalten.","Сохранение применяет количество строк и видимость. Вводите задачи прямо в списке: текст и отметки сохраняются автоматически. Скрытые строки сохраняют задачи. Для редактирования отключите сквозные клики.","Enregistrer applique le nombre de lignes et la visibilité. Saisissez les tâches directement ; textes et coches sont enregistrés automatiquement. Les lignes masquées conservent leurs tâches. Désactivez les clics traversants pour modifier."),
+        ["Save applies the slot count and visibility. Type tasks directly in the checklist; text and checkmarks are saved automatically. Hidden slots retain their tasks. Checkboxes work in click-through mode; turn it off to edit task text."]=("Speichern übernimmt Zeilenanzahl und Sichtbarkeit. Aufgaben direkt in der Checkliste eingeben; Texte und Häkchen werden automatisch gespeichert. Ausgeblendete Zeilen behalten ihre Aufgaben. Häkchen funktionieren auch im Durchklick-Modus; zum Bearbeiten der Texte diesen ausschalten.","Сохранение применяет количество строк и видимость. Вводите задачи прямо в списке: текст и отметки сохраняются автоматически. Скрытые строки сохраняют задачи. Отметки доступны при сквозных кликах; для изменения текста отключите этот режим.","Enregistrer applique le nombre de lignes et la visibilité. Saisissez les tâches directement ; textes et coches sont enregistrés automatiquement. Les lignes masquées conservent leurs tâches. Les cases restent cliquables en mode traversant ; désactivez-le pour modifier le texte."),
         ["Hidden cubes"]=("Versteckte Würfel","Скрытые кубы","Cubes cachés"),
         ["Target screen (experimental)"]=("Zielbildschirm (experimentell)","Целевой экран (экспериментально)","Écran cible (expérimental)"),
         ["Automatic (saved positions)"]=("Automatisch (gespeicherte Positionen)","Автоматически (сохранённые позиции)","Automatique (positions enregistrées)"),

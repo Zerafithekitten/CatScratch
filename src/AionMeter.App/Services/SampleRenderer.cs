@@ -90,13 +90,15 @@ public static class SampleRenderer
                 refresh=()=>{};break;
             case "meter-controls":
             case "meter-controls-vertical":
+            case "meter-controls-grid":
             case "meter-controls-transparent":
+                if(o.Window=="meter-controls-grid")meter.Settings.ControlsLayout=ControlsLayout.Grid;
                 if(o.Window=="meter-controls-vertical")meter.Settings.ControlsLayout=ControlsLayout.Vertical;
                 if(o.Window=="meter-controls-transparent"){meter.Settings.WindowOpacity=.7;meter.Settings.BackgroundOpacity=.2;}
                 var controlOverlay=new OverlayWindow(meter,exitOnClose:false);
                 var controlPanel=new MeterControlsWindow(meter.Settings,()=>{},()=>{});
                 controlOverlay.MoveControlsTo(controlPanel);
-                controlPanel.SizeToContent=SizeToContent.Manual;controlPanel.Height=o.Window=="meter-controls-vertical"?double.NaN:72;
+                controlPanel.SizeToContent=SizeToContent.Height;controlPanel.Height=double.NaN;
                 host=controlPanel;refresh=controlOverlay.Refresh;break;
             case "color-picker":
                 host=new Window{Width=304,Height=198,Background=ThemeColors.Brush("#20242A"),Content=new Border{Padding=new(12),Child=new Controls.HsvColorPicker(Colors.Red)}};
@@ -266,9 +268,12 @@ public static class SampleRenderer
                 refresh = () => { };
                 break;
             case "checklist":
+            case "checklist-locked":
                 ChecklistState.Normalize(meter.Settings);
                 meter.Settings.ChecklistItems[0].Completed=true;
-                host=new ChecklistWindow(meter.Settings);refresh=()=>{};break;
+                var taskWindow=new ChecklistWindow(meter.Settings);
+                if(o.Window=="checklist-locked")taskWindow.SetDisplayOnly(true);
+                host=taskWindow;refresh=()=>{};break;
             case "hidden-cube":
                 host=new HiddenCubeWindow(meter.Settings);
                 refresh=()=>{};

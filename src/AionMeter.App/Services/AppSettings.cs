@@ -12,7 +12,7 @@ public enum HistoryMode
     BossesAndLong,
     All,
 }
-public enum ControlsLayout { Horizontal, Vertical }
+public enum ControlsLayout { Horizontal, Vertical, Grid }
 public enum ControlsAnchor { Free, TopLeft, TopCenter, TopRight, CenterLeft, Center, CenterRight, BottomLeft, BottomCenter, BottomRight }
 
 public sealed class AppSettings

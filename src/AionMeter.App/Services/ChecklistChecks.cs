@@ -50,10 +50,35 @@ internal static class ChecklistChecks
             check(WindowPinning.IsPinned(window) && window.Fields.All(f=>f.Check.IsEnabled && !f.Text.IsReadOnly),
                 "Pinning the checklist blocks position changes without locking its tasks");
             WindowClickThrough.ApplyAll(true);
+            window.UpdateLayout();window.InputSurface.Sync();
             check(((long)NativeMethods.GetWindowLongPtr(new WindowInteropHelper(window).Handle,NativeMethods.GWL_EXSTYLE)&NativeMethods.WS_EX_TRANSPARENT)!=0 && window.Fields[0].Text.IsReadOnly,
                 "Checklist supports global click-through without modifying task data");
+            var inputHandle=window.InputSurface.Handle;
+            var inputStyle=(long)NativeMethods.GetWindowLongPtr(inputHandle,NativeMethods.GWL_EXSTYLE);
+            check(inputHandle!=0 && (inputStyle&NativeMethods.WS_EX_TRANSPARENT)==0 && (inputStyle&NativeMethods.WS_EX_NOACTIVATE)!=0 && (inputStyle&NativeMethods.WS_EX_TOOLWINDOW)!=0,
+                "Only checkbox pixels receive input through a separate nonactivating tool surface");
+            check(NativeMethods.SendMessage(inputHandle,0x0021,0,0)==3,"Clicking a checklist checkbox does not activate the meter or take game keyboard focus");
+            var inputBox=window.InputSurface.Checkboxes[0];
+            inputBox.IsChecked=true;inputBox.GetBindingExpression(CheckBox.IsCheckedProperty)!.UpdateSource();
+            inputBox.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            check(settings.ChecklistItems[0].Completed && window.Fields[0].Check.IsChecked==true && window.Fields[0].Text.TextDecorations?.Count==1,
+                "A checkbox can complete and strike through a task while text remains click-through");
+            inputBox.IsChecked=false;inputBox.GetBindingExpression(CheckBox.IsCheckedProperty)!.UpdateSource();
+            inputBox.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            check(!settings.ChecklistItems[0].Completed,"The click-through checkbox can also undo completion");
+            var visual=window.InputSurface.Visual!;
+            var bitmap=new System.Windows.Media.Imaging.RenderTargetBitmap((int)Math.Ceiling(visual.ActualWidth),(int)Math.Ceiling(visual.ActualHeight),96,96,PixelFormats.Pbgra32);
+            bitmap.Render(visual);
+            var pixels=new byte[bitmap.PixelWidth*bitmap.PixelHeight*4];bitmap.CopyPixels(pixels,bitmap.PixelWidth*4,0);
+            var opaque=0;var rightOpaque=0;
+            for(var y=0;y<bitmap.PixelHeight;y++)for(var x=0;x<bitmap.PixelWidth;x++)
+                if(pixels[(y*bitmap.PixelWidth+x)*4+3]!=0){opaque++;if(x>bitmap.PixelWidth/4)rightOpaque++;}
+            check(opaque>0 && rightOpaque==0,"Checkbox input surface leaves all task text and row backgrounds transparent to the game");
+            window.Hide();check(window.InputSurface.Handle==0,"Hiding the checklist also removes its checkbox input surface");
+            window.Show();window.UpdateLayout();window.InputSurface.Sync();
+            check(window.InputSurface.Handle!=0,"Showing a locked checklist restores its clickable checkboxes");
             WindowClickThrough.ApplyAll(false);
-            check(!window.Fields[0].Text.IsReadOnly,"Unlocking click-through restores checklist editing");
+            check(!window.Fields[0].Text.IsReadOnly && window.InputSurface.Handle==0,"Unlocking click-through restores editing and removes the extra input surface");
             var draft=settings.CreateDraft();var panel=new ChecklistSettingsPanel(draft);
             panel.Rows.Value=2;panel.WindowWidth.Value=380;
             check(settings.ChecklistRows==20 && settings.ChecklistWidth==320,
