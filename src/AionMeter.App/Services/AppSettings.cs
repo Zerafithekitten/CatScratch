@@ -83,6 +83,7 @@ public sealed class AppSettings
     public bool PetOnHitOnly {get;set;}
     public string? PreferredDisplay {get;set;}
     public bool ShowChecklistModule {get;set;}
+    public bool ChecklistSectionsMigrated {get;set;}
     public int ChecklistRows {get;set;}=11;
     public double ChecklistWidth {get;set;}=320;
     public bool ChecklistPositionSaved {get;set;}

@@ -5,6 +5,7 @@ public sealed partial class UiText
     private static readonly Dictionary<string,(string De,string Ru,string Fr)> LayoutComparisonText=new()
     {
         ["Daily"]=("Täglich","Ежедневно","Quotidien"),
+        ["Other tasks"]=("Weitere Aufgaben","Другие задачи","Autres tâches"),
         ["Weekly"]=("Wöchentlich","Еженедельно","Hebdomadaire"),
         ["5× Duty Quests"]=("5× Pflicht-Quests","5× ежедневные задания","5× quêtes de devoir"),
         ["2× Field Bosses"]=("2× Feldbosse","2× полевые боссы","2× boss de terrain"),

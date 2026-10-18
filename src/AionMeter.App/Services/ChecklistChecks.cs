@@ -21,6 +21,14 @@ internal static class ChecklistChecks
             check(window.Fields.Count==11 && window.Background==Brushes.Transparent && !window.ShowInTaskbar,
                 "Checklist defaults to eleven daily and weekly example rows on a transparent tool window");
             check(settings.ChecklistItems.Take(11).All(i=>!string.IsNullOrWhiteSpace(i.Text) && !i.Completed),"Daily and weekly example tasks are editable unchecked initial data");
+            check(window.SectionHeaders.SequenceEqual(new[]{UiText.Current.Localize("Daily"),UiText.Current.Localize("Weekly")}) && !window.Fields[0].Text.Text.Contains(" · "),
+                "Small daily and weekly headings separate the example tasks without repeated row prefixes");
+            var migration=new AppSettings {Transient=true,ChecklistItems=[new(){Text="Daily · 5× Duty Quests",Completed=true},new(){Text="Wöchentlich · 3× Schlachtfeld"},new(){Text="Weekly · My custom task",Completed=true}]};
+            ChecklistState.Normalize(migration);
+            check(migration.ChecklistItems[0] is {Text:"5× Duty Quests",Completed:true} && migration.ChecklistItems[1].Text=="3× Schlachtfeld" && migration.ChecklistItems[2] is {Text:"Weekly · My custom task",Completed:true},
+                "Legacy English and German examples lose only their known prefixes while custom text and completion survive");
+            migration.ChecklistItems[0].Text="Daily · 5× Duty Quests";ChecklistState.Normalize(migration);
+            check(migration.ChecklistItems[0].Text=="Daily · 5× Duty Quests","The one-time example migration never repeatedly rewrites later user edits");
             var field=window.Fields[0];field.Text.Text="Complete dungeon";field.Check.IsChecked=true;
             field.Check.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             check(settings.ChecklistItems[0] is {Text:"Complete dungeon",Completed:true} && field.Text.TextDecorations?.Count==1,
@@ -32,6 +40,7 @@ internal static class ChecklistChecks
             window.Fields[19].Text.Text="Keep hidden task";window.Fields[19].Check.IsChecked=true;
             window.Fields[19].Check.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             settings.ChecklistRows=1;window.ApplyPreferences();
+            check(window.SectionHeaders.Length==1,"Hidden weekly rows do not leave an empty weekly heading");
             check(window.Fields.Count==1 && settings.ChecklistItems[19] is {Text:"Keep hidden task",Completed:true},
                 "Reducing the visible slot count does not discard hidden tasks or checkmarks");
             settings.ChecklistRows=20;window.ApplyPreferences();

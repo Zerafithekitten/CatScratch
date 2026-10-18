@@ -1,3 +1,8 @@
+## CatScratch v3.0.4-beta.11
+
+- Separated the checklist with small Daily and Weekly headings. The initial two daily and nine weekly example rows no longer repeat category prefixes. Extra free slots appear under Other tasks; headings are hidden when their rows are not visible.
+- Existing unchanged example texts in all supported interface languages are cleaned up once, preserving completion state. Custom task text is retained. The compact rows, panel button, automatic saving and 20-slot limit remain available; CatScratch light is unchanged.
+
 ## CatScratch v3.0.4-beta.10
 
 - Added a dedicated Checklist button to the permanent control panel. Click it to show or hide the checklist without changing task text or checkmarks; the highlighted icon means enabled.

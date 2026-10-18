@@ -15,6 +15,7 @@ internal sealed class ChecklistWindow : Window,IDisplayAppearance
     private readonly List<(CheckBox Check,TextBox Text)> _fields=[];
     private bool _displayOnly;
     internal IReadOnlyList<(CheckBox Check,TextBox Text)> Fields=>_fields;
+    internal string[] SectionHeaders=>_rows.Children.OfType<TextBlock>().Select(t=>t.Text).ToArray();
     internal ScrollViewer TasksScroller {get;}
     internal Button CloseButton {get;}
     internal ChecklistWindow(AppSettings settings)
@@ -54,6 +55,8 @@ internal sealed class ChecklistWindow : Window,IDisplayAppearance
             Flush();_rows.Children.Clear();_fields.Clear();
             for(var i=0;i<_settings.ChecklistRows;i++)
             {
+                if(i is 0 or 2 or 11)
+                    _rows.Children.Add(new TextBlock {Text=UiText.Current.Localize(i==0?"Daily":i==2?"Weekly":"Other tasks"),FontSize=9,FontWeight=FontWeights.SemiBold,Foreground=ThemeColors.Brush("#C49AF5"),Margin=new(4,i==0?3:5,0,1)});
                 var item=_settings.ChecklistItems[i];
                 var check=new CheckBox {IsChecked=item.Completed,VerticalAlignment=VerticalAlignment.Center,Margin=new(4,0,5,0),Style=(Style)FindResource("DarkCheck"),ToolTip=UiText.Current.Localize("Mark task complete / incomplete")};
                 var text=new TextBox {Text=item.Text,MaxLength=240,Background=Brushes.Transparent,BorderThickness=new(0),Padding=new(1,1,3,1),Foreground=ThemeColors.Brush("#EDF2F7"),CaretBrush=ThemeColors.Brush("#C49AF5"),FontSize=11,VerticalContentAlignment=VerticalAlignment.Center,ToolTip=UiText.Current.Localize("Type a task")};
