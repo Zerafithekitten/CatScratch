@@ -63,3 +63,5 @@ On 2026-10-19 the owner requested fixing click-through position shifts, especial
 The owner replaced the proposed cube sound with freesound_community-kitty-meow-85182.mp3, then explicitly resumed Beta publication on 2026-10-19. Include it only as the new-install default; preserve existing audio preferences. Publish these changes together with the reviewed geometry corrections as v3.0.12-beta.6.
 
 On 2026-10-19 the owner explicitly requested Beta edge anchoring for Upcoming and Started, then additionally requested matching top-edge behavior and automatic recognition after dragging. Publish the verified changes as v3.0.12-beta.7; show actual growth/shrink images before upload and leave Stable and Light unchanged.
+
+On 2026-10-19 the owner reviewed the compact Hidden cube preview and approved "perfekt ... update". Publish it as v3.0.12-beta.8 after full validation; leave Stable and Light unchanged.

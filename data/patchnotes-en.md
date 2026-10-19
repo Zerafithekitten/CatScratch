@@ -1,4 +1,9 @@
-﻿## CatScratch v3.0.12-beta.7
+﻿## CatScratch v3.0.12-beta.8
+
+- Hidden cube alerts use a narrower, compact background directly behind the warning text. The hidden header area stays transparent in click-through mode without shifting the alert.
+- Preserves animated red warning markers, sound preferences and saved placement. Stable and Light are unchanged.
+
+## CatScratch v3.0.12-beta.7
 
 - Upcoming and Started event modules automatically anchor to the upper or lower screen edge when dragged close to it. At the bottom, extra events expand upwards and disappearing rows shrink back down; at the top, the upper edge stays fixed.
 - Dragging away releases the edge anchor. Saved placements and overlay profiles retain the edge choice; freely positioned modules keep their existing behavior.

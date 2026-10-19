@@ -15,14 +15,14 @@ internal sealed class HiddenCubeWindow : Window,IDisplayAppearance
     {
         IsPreview=preview;
         Title="CatScratch · "+UiText.Current.Localize("Hidden cubes");
-        Width=340;SizeToContent=SizeToContent.Height;MinWidth=300;MaxWidth=460;
+        Width=300;SizeToContent=SizeToContent.Height;MinWidth=280;MaxWidth=460;
         WindowStyle=WindowStyle.None;ResizeMode=ResizeMode.NoResize;AllowsTransparency=true;
         ShowInTaskbar=false;ShowActivated=false;Topmost=true;Background=Brushes.Transparent;
         Resources.MergedDictionaries.Add(new(){Source=new Uri("/CatScratch;component/Theme/MeterPreferences.xaml",UriKind.Relative)});
         Foreground=ThemeColors.Brush("#EDF2F7");FontFamily=(FontFamily)FindResource("UiFont");
         AppIcon.Apply(this);
         var body=new StackPanel();
-        _header=new DockPanel {Margin=new(0,0,0,5)};
+        _header=new DockPanel {Margin=new(0,0,0,3),Background=ThemeColors.Brush("#DF20242A")};
         var close=new Button {Content="\uE711",Style=(Style)FindResource("IconButton"),Width=22,Height=22};
         close.Click+=(_,_)=>{if(!preview){settings.ShowHiddenCubeModule=false;settings.Save();}Close();};
         DockPanel.SetDock(close,Dock.Right);_header.Children.Add(close);
@@ -30,13 +30,13 @@ internal sealed class HiddenCubeWindow : Window,IDisplayAppearance
         _header.Children.Add(new Image {Source=AppIcon.Image,Width=14,Height=14,Margin=new(0,0,6,0)});
         _header.Children.Add(new TextBlock {Text=UiText.Current.Localize("Hidden cubes")+(preview?" · "+UiText.Current.Localize("Test alert"):""),FontSize=12,VerticalAlignment=VerticalAlignment.Center,Foreground=ThemeColors.Brush("#C49AF5")});
         body.Children.Add(_header);
-        var warning=new Grid {Margin=new(0,3,0,3)};
+        var warning=new Grid();
         warning.ColumnDefinitions.Add(new ColumnDefinition {Width=GridLength.Auto});warning.ColumnDefinitions.Add(new ColumnDefinition());warning.ColumnDefinitions.Add(new ColumnDefinition {Width=GridLength.Auto});
         var red=ThemeColors.Brush("#FF5F63");
         var message=new TextBlock {Text="HIDDEN CUBE DETECTED",FontSize=16,FontWeight=FontWeights.Bold,Foreground=red,TextAlignment=TextAlignment.Center,TextWrapping=TextWrapping.Wrap,VerticalAlignment=VerticalAlignment.Center};
         Grid.SetColumn(message,1);warning.Children.Add(message);
         var markers=new[]{new TextBlock(),new TextBlock()};
-        for(var n=0;n<markers.Length;n++){var marker=markers[n];marker.Text="!";marker.FontSize=27;marker.FontWeight=FontWeights.Bold;marker.Foreground=red;marker.Margin=new(5,0,5,0);marker.VerticalAlignment=VerticalAlignment.Center;Grid.SetColumn(marker,n*2);warning.Children.Add(marker);}
+        for(var n=0;n<markers.Length;n++){var marker=markers[n];marker.Text="!";marker.FontSize=23;marker.FontWeight=FontWeights.Bold;marker.Foreground=red;marker.Margin=new(3,0,3,0);marker.VerticalAlignment=VerticalAlignment.Center;Grid.SetColumn(marker,n*2);warning.Children.Add(marker);}
         void Animate(bool active)
         {
             foreach(var marker in markers)
@@ -47,8 +47,8 @@ internal sealed class HiddenCubeWindow : Window,IDisplayAppearance
             }
         }
         IsVisibleChanged+=(_,_)=>Animate(IsVisible);Closed+=(_,_)=>Animate(false);
-        body.Children.Add(warning);
-        _shell=new Border {Child=body,Background=ThemeColors.Brush("#F0191D23"),BorderBrush=ThemeColors.Brush("#414A56"),BorderThickness=new(1),CornerRadius=new(7),Padding=new(10,6,8,7)};
+        body.Children.Add(new Border {Child=warning,Background=ThemeColors.Brush("#F0191D23"),BorderBrush=ThemeColors.Brush("#414A56"),BorderThickness=new(1),CornerRadius=new(5),Padding=new(5,1,5,1)});
+        _shell=new Border {Child=body,Background=Brushes.Transparent,BorderBrush=Brushes.Transparent,BorderThickness=new(1),Padding=new(1)};
         Content=_shell;
         if(settings.HiddenCubePositionSaved && double.IsFinite(settings.HiddenCubeLeft) && double.IsFinite(settings.HiddenCubeTop)){Left=settings.HiddenCubeLeft;Top=settings.HiddenCubeTop;}
         else {Left=SystemParameters.WorkArea.Left+Math.Max(0,(SystemParameters.WorkArea.Width-Width)/2);Top=SystemParameters.WorkArea.Top+SystemParameters.WorkArea.Height*.2;}
@@ -58,6 +58,6 @@ internal sealed class HiddenCubeWindow : Window,IDisplayAppearance
     public void SetDisplayOnly(bool enabled)
     {
         _header.Visibility=enabled?Visibility.Hidden:Visibility.Visible;
-        _shell.BorderBrush=enabled?Brushes.Transparent:ThemeColors.Brush("#414A56");
+        _shell.BorderBrush=Brushes.Transparent;
     }
 }

@@ -329,7 +329,10 @@ public static class SampleRenderer
                 if(o.Window=="checklist-locked")taskWindow.SetDisplayOnly(true);
                 host=taskWindow;refresh=taskWindow.RefreshResetClock;break;
             case "hidden-cube":
-                host=new HiddenCubeWindow(meter.Settings);
+            case "hidden-cube-locked":
+                var cubeWindow=new HiddenCubeWindow(meter.Settings);
+                if(o.Window=="hidden-cube-locked")cubeWindow.SetDisplayOnly(true);
+                host=cubeWindow;
                 refresh=()=>{};
                 break;
             case "settings-only-boss":
