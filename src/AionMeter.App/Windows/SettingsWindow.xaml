@@ -95,6 +95,8 @@
                   <TextBlock x:Name="ModulesTitle" Style="{StaticResource SectionLabel}" Margin="0,0,0,8" />
                   <CheckBox x:Name="ShowDpsMeterCheck" Style="{StaticResource DarkCheck}" />
                   <TextBlock x:Name="ShowDpsMeterHint" Style="{StaticResource Hint}" TextWrapping="Wrap" />
+                  <CheckBox x:Name="RememberClickThroughCheck" Style="{StaticResource DarkCheck}" Margin="0,10,0,0"/>
+                  <TextBlock x:Name="RememberClickThroughHint" Style="{StaticResource Hint}" TextWrapping="Wrap"/>
                 </StackPanel>
               </Border>
               <Border Style="{StaticResource Section}">

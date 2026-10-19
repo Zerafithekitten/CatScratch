@@ -5,6 +5,8 @@ public sealed partial class UiText
     private static readonly Dictionary<string,(string De,string Ru,string Fr)> LayoutComparisonText=new()
     {
         ["Choose a valid, different shortcut for each action."]=("Bitte wähle für jede Aktion ein gültiges, unterschiedliches Tastenkürzel.","Выберите допустимое отдельное сочетание клавиш для каждого действия.","Choisissez un raccourci valide et différent pour chaque action."),
+        ["Remember click-through after restart"]=("Durchklick-Modus nach Neustart beibehalten","Запоминать сквозные клики после перезапуска","Mémoriser les clics traversants après redémarrage"),
+        ["Restores the last click-through state when CatScratch starts. The control panel stays clickable."]=("Stellt beim Start den zuletzt verwendeten Durchklick-Zustand wieder her. Das Bedienpanel bleibt anklickbar.","При запуске восстанавливает последнее состояние сквозных кликов. Панель управления остаётся доступной.","Rétablit le dernier état des clics traversants au démarrage. Le panneau de contrôle reste cliquable."),
         ["Separate boss timing window"]=("Boss-Zeiten in eigenem Fenster","Отдельное окно таймеров босса","Fenêtre séparée des temps du boss"),
         ["Boss timing"]=("Boss-Zeiten","Таймеры босса","Temps du boss"),
         ["Waiting for a boss fight"]=("Warte auf einen Bosskampf","Ожидание боя с боссом","En attente d’un combat de boss"),

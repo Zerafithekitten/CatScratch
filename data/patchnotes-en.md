@@ -1,4 +1,16 @@
-﻿## CatScratch v3.0.10
+﻿## CatScratch v3.0.11
+
+### OPTIONAL CLICK-THROUGH RESTORATION AFTER RESTART
+
+- Added **Settings > Appearance > Modules > Remember click-through after restart**. Enable it and Save to restore the last saved click-through state when CatScratch starts.
+- Previously startup always switched click-through off, even though toggling the mode saved its state. With this option enabled, a locked session starts locked again; an unlocked session starts unlocked. The option does not force click-through on immediately or override a later deliberate unlock.
+- The permanent control panel remains clickable, including Settings and the lock toggle. You can still unlock using the panel, the configured hotkey or the tray controls. Auxiliary overlays inherit the restored state as they open.
+- The option is off by default to retain the previous startup behavior unless explicitly enabled. Disabling it restores the usual unlocked start; it does not interrupt the current click-through state.
+- The startup preference is saved with general settings and excluded from overlay layout profiles, so applying a layout does not change whether restart restoration is enabled. Settings changes take effect after Save; closing unsaved Settings leaves the saved preference unchanged.
+- Added checks for all four enabled/disabled preference and previous-state combinations, persisted settings reload, native DPS click-through after startup, the clickable control panel and profile isolation. Full release validation also covers existing modules and update preservation.
+- Includes all Stable 3.0.10 fixes, including transparent idle Boss timing and notification sound recovery. CatScratch light remains unchanged.
+
+## CatScratch v3.0.10
 
 ### BOSS TIMING — CLEAN CLICK-THROUGH DISPLAY
 

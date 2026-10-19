@@ -158,6 +158,9 @@ public partial class SettingsWindow : Window
         ModulesTitle.Text=T.Localize("Modules");
         ShowDpsMeterCheck.Content=T.Localize("Show DPS meter");
         ShowDpsMeterCheck.IsChecked=s.ShowDpsMeterModule;
+        RememberClickThroughCheck.IsChecked=s.RememberClickThrough;
+        RememberClickThroughCheck.Content=T.Localize("Remember click-through after restart");
+        RememberClickThroughHint.Text=T.Localize("Restores the last click-through state when CatScratch starts. The control panel stays clickable.");
         ShowDpsMeterHint.Text=T.Localize("Hides combat statistics but keeps a small CatScratch bar with Settings available. Capture and other modules keep running.");
         GameStartTitle.Text=T.Localize("AION 2 companion");
         FollowGameCheck.Content=T.Localize("Start and close CatScratch with AION 2");
@@ -314,6 +317,7 @@ public partial class SettingsWindow : Window
         var displayChanged=!string.Equals(s.PreferredDisplay,_moduleDraft.PreferredDisplay,StringComparison.OrdinalIgnoreCase);
         s.PreferredDisplay=_moduleDraft.PreferredDisplay;
         s.ShowDpsMeterModule=ShowDpsMeterCheck.IsChecked==true;
+        s.RememberClickThrough=RememberClickThroughCheck.IsChecked==true;
         if(dpsVisibilityChanged)s.OverlayVisible=s.ShowDpsMeterModule;
         s.Theme=theme;ThemeColors.Apply(theme);
         if(_controlPanelPreferences.Changed){s.ControlsLayout=_moduleDraft.ControlsLayout;s.ControlsAnchor=_moduleDraft.ControlsAnchor;}

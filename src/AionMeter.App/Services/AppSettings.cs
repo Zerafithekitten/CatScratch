@@ -43,6 +43,8 @@ public sealed class AppSettings
     public double BackgroundOpacity { get; set; } = 0.9;
     public bool Locked { get; set; }
     public bool ClickThrough { get; set; }
+    public bool RememberClickThrough {get;set;}
+    internal void ApplyStartupClickThrough(){if(!RememberClickThrough)ClickThrough=false;}
     public bool OverlayVisible { get; set; } = true;
     /// <summary>Persistent DPS display choice. Capture and other modules remain active while disabled.</summary>
     public bool ShowDpsMeterModule { get; set; } = true;

@@ -246,6 +246,13 @@ public partial class App : Application
             catch(Exception error){File.WriteAllText(placementPath,error.ToString());Shutdown(1);}
             return;
         }
+        if(ArgValue(e.Args,"--check-clickthrough-startup") is { } startupPath)
+        {
+            Log.Enabled=false;
+            try{ClickThroughStartupChecks.Run(startupPath);Shutdown();}
+            catch(Exception error){File.WriteAllText(startupPath,error.ToString());Shutdown(1);}
+            return;
+        }
         if(ArgValue(e.Args,"--check-boss-timing") is { } timingPath)
         {
             Log.Enabled=false;
@@ -335,7 +342,7 @@ public partial class App : Application
         WindowPresentation.ConfigureDisplay(settings.PreferredDisplay);
         ThemeColors.Apply(settings.Theme);
         settings.AutoHideSeconds = 0;
-        settings.ClickThrough = false;
+        settings.ApplyStartupClickThrough();
         settings.ShowGear = true;
         if (Core.Updates.UpdateFeed.IsConfigured && settings.UpdateSource != Core.Updates.UpdateFeed.Repository)
         {
