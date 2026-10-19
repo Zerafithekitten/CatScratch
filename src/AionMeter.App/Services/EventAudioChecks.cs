@@ -40,6 +40,7 @@ internal static class EventAudioChecks
                 var until=DateTime.UtcNow.AddSeconds(8);
                 while(!done()){if(DateTime.UtcNow>until)throw new TimeoutException("Audio UI check timed out");await Task.Delay(25);}
             }
+            SoundPlaybackChecks.Run(shortFile,Require);
             combo.SelectedIndex=3;await Wait(()=>choose.IsEnabled);
             Require(cards.Saved.Sounds["shugo"].FilePath==shortFile && combo.SelectedItem?.ToString()=="valid short sound.wav","Valid selection was not saved or displayed");
             preview.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));await Wait(()=>preview.IsEnabled);
@@ -69,7 +70,7 @@ internal static class EventAudioChecks
             File.Delete(shortFile);await cubeAudio.PreviewAsync();
             Require(cubeAudio.Error is not null && cubePreviews==1,"Missing cube audio must show an error without starting playback");
             File.WriteAllText(output,JsonSerializer.Serialize(new { Selection=true,Filename=true,Preview=true,LongRejected=true,InvalidRejected=true,PreviousPreserved=true,Cancelled=true,
-                CubeDraft=true,CubePreview=true,CubePersisted=true,CubeRejectedPreserves=true,CubeCancelled=true,CubeMissingHandled=true }));
+                CubeDraft=true,CubePreview=true,CubePersisted=true,CubeRejectedPreserves=true,CubeCancelled=true,CubeMissingHandled=true,PlaybackRecovery=true }));
         }
         finally { window.Close(); }
     }

@@ -45,3 +45,5 @@ On 2026-10-19 the owner reviewed all three inline Update title replacements and 
 On 2026-10-19 the owner explicitly authorized Stable hotfix 3.0.8 after adding the configurable Checklist hotkey and a full review. The owner additionally requested preserving Checklist task positions across click-through toggles. Show actual images before publication, run complete release checks, and leave Light unchanged.
 
 On 2026-10-19 the owner reviewed the separate boss timing window image and explicitly authorized publishing it to Stable as v3.0.9. Run the complete release checks and keep Light unchanged.
+
+On 2026-10-19 the owner resumed the held Stable hotfix with "mach erstmal den hotfix", authorizing v3.0.10 for the reviewed boss timing transparency correction and sound playback recovery. Exclude the separately discussed monster-picture suggestion and keep Light unchanged.

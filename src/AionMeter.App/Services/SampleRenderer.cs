@@ -289,11 +289,12 @@ public static class SampleRenderer
                 break;
             case "boss-timing":
             case "boss-timing-locked":
+            case "boss-timing-idle-locked":
                 meter.Settings.DetachBossTiming=true;
                 timingSource=new OverlayWindow(meter,exitOnClose:false);
                 var timing=new BossTimingWindow(meter.Settings,timingSource.DataContext,timingSource.Refresh);
-                WindowClickThrough.Attach(timing,()=>o.Window=="boss-timing-locked");
-                host=timing;refresh=timingSource.Refresh;break;
+                WindowClickThrough.Attach(timing,()=>o.Window is "boss-timing-locked" or "boss-timing-idle-locked");
+                host=timing;refresh=()=>{timingSource.Refresh();if(o.Window=="boss-timing-idle-locked")((ViewModels.OverlayViewModel)timingSource.DataContext).HasTimingBoss=false;};break;
             case "checklist":
             case "checklist-locked":
                 ChecklistState.Normalize(meter.Settings);

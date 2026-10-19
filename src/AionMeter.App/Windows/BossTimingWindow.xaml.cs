@@ -33,5 +33,19 @@ public partial class BossTimingWindow : Window,IDisplayAppearance
     {
         _settings.DetachBossTiming=false;SavePlacement();_changed();Close();
     }
-    public void SetDisplayOnly(bool enabled)=>Header.Visibility=enabled?Visibility.Hidden:Visibility.Visible;
+    public void SetDisplayOnly(bool enabled)
+    {
+        Header.Visibility=enabled?Visibility.Hidden:Visibility.Visible;
+        Waiting.Opacity=enabled?0:1;
+        if(enabled)
+        {
+            Frame.Background=System.Windows.Media.Brushes.Transparent;
+            Frame.BorderBrush=System.Windows.Media.Brushes.Transparent;
+        }
+        else
+        {
+            Frame.SetResourceReference(System.Windows.Controls.Border.BackgroundProperty,"CustomBrush_F0191D23");
+            Frame.SetResourceReference(System.Windows.Controls.Border.BorderBrushProperty,"CustomBrush_414A56");
+        }
+    }
 }

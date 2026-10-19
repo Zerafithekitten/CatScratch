@@ -6,13 +6,13 @@ A separate, always-on-top Windows DPS meter for **AION 2**, by Zerafithekitten. 
 
 | Channel | Current version | What it includes |
 | --- | --- | --- |
-| **Stable** | **[v3.0.9](https://github.com/Zerafithekitten/CatScratch/releases/tag/v3.0.9)** | Compact panel layouts, checklist with a custom hotkey, reset countdowns and stable click-through placement, Pet tracking modes and sounds, passive Hidden cube alerts, ONLY BOSS, defeat estimates, refined Test mode and DPS placement fixes. |
+| **Stable** | **[v3.0.10](https://github.com/Zerafithekitten/CatScratch/releases/tag/v3.0.10)** | Compact panel layouts, checklist with a custom hotkey, reset countdowns and stable click-through placement, Pet tracking modes and sounds, passive Hidden cube alerts, ONLY BOSS, defeat estimates, refined Test mode and DPS placement fixes. |
 | **Beta** | [Previous: v3.0.4-beta.13](https://github.com/Zerafithekitten/CatScratch/releases/tag/v3.0.4-beta.13) | Promoted to Stable 3.0.4, including the latest preview-layout and vertical-label corrections. |
 | **Light** | [v1.0.0](https://github.com/Zerafithekitten/CatScratch/releases/tag/light-v1.0.0) | Separate **DPS meter only** edition with essential settings. Independent ZIP download and settings; no additional CatScratch modules or automatic updater. |
 
 **CatScratch light** is installed separately from the full version. [Download its ZIP](https://github.com/Zerafithekitten/CatScratch/releases/download/light-v1.0.0/CatScratch-light-win-x64.zip) and extract it into its own folder. Light is maintained and updated **only on the owner's explicit request**; normal development continues on full CatScratch.
 
-English is the default. German, Russian and French are also available. Screenshots use synthetic sample data; names and numbers are examples. All features described below are included in **Stable v3.0.9** unless a limitation is stated.
+English is the default. German, Russian and French are also available. Screenshots use synthetic sample data; names and numbers are examples. All features described below are included in **Stable v3.0.10** unless a limitation is stated.
 
 ## Contents
 
@@ -65,9 +65,11 @@ You can hide the combat display under **Settings > Appearance > Modules > Show D
 
 The meter tracks your own damage while solo and confirmed current party members while grouped. Compact rows show class emblems, class-colored background fills, name, DPS, damage share, Combat Power (**CP**) and Gear Score (**GS**). Missing values appear as dashes. Incoming damage is shown separately in red.
 
-The collapsible **Personal combat** section shows self healing and healing of others. An optional boss HP panel uses received health data. A small **Enrage time** bar appears only for a received deadline matching that boss; it represents the server boss time limit, not a predicted enrage mechanic. Enable **Settings > Combat > Separate boss timing window** to move Enrage time and Estimated defeat into their own compact overlay. It has a saved position and independent pin; turn the option off or use its X to return the displays to the DPS meter. It continues updating while the DPS display is hidden.
+The collapsible **Personal combat** section shows self healing and healing of others. An optional boss HP panel uses received health data. A small **Enrage time** bar appears only for a received deadline matching that boss; it represents the server boss time limit, not a predicted enrage mechanic. Enable **Settings > Combat > Separate boss timing window** to move Enrage time and Estimated defeat into their own compact overlay. It has a saved position and independent pin; turn the option off or use its X to return the displays to the DPS meter. It continues updating while the DPS display is hidden. In click-through mode the outer frame disappears; without an active boss, the idle timing overlay is fully transparent.
 
 ![Optional separate boss timing window](docs/images/boss-timing-stable309.png)
+
+![Boss timing in click-through mode](docs/images/boss-timing-clickthrough-stable3010.png)
 
 The control panel shows the Europe/Berlin clock and fight duration; the combat display footer retains party DPS and a passive RTT estimate.
 
@@ -272,7 +274,7 @@ The green **Update!** button appears **only after the update is fully prepared**
 
 After a successful new startup, the old backup, staged payload and downloaded ZIP are removed. Failed updates retain recovery files. Settings, saved fights, personal bests, recent players and captures are preserved. Update staging stays under `userdata/temp/updates`; a writable program folder is required.
 
-When a Beta is promoted and its Stable build starts, Beta subscribers automatically return to the Stable update channel. A later deliberate switch back to Beta is respected until the next Stable transition. The installed version then shows the Stable number, currently **3.0.9** without a beta suffix.
+When a Beta is promoted and its Stable build starts, Beta subscribers automatically return to the Stable update channel. A later deliberate switch back to Beta is respected until the next Stable transition. The installed version then shows the Stable number, currently **3.0.10** without a beta suffix.
 
 Use **Check now** in Settings or **Check for updates** in the tray menu for a manual check. Automatic checking and preparation can be disabled in Settings. CatScratch also reduces data-loading allocations and moves optional startup work behind the first meter display.
 

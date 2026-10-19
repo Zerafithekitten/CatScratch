@@ -57,9 +57,18 @@ internal static class BossTimingChecks
             WindowClickThrough.ApplyAll(true);timing.UpdateLayout();
             var style=(long)NativeMethods.GetWindowLongPtr(new WindowInteropHelper(timing).Handle,NativeMethods.GWL_EXSTYLE);
             Check((style&NativeMethods.WS_EX_TRANSPARENT)!=0 && !timing.ShowInTaskbar,"Timing respects click-through and has no separate taskbar entry");
+            var frame=(Border)timing.FindName("Frame");
+            Check(frame.Background==System.Windows.Media.Brushes.Transparent && frame.BorderBrush==System.Windows.Media.Brushes.Transparent,"Click-through removes the outer timing background and frame");
+            model.HasTimingBoss=false;timing.UpdateLayout();
+            var root=(FrameworkElement)timing.Content;
+            var bitmap=new System.Windows.Media.Imaging.RenderTargetBitmap((int)Math.Ceiling(root.ActualWidth),(int)Math.Ceiling(root.ActualHeight),96,96,System.Windows.Media.PixelFormats.Pbgra32);
+            bitmap.Render(root);var pixels=new byte[bitmap.PixelWidth*bitmap.PixelHeight*4];bitmap.CopyPixels(pixels,bitmap.PixelWidth*4,0);
+            Check(Enumerable.Range(0,pixels.Length/4).All(i=>pixels[i*4+3]==0),"Idle click-through timing is fully transparent, including the waiting message");
+            model.HasTimingBoss=true;timing.UpdateLayout();
             Check(((StackPanel)timing.FindName("TimingBody")).PointToScreen(new Point())==position,"Hiding timing controls does not shift its contents");
             WindowClickThrough.ApplyAll(false);timing.UpdateLayout();
             Check(((DockPanel)timing.FindName("Header")).Visibility==Visibility.Visible,"Unlocking restores timing controls");
+            Check(frame.Background!=System.Windows.Media.Brushes.Transparent && frame.BorderBrush!=System.Windows.Media.Brushes.Transparent && ((TextBlock)timing.FindName("Waiting")).Opacity==1,"Unlocking restores themed background, border and waiting message");
             var group=new WindowVisibilityGroup();group.Toggle([timing],overlay,false);Check(!timing.IsVisible,"Global hide includes detached timing");
             group.Restore();Check(timing.IsVisible,"Global restore includes detached timing");
             model.SetBossLimit(null,DateTimeOffset.UtcNow.ToUnixTimeMilliseconds());timing.UpdateLayout();

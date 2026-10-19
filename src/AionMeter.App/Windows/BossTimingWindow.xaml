@@ -5,7 +5,7 @@
  AllowsTransparency="True" Background="Transparent" Topmost="True" ShowActivated="False" ShowInTaskbar="False"
  FontFamily="{StaticResource UiFont}" Foreground="{DynamicResource CustomBrush_EDF2F7}" UseLayoutRounding="True">
  <Window.Resources><ResourceDictionary><ResourceDictionary.MergedDictionaries><ResourceDictionary Source="/CatScratch;component/Theme/MeterPreferences.xaml"/></ResourceDictionary.MergedDictionaries><c:VisibleIf x:Key="VisibleIf"/></ResourceDictionary></Window.Resources>
- <Border Background="{DynamicResource CustomBrush_F0191D23}" BorderBrush="{DynamicResource CustomBrush_414A56}" BorderThickness="1" CornerRadius="7" Padding="8,5,8,7">
+ <Border x:Name="Frame" Background="{DynamicResource CustomBrush_F0191D23}" BorderBrush="{DynamicResource CustomBrush_414A56}" BorderThickness="1" CornerRadius="7" Padding="8,5,8,7">
   <StackPanel>
    <DockPanel x:Name="Header" Height="20" Margin="0,0,0,3">
     <Button x:Name="ReturnButton" DockPanel.Dock="Right" Style="{StaticResource IconButton}" Content="&#xE711;" Width="20" Height="20" Click="Return_Click"/>

@@ -1,4 +1,22 @@
-﻿## CatScratch v3.0.9
+﻿## CatScratch v3.0.10
+
+### BOSS TIMING — CLEAN CLICK-THROUGH DISPLAY
+
+- The optional separate Boss timing window now removes its outer background and frame in click-through mode. During a boss fight, only the boss name and readable timing rows remain visible.
+- With no active boss, the waiting message is also hidden in click-through mode, leaving the idle overlay fully transparent. Unlocking restores the themed background, frame, title controls and waiting message.
+- The hidden controls keep their layout space, so toggling click-through does not shift the boss name or timing rows. Saved position, independent pin and the option to return both displays to the DPS meter remain unchanged.
+- Added pixel-level regression coverage verifying that the idle click-through window contains no visible pixels, alongside checks for restoring normal appearance.
+
+### HIDDEN CUBE SOUND — RECOVERY FROM STALLED PLAYBACK
+
+- Each queued notification now uses a fresh Windows audio player. Repeated use of the same custom sound no longer depends on reusing the previous decoder instance.
+- Added recovery when Windows does not report that a sound opened or finished. Opening has a five-second limit; playback is released after the validated clip duration plus a short grace period, so a stalled player cannot permanently block later reminders.
+- Late callbacks from abandoned players are ignored. Decoder failures advance the queue; Preview still replaces active playback and clears old queued reminders. Shutdown stops playback and its recovery timer.
+- Existing sound selection, volume and WAV/MP3 limits are retained. The recovery protects the playback failure path identified during investigation; the exact cause of the original user report has not been confirmed from that user's logs.
+- Added deterministic playback checks for repeated reminders, missing open/end callbacks, late callbacks, decoder errors, Preview and disposal. Hidden cube tests also cover new finds after opening earlier cubes and moving between locations.
+- This hotfix includes the complete Stable 3.0.9 feature set. Monster pictures or markers are not part of this update. CatScratch light remains unchanged.
+
+## CatScratch v3.0.9
 
 ### OPTIONAL SEPARATE BOSS TIMING WINDOW
 

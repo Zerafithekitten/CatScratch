@@ -56,4 +56,18 @@ public class HiddenCubeTests
         Seen();cubes.Reset();Assert.Equal(0,cubes.Count(5));
         Seen();Assert.Equal(0,cubes.Count(2+HiddenCubes.LifetimeMs));
     }
+    [Fact] public void LaterCubeFindsAcrossLocationsAdvanceSoundNotificationVersion()
+    {
+        var cubes=new HiddenCubes();
+        cubes.Observe(new HiddenCubeSeenEvent(1,7,HiddenCubePackets.ConfirmedTemplate));
+        cubes.Observe(new HiddenCubeSeenEvent(2,8,HiddenCubePackets.ConfirmedTemplate));
+        Assert.Equal(2,cubes.DetectionVersion);
+        cubes.Observe(new HiddenCubeGoneEvent(3,7));cubes.Observe(new HiddenCubeGoneEvent(4,8));
+        Assert.Equal(0,cubes.Count(5));
+        cubes.Observe(new HiddenCubeSeenEvent(120000,9,HiddenCubePackets.ConfirmedTemplate));
+        Assert.Equal(3,cubes.DetectionVersion);Assert.Equal(1,cubes.Count(120000));
+        cubes.Observe(new ZoneChangedEvent(120001,1110,"Map",false));
+        cubes.Observe(new HiddenCubeSeenEvent(120002,9,HiddenCubePackets.ConfirmedTemplate));
+        Assert.Equal(4,cubes.DetectionVersion);Assert.Equal(1,cubes.Count(120002));
+    }
 }
