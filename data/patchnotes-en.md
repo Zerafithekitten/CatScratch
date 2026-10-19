@@ -1,4 +1,9 @@
-﻿## CatScratch v3.0.12-beta.10
+﻿## CatScratch v3.0.12-beta.11
+
+- Missing resource data now shows an orange **Relog!** warning instead of a dash in List, Horizontal and Grid layouts. The tooltip explains returning to character selection and logging in again.
+- Received data replaces the warning. Confirmed zero balances remain visible as zero. Stable and Light are unchanged.
+
+## CatScratch v3.0.12-beta.10
 
 - Added matching game icons for all five resources, in both the module and Settings. Icons are bundled for offline display.
 - Choose List, Horizontal (compact icons and values) or Grid (two columns) under Settings > Resources. Names remain in tooltips in Horizontal mode; its width fits automatically.

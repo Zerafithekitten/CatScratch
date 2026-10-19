@@ -69,3 +69,5 @@ On 2026-10-19 the owner reviewed the compact Hidden cube preview and approved "p
 On 2026-10-20 the owner explicitly requested Resources settings and Beta publication, then required each resource to be independently selectable. Actual module and Settings previews were shown. Publish the verified opt-in module as v3.0.12-beta.9; clearly mark last-received currency balances and do not claim verified live currency changes or guessed Odyle limits/deadlines. Stable and Light remain unchanged.
 
 On 2026-10-20 the owner reviewed the resource icons and layout previews and explicitly requested "beta update". Publish them as v3.0.12-beta.10 after full release validation; preserve Stable and Light.
+
+On 2026-10-20 the owner chose to return to the normal online Beta workflow and explicitly requested publishing the latest reviewed Relog warning changes as v3.0.12-beta.11. Run full release verification; keep Stable and Light unchanged.

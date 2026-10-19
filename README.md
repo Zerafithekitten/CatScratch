@@ -7,7 +7,7 @@ A separate, always-on-top Windows DPS meter for **AION 2**, by Zerafithekitten. 
 | Channel | Current version | What it includes |
 | --- | --- | --- |
 | **Stable** | **[v3.0.11](https://github.com/Zerafithekitten/CatScratch/releases/tag/v3.0.11)** | Compact panel layouts, checklist with a custom hotkey, reset countdowns and stable click-through placement, Pet tracking modes and sounds, passive Hidden cube alerts, ONLY BOSS, defeat estimates, refined Test mode and DPS placement fixes. |
-| **Beta** | **[v3.0.12-beta.10](https://github.com/Zerafithekitten/CatScratch/releases/tag/v3.0.12-beta.10)** | Individual world bosses, favorites and sounds, plus topmost recovery, click-through startup fixes, manual-only boss watching and the confirmed Verteron hidden cube variant. |
+| **Beta** | **[v3.0.12-beta.11](https://github.com/Zerafithekitten/CatScratch/releases/tag/v3.0.12-beta.11)** | Individual world bosses, favorites and sounds, plus topmost recovery, click-through startup fixes, manual-only boss watching and the confirmed Verteron hidden cube variant. |
 | **Light** | [v1.0.0](https://github.com/Zerafithekitten/CatScratch/releases/tag/light-v1.0.0) | Separate **DPS meter only** edition with essential settings. Independent ZIP download and settings; no additional CatScratch modules or automatic updater. |
 
 **CatScratch light** is installed separately from the full version. [Download its ZIP](https://github.com/Zerafithekitten/CatScratch/releases/download/light-v1.0.0/CatScratch-light-win-x64.zip) and extract it into its own folder. Light is maintained and updated **only on the owner's explicit request**; normal development continues on full CatScratch.
@@ -458,3 +458,5 @@ Enable it in **Settings > Resources**, choose any of the five individual rows an
 Abyss Points, Centuryroot Token, Deava Pass Shop Coin and Phantasmal Fragment show the last unambiguous received inventory balance, marked **\***. Continuous currency-change updates are not yet verified. Missing or ambiguous values show a dash; return to character selection and log in again to refresh the snapshot. No resources are read from game memory.
 
 Resource layouts (Beta 3.0.12-beta.10): choose **List**, **Horizontal** (icons and values, names in tooltips) or **Grid** (two columns) in Settings > Resources. All five resources have bundled game icons, also shown beside their Settings choices. Horizontal width fits the selected values automatically; List and Grid use the width slider. Layout choices are saved and included in overlay profiles.
+
+Missing resource data now displays an orange **Relog!** warning in all three layouts, with a tooltip explaining character selection and login. Confirmed zero balances remain visible as zero; received values replace the warning.

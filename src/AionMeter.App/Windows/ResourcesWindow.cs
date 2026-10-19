@@ -39,9 +39,10 @@ internal sealed class ResourcesWindow:Window,IDisplayAppearance
         foreach(var entry in Entries.Where(e=>(_meter.Settings.VisibleResources??[]).Contains(e.Key)))
         {
             var row=new DockPanel{Margin=new Thickness(7,3,7,3)};
+            var missing=entry.Item==0?values.Energy is null:!values.Balances.ContainsKey(entry.Item);
             var text=entry.Item==0?(values.Energy is {} energy?$"{energy.Available:N0} (+{energy.Supplementary:N0})":"–"):
                 values.Balances.TryGetValue(entry.Item,out var count)?$"{count:N0} *":"–";
-            var value=new TextBlock{Text=text,FontWeight=FontWeights.SemiBold,Foreground=ThemeColors.Brush("#EDF2F7"),Margin=new Thickness(8,0,0,0)};DockPanel.SetDock(value,Dock.Right);row.Children.Add(value);
+            var value=new TextBlock{Text=missing?"⚠ Relog!":text,FontWeight=FontWeights.SemiBold,Foreground=ThemeColors.Brush(missing?"#FFB454":"#EDF2F7"),Margin=new Thickness(8,0,0,0)};DockPanel.SetDock(value,Dock.Right);row.Children.Add(value);
             var icon=new Image{Source=ResourceIcons.For(entry.Key),Width=18,Height=18,Margin=new Thickness(0,0,5,0),VerticalAlignment=VerticalAlignment.Center,ToolTip=entry.Name};DockPanel.SetDock(icon,Dock.Left);row.Children.Add(icon);
             if(layout=="List")row.Children.Add(new TextBlock{VerticalAlignment=VerticalAlignment.Center,Text=entry.Name,Foreground=ThemeColors.Brush("#C49AF5"),TextTrimming=TextTrimming.CharacterEllipsis});
             if(layout=="Grid")
@@ -51,7 +52,7 @@ internal sealed class ResourcesWindow:Window,IDisplayAppearance
                 value.Margin=new Thickness(0,2,0,0);details.Children.Add(value);row.Children.Add(details);
             }
             value.VerticalAlignment=VerticalAlignment.Center;
-            _rows.Children.Add(new Border{Width=layout=="List"?configuredWidth-4:layout=="Grid"?(configuredWidth-8)/2:double.NaN,Child=row,Background=ThemeColors.Brush("#D020242A"),CornerRadius=new CornerRadius(4),Margin=new Thickness(layout=="List"?0:1,1,layout=="List"?0:1,1),ToolTip=entry.Name+"\n"+(entry.Item==0?ControlPanelSettingsPanel.L("Odyle: available (+supplementary). Updated from received server data.","Odyle: verfügbar (+Zusatzbestand). Aktualisiert durch empfangene Spieldaten."):ControlPanelSettingsPanel.L("* Last received inventory balance. Continuous currency changes are not yet verified.","* Zuletzt empfangener Inventarbestand. Laufende Währungsänderungen sind noch nicht bestätigt."))});
+            _rows.Children.Add(new Border{Width=layout=="List"?configuredWidth-4:layout=="Grid"?(configuredWidth-8)/2:double.NaN,Child=row,Background=ThemeColors.Brush("#D020242A"),CornerRadius=new CornerRadius(4),Margin=new Thickness(layout=="List"?0:1,1,layout=="List"?0:1,1),ToolTip=entry.Name+"\n"+(missing?ControlPanelSettingsPanel.L("No data received. Return to character selection and log in again.","Noch keine Daten empfangen. Kurz in die Charakterauswahl wechseln und wieder einloggen."):entry.Item==0?ControlPanelSettingsPanel.L("Odyle: available (+supplementary). Updated from received server data.","Odyle: verfügbar (+Zusatzbestand). Aktualisiert durch empfangene Spieldaten."):ControlPanelSettingsPanel.L("* Last received inventory balance. Continuous currency changes are not yet verified.","* Zuletzt empfangener Inventarbestand. Laufende Währungsänderungen sind noch nicht bestätigt."))});
         }
         if(_rows.Children.Count==0)_rows.Children.Add(new TextBlock{Text=ControlPanelSettingsPanel.L("Select resources in Settings.","Ressourcen in den Einstellungen auswählen."),Margin=new Thickness(6),Foreground=ThemeColors.Brush("#A9B8C7")});
     }

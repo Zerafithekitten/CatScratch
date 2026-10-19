@@ -38,7 +38,14 @@ internal static class ResourceModuleChecks
             var host=new Window{Content=panel,Width=500,Height=500,Left=-30000,Top=-30000};
             try{host.Show();host.UpdateLayout();var choices=Find<CheckBox>(host).ToArray();Check(choices.Length==6,"Settings offer module visibility and five independent resource choices");var layout=Find<ComboBox>(host).Single();layout.SelectedIndex=2;Check(draft.ResourcesLayout=="Grid" && meter.Settings.ResourcesLayout!="Grid","Layout changes stay in the Settings draft");choices[2].IsChecked=true;choices[2].RaiseEvent(new RoutedEventArgs(Button.ClickEvent));Check(draft.VisibleResources.Contains("abyss") && !meter.Settings.VisibleResources.Contains("abyss"),"Resource selection stays in the settings draft until Save");}
             finally{host.Close();}
-            meter.Resources.Reset();window.Refresh();Check(Find<TextBlock>(window).Any(t=>t.Text=="–"),"Unknown and reset values are never displayed as zero");
+            meter.Resources.Reset();
+            foreach(var layoutName in new[]{"List","Strip","Grid"})
+            {
+                meter.Settings.ResourcesLayout=layoutName;window.Refresh();window.UpdateLayout();
+                Check(Find<TextBlock>(window).Any(t=>t.Text=="⚠ Relog!") && !Find<TextBlock>(window).Any(t=>t.Text=="–"),"Missing resource data displays a relog warning: "+layoutName);
+            }
+            meter.Resources.Observe(new Core.Game.OdyleEnergyEvent(1,0,0));window.Refresh();
+            Check(Find<TextBlock>(window).Any(t=>t.Text.Contains("(+0)")) && !Find<TextBlock>(window).Any(t=>t.Text=="⚠ Relog!"),"Confirmed zero values replace the warning and remain visible");
             var path=output+".settings";try{JsonSettingsFile.Write(path,meter.Settings);var restored=JsonSettingsFile.Read<AppSettings>(path)!;Check(restored.VisibleResources.SequenceEqual(meter.Settings.VisibleResources),"Resource selections survive serialization");}finally{foreach(var f in new[]{path,path+".bak"})if(File.Exists(f))File.Delete(f);}
             File.WriteAllText(output,JsonSerializer.Serialize(passed));
         }
