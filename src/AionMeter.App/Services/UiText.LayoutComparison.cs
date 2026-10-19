@@ -4,6 +4,7 @@ public sealed partial class UiText
 {
     private static readonly Dictionary<string,(string De,string Ru,string Fr)> LayoutComparisonText=new()
     {
+        ["Choose a valid, different shortcut for each action."]=("Bitte wähle für jede Aktion ein gültiges, unterschiedliches Tastenkürzel.","Выберите допустимое отдельное сочетание клавиш для каждого действия.","Choisissez un raccourci valide et différent pour chaque action."),
         ["Automatically clear checkmarks at reset"]=("Häkchen beim Reset automatisch entfernen","Автоматически снимать отметки при сбросе","Effacer les coches à la réinitialisation"),
         ["Reset time (UTC)"]=("Reset-Zeit (UTC)","Время сброса (UTC)","Heure de réinitialisation (UTC)"),
         ["Weekly reset day"]=("Wöchentlicher Reset-Tag","День еженедельного сброса","Jour de réinitialisation hebdomadaire"),

@@ -101,7 +101,8 @@ public partial class OverlayWindow : Window, IDisplayAppearance
 
     public nint Handle => _hwnd;
 
-    private void Checklist_Click(object sender,RoutedEventArgs e)
+    private void Checklist_Click(object sender,RoutedEventArgs e) => ToggleChecklist();
+    internal void ToggleChecklist()
     {
         _settings.ShowChecklistModule=!_settings.ShowChecklistModule;
         _settings.Save();Refresh();
@@ -274,7 +275,7 @@ public partial class OverlayWindow : Window, IDisplayAppearance
     private (bool Gs, bool Cp) _partyGearVisibility;
     public void Refresh()
     {
-        ChecklistButton.ToolTip=UiText.Current.Localize(_settings.ShowChecklistModule?"Hide checklist":"Show checklist");
+        ChecklistButton.ToolTip=UiText.Current.Localize(_settings.ShowChecklistModule?"Hide checklist":"Show checklist")+" · "+_settings.HotkeyChecklist;
         System.Windows.Automation.AutomationProperties.SetName(ChecklistButton,ChecklistButton.ToolTip.ToString());
         ChecklistButton.Foreground=ThemeColors.Brush(_settings.ShowChecklistModule?"#C49AF5":"#A9B8C7");
         ChecklistButton.Background=_settings.ShowChecklistModule?ThemeColors.Brush("#23C49AF5"):Brushes.Transparent;

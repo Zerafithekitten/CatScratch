@@ -1,4 +1,21 @@
-﻿## CatScratch v3.0.7
+﻿## CatScratch v3.0.8
+
+### CHECKLIST — CUSTOM SHORTCUT AND STABLE CLICK-THROUGH PLACEMENT
+
+- Settings > Hotkeys now includes an editable Checklist shortcut. Its default is **Shift+F3**. Select the field and press your preferred combination, then Save. The shortcut toggles the module, just like its control-panel button, while retaining your task text, checkmarks and saved placement.
+- The selected shortcut survives restarts and is displayed in the Checklist button tooltip and Help & symbols. Overlay layout profiles do not overwrite it. Existing customized shortcuts remain unchanged.
+- Enabling click-through no longer pulls checklist tasks upward when the title controls disappear. The hidden title area retains its space, keeping daily/weekly headings, rows and checkbox hit targets in their original screen positions. Turning click-through off restores the title in the same place.
+- Checkboxes remain usable without taking keyboard focus from the game; task text and surrounding transparent space continue to pass clicks through.
+
+### HOTKEY VALIDATION AND REVIEW CLEANUP
+
+- Settings now rejects duplicate or malformed shortcuts before applying changes and directs you to the conflicting field. Different spellings or modifier order for the same actual combination are recognized as a conflict. This prevents one CatScratch action from silently taking another action's shortcut.
+- Invalid hotkey strings containing empty segments or unsupported numeric key values are rejected safely. A key combination reserved by Windows or another application may still need to be changed.
+- Removed obsolete preview-layout tracking and its unnecessary settings write when ending Test mode. Test mode continues to use the actual user positions, preserving the size of DPS and Settings windows and isolating real tasks and records from sample data.
+- Reviewed the affected persistence, profiles, input surfaces, window handling and preview paths, with regression coverage for checklist coordinates in both click-through states, native hotkey dispatch, custom-shortcut reload and profile isolation. Full release validation also covers capture/combat logic, shutdown, performance, sounds, boss records, panel layouts, estimates, placement, color persistence and the updater.
+- Includes all Stable 3.0.7 behavior, including the inline Update! title. CatScratch light is unchanged.
+
+## CatScratch v3.0.7
 
 ### UPDATE BUTTON — INTEGRATED INTO THE CONTROL PANEL
 

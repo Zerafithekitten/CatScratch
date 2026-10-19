@@ -49,8 +49,12 @@ internal static class ChecklistChecks
             WindowPinning.ButtonFor(window)!.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             check(WindowPinning.IsPinned(window) && window.Fields.All(f=>f.Check.IsEnabled && !f.Text.IsReadOnly),
                 "Pinning the checklist blocks position changes without locking its tasks");
+            window.UpdateLayout();
+            var originalTaskPosition=window.Fields[0].Check.PointToScreen(new Point());
+            var originalHeight=window.ActualHeight;
             WindowClickThrough.ApplyAll(true);
             window.UpdateLayout();window.InputSurface.Sync();
+            check(window.Fields[0].Check.PointToScreen(new Point())==originalTaskPosition && window.ActualHeight==originalHeight,$"Click-through preserves exact checklist task coordinates and window height: {originalTaskPosition} / {window.Fields[0].Check.PointToScreen(new Point())}, {originalHeight} / {window.ActualHeight}");
             check(((long)NativeMethods.GetWindowLongPtr(new WindowInteropHelper(window).Handle,NativeMethods.GWL_EXSTYLE)&NativeMethods.WS_EX_TRANSPARENT)!=0 && window.Fields[0].Text.IsReadOnly,
                 "Checklist supports global click-through without modifying task data");
             var inputHandle=window.InputSurface.Handle;
@@ -78,6 +82,8 @@ internal static class ChecklistChecks
             window.Show();window.UpdateLayout();window.InputSurface.Sync();
             check(window.InputSurface.Handle!=0,"Showing a locked checklist restores its clickable checkboxes");
             WindowClickThrough.ApplyAll(false);
+            window.UpdateLayout();
+            check(window.Fields[0].Check.PointToScreen(new Point())==originalTaskPosition && window.ActualHeight==originalHeight,"Unlocking restores the header without shifting checklist tasks");
             check(!window.Fields[0].Text.IsReadOnly && window.InputSurface.Handle==0,"Unlocking click-through restores editing and removes the extra input surface");
             var draft=settings.CreateDraft();var panel=new ChecklistSettingsPanel(draft);
             panel.Rows.Value=2;panel.WindowWidth.Value=380;
@@ -87,8 +93,10 @@ internal static class ChecklistChecks
             panel.ApplyTo(settings);window.ApplyPreferences();
             check(settings.ChecklistRows==2 && settings.ChecklistWidth==380 && window.Fields.Count==2 && settings.ChecklistItems[0].Text=="Live edit after Settings opened",
                 "Saving checklist layout applies it without overwriting newer live task edits");
+            settings.HotkeyChecklist="Ctrl+Alt+F3";
             JsonSettingsFile.Write(path,settings);
             var restored=JsonSettingsFile.Read<AppSettings>(path)!;
+            check(restored.HotkeyChecklist=="Ctrl+Alt+F3","Custom checklist shortcut survives settings reload");
             check(restored.ChecklistItems[19] is {Text:"Keep hidden task",Completed:true} && restored.ChecklistItems[0].Text=="Live edit after Settings opened" && restored.ChecklistRows==2,
                 "Checklist text, checkmarks and preferences survive a settings-file reload");
             settings.ChecklistRows=20;window.ApplyPreferences();window.MaxHeight=250;window.UpdateLayout();
@@ -97,13 +105,31 @@ internal static class ChecklistChecks
             settings.ChecklistRows=2;window.ApplyPreferences();
             var profile=OverlayProfiles.Capture("Tasks",settings,new TimerCards.State());
             restored.ChecklistItems[0].Text="Personal task survives profile";
+            restored.HotkeyChecklist="Ctrl+Shift+F3";
             OverlayProfiles.Apply(profile,restored,new TimerCards.State());
+            check(restored.HotkeyChecklist=="Ctrl+Shift+F3","Layout profiles never replace the checklist shortcut");
             check(restored.ChecklistItems[0].Text=="Personal task survives profile" && restored.ModulePins.GetValueOrDefault("checklist"),
                 "Overlay profiles preserve checklist layout and pin without restoring task contents");
             var invalid=new AppSettings {Transient=true,ChecklistRows=99,ChecklistWidth=double.NaN,ChecklistItems=[]};
             ChecklistState.Normalize(invalid);
             check(invalid.ChecklistRows==20 && invalid.ChecklistWidth==320 && invalid.ChecklistItems.Count==20,
                 "Invalid checklist preferences are bounded to twenty safe task slots");
+            using(var meter=new MeterService(settings,null))
+            {
+                var overlay=new OverlayWindow(meter,exitOnClose:false);
+                try
+                {
+                    using var hotkey=new HotkeyManager(new WindowInteropHelper(window).Handle);
+                    check(hotkey.Register("Ctrl+Alt+Shift+F3",overlay.ToggleChecklist),"Checklist toggle registers as a real global shortcut");
+                    var wasEnabled=settings.ShowChecklistModule;
+                    var task=settings.ChecklistItems[0].Text;
+                    NativeMethods.SendMessage(new WindowInteropHelper(window).Handle,NativeMethods.WM_HOTKEY,hotkey.LastRegisteredId,0);
+                    check(settings.ShowChecklistModule!=wasEnabled,"Global checklist hotkey toggles its module");
+                    NativeMethods.SendMessage(new WindowInteropHelper(window).Handle,NativeMethods.WM_HOTKEY,hotkey.LastRegisteredId,0);
+                    check(settings.ShowChecklistModule==wasEnabled && settings.ChecklistItems[0].Text==task,"Second hotkey press restores visibility without losing tasks");
+                }
+                finally{overlay.Close();}
+            }
             window.CloseButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             check(!window.IsVisible && !settings.ShowChecklistModule && settings.ChecklistPositionSaved,
                 "The checklist X closes only its module and retains task contents and placement");

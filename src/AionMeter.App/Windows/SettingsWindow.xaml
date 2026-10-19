@@ -228,6 +228,7 @@
                   <StackPanel Orientation="Horizontal" Margin="0,6,0,0"><TextBlock Text="{Binding ToggleEventsLabel, Source={x:Static s:UiText.Current}}" Style="{StaticResource Label}"/><TextBox x:Name="HkEvents"/></StackPanel>
                   <StackPanel Orientation="Horizontal" Margin="0,6,0,0"><TextBlock Text="{Binding TogglePetsLabel, Source={x:Static s:UiText.Current}}" Style="{StaticResource Label}"/><TextBox x:Name="HkPets"/></StackPanel>
                   <StackPanel Orientation="Horizontal" Margin="0,6,0,0"><TextBlock Text="{Binding ToggleDeathRecapLabel, Source={x:Static s:UiText.Current}}" Style="{StaticResource Label}"/><TextBox x:Name="HkDeathRecap"/></StackPanel>
+                  <StackPanel Orientation="Horizontal" Margin="0,6,0,0"><TextBlock Text="{Binding ChecklistLabel, Source={x:Static s:UiText.Current}}" Style="{StaticResource Label}"/><TextBox x:Name="HkChecklist"/></StackPanel>
                   <TextBlock Style="{StaticResource Hint}" Margin="0,6,0,0" Text="{Binding HotkeysHint, Source={x:Static s:UiText.Current}}" />
                 </StackPanel>
               </Border>

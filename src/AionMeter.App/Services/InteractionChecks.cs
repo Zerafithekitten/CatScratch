@@ -170,7 +170,8 @@ internal static class InteractionChecks
             Check(Style(first) == originals[0] && Style(second) == originals[1], "Original native window styles restored");
             for (var i = 0; i < 4; i++) { mode = !mode; WindowClickThrough.ApplyAll(mode); }
             Check(Style(first) == originals[0], "Repeated toggles preserve original styles");
-            Check(!HotkeyManager.TryParse("+++", out _, out _), "Invalid hotkey text rejected");
+            Check(!HotkeyManager.TryParse("+++", out _, out _) && !HotkeyManager.TryParse("Ctrl++A",out _,out _) && !HotkeyManager.TryParse("99999",out _,out _), "Invalid hotkey text rejected");
+            Check(HotkeyManager.InvalidGestureIndex(new[]{"Ctrl+Shift+A","shift+control+a"})==1 && HotkeyManager.InvalidGestureIndex(new[]{"Shift+F3","Shift+F4"})==-1,"Shortcut conflicts compare actual keys even with reordered or alternate modifier names");
             var grouped=new WindowVisibilityGroup();
             var placement=(first.Left,first.Top,first.Width,first.Height);
             var hidden=Create();hidden.Hide();
@@ -235,8 +236,8 @@ internal static class InteractionChecks
                 }
                 finally{Windows.OverlayWindow.ClockOverride=null;}
             }
-            var moduleKeys=new[]{defaults.HotkeyToggleOverlay,defaults.HotkeyPersonal,defaults.HotkeyEvents,defaults.HotkeyTimers,defaults.HotkeyPets,defaults.HotkeyToggleAll,defaults.HotkeyClickThrough,defaults.HotkeyReset,defaults.HotkeyDeathRecap};
-            Check(moduleKeys.Distinct().Count()==9 && moduleKeys.All(k=>k.StartsWith("Shift+F") && HotkeyManager.TryParse(k,out _,out _)),"Every default shortcut uses Shift and a distinct function key away from WASD");
+            var moduleKeys=new[]{defaults.HotkeyToggleOverlay,defaults.HotkeyPersonal,defaults.HotkeyEvents,defaults.HotkeyTimers,defaults.HotkeyPets,defaults.HotkeyToggleAll,defaults.HotkeyClickThrough,defaults.HotkeyReset,defaults.HotkeyDeathRecap,defaults.HotkeyChecklist};
+            Check(moduleKeys.Distinct().Count()==10 && moduleKeys.All(k=>k.StartsWith("Shift+F") && HotkeyManager.TryParse(k,out _,out _)),"Every default shortcut uses Shift and a distinct function key away from WASD");
             var oldDefaults=new AppSettings {HotkeyToggleOverlay="Ctrl+Shift+D",HotkeyTimers="Ctrl+Shift+T",HotkeyPets="Alt+F9"};oldDefaults.MigrateHotkeys();
             Check(oldDefaults.HotkeyToggleOverlay=="Shift+F5" && oldDefaults.HotkeyTimers=="Shift+F8" && oldDefaults.HotkeyPets=="Alt+F9","One-time hotkey migration updates old defaults and preserves custom combinations");
             oldDefaults.HotkeyToggleOverlay="Ctrl+Shift+D";oldDefaults.MigrateHotkeys();
@@ -378,7 +379,7 @@ internal static class InteractionChecks
             Check(eventPreferences.Background is System.Windows.Media.SolidColorBrush eventBg && eventBg.Color.A==255 && eventPreferences.Opacity==1,
                 "Event settings use a solid interactive meter-style surface");
             var settings=new AionMeter.App.Windows.SettingsWindow(meter); windows.Add(settings);
-            foreach(var (field,gesture) in new[]{("HkPersonal",meter.Settings.HotkeyPersonal),("HkEvents",meter.Settings.HotkeyEvents),("HkPets",meter.Settings.HotkeyPets),("HkDeathRecap",meter.Settings.HotkeyDeathRecap)})
+            foreach(var (field,gesture) in new[]{("HkPersonal",meter.Settings.HotkeyPersonal),("HkEvents",meter.Settings.HotkeyEvents),("HkPets",meter.Settings.HotkeyPets),("HkDeathRecap",meter.Settings.HotkeyDeathRecap),("HkChecklist",meter.Settings.HotkeyChecklist)})
             {
                 var box=(System.Windows.Controls.TextBox)settings.FindName(field);
                 Check(box.IsReadOnly && box.Text==gesture && HotkeyManager.TryParse(gesture,out _,out _),"Module shortcut can be recorded by pressing keys: "+field);

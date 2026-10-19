@@ -2,6 +2,7 @@ namespace AionMeter.App.Services;
 
 public sealed partial class UiText
 {
+    public string ChecklistLabel => Localize("Checklist");
     public string ToggleDeathRecapLabel => Localize("Enable / disable death recap");
     public string BackgroundUpdatesLabel => Localize("Check and prepare updates automatically");
     public string BackgroundUpdatesHint => Localize("Checks after startup and every 10 minutes. Downloads and prepares updates in the background. Restart only when you click Restart to update.");

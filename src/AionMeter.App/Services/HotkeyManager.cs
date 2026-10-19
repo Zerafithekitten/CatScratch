@@ -48,7 +48,7 @@ public sealed class HotkeyManager : IDisposable
         modifiers = 0;
         vk = 0;
         if (string.IsNullOrWhiteSpace(gesture)) return false;
-        var parts = gesture.Split('+', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+        var parts = gesture.Split('+', StringSplitOptions.TrimEntries);
         if (parts.Length == 0) return false;
         foreach (var part in parts[..^1])
         {
@@ -63,9 +63,21 @@ public sealed class HotkeyManager : IDisposable
         }
         var keyText = parts[^1];
         if (keyText.Length == 1 && char.IsDigit(keyText[0])) keyText = "D" + keyText;
-        if (!Enum.TryParse<Key>(keyText, ignoreCase: true, out var key)) return false;
+        if (!Enum.TryParse<Key>(keyText, ignoreCase: true, out var key) || !Enum.IsDefined(key)) return false;
         vk = (uint)KeyInterop.VirtualKeyFromKey(key);
         return vk != 0;
+    }
+
+    internal static int InvalidGestureIndex(IEnumerable<string> gestures)
+    {
+        var seen = new HashSet<(uint Modifiers,uint Key)>();
+        var index=0;
+        foreach(var gesture in gestures)
+        {
+            if(!TryParse(gesture,out var modifiers,out var key) || !seen.Add((modifiers,key)))return index;
+            index++;
+        }
+        return -1;
     }
 
     private nint WndProc(nint hwnd, int msg, nint wParam, nint lParam, ref bool handled)

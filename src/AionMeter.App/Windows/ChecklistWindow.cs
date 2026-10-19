@@ -10,6 +10,7 @@ internal sealed class ChecklistWindow : Window,IDisplayAppearance
 {
     private readonly AppSettings _settings;
     private readonly StackPanel _rows=new();
+    private readonly Border _headerFrame;
     private readonly DockPanel _header=new(){Margin=new(4,0,1,0)};
     private readonly DispatcherTimer _save=new(){Interval=TimeSpan.FromMilliseconds(450)};
     private readonly List<(CheckBox Check,TextBox Text)> _fields=[];
@@ -39,8 +40,8 @@ internal sealed class ChecklistWindow : Window,IDisplayAppearance
         var pin=WindowPinning.CreateButton(this,settings,"checklist");pin.Width=20;pin.Height=20;DockPanel.SetDock(pin,Dock.Right);_header.Children.Add(pin);
         var paw=new Image {Source=AppIcon.Image,Width=12,Height=12,Margin=new(0,0,5,0)};DockPanel.SetDock(paw,Dock.Left);_header.Children.Add(paw);
         _header.Children.Add(new TextBlock {Text=UiText.Current.Localize("Checklist"),FontSize=11,Foreground=ThemeColors.Brush("#C49AF5"),VerticalAlignment=VerticalAlignment.Center});
-        var headerFrame=new Border {Background=ThemeColors.Brush("#B8191D23"),CornerRadius=new(5),Child=_header};
-        DockPanel.SetDock(headerFrame,Dock.Top);root.Children.Add(headerFrame);
+        _headerFrame=new Border {Background=ThemeColors.Brush("#B8191D23"),CornerRadius=new(5),Child=_header};
+        DockPanel.SetDock(_headerFrame,Dock.Top);root.Children.Add(_headerFrame);
         TasksScroller=new ScrollViewer {Content=_rows,VerticalScrollBarVisibility=ScrollBarVisibility.Auto,HorizontalScrollBarVisibility=ScrollBarVisibility.Disabled};
         root.Children.Add(TasksScroller);Content=root;
         if(settings.ChecklistPositionSaved && double.IsFinite(settings.ChecklistLeft) && double.IsFinite(settings.ChecklistTop)){Left=settings.ChecklistLeft;Top=settings.ChecklistTop;}
@@ -125,7 +126,7 @@ internal sealed class ChecklistWindow : Window,IDisplayAppearance
     }
     public void SetDisplayOnly(bool enabled)
     {
-        _displayOnly=enabled;_header.Visibility=enabled?Visibility.Collapsed:Visibility.Visible;
+        _displayOnly=enabled;_headerFrame.Visibility=enabled?Visibility.Hidden:Visibility.Visible;
         foreach(var field in _fields)field.Text.IsReadOnly=enabled;
         _input.Sync();_input.Schedule();
     }

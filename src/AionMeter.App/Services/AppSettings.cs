@@ -163,6 +163,7 @@ public sealed class AppSettings
     public string HotkeyReset { get; set; } = "Shift+F12";
     public string HotkeyClickThrough { get; set; } = "Shift+F11";
     public string HotkeyPersonal { get; set; } = "Shift+F6";
+    public string HotkeyChecklist { get; set; } = "Shift+F3";
     public string HotkeyDeathRecap { get; set; } = "Shift+F4";
     public string HotkeyEvents { get; set; } = "Shift+F7";
     public string HotkeyPets { get; set; } = "Shift+F9";

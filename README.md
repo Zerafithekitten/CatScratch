@@ -6,13 +6,13 @@ A separate, always-on-top Windows DPS meter for **AION 2**, by Zerafithekitten. 
 
 | Channel | Current version | What it includes |
 | --- | --- | --- |
-| **Stable** | **[v3.0.7](https://github.com/Zerafithekitten/CatScratch/releases/tag/v3.0.7)** | Compact panel layouts, checklist with reset countdowns, Pet tracking modes and sounds, passive Hidden cube alerts, ONLY BOSS, defeat estimates, refined Test mode and DPS placement fixes. |
+| **Stable** | **[v3.0.8](https://github.com/Zerafithekitten/CatScratch/releases/tag/v3.0.8)** | Compact panel layouts, checklist with a custom hotkey, reset countdowns and stable click-through placement, Pet tracking modes and sounds, passive Hidden cube alerts, ONLY BOSS, defeat estimates, refined Test mode and DPS placement fixes. |
 | **Beta** | [Previous: v3.0.4-beta.13](https://github.com/Zerafithekitten/CatScratch/releases/tag/v3.0.4-beta.13) | Promoted to Stable 3.0.4, including the latest preview-layout and vertical-label corrections. |
 | **Light** | [v1.0.0](https://github.com/Zerafithekitten/CatScratch/releases/tag/light-v1.0.0) | Separate **DPS meter only** edition with essential settings. Independent ZIP download and settings; no additional CatScratch modules or automatic updater. |
 
 **CatScratch light** is installed separately from the full version. [Download its ZIP](https://github.com/Zerafithekitten/CatScratch/releases/download/light-v1.0.0/CatScratch-light-win-x64.zip) and extract it into its own folder. Light is maintained and updated **only on the owner's explicit request**; normal development continues on full CatScratch.
 
-English is the default. German, Russian and French are also available. Screenshots use synthetic sample data; names and numbers are examples. All features described below are included in **Stable v3.0.7** unless a limitation is stated.
+English is the default. German, Russian and French are also available. Screenshots use synthetic sample data; names and numbers are examples. All features described below are included in **Stable v3.0.8** unless a limitation is stated.
 
 ## Contents
 
@@ -238,13 +238,15 @@ Under **Settings > Appearance > Target screen (experimental)**, choose the monit
 
 ## Checklist
 
-Use the **Checklist button in the control panel** to show or hide it without changing task text or checkmarks. Its icon is highlighted while enabled and is explained in **Settings > Help & symbols**. You can also enable **Settings > Checklist > Show checklist**, select **1–20 task slots** and a window width, then **Save**. The module has a transparent outer surface and compact tinted rows. Type a task on the right and use its checkbox on the left to strike it through; uncheck it to undo completion.
+Use **Shift+F3** (customizable in **Settings > Hotkeys > Checklist**) or the **Checklist button in the control panel** to show or hide it without changing task text or checkmarks. Its icon is highlighted while enabled and is explained in **Settings > Help & symbols**. You can also enable **Settings > Checklist > Show checklist**, select **1–20 task slots** and a window width, then **Save**. The module has a transparent outer surface and compact tinted rows. Type a task on the right and use its checkbox on the left to strike it through; uncheck it to undo completion.
 
 Text and checkmarks save automatically and survive restarting CatScratch. Reducing the number of visible rows keeps hidden tasks. Small **Daily** and **Weekly** headings separate the eleven editable examples: two daily and nine weekly tasks from the supplied overview. Category prefixes are omitted from the task rows; extra free slots appear under **Other tasks**. These are sample text, not automatic progress detection. Reset countdowns and opt-in clearing are described below.
 
-The module has its own pin and X. Checkboxes remain clickable in global click-through mode without taking game keyboard focus. Task text and empty space stay click-through; unlock the mode to edit text. Layout profiles change placement, width and slot count without overwriting task text or completion. Checklist is part of full CatScratch only.
+The module has its own pin and X. Checkboxes remain clickable in global click-through mode without taking game keyboard focus. Task text and empty space stay click-through; unlock the mode to edit text. Hiding the title controls keeps every task at the same screen position. Layout profiles change placement, width and slot count without overwriting task text or completion. Checklist is part of full CatScratch only.
 
-![Compact checklist with editable sample tasks](docs/images/checklist-countdowns-beta13.png)
+![Compact checklist with editable sample tasks](docs/images/checklist-stable308.png)
+
+![Configurable Checklist shortcut in Hotkeys](docs/images/checklist-hotkey-stable308.png)
 
 ## Hidden cubes (experimental)
 
@@ -266,7 +268,7 @@ The green **Update!** button appears **only after the update is fully prepared**
 
 After a successful new startup, the old backup, staged payload and downloaded ZIP are removed. Failed updates retain recovery files. Settings, saved fights, personal bests, recent players and captures are preserved. Update staging stays under `userdata/temp/updates`; a writable program folder is required.
 
-When a Beta is promoted and its Stable build starts, Beta subscribers automatically return to the Stable update channel. A later deliberate switch back to Beta is respected until the next Stable transition. The installed version then shows the Stable number, currently **3.0.7** without a beta suffix.
+When a Beta is promoted and its Stable build starts, Beta subscribers automatically return to the Stable update channel. A later deliberate switch back to Beta is respected until the next Stable transition. The installed version then shows the Stable number, currently **3.0.8** without a beta suffix.
 
 Use **Check now** in Settings or **Check for updates** in the tray menu for a manual check. Automatic checking and preparation can be disabled in Settings. CatScratch also reduces data-loading allocations and moves optional startup work behind the first meter display.
 

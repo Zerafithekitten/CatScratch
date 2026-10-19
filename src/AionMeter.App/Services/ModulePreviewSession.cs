@@ -21,7 +21,6 @@ internal sealed class ModulePreviewSession:IDisposable
     private readonly List<Action> _refresh=[];
     internal Dictionary<string,Rect> ArrangedBounds {get;private set;}=[];
     private bool _disposed;
-    private bool _placing=true;
     private readonly Dictionary<string,Point> _userPositions=[];
     private readonly Window[] _existingWindows;
     internal IReadOnlyList<Window> Windows=>_windows.Select(p=>p.Window).ToArray();
@@ -82,13 +81,6 @@ internal sealed class ModulePreviewSession:IDisposable
         }
         _windows.Add((id,window));
         if(refresh is not null)_refresh.Add(()=>{if(window.IsVisible)refresh();});
-        void Remember()
-        {
-            if(_placing || !window.IsLoaded || !double.IsFinite(window.Left) || !double.IsFinite(window.Top))return;
-            _source.ModulePreviewLayout[id]=new(){Left=window.Left,Top=window.Top,Width=window.ActualWidth,Height=window.ActualHeight};
-        }
-        window.LocationChanged+=(_,_)=>Remember();window.SizeChanged+=(_,_)=>Remember();
-        window.Closed+=(_,_)=>Remember();
     }
     internal void Show(bool offscreen=false,Window? settingsWindow=null,Window? controlsPanel=null)
     {
@@ -125,7 +117,6 @@ internal sealed class ModulePreviewSession:IDisposable
             var r=ArrangedBounds[id];window.Left=offscreen?-30000:r.Left;window.Top=offscreen?-30000:r.Top;
             window.Opacity=Math.Clamp(_source.WindowOpacity,.4,1);
         }
-        _placing=false;
         WindowClickThrough.ApplyAll(false);
         _timer.Start();
     }
@@ -163,7 +154,7 @@ internal sealed class ModulePreviewSession:IDisposable
         if(_disposed)return;_disposed=true;_timer.Stop();
         foreach(var (_,window) in _windows.ToArray())window.Close();
         _refresh.Clear();_cards.Dispose();_meter.Dispose();
-        WindowClickThrough.ApplyAll(_source.ClickThrough);_source.Save();
+        WindowClickThrough.ApplyAll(_source.ClickThrough);
         // Only this session's uniquely named temporary directory is removed.
         var full=Path.GetFullPath(_directory);
         var parent=Path.GetFullPath(Path.GetTempPath()).TrimEnd(Path.DirectorySeparatorChar)+Path.DirectorySeparatorChar;

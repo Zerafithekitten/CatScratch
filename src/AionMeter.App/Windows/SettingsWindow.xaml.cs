@@ -136,7 +136,7 @@ public partial class SettingsWindow : Window
         Loaded+=(_,_)=>WindowPresentation.PlaceOnPreferredScreen(this);
         Controls.DragAnywhere.Attach(this);
         Load();
-        foreach (var field in new[] { HkToggle, HkAll, HkReset, HkClick, HkTimers, HkPersonal, HkEvents, HkPets, HkDeathRecap })
+        foreach (var field in new[] { HkToggle, HkAll, HkReset, HkClick, HkTimers, HkPersonal, HkEvents, HkPets, HkDeathRecap, HkChecklist })
         {
             field.IsReadOnly = true;
             field.ToolTip = UiText.Current.Localize("Click here and press your shortcut. Applied after saving.");
@@ -212,6 +212,7 @@ public partial class SettingsWindow : Window
         HkEvents.Text=s.HotkeyEvents;
         HkPets.Text=s.HotkeyPets;
         HkDeathRecap.Text=s.HotkeyDeathRecap;
+        HkChecklist.Text=s.HotkeyChecklist;
 
         _devices.Add((null, T.AdapterAuto));
         try
@@ -278,6 +279,14 @@ public partial class SettingsWindow : Window
     private async void Save_Click(object sender, RoutedEventArgs e)
     {
         var s = _meter.Settings;
+        var hotkeyFields=new[] {HkToggle,HkAll,HkReset,HkClick,HkTimers,HkPersonal,HkEvents,HkPets,HkDeathRecap,HkChecklist};
+        var invalidHotkey=HotkeyManager.InvalidGestureIndex(hotkeyFields.Select(field=>field.Text));
+        if(invalidHotkey>=0)
+        {
+            SelectTab("hotkeys");
+            MessageBox.Show(this,T.Localize("Choose a valid, different shortcut for each action."),"CatScratch",MessageBoxButton.OK,MessageBoxImage.Warning);
+            hotkeyFields[invalidHotkey].Focus();return;
+        }
         if(!_themePanel.TryGet(out var theme)){SelectTab("appearance");_themePanel.FocusInvalidColor();return;}
         var follow=FollowGameCheck.IsChecked==true;
         var game=GameExecutableText.Text;
@@ -352,6 +361,7 @@ public partial class SettingsWindow : Window
         s.HotkeyEvents=HkEvents.Text.Trim();
         s.HotkeyPets=HkPets.Text.Trim();
         s.HotkeyDeathRecap=HkDeathRecap.Text.Trim();
+        s.HotkeyChecklist=HkChecklist.Text.Trim();
 
         _cards.ApplyPreferences(_eventDraft);
         var petVisibilityChanged=s.ShowPetTrackerModule!=_moduleDraft.ShowPetTrackerModule;
