@@ -49,3 +49,5 @@ On 2026-10-19 the owner reviewed the separate boss timing window image and expli
 On 2026-10-19 the owner resumed the held Stable hotfix with "mach erstmal den hotfix", authorizing v3.0.10 for the reviewed boss timing transparency correction and sound playback recovery. Exclude the separately discussed monster-picture suggestion and keep Light unchanged.
 
 On 2026-10-19 the owner explicitly authorized publishing the opt-in click-through restart preference to Stable after verification as v3.0.11. Show the actual setting and run full release validation; keep Light unchanged.
+
+On 2026-10-19 the owner reviewed the individual world boss settings image and explicitly authorized "upload beta" for v3.0.12-beta.1. Run complete release checks; publish only beta and its prerelease tag with latest=false. Keep main, Stable 3.0.11 and Light unchanged.

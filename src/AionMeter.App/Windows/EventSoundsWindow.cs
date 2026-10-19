@@ -29,7 +29,7 @@ public sealed class EventSoundsWindow : Window
         Controls.DragAnywhere.Attach(this);
         Closed += (_, _) => cards.Save();
     }
-    internal static StackPanel BuildBody(TimerCards cards, Action<EventSoundPreference,double> preview, Func<string?>? chooseFile, FrameworkElement scope)
+    internal static StackPanel BuildBody(TimerCards cards, Action<EventSoundPreference,double> preview, Func<string?>? chooseFile, FrameworkElement scope, IEnumerable<(string Id,string Name,string Kind)>? entries=null,bool includeGeneral=true)
     {
         var body=new StackPanel();
         body.Resources[typeof(Button)]=(Style)scope.FindResource("GhostButton");
@@ -38,6 +38,8 @@ public sealed class EventSoundsWindow : Window
         {
             var content=new StackPanel(); parent.Children.Add(new Border { Child=content,Background=Brush("#191D23"),BorderBrush=Brush("#414A56"),BorderThickness=new Thickness(1),CornerRadius=new CornerRadius(7),Padding=new Thickness(12),Margin=new Thickness(0,0,0,10) }); return content;
         }
+        if(includeGeneral)
+        {
         var panel=Card(body);
         panel.Children.Add(new TextBlock { Text=UiText.Current.Localize("SOUND PREFERENCES"),Foreground=Brush("#C49AF5"),FontWeight=FontWeights.SemiBold });
         panel.Children.Add(new TextBlock { Text = UiText.Current.Localize("Enable a sound for each event you want to hear. Automatic reminders follow your selected events.\nSimultaneous reminders play one after another."), TextWrapping = TextWrapping.Wrap, Margin = new Thickness(0,8,0,15) });
@@ -50,7 +52,8 @@ public sealed class EventSoundsWindow : Window
         if (lead.SelectedIndex < 0) lead.SelectedIndex = 2;
         lead.SelectionChanged += (_, _) => { cards.Saved.SoundLeadMinutes = new[] {0,1,2,5,10}[lead.SelectedIndex]; cards.Save(); }; panel.Children.Add(lead);
         panel.Children.Add(new TextBlock { Text=UiText.Current.Localize("Custom audio: WAV or MP3, maximum 10 seconds and 10 MB."), Foreground=Brush("#A9B8C7"),FontSize=11,TextWrapping=TextWrapping.Wrap });
-        foreach (var item in AutomaticEventSchedule.Catalog.Select(e => (Id: e.Id, Name: e.Name, Kind: EventKinds.For(e.Id)))
+        }
+        foreach (var item in entries??AutomaticEventSchedule.Catalog.Select(e => (Id: e.Id, Name: e.Name, Kind: EventKinds.For(e.Id)))
                      .Append((Id: "tracked-boss", Name: "Tracked world bosses", Kind: "BOSS")))
         {
             if (!cards.Saved.Sounds.TryGetValue(item.Id, out var preference))
@@ -132,7 +135,7 @@ public sealed class EventSoundsWindow : Window
             box.Children.Add(controls);
             box.Children.Add(feedback);
         }
-        body.Children.Add(new TextBlock { Text = UiText.Current.Localize("Tracked world bosses use the watched-boss and ‘Notify before respawn’ settings in Boss timers. Custom audio files must stay at their selected location."), Foreground=Brush("#A9B8C7"),TextWrapping = TextWrapping.Wrap, Margin = new Thickness(0,2,0,0) });
+        if(includeGeneral)body.Children.Add(new TextBlock { Text = UiText.Current.Localize("Tracked world bosses use the watched-boss and ‘Notify before respawn’ settings in Boss timers. Custom audio files must stay at their selected location."), Foreground=Brush("#A9B8C7"),TextWrapping = TextWrapping.Wrap, Margin = new Thickness(0,2,0,0) });
         return body;
     }
     internal static bool HasCustomFile(EventSoundPreference preference) => !string.IsNullOrWhiteSpace(preference.FilePath) && File.Exists(preference.FilePath);

@@ -246,6 +246,13 @@ public partial class App : Application
             catch(Exception error){File.WriteAllText(placementPath,error.ToString());Shutdown(1);}
             return;
         }
+        if(ArgValue(e.Args,"--check-world-boss-events") is { } worldBossPath)
+        {
+            Log.Enabled=false;
+            try{WorldBossEventChecks.Run(worldBossPath);Shutdown();}
+            catch(Exception error){File.WriteAllText(worldBossPath,error.ToString());Shutdown(1);}
+            return;
+        }
         if(ArgValue(e.Args,"--check-clickthrough-startup") is { } startupPath)
         {
             Log.Enabled=false;
@@ -959,7 +966,7 @@ public partial class App : Application
                 ? string.Format(t.AlertSoon, name, minutes, next.ToString("HH:mm"))
                 : string.Format(t.AlertNow, name, next.ToString("HH:mm"));
             _tray?.ShowBalloon(t.TimersTitle, text);
-            if (_timerCards?.Saved.Sounds.TryGetValue("tracked-boss", out var sound) == true && sound.Enabled)
+            if (_timerCards?.Saved.Sounds.TryGetValue("tracked-boss", out var sound) == true && sound.Enabled && !_timerCards.HasIndividualBossSound(timer.NpcCode))
                 (_eventSoundPlayer ??= new()).Play(sound, _timerCards.Saved.SoundVolume);
         }
     }
@@ -968,9 +975,11 @@ public partial class App : Application
     {
         if(_meter.DemoRunning)return;
         if (_timerCards is not { } cards || cards.Saved.Sounds.Count == 0) return;
-        var enabled = cards.Saved.Sounds.Where(p => p.Value.Enabled && cards.Saved.SelectedEvents.Contains(p.Key)).Select(p => p.Key);
+        var enabled = cards.Saved.Sounds.Where(p => p.Value.Enabled && cards.EffectiveScheduledIds().Contains(p.Key)).Select(p => p.Key);
         foreach (var due in _eventAlerts.TakeDue(DateTimeOffset.UtcNow, cards.Saved.EventRegion, enabled, cards.Saved.SoundLeadMinutes))
             (_eventSoundPlayer ??= new()).Play(cards.Saved.Sounds[due.Id], cards.Saved.SoundVolume);
+        foreach(var due in cards.TakeDueWorldBossSounds(DateTimeOffset.UtcNow))
+            (_eventSoundPlayer??=new()).Play(due.Sound,cards.Saved.SoundVolume);
     }
 
     public void ShowEventSounds()

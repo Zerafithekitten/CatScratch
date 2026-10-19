@@ -6,7 +6,7 @@ using AionMeter.App.Services;
 using AionMeter.Core.Events;
 namespace AionMeter.App.Windows;
 
-public sealed class TimerHubWindow : Window, IDisplayAppearance
+public sealed partial class TimerHubWindow : Window, IDisplayAppearance
 {
     private readonly TimerCards _cards;
     private readonly bool _startedOnly;
@@ -23,6 +23,7 @@ public sealed class TimerHubWindow : Window, IDisplayAppearance
         if (_header is not null) _header.Visibility=enabled ? Visibility.Collapsed : Visibility.Visible;
         foreach(var tile in _list.Children.OfType<Border>()) {
             tile.Background=EventPanelBrushes.Background;
+            if(tile.Child is Grid {Tag:TimerCardData boss})EventFavoriteAppearance.Apply(tile,EventPanelBrushes.ForKind("BOSS"),_cards.IsFavorite(boss.Id),BossStarted(boss,ClockOverride?.Invoke()??DateTimeOffset.UtcNow));
             if (tile.Child is Grid { Tag: EventStart item }) EventFavoriteAppearance.Apply(tile,EventPanelBrushes.ForKind(EventKinds.For(item.Id)),_cards.IsFavorite(item.Id),item.StartsAt <= (ClockOverride?.Invoke() ?? DateTimeOffset.UtcNow));
         }
         foreach (var placeholder in _list.Children.OfType<TextBlock>())
@@ -81,7 +82,11 @@ public sealed class TimerHubWindow : Window, IDisplayAppearance
         var activeIds=allEvents.Where(e=>EventActivity.IsActive(e,now)).Select(e=>e.Id).ToHashSet();
         var events=_startedOnly ? allEvents.Where(e=>EventActivity.IsActive(e,now)).ToArray()
             : allEvents.Where(e=>e.StartsAt>now && !activeIds.Contains(e.Id)).ToArray();
-        var key=string.Join('|',events.Select(e=>$"{e.Id}:{e.StartsAt:O}"));
+        var chosen=_cards.SelectedWorldBossCards();
+        var chosenIds=chosen.Select(b=>b.Id).ToHashSet();
+        events=events.Where(e=>!chosenIds.Contains(e.Id)).ToArray();
+        var bosses=chosen.Where(b=>BossStarted(b,now)==_startedOnly).ToArray();
+        var key=string.Join('|',events.Select(e=>$"{e.Id}:{e.StartsAt:O}"))+";"+string.Join('|',bosses.Select(b=>$"{b.Id}:{b.Name}:{b.Next:O}:{b.Alive}"));
         if(_list.Tag as string != key)
         {
             foreach (var tile in _list.Children.OfType<Border>()) EventPulse.Apply(tile,EventPanelBrushes.Border,false);
@@ -108,11 +113,18 @@ public sealed class TimerHubWindow : Window, IDisplayAppearance
                 tile.MouseRightButtonUp+=(_,_)=> { var menu=new ContextMenu(); var detach=new MenuItem { Header=UiText.Current.Localize("Open separate window") }; detach.Click+=(_,_)=>_cards.Pin(item.Id.StartsWith("boss:") ? item.Id : "auto:"+item.Id); menu.Items.Add(detach); menu.IsOpen=true; };
                 _list.Children.Add(tile);
             }
-            if(events.Length==0) _list.Children.Add(new TextBlock { Text=UiText.Current.Localize(_startedOnly ? "No started events" : "No events in the next hour"), FontSize=11, Foreground=ColorBrush("#91A5C3"), Margin=new(0,4,0,2) });
+            foreach(var boss in bosses)_list.Children.Add(CreateBossTile(boss));
+            if(events.Length==0 && bosses.Length==0) _list.Children.Add(new TextBlock { Text=UiText.Current.Localize(_startedOnly ? "No started events" : "No events in the next hour"), FontSize=11, Foreground=ColorBrush("#91A5C3"), Margin=new(0,4,0,2) });
         }
         foreach(var border in _list.Children.OfType<Border>())
         {
-            var row=(Grid)border.Child; var item=(EventStart)row.Tag; var remaining=item.StartsAt-now;
+            var row=(Grid)border.Child;
+            if(row.Tag is TimerCardData boss)
+            {
+                border.Width=Math.Max(220,(Width-16)/(Width>=460?2:1));
+                ((TextBlock)row.Children[2]).Text=TimerCards.Countdown(boss,now);continue;
+            }
+            var item=(EventStart)row.Tag; var remaining=item.StartsAt-now;
             border.Width = Math.Max(220, (Width-16) / (Width>=460 ? 2 : 1));
             ((TextBlock)row.Children[2]).Text=remaining <= TimeSpan.Zero ? TimerCards.StartedText(item,now) : $"{UiText.Current.Localize("in")} {(int)remaining.TotalMinutes:00}:{remaining.Seconds:00}";
         }

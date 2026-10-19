@@ -7,7 +7,7 @@ A separate, always-on-top Windows DPS meter for **AION 2**, by Zerafithekitten. 
 | Channel | Current version | What it includes |
 | --- | --- | --- |
 | **Stable** | **[v3.0.11](https://github.com/Zerafithekitten/CatScratch/releases/tag/v3.0.11)** | Compact panel layouts, checklist with a custom hotkey, reset countdowns and stable click-through placement, Pet tracking modes and sounds, passive Hidden cube alerts, ONLY BOSS, defeat estimates, refined Test mode and DPS placement fixes. |
-| **Beta** | [Previous: v3.0.4-beta.13](https://github.com/Zerafithekitten/CatScratch/releases/tag/v3.0.4-beta.13) | Promoted to Stable 3.0.4, including the latest preview-layout and vertical-label corrections. |
+| **Beta** | **[v3.0.12-beta.1](https://github.com/Zerafithekitten/CatScratch/releases/tag/v3.0.12-beta.1)** | Individual world boss display, persistent favorites and per-boss sound preferences. |
 | **Light** | [v1.0.0](https://github.com/Zerafithekitten/CatScratch/releases/tag/light-v1.0.0) | Separate **DPS meter only** edition with essential settings. Independent ZIP download and settings; no additional CatScratch modules or automatic updater. |
 
 **CatScratch light** is installed separately from the full version. [Download its ZIP](https://github.com/Zerafithekitten/CatScratch/releases/download/light-v1.0.0/CatScratch-light-win-x64.zip) and extract it into its own folder. Light is maintained and updated **only on the owner's explicit request**; normal development continues on full CatScratch.
@@ -265,6 +265,16 @@ Enable **Settings > Hidden cubes > Enable hidden cube alerts (experimental)** to
 Choose an optional **MP3 or WAV** in the same tab, adjust its independent **Volume**, and use **Preview** to listen before saving. One notification plays for each newly detected cube, rather than every repeated announcement. Visual test alerts stay silent. Files must be at most **10 seconds / 10 MB** and remain at their selected location.
 
 Opening the cube or changing context clears the warning; announcements also expire after 60 seconds without a refresh. An announcement confirms that the server sent the object, rather than a measured distance or continued visual presence. Other cube variants, map placement, direction and distance remain unverified. No screenshot capture or game-memory access is used.
+
+### Individual world bosses (Beta 3.0.12-beta.1)
+
+**Beta only.** Settings > Events provides individual choices for known world bosses, a search field, favorite stars and an expandable sound picker for each boss. Favorites and selected bosses remain visible in the event modules beyond one hour; unknown times stay labeled as unknown. Confirmed living bosses appear in Started events. Favorites use the gold frame. Open a map's boss list in the game to discover additional world bosses.
+
+Per-boss sounds support the existing built-in choices and validated WAV/MP3 files. They use the event reminder lead time and volume, only the current server's known respawn, and notify once per occurrence. Settings are drafts until Save. Display choice, favorites and sounds survive restart.
+
+![Individual world boss preferences](docs/images/world-boss-settings-beta1.png)
+
+![Individual world bosses in the event overlay](docs/images/world-boss-events-beta1.png)
 
 ## Updates and release channels
 

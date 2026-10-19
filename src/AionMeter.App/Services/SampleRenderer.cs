@@ -266,6 +266,31 @@ public static class SampleRenderer
                 host = timers;
                 refresh = timers.ReloadNow;
                 break;
+            case "world-boss-settings":
+            case "world-boss-events":
+                FeedTimers(meter);
+                var bossPreferences=new TimerCards(meter,false);
+                bossPreferences.Saved.SelectedEvents=["shugo","rift"];
+                var sampleBosses=bossPreferences.WorldBossOptions().Where(b=>b.Code!=2400800).Take(2).ToArray();
+                bossPreferences.Saved.SelectedWorldBosses=[2400800,sampleBosses[0].Code];
+                bossPreferences.SetFavorite(TimerCards.WorldBossKey(2400800),true);
+                bossPreferences.SetFavorite(sampleBosses[0].Id,true);
+                bossPreferences.Saved.Sounds[sampleBosses[0].Id]=new(){Enabled=true,Sound="Bell"};
+                if(o.Window=="world-boss-settings")
+                {
+                    var bossPanel=new WorldBossSettingsPanel(bossPreferences,()=>{},(_,_)=>{});
+                    bossPanel.Children.OfType<TextBox>().Single().Text=sampleBosses[0].Name;
+                    var sampleRows=(StackPanel)((ScrollViewer)bossPanel.Children.OfType<ScrollViewer>().Single()).Content;
+                    var sampleRow=(StackPanel)((Border)sampleRows.Children[0]).Child;
+                    sampleRow.Children.OfType<Expander>().Single().IsExpanded=true;
+                    host=new Window{Title="CatScratch",Width=600,Height=345,Background=ThemeColors.Brush("#20242A"),Foreground=ThemeColors.Brush("#EDF2F7"),FontFamily=(FontFamily)Application.Current.FindResource("UiFont"),Content=new Border{Child=bossPanel,Padding=new Thickness(16)},WindowStyle=WindowStyle.None};
+                    refresh=()=>{};
+                }
+                else
+                {
+                    var bossHub=new TimerHubWindow(bossPreferences);WindowClickThrough.Attach(bossHub,()=>false);host=bossHub;refresh=bossHub.Reload;
+                }
+                break;
             case "event-sounds":
             case "event-sounds-error":
                 var soundCards = new TimerCards(meter, persistent: false);

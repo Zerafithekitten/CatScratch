@@ -1,4 +1,14 @@
-﻿## CatScratch v3.0.11
+﻿## CatScratch v3.0.12-beta.1
+
+### Individual world bosses
+
+- Settings > Events now offers a searchable list of known world bosses with individual display choices and favorites.
+- Selected bosses and favorites stay in the event modules beyond the normal one-hour window. Unknown spawn times are labeled honestly; favorites receive the existing glowing gold frame. Confirmed living bosses stay in Started events.
+- Each boss can use its own built-in or custom WAV/MP3 sound, with event reminder lead time and volume. Reminders are issued once per known respawn and use only the current server's timer data.
+- Choices, favorites and sounds apply on Save and survive restart. Existing bulk boss display, generic events and watched-boss sounds remain available.
+- Beta only; Stable remains 3.0.11. CatScratch light is unchanged.
+
+## CatScratch v3.0.11
 
 ### OPTIONAL CLICK-THROUGH RESTORATION AFTER RESTART
 

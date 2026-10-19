@@ -51,7 +51,14 @@ public sealed class EventPreferencesWindow : Window
             foreach(var item in group)
             {
                 var check=new CheckBox { Content=UiText.Current.Localize(item.Name),Style=(Style)scope.FindResource("DarkCheck"),IsChecked=cards.Saved.SelectedEvents.Contains(item.Id) };
-                check.Click+=(_,_)=> { cards.Saved.SelectedEvents.Remove(item.Id); if(check.IsChecked==true) cards.Saved.SelectedEvents.Add(item.Id); Save(); }; events.Children.Add(check);
+                check.Click+=(_,_)=> { cards.Saved.SelectedEvents.Remove(item.Id); if(check.IsChecked==true) cards.Saved.SelectedEvents.Add(item.Id); Save(); };
+                if(group.Key=="BOSS")
+                {
+                    var row=new DockPanel();var star=new Button{Content=cards.IsFavorite(item.Id)?"★":"☆",FontFamily=(FontFamily)scope.FindResource("UiFont"),Style=(Style)scope.FindResource("IconButton"),Width=24,Height=22,ToolTip=UiText.Current.Localize("Favorite: always show in events")};
+                    star.Click+=(_,_)=>{cards.SetFavorite(item.Id,!cards.IsFavorite(item.Id));star.Content=cards.IsFavorite(item.Id)?"★":"☆";star.Foreground=cards.IsFavorite(item.Id)?EventFavoriteAppearance.Gold:Brush("#A9B8C7");Save();};
+                    star.Foreground=cards.IsFavorite(item.Id)?EventFavoriteAppearance.Gold:Brush("#A9B8C7");DockPanel.SetDock(star,Dock.Right);row.Children.Add(star);row.Children.Add(check);events.Children.Add(row);
+                }
+                else events.Children.Add(check);
             }
         }
         var allBosses=new CheckBox { Content=UiText.Current.Localize("Show all world bosses"),Style=(Style)scope.FindResource("DarkCheck"),IsChecked=cards.Saved.ShowAllWorldBosses,Margin=new(0,8,0,0) };

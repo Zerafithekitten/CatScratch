@@ -21,6 +21,7 @@ internal sealed class EventsSettingsPanel : StackPanel
         Check("Show started events",cards.Saved.StartedEventWindowOpen,v=>cards.Saved.StartedEventWindowOpen=v);
         double WidthOf(string key)=>cards.Saved.Positions.TryGetValue(key,out var placement)?placement.Width:480;
         void SetWidth(string key,double value){if(!cards.Saved.Positions.TryGetValue(key,out var placement))cards.Saved.Positions[key]=placement=new(){Left=100,Top=key=="started-events"?240:100};placement.Width=value;Save();}
+        Children.Add(new WorldBossSettingsPanel(cards,Save,preview));
         Children.Add(EventPreferencesWindow.BuildBody(cards,()=>WidthOf("auto-events"),v=>SetWidth("auto-events",v),_=>reload(),reload,this));
         display.Children.Add(new TextBlock {Text=T("Started events width"),Margin=new(0,8,0,4)});
         var startedWidth=new Slider {Minimum=240,Maximum=1000,Value=WidthOf("started-events"),Style=(Style)FindResource("GoldSlider")};startedWidth.ValueChanged+=(_,e)=>SetWidth("started-events",e.NewValue);display.Children.Add(startedWidth);

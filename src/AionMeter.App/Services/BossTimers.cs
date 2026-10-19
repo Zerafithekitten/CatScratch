@@ -134,6 +134,12 @@ public sealed class BossTimers
         lock (_gate) return _timers.Values.ToList();
     }
 
+    internal IReadOnlyList<int> KnownWorldBossCodes()
+    {
+        lock(_gate)return _knownMaps.Values.SelectMany(m=>_data.FieldBossesInBlock(m.Block))
+            .Concat(_timers.Values.Where(t=>t.NpcCode>0).Select(t=>t.NpcCode)).Distinct().ToArray();
+    }
+
     /// <summary>The local character's server (0 until one is seen).</summary>
     public int CurrentServer
     {

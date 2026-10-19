@@ -15,7 +15,7 @@ public sealed class CardPlacement
     public double Height { get; set; } = 180;
     public bool Open { get; set; }
 }
-public sealed class TimerCards : IDisposable
+public sealed partial class TimerCards : IDisposable
 {
     public static readonly TimeZoneInfo DisplayZone = TimeZoneInfo.FindSystemTimeZoneById("W. Europe Standard Time");
     public static DateTimeOffset Berlin(DateTimeOffset value) => TimeZoneInfo.ConvertTime(value, DisplayZone);
@@ -34,6 +34,7 @@ public sealed class TimerCards : IDisposable
         public HashSet<string> FavoriteEvents { get; set; } = [];
         public double EventOpacity { get; set; } = 0.85;
         public bool ShowAllWorldBosses { get; set; }
+        public HashSet<int> SelectedWorldBosses {get;set;}=[];
         public int EventTileVersion { get; set; }
         public bool EventWindowOpen { get; set; } = true;
         public bool StartedEventWindowOpen { get; set; } = true;
@@ -51,9 +52,11 @@ public sealed class TimerCards : IDisposable
     private AppSettings? _settingsOverride;
     internal AppSettings Settings=>_settingsOverride ?? _meter.Settings;
 
+    private HashSet<string> _favoritesBaseline=[];
     internal TimerCards CreatePreferencesDraft() => new(_meter, persistent: false)
     {
         Saved = JsonSerializer.Deserialize<State>(JsonSerializer.Serialize(Saved))!,
+        _favoritesBaseline=new(Saved.FavoriteEvents),
         _settingsOverride = Settings.CreateDraft()
     };
 
@@ -64,6 +67,11 @@ public sealed class TimerCards : IDisposable
         Saved.SelectedEvents = new(source.SelectedEvents);
         Saved.EventOpacity = source.EventOpacity;
         Saved.ShowAllWorldBosses = source.ShowAllWorldBosses;
+        Saved.SelectedWorldBosses=new(source.SelectedWorldBosses);
+        foreach(var id in source.FavoriteEvents.Except(draft._favoritesBaseline))Saved.FavoriteEvents.Add(id);
+        foreach(var id in draft._favoritesBaseline.Except(source.FavoriteEvents))Saved.FavoriteEvents.Remove(id);
+        draft._favoritesBaseline=new(source.FavoriteEvents);
+        FavoritesChanged?.Invoke();
         Saved.EventWindowOpen = source.EventWindowOpen;
         Saved.StartedEventWindowOpen = source.StartedEventWindowOpen;
         Saved.SoundLeadMinutes = source.SoundLeadMinutes;
@@ -81,11 +89,13 @@ public sealed class TimerCards : IDisposable
     }
     public bool TestMode => _meter.DemoRunning;
     public event Action? FavoritesChanged;
-    public bool IsFavorite(string id)=>Saved.FavoriteEvents.Contains(id.StartsWith("auto:")?id[5..]:id);
+    public bool IsFavorite(string id)=>Saved.FavoriteEvents.Any(f=>FavoriteKey(f)==FavoriteKey(id));
     public void SetFavorite(string id,bool favorite)
     {
-        if(id.StartsWith("auto:"))id=id[5..];
-        if(favorite?!Saved.FavoriteEvents.Add(id):!Saved.FavoriteEvents.Remove(id))return;
+        id=FavoriteKey(id);
+        var changed=favorite?Saved.FavoriteEvents.Add(id):Saved.FavoriteEvents.RemoveWhere(f=>FavoriteKey(f)==id)>0;
+        if(!changed)return;
+        _scheduleKey=null;
         Save();FavoritesChanged?.Invoke();
     }
     public IReadOnlyList<EventStart> Schedule24Hours(DateTimeOffset now)
@@ -106,25 +116,23 @@ public sealed class TimerCards : IDisposable
         {
             var anchor=_meter.TestStartedAt;
             if(now>anchor.AddMinutes(8))anchor=new DateTimeOffset(now.Year,now.Month,now.Day,now.Hour,now.Minute,0,now.Offset);
-            var examples=AutomaticEventSchedule.Catalog.Where(e=>Saved.SelectedEvents.Contains(e.Id)).Select((e,i)=>new EventStart(e.Id,e.Name,i==0?anchor.AddSeconds(-30):anchor.AddMinutes(5*(i+1))));
-            if(Saved.ShowAllWorldBosses)examples=examples.Concat(_meter.Timers.All().Where(b=>b.NextSpawn is not null).Select(b=>new EventStart($"boss:{b.ServerId}:{b.NpcCode}",_meter.Data.NpcName(b.NpcCode),b.NextSpawn!.Value)));
+            var examples=AutomaticEventSchedule.Catalog.Where(e=>EffectiveScheduledIds().Contains(e.Id)).Select((e,i)=>new EventStart(e.Id,e.Name,i==0?anchor.AddSeconds(-30):anchor.AddMinutes(5*(i+1))));
+            if(Saved.ShowAllWorldBosses || SelectedBossCodes().Any())examples=examples.Concat(_meter.Timers.All().Where(b=>b.NextSpawn is not null && IncludeWorldBoss(b.NpcCode)).Select(b=>new EventStart($"boss:{b.ServerId}:{b.NpcCode}",_meter.Data.NpcName(b.NpcCode),b.NextSpawn!.Value)));
             return examples.Where(e=>(e.StartsAt>now || EventActivity.IsActive(e,now)) && e.StartsAt<=now.AddHours(1)).OrderBy(e=>e.StartsAt).ToArray();
         }
-        var key = Saved.EventRegion + ":" + Saved.ShowAllWorldBosses + ":" + string.Join('|', Saved.SelectedEvents);
+        var key = Saved.EventRegion + ":" + Saved.ShowAllWorldBosses + ":" + string.Join('|', EffectiveScheduledIds())+":"+string.Join('|',SelectedBossCodes());
         if (key == _scheduleKey && now >= _scheduleAt && now < _scheduleUntil) return _nextEvents;
-        var selected = Saved.ShowAllWorldBosses
-            ? Saved.SelectedEvents.Concat(AutomaticEventSchedule.Catalog.Where(e => EventKinds.For(e.Id) == "BOSS").Select(e => e.Id))
-            : Saved.SelectedEvents;
+        var selected=EffectiveScheduledIds();
         var scheduled = AutomaticEventSchedule.Next(now, Saved.EventRegion, selected, TimeSpan.FromMinutes(10))
             .Where(e => e.StartsAt > now || EventActivity.IsActive(e, now));
-        var liveBosses = Saved.ShowAllWorldBosses
+        var liveBosses = Saved.ShowAllWorldBosses || SelectedBossCodes().Any()
             ? _meter.Timers.ForServer(_meter.Timers.CurrentServer)
-                .Where(b => b.NpcCode > 0 && b.NextSpawn is { } next && next > now.AddMinutes(-2) && next <= now.AddHours(1))
+                .Where(b => b.NpcCode > 0 && IncludeWorldBoss(b.NpcCode) && b.NextSpawn is { } next && next > now.AddMinutes(-2) && next <= now.AddHours(1))
                 .Select(b => new EventStart($"boss:{b.ServerId}:{b.NpcCode}", _meter.Data.NpcName(b.NpcCode), b.NextSpawn!.Value))
             : Enumerable.Empty<EventStart>();
-        var retainedBosses = Saved.ShowAllWorldBosses ? _nextEvents.Where(e =>
-            e.Id.StartsWith($"boss:{_meter.Timers.CurrentServer}:") && EventActivity.IsActive(e,now)) : [];
-        var candidates = scheduled.Concat(liveBosses).Concat(retainedBosses).ToArray();
+        var retainedBosses = _nextEvents.Where(e =>
+            e.Id.StartsWith($"boss:{_meter.Timers.CurrentServer}:") && TryBossCode(e.Id,out var code) && IncludeWorldBoss(code) && EventActivity.IsActive(e,now));
+        var candidates = scheduled.Concat(liveBosses).Concat(retainedBosses).Concat(FavoriteScheduledBosses(now)).ToArray();
         _nextEvents = candidates.OrderBy(e => e.StartsAt).ThenBy(e => e.Id)
             .DistinctBy(e => (e.Id,e.StartsAt)).ToArray();
         _scheduleKey = key;
@@ -149,7 +157,7 @@ public sealed class TimerCards : IDisposable
         _meter = meter;
         _persistent = persistent && !meter.Settings.Transient;
         if (_persistent) Saved = JsonSettingsFile.Read<State>(_path) ?? new();
-        Saved.SelectedEvents ??= []; Saved.FavoriteEvents ??= []; Saved.Positions ??= []; Saved.Sounds ??= []; Saved.Events ??= [];
+        Saved.SelectedWorldBosses ??=[]; Saved.SelectedEvents ??= []; Saved.FavoriteEvents ??= []; Saved.Positions ??= []; Saved.Sounds ??= []; Saved.Events ??= [];
         if (Saved.EventRegion == "Europa") Saved.EventRegion = "Europe";
         if (Saved.EventTileVersion < 1)
         {
