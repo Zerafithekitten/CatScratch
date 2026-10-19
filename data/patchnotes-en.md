@@ -1,4 +1,15 @@
-﻿## CatScratch v3.0.6
+﻿## CatScratch v3.0.7
+
+### UPDATE BUTTON — INTEGRATED INTO THE CONTROL PANEL
+
+- The green Update! button now replaces the CatScratch title inside the existing control panel. The detached notification popup above the panel has been removed, so there is no separate notification window to become misplaced.
+- The replacement is shown only while a prepared update is available. Without one, the normal CatScratch title remains visible. Removing the prepared update restores the title.
+- The installed version stays underneath. The title slot retains its dimensions, so appearing or disappearing updates do not move or resize the panel or rearrange its controls.
+- Supports Horizontal, Vertical rail and Grid layouts. The vertical rail uses upright stacked Update! lettering in the same title area; the update indicator stays green in every layout.
+- The control remains clickable when overlays use global click-through. Clicking it retains the existing explicit apply-and-restart action; this hotfix does not introduce automatic restarts or change update verification.
+- Includes Stable 3.0.6's readable boss remaining-time row and Stable 3.0.5's localized reset settings. DPS layout, settings and user data are retained. CatScratch light remains unchanged.
+
+## CatScratch v3.0.6
 
 ### BOSS REST-TIME READABILITY — CLICK-THROUGH HOTFIX
 

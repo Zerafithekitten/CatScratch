@@ -6,13 +6,13 @@ A separate, always-on-top Windows DPS meter for **AION 2**, by Zerafithekitten. 
 
 | Channel | Current version | What it includes |
 | --- | --- | --- |
-| **Stable** | **[v3.0.6](https://github.com/Zerafithekitten/CatScratch/releases/tag/v3.0.6)** | Compact panel layouts, checklist with reset countdowns, Pet tracking modes and sounds, passive Hidden cube alerts, ONLY BOSS, defeat estimates, refined Test mode and DPS placement fixes. |
+| **Stable** | **[v3.0.7](https://github.com/Zerafithekitten/CatScratch/releases/tag/v3.0.7)** | Compact panel layouts, checklist with reset countdowns, Pet tracking modes and sounds, passive Hidden cube alerts, ONLY BOSS, defeat estimates, refined Test mode and DPS placement fixes. |
 | **Beta** | [Previous: v3.0.4-beta.13](https://github.com/Zerafithekitten/CatScratch/releases/tag/v3.0.4-beta.13) | Promoted to Stable 3.0.4, including the latest preview-layout and vertical-label corrections. |
 | **Light** | [v1.0.0](https://github.com/Zerafithekitten/CatScratch/releases/tag/light-v1.0.0) | Separate **DPS meter only** edition with essential settings. Independent ZIP download and settings; no additional CatScratch modules or automatic updater. |
 
 **CatScratch light** is installed separately from the full version. [Download its ZIP](https://github.com/Zerafithekitten/CatScratch/releases/download/light-v1.0.0/CatScratch-light-win-x64.zip) and extract it into its own folder. Light is maintained and updated **only on the owner's explicit request**; normal development continues on full CatScratch.
 
-English is the default. German, Russian and French are also available. Screenshots use synthetic sample data; names and numbers are examples. All features described below are included in **Stable v3.0.6** unless a limitation is stated.
+English is the default. German, Russian and French are also available. Screenshots use synthetic sample data; names and numbers are examples. All features described below are included in **Stable v3.0.7** unless a limitation is stated.
 
 ## Contents
 
@@ -260,13 +260,13 @@ Choose **Stable** or **Beta** in **Settings > Updates**. Stable is the default d
 
 With automatic updates enabled, CatScratch checks shortly after startup and **every ten minutes**. It downloads, verifies and extracts an available update in the background while the current meter keeps running.
 
-The small green **Update!** notice appears **only after the update is fully prepared**, in a separate popup above the control panel. It follows and hides with the panel, without changing the panel position or dimensions. Click it to apply the prepared files and restart; CatScratch does not restart automatically.
+The green **Update!** button appears **only after the update is fully prepared**, replacing the CatScratch title inside the existing control panel. Otherwise the normal CatScratch title remains visible. There is no separate notification window, and the panel position and dimensions stay unchanged. The installed version remains underneath. Horizontal, Vertical rail and Grid are supported. Click it to apply the prepared files and restart; CatScratch does not restart automatically.
 
-<img src="docs/screenshots/update-notice.png" alt="Small green Update! button shown separately above the control panel" width="72" />
+<img src="docs/images/inline-update-stable307.png" alt="Green Update! button replacing the CatScratch title inside the control panel" width="632" />
 
 After a successful new startup, the old backup, staged payload and downloaded ZIP are removed. Failed updates retain recovery files. Settings, saved fights, personal bests, recent players and captures are preserved. Update staging stays under `userdata/temp/updates`; a writable program folder is required.
 
-When a Beta is promoted and its Stable build starts, Beta subscribers automatically return to the Stable update channel. A later deliberate switch back to Beta is respected until the next Stable transition. The installed version then shows the Stable number, currently **3.0.6** without a beta suffix.
+When a Beta is promoted and its Stable build starts, Beta subscribers automatically return to the Stable update channel. A later deliberate switch back to Beta is respected until the next Stable transition. The installed version then shows the Stable number, currently **3.0.7** without a beta suffix.
 
 Use **Check now** in Settings or **Check for updates** in the tray menu for a manual check. Automatic checking and preparation can be disabled in Settings. CatScratch also reduces data-loading allocations and moves optional startup work behind the first meter display.
 

@@ -39,3 +39,5 @@ Write brief, high-level patch notes for Beta and detailed patch notes for Stable
 On 2026-10-19 the owner explicitly requested Stable hotfix 3.0.5 for English AM/PM checklist reset times and weekdays localized to the selected application language, including the matching reset tooltips. Publish after checks; Light remains unchanged.
 
 On 2026-10-19 the owner reviewed the boss estimate readability image and explicitly requested publishing it directly as Stable hotfix 3.0.6 after full checks. Keep Light unchanged.
+
+On 2026-10-19 the owner reviewed all three inline Update title replacements and explicitly approved publishing them as Stable hotfix 3.0.7, with no separate notification popup and the normal CatScratch title when no prepared update exists.

@@ -156,6 +156,7 @@ public partial class OverlayWindow : Window, IDisplayAppearance
         CompactHistory.Visibility=BossTimersLink.Visibility=DetailsLink.Visibility=Visibility.Visible;
         HistoryLink.Visibility=Visibility.Collapsed;
         WindowPinning.SetDisplayOnly(this,_displayOnly);
+        _controlsPanel?.RefreshUpdateBranding();
     }
     private Brush? _shellBackground, _shellBorder, _frameBorder;
     private System.Windows.Media.Effects.Effect? _frameEffect;

@@ -1,4 +1,4 @@
-using System.IO;
+﻿using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -45,6 +45,17 @@ internal static class ControlPanelChecks
                 var was=settings.ShowChecklistModule;checklist.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
                 Check(settings.ShowChecklistModule!=was,"Checklist toggle keeps its handler in "+layout);
                 checklist.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                var bounds=WindowPresentation.PhysicalBounds(panel);
+                var title=(TextBlock)overlay.FindName("ShellTitle");
+                Check(title.Visibility==Visibility.Visible && panel.InlineUpdate?.Visibility==Visibility.Collapsed,"Without an update the normal CatScratch title remains visible: "+layout);
+                panel.SetUpdateAvailable(true);overlay.Refresh();panel.UpdateLayout();
+                Check(title.Visibility==Visibility.Hidden && panel.InlineUpdate is {IsVisible:true} && Window.GetWindow(panel.InlineUpdate)==panel,"Ready Update replaces CatScratch in the same panel: "+layout);
+                Check(WindowPresentation.PhysicalBounds(panel)==bounds,"Update availability does not change the panel bounds: "+layout);
+                var update=panel.InlineUpdate!;var content=Visuals(update).OfType<TextBlock>().Last();
+                content.Measure(new Size(double.PositiveInfinity,double.PositiveInfinity));
+                Check(content.DesiredSize.Width<=update.ActualWidth+.5 && content.DesiredSize.Height<=update.ActualHeight+.5,"Inline Update lettering fits its title slot: "+layout);
+                panel.SetUpdateAvailable(false);overlay.Refresh();panel.UpdateLayout();
+                Check(title.Visibility==Visibility.Visible && update.Visibility==Visibility.Collapsed && WindowPresentation.PhysicalBounds(panel)==bounds,"Removing the update restores the original title and layout: "+layout);
             }
             var before=restores;panel.RestoreButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             Check(restores==before+1,"The DPS visibility control retains its callback");
@@ -54,7 +65,7 @@ internal static class ControlPanelChecks
             Check(checklist.IsVisible && panel.SettingsButton.IsVisible && exit.IsVisible,"Checklist, Settings and Exit remain accessible during global click-through");
             var boundsBefore=WindowPresentation.PhysicalBounds(panel);
             panel.SetUpdateAvailable(true);panel.UpdateLayout();
-            Check(panel.UpdateNotice.IsOpen && WindowPresentation.PhysicalBounds(panel)==boundsBefore,"The separate Update notice never moves or resizes the compact panel");
+            Check(panel.InlineUpdate is {IsVisible:true} inline && Window.GetWindow(inline)==panel && WindowPresentation.PhysicalBounds(panel)==boundsBefore,"Update replaces the title inside the panel without a separate window or size change");
             panel.SetUpdateAvailable(false);
             var draft=settings.CreateDraft();var preferences=new ControlPanelSettingsPanel(draft);
             var orientation=preferences.Children.OfType<ComboBox>().First();

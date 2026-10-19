@@ -1,4 +1,4 @@
-using System.IO;
+﻿using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using AionMeter.App.Windows;
@@ -150,23 +150,23 @@ internal static class PolishChecks
             finally{tooltip.IsOpen=false;}
             var panelBeforeNotice=WindowPresentation.PhysicalBounds(permanentPanel);
             permanentPanel.SetUpdateAvailable(true);permanentPanel.UpdateLayout();
-            check(permanentPanel.UpdateNotice.IsOpen && permanentPanel.UpdateNotice.Child is Button {Content:"Update!"}
+            check(permanentPanel.InlineUpdate is Button {IsVisible:true,Content:"Update!"}
                 && WindowPresentation.PhysicalBounds(permanentPanel)==panelBeforeNotice,
-                "Update! opens in a separate popup above the panel without changing panel position or size");
-            var noticeButton=(Button)permanentPanel.UpdateNotice.Child;
+                "Update! replaces the title inside the panel without changing its position or size");
+            var noticeButton=permanentPanel.InlineUpdate!;
             noticeButton.ApplyTemplate();noticeButton.UpdateLayout();
             var noticeText=Visuals(noticeButton).OfType<TextBlock>().First(t=>t.Text=="Update!");
             noticeText.Measure(new Size(double.PositiveInfinity,double.PositiveInfinity));
-            check(noticeText.DesiredSize.Height<=noticeButton.ActualHeight-noticeButton.Padding.Top-noticeButton.Padding.Bottom-2
+            check(noticeText.DesiredSize.Height<=noticeButton.ActualHeight-noticeButton.Padding.Top-noticeButton.Padding.Bottom
                 && ((System.Windows.Media.SolidColorBrush)noticeButton.Foreground).Color.G>((System.Windows.Media.SolidColorBrush)noticeButton.Foreground).Color.R,
                 "The green Update! notice has sufficient text height without clipping");
             permanentPanel.Hide();
-            check(!permanentPanel.UpdateNotice.IsOpen,"Hiding the panel hides its separate update notice");
+            check(!permanentPanel.InlineUpdate!.IsVisible,"Hiding the panel also hides its inline update button");
             permanentPanel.Show();
-            check(permanentPanel.UpdateNotice.IsOpen,"The ready update notice returns with the panel");
+            check(permanentPanel.InlineUpdate!.IsVisible,"The ready update notice returns with the panel");
             permanentPanel.SetUpdateAvailable(false);
-            check(!permanentPanel.UpdateNotice.IsOpen && WindowPresentation.PhysicalBounds(permanentPanel)==panelBeforeNotice,
-                "Removing a ready update closes only the notice and preserves panel bounds");
+            check(!permanentPanel.InlineUpdate!.IsVisible && WindowPresentation.PhysicalBounds(permanentPanel)==panelBeforeNotice,
+                "Removing a ready update restores the title and preserves panel bounds");
             var exitButton=(Button)detachedOverlay.FindName("ShellHideButton");
             var version=(TextBlock)detachedOverlay.FindName("InstalledVersionText");
             check(Window.GetWindow(exitButton)==permanentPanel && Window.GetWindow(version)==permanentPanel,"Version and the sole CatScratch Exit button move to the permanent control panel");

@@ -28,9 +28,11 @@ internal sealed class MeterControlsWindow : Window
     private ControlsLayout? _layout;
     private ControlsAnchor? _anchor;
     private bool _aligning;
-    private readonly Popup _updateNotice=new(){AllowsTransparency=true,StaysOpen=true,Placement=PlacementMode.Top};
+    private Button? _inlineUpdate;
+    private TextBlock? _brandTitle;
+    private bool? _updateRail;
     private bool _updateAvailable;
-    internal Popup UpdateNotice=>_updateNotice;
+    internal Button? InlineUpdate=>_inlineUpdate;
     internal double BackgroundOpacity=>_backdrop.Opacity;
     internal Button SettingsButton { get; private set; }
     internal Button RestoreButton { get; }
@@ -66,9 +68,7 @@ internal sealed class MeterControlsWindow : Window
             settings.ControlsLeft=Left;settings.ControlsTop=Top;settings.Save();moved?.Invoke(Left,Top);
         });
         Loaded+=(_,_)=>AlignToScreen();SizeChanged+=(_,_)=>AlignToScreen();
-        LocationChanged+=(_,_)=>SyncUpdateNotice();SizeChanged+=(_,_)=>SyncUpdateNotice();
-        IsVisibleChanged+=(_,_)=>SyncUpdateNotice();
-        Closed+=(_,_)=>{_updateAvailable=false;_updateNotice.IsOpen=false;_updateNotice.Child=null;};
+        Closed+=(_,_)=>_updateAvailable=false;
         RefreshText();RestorePosition();
     }
 
@@ -84,9 +84,6 @@ internal sealed class MeterControlsWindow : Window
         _verticalFooter=new Grid {Margin=new(4,1,4,3),Visibility=Visibility.Collapsed};
         _verticalFooter.ColumnDefinitions.Add(new(){Width=GridLength.Auto});_verticalFooter.ColumnDefinitions.Add(new(){Width=new(1,GridUnitType.Star)});
         var root=_layoutRoot=new StackPanel();root.Children.Add(header);root.Children.Add(buttons);root.Children.Add(_verticalActions);root.Children.Add(_verticalFooter);
-        var updateButton=CreateUpdateNoticeButton(this);
-        updateButton.Click+=(_,_)=>overlay.OpenReadyUpdate();
-        _updateNotice.Child=updateButton;_updateNotice.PlacementTarget=this;
         SetUpdateAvailable(update.Visibility==Visibility.Visible);
         SetFrame(root);
         _header=(Grid)header;_buttons=(WrapPanel)buttons;
@@ -100,29 +97,58 @@ internal sealed class MeterControlsWindow : Window
         _caption=_header.Children.OfType<StackPanel>().Single(p=>p.Name=="ShellCaption");
         _personalButton=_caption.Children.OfType<FrameworkElement>().Single(p=>p.Name=="PersonalCombatButton");
         _petButton=_caption.Children.OfType<FrameworkElement>().Single(p=>p.Name=="PetTrackerButton");
+        var branding=(StackPanel)_caption.Children[1];
+        _brandTitle=(TextBlock)branding.Children[0];
+        branding.Children.Remove(_brandTitle);
+        var titleSlot=new Grid {ClipToBounds=true};titleSlot.Children.Add(_brandTitle);
+        _inlineUpdate=CreateInlineUpdateButton(this);
+        _inlineUpdate.Click+=(_,_)=>overlay.OpenReadyUpdate();
+        _inlineUpdate.SetBinding(WidthProperty,new System.Windows.Data.Binding(nameof(ActualWidth)){Source=_brandTitle});
+        _inlineUpdate.SetBinding(HeightProperty,new System.Windows.Data.Binding(nameof(ActualHeight)){Source=_brandTitle});
+        titleSlot.Children.Add(_inlineUpdate);branding.Children.Insert(0,titleSlot);
+        RefreshUpdateBranding();
         _horizontalItems=_buttons.Children.Cast<UIElement>().ToArray();
         foreach(var item in _horizontalItems.OfType<FrameworkElement>().Concat([_personalButton,_petButton]))
             _horizontalSizing[item]=(item.Width,item.Height,item.Margin,item.HorizontalAlignment);
         SizeToContent=SizeToContent.Height;Height=double.NaN;ApplyLayout();
     }
 
-    internal static Button CreateUpdateNoticeButton(FrameworkElement resources)=>new()
+    internal static Button CreateInlineUpdateButton(FrameworkElement resources)
     {
-        Content="Update!",Width=72,Height=26,Padding=new Thickness(8,2,8,2),
-        FontFamily=new("Segoe UI"),FontSize=12,FontWeight=FontWeights.SemiBold,
-        Style=(Style)resources.FindResource("GhostButton"),
-        Background=ThemeColors.Brush("#223A2D"),BorderBrush=ThemeColors.Brush("#4FC18A"),Foreground=ThemeColors.Brush("#A4E8BD"),
-        UseLayoutRounding=true,SnapsToDevicePixels=true,ToolTip=UiText.Current.TipUpdate
-    };
-
-    internal void SetUpdateAvailable(bool available){_updateAvailable=available;SyncUpdateNotice();}
-    private void SyncUpdateNotice()
+        var surface=new FrameworkElementFactory(typeof(Border));
+        surface.SetValue(Border.CornerRadiusProperty,new CornerRadius(2));
+        surface.SetBinding(Border.BackgroundProperty,new System.Windows.Data.Binding(nameof(Control.Background)){RelativeSource=new(System.Windows.Data.RelativeSourceMode.TemplatedParent)});
+        var content=new FrameworkElementFactory(typeof(ContentPresenter));
+        content.SetValue(FrameworkElement.HorizontalAlignmentProperty,HorizontalAlignment.Center);
+        content.SetValue(FrameworkElement.VerticalAlignmentProperty,VerticalAlignment.Center);
+        surface.AppendChild(content);
+        return new Button
+        {
+            Content="Update!",Padding=new(0),MinWidth=0,MinHeight=0,
+            FontFamily=new("Segoe UI"),FontSize=9.5,FontWeight=FontWeights.SemiBold,Focusable=false,
+            Style=(Style)resources.FindResource("GhostButton"),Template=new ControlTemplate(typeof(Button)){VisualTree=surface},
+            Background=ThemeColors.Brush("#223A2D"),Foreground=ThemeColors.Brush("#A4E8BD"),
+            UseLayoutRounding=true,SnapsToDevicePixels=true,ToolTip=UiText.Current.TipUpdate
+        };
+    }
+    internal void SetUpdateAvailable(bool available){_updateAvailable=available;RefreshUpdateBranding();}
+    internal void RefreshUpdateBranding()
     {
-        _updateNotice.HorizontalOffset=(ActualWidth-72)/2;
-        _updateNotice.VerticalOffset=-4;
-        _updateNotice.IsOpen=_updateAvailable && IsVisible && WindowState!=WindowState.Minimized;
-        // Recalculate screen placement after a parent move without touching the panel's bounds.
-        if(_updateNotice.IsOpen){var offset=_updateNotice.HorizontalOffset;_updateNotice.HorizontalOffset=offset+.01;_updateNotice.HorizontalOffset=offset;}
+        if(_inlineUpdate is null || _brandTitle is null)return;
+        _brandTitle.Visibility=_updateAvailable?Visibility.Hidden:Visibility.Visible;
+        _inlineUpdate.Visibility=_updateAvailable?Visibility.Visible:Visibility.Collapsed;
+        _inlineUpdate.ToolTip=UiText.Current.TipUpdate;
+        if(_updateRail==IsVerticalRail)return;
+        _updateRail=IsVerticalRail;
+        _inlineUpdate.FontSize=IsVerticalRail?8:9.5;
+        _inlineUpdate.Content=IsVerticalRail?"U\np\nd\na\nt\ne\n!":"Update!";
+        var text=new FrameworkElementFactory(typeof(TextBlock));
+        text.SetBinding(TextBlock.TextProperty,new System.Windows.Data.Binding("."));
+        text.SetValue(TextBlock.TextAlignmentProperty,TextAlignment.Center);
+        text.SetValue(TextBlock.LineHeightProperty,8.5);
+        text.SetValue(TextBlock.LineStackingStrategyProperty,LineStackingStrategy.BlockLineHeight);
+        // The fixed title slot preserves panel dimensions when updates appear or disappear.
+        _inlineUpdate.ContentTemplate=IsVerticalRail?new DataTemplate{VisualTree=text}:null;
     }
 
     internal void RefreshText()
@@ -168,7 +194,7 @@ internal sealed class MeterControlsWindow : Window
             _caption.LayoutTransform=rail?new RotateTransform(-90):Transform.Identity;
             paw.Margin=rail?new(0,0,0,2):new(0,0,3,0);
             var branding=(StackPanel)_caption.Children[1];
-            var title=(TextBlock)branding.Children[0];
+            var title=_brandTitle!;
             title.FontSize=rail?9:10.5;title.TextAlignment=rail?TextAlignment.Center:TextAlignment.Left;
             title.LineHeight=rail?8.5:double.NaN;
             title.LineStackingStrategy=rail?LineStackingStrategy.BlockLineHeight:LineStackingStrategy.MaxHeight;
@@ -205,6 +231,7 @@ internal sealed class MeterControlsWindow : Window
                 if(child is ContentControl {Content:Button pin}){child.Width=18;pin.Width=pin.Height=18;pin.Margin=new(0);pin.Padding=new(0);pin.RenderTransformOrigin=new(.5,.5);pin.RenderTransform=rail?new RotateTransform(-90):Transform.Identity;}
             }
             ArrangeActions(vertical,rail);
+            RefreshUpdateBranding();
         }
         if(_anchor!=_settings.ControlsAnchor){_anchor=_settings.ControlsAnchor;AlignToScreen();}
     }

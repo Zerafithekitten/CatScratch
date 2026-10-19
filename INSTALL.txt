@@ -1,7 +1,7 @@
 ﻿CatScratch — AION 2 for Windows
 
 RELEASE CHANNELS
-Stable: v3.0.6
+Stable: v3.0.7
 Previous Beta: v3.0.4-beta.13 — promoted to Stable 3.0.4 with the final reviewed corrections.
 Downloads: https://github.com/Zerafithekitten/CatScratch/releases
 The current GitHub README describes availability by channel.
@@ -80,7 +80,7 @@ UPDATES
 Choose Stable or Beta in Settings > Updates.
 With automatic updates enabled, check shortly after startup and every ten minutes.
 Download, verify and extract updates in the background while the current meter runs.
-A small green Update! button appears separately above the control panel only when preparation is complete. It does not change panel position or size. Click it to apply prepared files and restart. No automatic restart occurs.
+A green Update! button replaces the CatScratch title inside the control panel only when preparation is complete. Otherwise the CatScratch title remains visible. No separate update popup is created, and panel position and size stay unchanged. Click it to apply prepared files and restart. No automatic restart occurs.
 Both installed and portable copies support in-app updates in a writable folder.
 Preserve userdata; remove old backups, staging and ZIP only after successful new startup.
 Failed updates retain recovery files. Temporary update data uses userdata/temp/updates.
