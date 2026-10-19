@@ -92,7 +92,8 @@ public partial class OverlayWindow : Window, IDisplayAppearance
         {
             _hwnd = new WindowInteropHelper(this).Handle;
             // Clicking the overlay must never pull keyboard focus away from the game window.
-            NativeMethods.SetExStyle(_hwnd, 0, NativeMethods.WS_EX_NOACTIVATE | NativeMethods.WS_EX_TOOLWINDOW);
+            NativeMethods.SetExStyle(_hwnd, _settings.ClickThrough?NativeMethods.WS_EX_NOACTIVATE:0,
+                NativeMethods.WS_EX_TOOLWINDOW | (_settings.ClickThrough?0:NativeMethods.WS_EX_NOACTIVATE));
             ApplyClickThrough();
             // WindowPresentation constrains after Loaded, using the same physical screen
             // bounds as dragging. A second WorkingArea clamp here caused restart drift.

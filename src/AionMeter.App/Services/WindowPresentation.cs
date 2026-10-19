@@ -58,21 +58,39 @@ internal static class WindowPresentation
 
     // Games can reorder topmost windows after activation or a display-mode change. Recover only
     // our visible overlays, without activating them, moving them, or showing hidden modules.
+    private static long _nextTopmostRefresh;
+    private static bool _topmostQueued;
     internal static void MaintainTopmost()
     {
         var foreground=GetForegroundWindow();
         GetWindowThreadProcessId(foreground,out var process);
-        if(process!=(uint)Environment.ProcessId) // Keep Settings and interactive dialogs above overlays.
-            foreach(var window in Windows.Keys.ToArray())RestoreTopmost(window);
+        var force=Environment.TickCount64>=_nextTopmostRefresh;
+        if(process!=(uint)Environment.ProcessId)
+        {
+            if(force)_nextTopmostRefresh=Environment.TickCount64+2000;
+            RepairTopmostForForeground(process,force);
+        }
         // Tooltips are separate native popup windows. Reassert them after overlays, without activation.
         foreach(var tooltip in OpenTooltips.ToArray())RestoreTooltip(tooltip);
     }
-    internal static bool RestoreTopmost(Window window)
+    internal static void RepairTopmostForForeground(uint process,bool force)
+    {
+        // Preserve Settings, audio pickers and other interactive windows while this app has focus.
+        if(process==(uint)Environment.ProcessId)return;
+        foreach(var window in Windows.Keys.ToArray())RestoreTopmost(window,force);
+    }
+    private static void QueueTopmostRecovery()
+    {
+        if(!Enabled || _topmostQueued || Application.Current is not {} app || app.Dispatcher.HasShutdownStarted || app is App {IsExiting:true})return;
+        _topmostQueued=true;
+        app.Dispatcher.BeginInvoke(()=>{_topmostQueued=false;if(!app.Dispatcher.HasShutdownStarted)MaintainTopmost();},System.Windows.Threading.DispatcherPriority.Normal);
+    }
+    internal static bool RestoreTopmost(Window window,bool force=false)
     {
         if(!window.Topmost || !window.IsVisible || window.WindowState==WindowState.Minimized)return false;
         var handle=new WindowInteropHelper(window).Handle;
         if(handle==0)return false;
-        var covered=((long)NativeMethods.GetWindowLongPtr(handle,NativeMethods.GWL_EXSTYLE)&8)==0;
+        var covered=force || ((long)NativeMethods.GetWindowLongPtr(handle,NativeMethods.GWL_EXSTYLE)&8)==0;
         for(var previous=GetWindow(handle,3);!covered && previous!=0;previous=GetWindow(previous,3)) // GW_HWNDPREV
         {
             if(!IsWindowVisible(previous))continue;
@@ -113,12 +131,16 @@ internal static class WindowPresentation
             if(previous is not null && previous!=root && previous.LayoutTransform==scale)previous.LayoutTransform=Transform.Identity;
             root.LayoutTransform=scale;previous=root;
         }
-        window.Loaded+=(_,_)=>{Layout();PlaceOnPreferredScreen(window);Constrain(window);};
+        window.Loaded+=(_,_)=>{Layout();PlaceOnPreferredScreen(window);Constrain(window);QueueTopmostRecovery();};
+        window.IsVisibleChanged+=(_,_)=>{if(window.IsVisible)QueueTopmostRecovery();};
         window.SizeChanged+=(_,_)=>Constrain(window);
         window.LocationChanged+=(_,_)=>Constrain(window);
         window.Closed+=(_,_)=>{Windows.Remove(window);Limits.Remove(window);NativeDragging.Remove(window);};
         window.SourceInitialized+=(_,_)=>HwndSource.FromHwnd(new WindowInteropHelper(window).Handle)?.AddHook((nint hwnd,int msg,nint wp,nint lp,ref bool handled)=>
         {
+            // Recover promptly after app deactivation, a display change or native topmost demotion.
+            if(msg==0x001C && wp==0 || msg==0x007E || msg==0x0047 && window.Topmost &&
+                ((long)NativeMethods.GetWindowLongPtr(hwnd,NativeMethods.GWL_EXSTYLE)&8)==0)QueueTopmostRecovery();
             if(msg==0x0231)NativeDragging.Add(window);
             if(msg==0x0232){NativeDragging.Remove(window);Constrain(window);}
             if(!Enabled || msg is not (0x0216 or 0x0214) || lp==0)return 0; // WM_MOVING / WM_SIZING

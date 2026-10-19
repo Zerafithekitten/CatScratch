@@ -31,6 +31,12 @@ public sealed partial class TimerHubWindow : Window, IDisplayAppearance
     }
     public Func<DateTimeOffset>? ClockOverride { get; set; }
     private static SolidColorBrush ColorBrush(string hex) => ThemeColors.Brush(hex);
+    internal static TimerHubWindow CreateOverlay(TimerCards cards,bool startedOnly=false)
+    {
+        var window=new TimerHubWindow(cards,startedOnly);
+        WindowClickThrough.Attach(window,()=>cards.Settings.ClickThrough,()=>cards.Saved.EventOpacity);
+        return window;
+    }
     public TimerHubWindow(TimerCards cards, bool startedOnly = false)
     {
         AppIcon.Apply(this);

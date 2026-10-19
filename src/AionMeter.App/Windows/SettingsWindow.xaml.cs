@@ -159,8 +159,8 @@ public partial class SettingsWindow : Window
         ShowDpsMeterCheck.Content=T.Localize("Show DPS meter");
         ShowDpsMeterCheck.IsChecked=s.ShowDpsMeterModule;
         RememberClickThroughCheck.IsChecked=s.RememberClickThrough;
-        RememberClickThroughCheck.Content=T.Localize("Remember click-through after restart");
-        RememberClickThroughHint.Text=T.Localize("Restores the last click-through state when CatScratch starts. The control panel stays clickable.");
+        RememberClickThroughCheck.Content=T.Localize("Start with click-through enabled");
+        RememberClickThroughHint.Text=T.Localize("Always enables click-through at startup, even after a temporary unlock. The control panel stays clickable.");
         ShowDpsMeterHint.Text=T.Localize("Hides combat statistics but keeps a small CatScratch bar with Settings available. Capture and other modules keep running.");
         GameStartTitle.Text=T.Localize("AION 2 companion");
         FollowGameCheck.Content=T.Localize("Start and close CatScratch with AION 2");

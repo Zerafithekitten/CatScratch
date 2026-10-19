@@ -44,6 +44,7 @@ public partial class App : Application
     private HotkeyManager? _hotkeys;
     private readonly WindowVisibilityGroup _windowVisibility=new();
     private DispatcherTimer? _timer;
+    private DispatcherTimer? _topmostTimer;
     private DispatcherTimer? _gameTimer;
     private GameExitGate _gameExit = new();
     private string? _watchedGame;
@@ -246,6 +247,13 @@ public partial class App : Application
             catch(Exception error){File.WriteAllText(placementPath,error.ToString());Shutdown(1);}
             return;
         }
+        if(ArgValue(e.Args,"--check-topmost") is { } topmostPath)
+        {
+            Log.Enabled=false;
+            try{TopmostChecks.Run(topmostPath);Shutdown();}
+            catch(Exception error){File.WriteAllText(topmostPath,error.ToString());Shutdown(1);}
+            return;
+        }
         if(ArgValue(e.Args,"--check-world-boss-events") is { } worldBossPath)
         {
             Log.Enabled=false;
@@ -417,7 +425,7 @@ public partial class App : Application
         Dispatcher.BeginInvoke(() =>
         {
             if (!IsExiting && _timerCards!.Saved.EventWindowOpen) ShowTimerHub();
-            if (!IsExiting && _timerCards!.Saved.StartedEventWindowOpen) OpenStartedEvents(false);
+            if (!IsExiting && _timerCards!.Saved.StartedEventWindowOpen) OpenStartedEvents();
         }, DispatcherPriority.ApplicationIdle);
 
         // A new player's first start: without Npcap nothing can be measured — say so and offer the download.
@@ -442,6 +450,10 @@ public partial class App : Application
         _timer = new DispatcherTimer(DispatcherPriority.Background) { Interval = TimeSpan.FromMilliseconds(200) };
         _timer.Tick += (_, _) => OnTick();
         _timer.Start();
+        // Independent of combat refresh and Background-priority dispatcher traffic.
+        _topmostTimer=new DispatcherTimer(DispatcherPriority.Normal){Interval=TimeSpan.FromMilliseconds(250)};
+        _topmostTimer.Tick+=(_,_)=>{if(!_shutdownStarted)WindowPresentation.MaintainTopmost();};
+        _topmostTimer.Start();
         _watchedGame=settings.GameExecutable;
         if(e.Args.Contains("--game-session")) _gameExit.ShouldClose(settings.FollowGame,true,DateTimeOffset.UtcNow);
         _gameTimer=new DispatcherTimer(DispatcherPriority.Background) { Interval=TimeSpan.FromSeconds(2) };
@@ -523,7 +535,6 @@ public partial class App : Application
         SyncBossTiming();
         if (++_ticks % 5 == 0)
         {
-            WindowPresentation.MaintainTopmost();
             _tray?.Update(_overlay.IsVisible, _meter.Settings.ClickThrough, _meter.DemoRunning ? "demo" : _meter.CaptureStatus.Message);
             CheckBossAlerts();
             CheckEventSounds();
@@ -807,7 +818,7 @@ public partial class App : Application
         if (reopenEvents) ShowTimerHub();
         var reopenStarted = _startedEvents?.IsVisible == true;
         _startedEvents?.Close();
-        if (reopenStarted) OpenStartedEvents(false);
+        if (reopenStarted) OpenStartedEvents();
         _tray?.ApplyTexts();
         _meterControls?.RefreshText();
         _overlay.OnLanguageChanged();
@@ -919,10 +930,10 @@ public partial class App : Application
     private void ToggleEventModule()
     {
         if(_timerHub is {IsLoaded:true})_timerHub.Close();
-        else OpenTimerHub(false);
+        else OpenTimerHub();
     }
-    public void ShowTimerHub()=>OpenTimerHub(true);
-    public void ShowStartedEvents()=>OpenStartedEvents(true);
+    public void ShowTimerHub()=>OpenTimerHub();
+    public void ShowStartedEvents()=>OpenStartedEvents();
     public void ShowEventSchedule()
     {
         if(_eventSchedule is {IsLoaded:true}){_eventSchedule.Reload();Activate(_eventSchedule);return;}
@@ -930,23 +941,18 @@ public partial class App : Application
         _eventSchedule.Closed+=(_,_)=>_eventSchedule=null;
         _eventSchedule.Show();_windowVisibility.Track(_eventSchedule);
     }
-    private void OpenStartedEvents(bool interactive)
+    private void OpenStartedEvents()
     {
-        if (interactive && _meter.Settings.ClickThrough) ToggleClickThrough();
-        if (_startedEvents is { IsLoaded:true }) { Activate(_startedEvents); return; }
-        _startedEvents = new TimerHubWindow(_timerCards!, startedOnly:true);
-        WindowClickThrough.Attach(_startedEvents,()=>_meter.Settings.ClickThrough,()=>_timerCards!.Saved.EventOpacity);
+        if (_startedEvents is { IsLoaded:true }) { if(!_meter.Settings.ClickThrough)Activate(_startedEvents); return; }
+        _startedEvents = TimerHubWindow.CreateOverlay(_timerCards!, startedOnly:true);
         _startedEvents.Closed+=(_,_)=>_startedEvents=null;
         _startedEvents.Show();
         _windowVisibility.Track(_startedEvents);
     }
-    private void OpenTimerHub(bool interactive)
+    private void OpenTimerHub()
     {
-        // Opening the event controls is an explicit request to interact with the displays.
-        if (interactive && _meter.Settings.ClickThrough) ToggleClickThrough();
-        if (_timerHub is { IsLoaded: true }) { Activate(_timerHub); return; }
-        _timerHub = new TimerHubWindow(_timerCards!);
-        WindowClickThrough.Attach(_timerHub, () => _meter.Settings.ClickThrough, () => _timerCards!.Saved.EventOpacity);
+        if (_timerHub is { IsLoaded: true }) { if(!_meter.Settings.ClickThrough)Activate(_timerHub); return; }
+        _timerHub = TimerHubWindow.CreateOverlay(_timerCards!);
         _timerHub.Closed += (_, _) => _timerHub = null;
         _timerHub.Show();
         _windowVisibility.Track(_timerHub);
@@ -992,8 +998,8 @@ public partial class App : Application
     {
         _eventSchedule?.Reload();
         if(_timerCards is not { } cards)return;
-        if(cards.Saved.EventWindowOpen){if(_timerHub is null)OpenTimerHub(false);}else _timerHub?.Close();
-        if(cards.Saved.StartedEventWindowOpen){if(_startedEvents is null)OpenStartedEvents(false);}else _startedEvents?.Close();
+        if(cards.Saved.EventWindowOpen){if(_timerHub is null)OpenTimerHub();}else _timerHub?.Close();
+        if(cards.Saved.StartedEventWindowOpen){if(_startedEvents is null)OpenStartedEvents();}else _startedEvents?.Close();
         foreach(var pair in new[]{(Window:_timerHub,Key:"auto-events"),(Window:_startedEvents,Key:"started-events")})
             if(pair.Window is { } window){if(cards.Saved.Positions.TryGetValue(pair.Key,out var position))window.Width=Math.Clamp(position.Width,240,1000);window.Opacity=cards.Saved.EventOpacity;window.Reload();}
     }
@@ -1044,8 +1050,8 @@ public partial class App : Application
         _overlay.ApplyAppearance();_overlay.Left=placement.Left;_overlay.Top=placement.Top;
         WindowPresentation.Constrain(_overlay);
         _timerCards.Save();_timerCards.Restore();
-        if(profile.Upcoming)OpenTimerHub(false);
-        if(profile.Started)OpenStartedEvents(false);
+        if(profile.Upcoming)OpenTimerHub();
+        if(profile.Started)OpenStartedEvents();
         if(_meter.Settings.ShowPetTrackerModule)TogglePetModule();
         if(profile.BossTimers is {Open:true} boss){ShowBossTimers();_timersWindow!.Left=boss.Left;_timersWindow.Top=boss.Top;_timersWindow.Width=Math.Max(_timersWindow.MinWidth,boss.Width);_timersWindow.Height=Math.Max(_timersWindow.MinHeight,boss.Height);WindowPresentation.Constrain(_timersWindow);}
         SetOverlayVisible(_meter.Settings.OverlayVisible,updateModule:false);
@@ -1175,6 +1181,7 @@ public partial class App : Application
         if (_meter is not null) Log.Info("Exiting");
         _modulePreview?.Dispose();_modulePreview=null;
         _timer?.Stop();
+        _topmostTimer?.Stop();
         _gameTimer?.Stop();
         _timerCards?.Dispose();
         _showWait?.Unregister(null);

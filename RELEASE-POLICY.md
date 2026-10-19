@@ -51,3 +51,5 @@ On 2026-10-19 the owner resumed the held Stable hotfix with "mach erstmal den ho
 On 2026-10-19 the owner explicitly authorized publishing the opt-in click-through restart preference to Stable after verification as v3.0.11. Show the actual setting and run full release validation; keep Light unchanged.
 
 On 2026-10-19 the owner reviewed the individual world boss settings image and explicitly authorized "upload beta" for v3.0.12-beta.1. Run complete release checks; publish only beta and its prerelease tag with latest=false. Keep main, Stable 3.0.11 and Light unchanged.
+
+On 2026-10-19 the owner authorized "ab in die beta damit" for topmost recovery, then added restart click-through and missing transparent appearance to the same correction. Publish all verified fixes as v3.0.12-beta.2 with latest=false, preserving main, Stable 3.0.11 and Light.

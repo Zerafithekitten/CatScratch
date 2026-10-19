@@ -48,14 +48,14 @@ jobs:
       - name: Verify event panels and complete shutdown
         shell: pwsh
         run: |
-          foreach ($check in @('interaction', 'shutdown', 'performance', 'event-audio', 'release250', 'boss-records', 'beta4', 'checklist', 'panel', 'enhancements', 'placement', 'boss-timing', 'clickthrough-startup', 'world-boss-events')) {
+          foreach ($check in @('interaction', 'shutdown', 'performance', 'event-audio', 'release250', 'boss-records', 'beta4', 'checklist', 'panel', 'enhancements', 'placement', 'boss-timing', 'clickthrough-startup', 'world-boss-events', 'topmost')) {
             $result = "$env:RUNNER_TEMP/meter-$check.txt"
             $process = Start-Process "$PWD/dist/payload/CatScratch.exe" -ArgumentList @("--check-$check",("`"$result`"")) -WindowStyle Hidden -PassThru
             if (-not $process.WaitForExit(20000)) { Stop-Process -Id $process.Id; throw "$check verification timed out" }
             Get-Content $result
             $process.Refresh()
             if ($process.ExitCode) { throw "$check verification failed" }
-            if ($check -in @('interaction', 'event-audio', 'release250', 'boss-records', 'beta4', 'checklist', 'panel', 'enhancements', 'placement', 'boss-timing', 'clickthrough-startup', 'world-boss-events')) { $null = Get-Content $result -Raw | ConvertFrom-Json -ErrorAction Stop }
+            if ($check -in @('interaction', 'event-audio', 'release250', 'boss-records', 'beta4', 'checklist', 'panel', 'enhancements', 'placement', 'boss-timing', 'clickthrough-startup', 'world-boss-events', 'topmost')) { $null = Get-Content $result -Raw | ConvertFrom-Json -ErrorAction Stop }
           }
           # Diagnostics may create their own empty cache folders. Never include them in Setup.
           $payload = [IO.Path]::GetFullPath("$PWD/dist/payload").TrimEnd('\') + '\'

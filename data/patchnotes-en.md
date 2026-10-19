@@ -1,4 +1,13 @@
-﻿## CatScratch v3.0.12-beta.1
+﻿## CatScratch v3.0.12-beta.2
+
+### Overlay visibility and click-through fixes
+
+- Topmost recovery now runs independently of the meter's background refresh, with prompt recovery after window deactivation or display changes and a periodic native refresh. It preserves position, size, click-through and keyboard focus, skips hidden/minimized windows, and respects active CatScratch dialogs. This hardens recovery; confirmation in the reported in-game situation is still needed.
+- The former Remember click-through option is now clearly labeled **Start with click-through enabled**. When enabled, startup always enables the mode, even if a temporary unlock was saved previously. Existing enabled preferences are retained. The DPS window also keeps its native no-activation flag and transparent appearance.
+- Opening Upcoming events or Started events no longer silently disables global click-through. Both modules inherit the chosen state; the control panel remains clickable for explicit unlocking.
+- Includes all Beta 1 world boss features. Stable remains 3.0.11; CatScratch light is unchanged.
+
+## CatScratch v3.0.12-beta.1
 
 ### Individual world bosses
 

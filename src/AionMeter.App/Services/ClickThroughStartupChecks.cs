@@ -21,10 +21,10 @@ internal static class ClickThroughStartupChecks
                 JsonSettingsFile.Write(path,original);
                 var restored=JsonSettingsFile.Read<AppSettings>(path)!;restored.Transient=true;
                 restored.ApplyStartupClickThrough();
-                Check(restored.RememberClickThrough==remember && restored.ClickThrough==(remember && enabled),$"Restart restores state only when opted in: remember={remember}, previous={enabled}");
+                Check(restored.RememberClickThrough==remember && restored.ClickThrough==remember,$"Startup preference controls initial mode regardless of temporary state: remember={remember}, previous={enabled}");
             }
             var settings=new AppSettings{Transient=true,DownloadIcons=false,RememberClickThrough=true,ClickThrough=true};
-            settings.ApplyStartupClickThrough();
+            settings.ClickThrough=false;settings.ApplyStartupClickThrough();
             using var meter=new MeterService(settings,null);
             var overlay=new OverlayWindow(meter,exitOnClose:false){Left=-30000,Top=-30000};
             var controls=new MeterControlsWindow(settings,()=>{},()=>{}){Left=-30000,Top=-30000};
@@ -33,8 +33,26 @@ internal static class ClickThroughStartupChecks
                 overlay.MoveControlsTo(controls);overlay.Show();controls.Show();
                 var style=(long)NativeMethods.GetWindowLongPtr(new WindowInteropHelper(overlay).Handle,NativeMethods.GWL_EXSTYLE);
                 var controlsStyle=(long)NativeMethods.GetWindowLongPtr(new WindowInteropHelper(controls).Handle,NativeMethods.GWL_EXSTYLE);
-                Check((style&NativeMethods.WS_EX_TRANSPARENT)!=0,"Opted-in startup applies native click-through to the DPS window");
+                Check((style&NativeMethods.WS_EX_TRANSPARENT)!=0 && (style&NativeMethods.WS_EX_NOACTIVATE)!=0,"Opted-in startup preserves native click-through and no-activation on the DPS window");
                 Check((controlsStyle&NativeMethods.WS_EX_TRANSPARENT)==0,"The control panel remains clickable after locked startup");
+                Check(overlay.DisplayOnly && ((System.Windows.Controls.Border)overlay.FindName("Frame")).Background==System.Windows.Media.Brushes.Transparent,
+                    "Startup applies transparent display-only appearance as well as native click-through");
+                using(var eventCards=new TimerCards(meter,false))
+                {
+                    foreach(var startedOnly in new[]{false,true})
+                    {
+                        var module=TimerHubWindow.CreateOverlay(eventCards,startedOnly);module.Left=-30000;module.Top=-30000;
+                        try
+                        {
+                            module.Show();module.UpdateLayout();
+                            var native=(long)NativeMethods.GetWindowLongPtr(new WindowInteropHelper(module).Handle,NativeMethods.GWL_EXSTYLE);
+                            Check(settings.ClickThrough && (native&NativeMethods.WS_EX_TRANSPARENT)!=0,"Opening event module preserves global and native click-through: "+startedOnly);
+                            var content=(System.Windows.Controls.DockPanel)((System.Windows.Controls.Border)module.Content).Child;
+                            Check(content.Children.OfType<System.Windows.Controls.DockPanel>().First().Visibility==Visibility.Collapsed,"Event module starts with its display-only appearance: "+startedOnly);
+                        }
+                        finally{module.Close();}
+                    }
+                }
                 var preferences=new SettingsWindow(meter);
                 try
                 {
