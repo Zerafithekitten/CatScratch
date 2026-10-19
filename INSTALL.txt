@@ -2,7 +2,7 @@
 
 RELEASE CHANNELS
 Stable: v3.0.11
-Beta: v3.0.12-beta.4 — individual world boss display, favorites and sounds.
+Beta: v3.0.12-beta.5 — individual world boss display, favorites and sounds.
 Downloads: https://github.com/Zerafithekitten/CatScratch/releases
 The current GitHub README describes availability by channel.
 

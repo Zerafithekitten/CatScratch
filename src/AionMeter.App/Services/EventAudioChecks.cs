@@ -40,6 +40,19 @@ internal static class EventAudioChecks
                 var until=DateTime.UtcNow.AddSeconds(8);
                 while(!done()){if(DateTime.UtcNow>until)throw new TimeoutException("Audio UI check timed out");await Task.Delay(25);}
             }
+            var newSettingsPath=Path.Combine(folder,"new-install.json");
+            var fresh=AppSettings.LoadFrom(newSettingsPath);
+            Require(fresh.HiddenCubeSoundEnabled && fresh.HiddenCubeSoundPath==CustomEventAudio.DefaultCubeSound,"New installs use the bundled kitty meow");
+            await CustomEventAudio.ValidateAsync(CustomEventAudio.DefaultCubeSound);
+            foreach(var enabled in new[]{false,true})
+            {
+                JsonSettingsFile.Write(newSettingsPath,new AppSettings{HiddenCubeSoundEnabled=enabled,HiddenCubeSoundPath=shortFile,HiddenCubeSoundVolume=.28});
+                var existing=AppSettings.LoadFrom(newSettingsPath);
+                Require(existing.HiddenCubeSoundEnabled==enabled && existing.HiddenCubeSoundPath==shortFile && existing.HiddenCubeSoundVolume==.28,"Existing cube sound settings remain unchanged");
+            }
+            File.WriteAllText(newSettingsPath,"{}");
+            var legacy=AppSettings.LoadFrom(newSettingsPath);
+            Require(!legacy.HiddenCubeSoundEnabled && legacy.HiddenCubeSoundPath is null,"Older saved configurations do not gain an unsolicited sound");
             SoundPlaybackChecks.Run(shortFile,Require);
             combo.SelectedIndex=3;await Wait(()=>choose.IsEnabled);
             Require(cards.Saved.Sounds["shugo"].FilePath==shortFile && combo.SelectedItem?.ToString()=="valid short sound.wav","Valid selection was not saved or displayed");

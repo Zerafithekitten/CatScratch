@@ -48,7 +48,7 @@ internal static class ClickThroughStartupChecks
                             var native=(long)NativeMethods.GetWindowLongPtr(new WindowInteropHelper(module).Handle,NativeMethods.GWL_EXSTYLE);
                             Check(settings.ClickThrough && (native&NativeMethods.WS_EX_TRANSPARENT)!=0,"Opening event module preserves global and native click-through: "+startedOnly);
                             var content=(System.Windows.Controls.DockPanel)((System.Windows.Controls.Border)module.Content).Child;
-                            Check(content.Children.OfType<System.Windows.Controls.DockPanel>().First().Visibility==Visibility.Collapsed,"Event module starts with its display-only appearance: "+startedOnly);
+                            Check(content.Children.OfType<System.Windows.Controls.DockPanel>().First().Visibility==Visibility.Hidden,"Event module starts with its display-only appearance: "+startedOnly);
                         }
                         finally{module.Close();}
                     }

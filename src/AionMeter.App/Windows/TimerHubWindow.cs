@@ -20,14 +20,14 @@ public sealed partial class TimerHubWindow : Window, IDisplayAppearance
     public void SetDisplayOnly(bool enabled)
     {
         _displayOnly=enabled;
-        if (_header is not null) _header.Visibility=enabled ? Visibility.Collapsed : Visibility.Visible;
+        if (_header is not null) _header.Visibility=enabled ? Visibility.Hidden : Visibility.Visible;
         foreach(var tile in _list.Children.OfType<Border>()) {
             tile.Background=EventPanelBrushes.Background;
             if(tile.Child is Grid {Tag:TimerCardData boss})EventFavoriteAppearance.Apply(tile,EventPanelBrushes.ForKind("BOSS"),_cards.IsFavorite(boss.Id),BossStarted(boss,ClockOverride?.Invoke()??DateTimeOffset.UtcNow));
             if (tile.Child is Grid { Tag: EventStart item }) EventFavoriteAppearance.Apply(tile,EventPanelBrushes.ForKind(EventKinds.For(item.Id)),_cards.IsFavorite(item.Id),item.StartsAt <= (ClockOverride?.Invoke() ?? DateTimeOffset.UtcNow));
         }
         foreach (var placeholder in _list.Children.OfType<TextBlock>())
-            placeholder.Visibility = enabled ? Visibility.Collapsed : Visibility.Visible;
+            placeholder.Visibility = enabled ? Visibility.Hidden : Visibility.Visible;
     }
     public Func<DateTimeOffset>? ClockOverride { get; set; }
     private static SolidColorBrush ColorBrush(string hex) => ThemeColors.Brush(hex);

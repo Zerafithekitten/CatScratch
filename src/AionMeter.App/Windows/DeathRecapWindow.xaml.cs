@@ -51,6 +51,6 @@ public partial class DeathRecapWindow : Window, IDisplayAppearance
     {
         // Keep text readable over the game even when the module passes mouse clicks through.
         Shell.Background = ThemeColors.Brush("#F0191D23");
-        Shell.BorderThickness = new(enabled ? 0 : 1); WindowPinning.SetDisplayOnly(this,enabled);
+        Shell.BorderBrush = enabled ? Brushes.Transparent : ThemeColors.Brush("#414A56"); WindowPinning.SetDisplayOnly(this,enabled);
     }
 }

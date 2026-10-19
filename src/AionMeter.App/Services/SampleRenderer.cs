@@ -268,6 +268,7 @@ public static class SampleRenderer
                 break;
             case "world-boss-settings":
             case "world-boss-events":
+            case "world-boss-events-locked":
                 FeedTimers(meter);
                 var bossPreferences=new TimerCards(meter,false);
                 bossPreferences.Saved.SelectedEvents=["shugo","rift"];
@@ -288,7 +289,7 @@ public static class SampleRenderer
                 }
                 else
                 {
-                    var bossHub=new TimerHubWindow(bossPreferences);WindowClickThrough.Attach(bossHub,()=>false);host=bossHub;refresh=bossHub.Reload;
+                    var bossHub=new TimerHubWindow(bossPreferences);WindowClickThrough.Attach(bossHub,()=>false);host=bossHub;refresh=()=>{bossHub.Reload();if(o.Window=="world-boss-events-locked")bossHub.SetDisplayOnly(true);};
                 }
                 break;
             case "event-sounds":

@@ -7,7 +7,7 @@ A separate, always-on-top Windows DPS meter for **AION 2**, by Zerafithekitten. 
 | Channel | Current version | What it includes |
 | --- | --- | --- |
 | **Stable** | **[v3.0.11](https://github.com/Zerafithekitten/CatScratch/releases/tag/v3.0.11)** | Compact panel layouts, checklist with a custom hotkey, reset countdowns and stable click-through placement, Pet tracking modes and sounds, passive Hidden cube alerts, ONLY BOSS, defeat estimates, refined Test mode and DPS placement fixes. |
-| **Beta** | **[v3.0.12-beta.4](https://github.com/Zerafithekitten/CatScratch/releases/tag/v3.0.12-beta.4)** | Individual world bosses, favorites and sounds, plus topmost recovery, click-through startup fixes manual-only boss watching and the confirmed Verteron hidden cube variant. |
+| **Beta** | **[v3.0.12-beta.5](https://github.com/Zerafithekitten/CatScratch/releases/tag/v3.0.12-beta.5)** | Individual world bosses, favorites and sounds, plus topmost recovery, click-through startup fixes manual-only boss watching and the confirmed Verteron hidden cube variant. |
 | **Light** | [v1.0.0](https://github.com/Zerafithekitten/CatScratch/releases/tag/light-v1.0.0) | Separate **DPS meter only** edition with essential settings. Independent ZIP download and settings; no additional CatScratch modules or automatic updater. |
 
 **CatScratch light** is installed separately from the full version. [Download its ZIP](https://github.com/Zerafithekitten/CatScratch/releases/download/light-v1.0.0/CatScratch-light-win-x64.zip) and extract it into its own folder. Light is maintained and updated **only on the owner's explicit request**; normal development continues on full CatScratch.

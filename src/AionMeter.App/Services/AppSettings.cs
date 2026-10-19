@@ -246,7 +246,7 @@ public sealed class AppSettings
         catch (Exception ex) when (ex is IOException or JsonException)
         {
         }
-        return new AppSettings { LayoutVersion = CurrentLayout, HotkeyDefaultsVersion=1 };
+        return new AppSettings { LayoutVersion = CurrentLayout, HotkeyDefaultsVersion=1, HiddenCubeSoundEnabled=true, HiddenCubeSoundPath=CustomEventAudio.DefaultCubeSound };
     }
 
     /// <summary>Throw-away settings (render tool): never written to disk.</summary>

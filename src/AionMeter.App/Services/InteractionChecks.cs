@@ -322,7 +322,7 @@ internal static class InteractionChecks
             var header = (System.Windows.Controls.DockPanel)root.Children[0];
             var list = (System.Windows.Controls.WrapPanel)root.Children[1];
             hub.SetDisplayOnly(true);
-            Check(header.Visibility == Visibility.Collapsed, "Locked events hide the shared header");
+            Check(header.Visibility == Visibility.Hidden, "Locked events hide the shared header");
             Check(list.Children.OfType<System.Windows.Controls.Border>().Count() == 2 &&
                 list.Children.OfType<System.Windows.Controls.Border>().All(b =>
                     b.Background is System.Windows.Media.SolidColorBrush bg && bg.Color.A > 0 &&
@@ -355,7 +355,7 @@ internal static class InteractionChecks
                 "Started-only cards keep the existing pulsing style");
             hub.SetDisplayOnly(true);
             startedHub.SetDisplayOnly(true);
-            Check(((FrameworkElement)startedRoot.Children[0]).Visibility==Visibility.Collapsed && ActiveLabels().Length==2,
+            Check(((FrameworkElement)startedRoot.Children[0]).Visibility==Visibility.Hidden && ActiveLabels().Length==2,
                 "Started events support the meter's click-through appearance");
             hub.ClockOverride=()=>new DateTimeOffset(2026,10,13,14,3,0,TimeSpan.FromHours(2)); hub.Reload();
             startedHub.ClockOverride=hub.ClockOverride; startedHub.Reload();
@@ -640,7 +640,7 @@ internal static class InteractionChecks
             Check(latestPets.Length==3 && latestPets.Select(p=>p.Definition.Id).SequenceEqual(new[]{1040,1047,1193}),"Pet panel keeps the three most recent incomplete attacked pets in order");
             Check(latestPets.All(p=>p.Definition.Id!=1176 && p.Progress!="MAX"),"Completed pets are hidden even in the attacked-target fallback");
             petWindow.SetDisplayOnly(true);
-            Check(petWindow.MinHeight==26,"Locked attacked-pet display can shrink to a single compact row");
+            Check(petWindow.MinHeight==52,"Locked Pet tracker preserves its minimum layout height");
             Check(((System.Windows.Controls.Border)petWindow.Content).Background==System.Windows.Media.Brushes.Transparent,"Locked Pet tracker hides its window background");
             petWindow.SetDisplayOnly(false);
             Check(((System.Windows.Controls.Border)petWindow.Content).Background!=System.Windows.Media.Brushes.Transparent,"Unlocking restores the themed Pet tracker surface");

@@ -1,4 +1,4 @@
-﻿using System.IO;
+using System.IO;
 using System.Text.Json;
 using System.Windows;
 using System.Windows.Controls;
@@ -87,6 +87,37 @@ internal static class WorldBossEventChecks
             meter.Timers.OnNotice(new BossNotice(code,1110,null,BossNoticeKind.Alive,now.AddHours(3).ToUnixTimeMilliseconds(),ServerId:2305));
             hub.Reload();started.Reload();
             Check(!Find<Grid>(hub).Any(g=>g.Tag is TimerCardData b && b.Id==unknown.Id) && Find<Grid>(started).Any(g=>g.Tag is TimerCardData b && b.Id==unknown.Id),"Confirmed alive bosses belong exclusively to Started events");
+            foreach(var eventWindow in new[]{hub,started})
+            {
+                eventWindow.SetDisplayOnly(false);eventWindow.UpdateLayout();
+                var content=Find<System.Windows.Controls.WrapPanel>(eventWindow).Single();
+                var before=content.PointToScreen(new Point());var height=eventWindow.ActualHeight;
+                for(var toggle=0;toggle<4;toggle++)
+                {
+                    eventWindow.SetDisplayOnly(true);eventWindow.UpdateLayout();
+                    Check((content.PointToScreen(new Point())-before).Length<.5 && Math.Abs(eventWindow.ActualHeight-height)<.5,"Event content and window geometry stay fixed while locked");
+                    eventWindow.Reload();eventWindow.UpdateLayout();
+                    Check((content.PointToScreen(new Point())-before).Length<.5,"Event refresh preserves locked content position");
+                    eventWindow.SetDisplayOnly(false);eventWindow.UpdateLayout();
+                    Check((content.PointToScreen(new Point())-before).Length<.5,"Unlock restores controls without shifting event content");
+                }
+            }
+            foreach(var module in new Window[]{new PetTrackerWindow(meter),new HiddenCubeWindow(meter.Settings),new Window{Title="Placement test",Width=300,Height=150,Content=new TextBlock{Text="Content anchor"}}})
+            {
+                module.Left=-30000;module.Top=-30000;WindowClickThrough.Attach(module,()=>false);
+                try
+                {
+                    module.Show();module.UpdateLayout();
+                    var labels=Find<TextBlock>(module).Where(t=>t.IsVisible).ToArray();
+                    var positions=labels.ToDictionary(t=>t,t=>t.PointToScreen(new Point()));
+                    var size=new Size(module.ActualWidth,module.ActualHeight);
+                    WindowClickThrough.ApplyAll(true);module.UpdateLayout();
+                    Check(labels.Where(t=>t.IsVisible).All(t=>(t.PointToScreen(new Point())-positions[t]).Length<.5) && Math.Abs(module.ActualHeight-size.Height)<.5 && Math.Abs(module.ActualWidth-size.Width)<.5,"Module content and geometry remain fixed when switching to click-through");
+                    WindowClickThrough.ApplyAll(false);module.UpdateLayout();
+                    Check(labels.All(t=>(t.PointToScreen(new Point())-positions[t]).Length<.5),"Module controls return without shifting content");
+                }
+                finally{module.Close();}
+            }
             var path=output+".settings.json";
             try{JsonSettingsFile.Write(path,cards.Saved);var restored=JsonSettingsFile.Read<TimerCards.State>(path)!;Check(restored.SelectedWorldBosses.SetEquals(cards.Saved.SelectedWorldBosses) && restored.FavoriteEvents.SetEquals(cards.Saved.FavoriteEvents) && restored.Sounds[id].Sound=="Ping","Boss selections, favorites and per-boss audio survive reload");}
             finally{foreach(var file in new[]{path,path+".bak"})if(File.Exists(file))File.Delete(file);}

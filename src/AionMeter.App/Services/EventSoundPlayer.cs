@@ -60,7 +60,7 @@ internal sealed class EventSoundPlayer : IDisposable
         if(_disposed || !preview && !preference.Enabled)return;
         var path=CustomEventAudio.IsCustom(preference.Sound)?preference.FilePath:
             Path.Combine(AppContext.BaseDirectory,"sounds",preference.Sound is "Bell" or "Ping"?preference.Sound+".wav":"Chime.wav");
-        if(path is null || !File.Exists(path)){Log.Info("Configured event sound is missing.");return;}
+        if(path is null){Log.Info("Configured event sound is missing.");return;}
         Uri file;
         try{file=CustomEventAudio.FileUri(path);}
         catch(Exception error) when(error is InvalidDataException or IOException or UnauthorizedAccessException or ArgumentException)

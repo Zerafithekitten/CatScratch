@@ -57,3 +57,7 @@ On 2026-10-19 the owner authorized "ab in die beta damit" for topmost recovery, 
 On 2026-10-19 the owner explicitly requested manual-only world boss watching and direct Beta publication as v3.0.12-beta.3. Preserve existing watch choices, kill/respawn records, Stable and Light.
 
 On 2026-10-19 the owner reviewed the Verteron cube alarm preview and explicitly requested Beta publication as v3.0.12-beta.4. Run full release validation; keep Stable and Light unchanged.
+
+On 2026-10-19 the owner requested fixing click-through position shifts, especially Upcoming and Started events, in Beta. Actual before/after module images were shown; publish verified corrections as v3.0.12-beta.5, preserving Stable and Light.
+
+The owner replaced the proposed cube sound with freesound_community-kitty-meow-85182.mp3, then explicitly resumed Beta publication on 2026-10-19. Include it only as the new-install default; preserve existing audio preferences. Publish these changes together with the reviewed geometry corrections as v3.0.12-beta.5.

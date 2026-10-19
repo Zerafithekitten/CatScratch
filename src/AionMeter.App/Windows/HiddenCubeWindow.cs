@@ -57,7 +57,7 @@ internal sealed class HiddenCubeWindow : Window,IDisplayAppearance
     }
     public void SetDisplayOnly(bool enabled)
     {
-        _header.Visibility=enabled?Visibility.Collapsed:Visibility.Visible;
-        _shell.BorderThickness=new(enabled?0:1);
+        _header.Visibility=enabled?Visibility.Hidden:Visibility.Visible;
+        _shell.BorderBrush=enabled?Brushes.Transparent:ThemeColors.Brush("#414A56");
     }
 }

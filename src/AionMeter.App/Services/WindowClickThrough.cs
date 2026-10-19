@@ -97,7 +97,7 @@ internal static class WindowClickThrough
         return enabled => {
             shell.Background=enabled ? Brushes.Transparent : background;
             shell.BorderBrush=enabled ? Brushes.Transparent : border;
-            title.Visibility=enabled ? Visibility.Collapsed : Visibility.Visible;
+            title.Visibility=enabled ? Visibility.Hidden : Visibility.Visible;
             grip.Visibility=enabled ? Visibility.Hidden : Visibility.Visible;
         };
     }

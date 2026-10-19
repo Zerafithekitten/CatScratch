@@ -128,12 +128,12 @@ public sealed class PetTrackerWindow:Window,IDisplayAppearance
     }
     public void SetDisplayOnly(bool enabled)
     {
-        MinHeight=enabled?26:52;
-        _header.Visibility=enabled?Visibility.Collapsed:Visibility.Visible;
-        _root.Margin=enabled?new(0):new(5);
-        _shell.Background=enabled?Brushes.Transparent:Brush("#DF20242A");_shell.BorderThickness=enabled?new(0):new(1);
-        _close.Visibility=_pin.Visibility=enabled?Visibility.Collapsed:Visibility.Visible;
-        _resize.Visibility=enabled?Visibility.Collapsed:Visibility.Visible;
+        MinHeight=52;
+        _header.Visibility=enabled?Visibility.Hidden:Visibility.Visible;
+        _root.Margin=new(5);
+        _shell.Background=enabled?Brushes.Transparent:Brush("#DF20242A");_shell.BorderBrush=enabled?Brushes.Transparent:Brush("#60616A76");
+        _close.Visibility=_pin.Visibility=enabled?Visibility.Hidden:Visibility.Visible;
+        _resize.Visibility=enabled?Visibility.Hidden:Visibility.Visible;
 
         SizeToContent=SizeToContent.Height;
     }
