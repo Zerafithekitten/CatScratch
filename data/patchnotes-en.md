@@ -1,4 +1,14 @@
-﻿## CatScratch v3.0.5
+﻿## CatScratch v3.0.6
+
+### BOSS REST-TIME READABILITY — CLICK-THROUGH HOTFIX
+
+- The estimated remaining boss fight time now has its own compact, rounded dark surface. It remains visible when global click-through removes the surrounding DPS window background, so bright or detailed game scenery no longer sits directly behind the text.
+- The estimate uses brighter semibold text and a slightly larger font. The before/after time-limit comparison is also larger and semibold, retaining its existing warning colors.
+- The row remains compact and was visually checked in German and English, including the minimum 260-DIP meter width with click-through enabled. The dedicated surface follows the custom interface background/text palette and does not prevent clicks from reaching the game.
+- This is a presentation fix: boss HP sampling, estimated-time calculations, deadline comparisons, measurement filters and player-row layout are unchanged. No settings reset is required.
+- Includes Stable 3.0.5's localized reset weekdays and English AM/PM correction, together with all Stable 3.0.4 features. CatScratch light remains unchanged.
+
+## CatScratch v3.0.5
 
 ### CHECKLIST RESET SETTINGS — LANGUAGE AND CLOCK FORMAT HOTFIX
 

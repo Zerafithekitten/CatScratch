@@ -1,7 +1,7 @@
 ﻿CatScratch — AION 2 for Windows
 
 RELEASE CHANNELS
-Stable: v3.0.5
+Stable: v3.0.6
 Previous Beta: v3.0.4-beta.13 — promoted to Stable 3.0.4 with the final reviewed corrections.
 Downloads: https://github.com/Zerafithekitten/CatScratch/releases
 The current GitHub README describes availability by channel.

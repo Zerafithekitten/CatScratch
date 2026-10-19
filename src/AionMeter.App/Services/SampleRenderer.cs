@@ -75,7 +75,7 @@ public static class SampleRenderer
         if (o.Window is not ("party" or "room"))
             meter.Tracker.Process(new InstanceTimerEvent(start, 600092, 2, start - 768_000, start + 2_832_000));
         if (o.Window == "overlay-crowd") fight.FeedCrowd(meter.Tracker, start + 20_000, 124);
-        if(o.Window is "overlay-boss-limit" or "overlay-boss-estimate")meter.Tracker.Process(new BossTimeLimitEvent(start,900001,start+300000));
+        if(o.Window is "overlay-boss-limit" or "overlay-boss-estimate" or "overlay-boss-estimate-locked")meter.Tracker.Process(new BossTimeLimitEvent(start,900001,start+300000));
         if (o.Window == "history")
             foreach (var entry in meter.History.List().Take(20)) meter.PortraitOf(entry);
         WaitForPortraits(meter);
@@ -321,7 +321,7 @@ public static class SampleRenderer
                 break;
             default:
                 if (o.Window == "overlay-update") meter.Updates.Preview(SampleRelease(meter.Updates.Current)); // with the footer's update banner
-                if (o.Window == "clickthrough") meter.Settings.ClickThrough = true;
+                if (o.Window is "clickthrough" or "overlay-boss-estimate-locked") meter.Settings.ClickThrough = true;
                 if (o.Window == "expanded") meter.Settings.CompactMode = false;
                 var overlay = new OverlayWindow(meter) { Width = o.Width ?? 560, Height = o.Height ?? 820 };
                 host = overlay;
@@ -330,7 +330,7 @@ public static class SampleRenderer
         }
         if(host is OverlayWindow display && !display.ControlsDetached)
             display.MoveControlsTo(new MeterControlsWindow(meter.Settings,()=>{},()=>{}));
-        if(o.Window=="overlay-boss-estimate" && host is OverlayWindow estimateDisplay)
+        if(o.Window.StartsWith("overlay-boss-estimate",StringComparison.Ordinal) && host is OverlayWindow estimateDisplay)
         {
             var hp=meter.Tracker.Snapshot(null,start+20000)!.Boss!.Hp;
             for(var i=0;i<=10;i++)
