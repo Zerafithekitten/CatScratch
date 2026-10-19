@@ -386,6 +386,7 @@ public partial class SettingsWindow : Window
         s.ShowResourcesModule=_moduleDraft.ShowResourcesModule;
         s.VisibleResources=new(_moduleDraft.VisibleResources??[]);
         s.ResourcesWidth=_moduleDraft.ResourcesWidth;
+        s.ResourcesLayout=_moduleDraft.ResourcesLayout;
         s.ShowHiddenCubeModule=_moduleDraft.ShowHiddenCubeModule;
         s.HiddenCubeSoundEnabled=_moduleDraft.HiddenCubeSoundEnabled;
         s.HiddenCubeSoundPath=_moduleDraft.HiddenCubeSoundPath;

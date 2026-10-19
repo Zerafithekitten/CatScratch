@@ -67,3 +67,5 @@ On 2026-10-19 the owner explicitly requested Beta edge anchoring for Upcoming an
 On 2026-10-19 the owner reviewed the compact Hidden cube preview and approved "perfekt ... update". Publish it as v3.0.12-beta.8 after full validation; leave Stable and Light unchanged.
 
 On 2026-10-20 the owner explicitly requested Resources settings and Beta publication, then required each resource to be independently selectable. Actual module and Settings previews were shown. Publish the verified opt-in module as v3.0.12-beta.9; clearly mark last-received currency balances and do not claim verified live currency changes or guessed Odyle limits/deadlines. Stable and Light remain unchanged.
+
+On 2026-10-20 the owner reviewed the resource icons and layout previews and explicitly requested "beta update". Publish them as v3.0.12-beta.10 after full release validation; preserve Stable and Light.

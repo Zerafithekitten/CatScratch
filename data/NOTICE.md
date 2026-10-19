@@ -33,3 +33,15 @@ Missing languages fall back to `en`.
 Pet monster-source IDs and matching open-Global-zone presence were checked against [Aion 2 Maps Global pet data](https://aion2maps.com/map/assets/pets.json) and its [Global map index](https://aion2maps.com/map/assets/maps/index.json), exported from Global patch 20 (2026-09-28), retrieved 2026-10-14. Only factual pet/NPC IDs and zone names were retained; no map artwork, spawn coordinates, descriptions or site code are bundled. Taiwan-only source lists are excluded. A blank zone means no verified open-world location, not an inferred location.
 
 Pet farming location facts in pets/locations.json were retrieved from https://aion2pets.app/pets.json on 2026-10-17, attributed there to Wikily (https://wikily.gg/aion-2/pets). Only matched existing pet IDs, monster/region names and recorded point coordinates are included, without artwork or site code. Region IDs (Verteron 1010, Altgard 1110, Chaotic Lower Reshanta 20) were cross-checked against https://aion2maps.com/map/assets/maps/index.json. Coordinates are map-space records, not validated live-player distances or guaranteed drops. Missing locations remain unknown.
+
+## Resource icons
+
+`src/AionMeter.App/Assets/Resources/*.png` are original AION 2 game icons (© NCSOFT), fetched without editing from the same official game-data CDN used by skill icons: `https://assets.playnccdn.com/static-aion2-gamedata/resources/` (2026-10-20). Bundled for reliable offline display. Item-name references were cross-checked with Aion2Data currency pages and Aion 2 Maps against the owner's screenshots.
+
+| Resource | Original CDN filename |
+| --- | --- |
+| Odyle Energy | `Icon_Item_Odenergy_A_001.png` |
+| Abyss Points | `Icon_abysspoint.png` |
+| Centuryroot Token | `Icon_Item_Currency_Drop_Junk_A_r_076.png` |
+| Daeva Pass Shop Coin | `icon_battlepass.png` |
+| Phantasmal Fragment | `Icon_Usable_Potion_Skillpoint_002.png` |

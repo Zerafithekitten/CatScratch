@@ -90,6 +90,7 @@ public sealed class AppSettings
     public string? PreferredDisplay {get;set;}
     public bool ShowResourcesModule {get;set;}
     public List<string> VisibleResources {get;set;}=["odyle","abyss","centuryroot","passcoin","fragment"];
+    public string ResourcesLayout {get;set;}="List";
     public double ResourcesWidth {get;set;}=300;
     public double ResourcesLeft {get;set;}=500;
     public double ResourcesTop {get;set;}=300;

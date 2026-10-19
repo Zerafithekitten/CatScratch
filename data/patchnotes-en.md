@@ -1,4 +1,10 @@
-﻿## CatScratch v3.0.12-beta.9
+﻿## CatScratch v3.0.12-beta.10
+
+- Added matching game icons for all five resources, in both the module and Settings. Icons are bundled for offline display.
+- Choose List, Horizontal (compact icons and values) or Grid (two columns) under Settings > Resources. Names remain in tooltips in Horizontal mode; its width fits automatically.
+- Layout selection applies with Save, persists across restart and participates in overlay profiles. Click-through retains layout geometry in all three variants. Currency * markers still mean last received inventory balance. Stable and Light are unchanged.
+
+## CatScratch v3.0.12-beta.9
 
 - Added an optional standalone Resources module under Settings > Resources. Individually select Odyle Energy, Abyss Points, Centuryroot Token, Deava Pass Shop Coin and Phantasmal Fragment; adjust width and save the selection.
 - Odyle displays available and supplementary energy separately and updates from confirmed login, regeneration and item-use packets. No recharge countdown or capacity is guessed.

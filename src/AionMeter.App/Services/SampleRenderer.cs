@@ -329,6 +329,9 @@ public static class SampleRenderer
                 if(o.Window=="checklist-locked")taskWindow.SetDisplayOnly(true);
                 host=taskWindow;refresh=taskWindow.RefreshResetClock;break;
             case "resources":
+            case "resources-strip":
+            case "resources-grid":
+                meter.Settings.ResourcesLayout=o.Window=="resources-strip"?"Strip":o.Window=="resources-grid"?"Grid":"List";
                 meter.Resources.Observe(new Core.Game.OdyleEnergyEvent(1,15,495));
                 meter.Resources.Observe(new Core.Game.ResourceBalanceSnapshot(1,new Dictionary<int,ulong>{{930100003,3188},{930100011,1670},{930100024,1000},{930100017,160}}));
                 host=new ResourcesWindow(meter);refresh=()=>{};break;
@@ -459,6 +462,11 @@ public static class SampleRenderer
         refresh();
         var root = rootOverride ?? host.Content as FrameworkElement;
         if (root is null) return;
+        if(double.IsNaN(host.Width))
+        {
+            root.Measure(new Size(double.IsFinite(host.MaxWidth)?host.MaxWidth:1200,double.PositiveInfinity));
+            host.Width=Math.Clamp(Math.Ceiling(root.DesiredSize.Width),host.MinWidth,double.IsFinite(host.MaxWidth)?host.MaxWidth:1200);
+        }
         if(host is BossTimingWindow)
         {
             // Settle inherited bindings before freezing the offscreen screenshot height.

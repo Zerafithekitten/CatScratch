@@ -8,7 +8,7 @@ internal sealed class ResourcesWindow:Window,IDisplayAppearance
 {
     internal static readonly (string Key,string Name,int Item)[] Entries=[("odyle","Odyle Energy",0),("abyss","Abyss Points",930100003),("centuryroot","Centuryroot Token",930100011),("passcoin","Deava Pass Shop Coin",930100024),("fragment","Phantasmal Fragment",930100017)];
     private readonly MeterService _meter;
-    private readonly StackPanel _rows=new();
+    private readonly WrapPanel _rows=new();
     private readonly DockPanel _header=new(){Height=24,Margin=new(0,0,0,3),Background=ThemeColors.Brush("#DF20242A")};
     internal ResourcesWindow(MeterService meter)
     {
@@ -30,7 +30,11 @@ internal sealed class ResourcesWindow:Window,IDisplayAppearance
     }
     internal void Refresh()
     {
-        Width=double.IsFinite(_meter.Settings.ResourcesWidth)?Math.Clamp(_meter.Settings.ResourcesWidth,220,600):300;
+        var layout=_meter.Settings.ResourcesLayout is "Strip" or "Grid"?_meter.Settings.ResourcesLayout:"List";
+        var configuredWidth=double.IsFinite(_meter.Settings.ResourcesWidth)?Math.Clamp(_meter.Settings.ResourcesWidth,220,600):300;
+        MinWidth=layout=="Strip"?160:220;
+        SizeToContent=layout=="Strip"?SizeToContent.WidthAndHeight:SizeToContent.Height;
+        Width=layout=="Strip"?double.NaN:configuredWidth;
         var values=_meter.Resources.Read();_rows.Children.Clear();
         foreach(var entry in Entries.Where(e=>(_meter.Settings.VisibleResources??[]).Contains(e.Key)))
         {
@@ -38,8 +42,16 @@ internal sealed class ResourcesWindow:Window,IDisplayAppearance
             var text=entry.Item==0?(values.Energy is {} energy?$"{energy.Available:N0} (+{energy.Supplementary:N0})":"–"):
                 values.Balances.TryGetValue(entry.Item,out var count)?$"{count:N0} *":"–";
             var value=new TextBlock{Text=text,FontWeight=FontWeights.SemiBold,Foreground=ThemeColors.Brush("#EDF2F7"),Margin=new Thickness(8,0,0,0)};DockPanel.SetDock(value,Dock.Right);row.Children.Add(value);
-            row.Children.Add(new TextBlock{Text=entry.Name,Foreground=ThemeColors.Brush("#C49AF5"),TextTrimming=TextTrimming.CharacterEllipsis});
-            _rows.Children.Add(new Border{Child=row,Background=ThemeColors.Brush("#D020242A"),CornerRadius=new CornerRadius(4),Margin=new Thickness(0,1,0,1),ToolTip=entry.Item==0?ControlPanelSettingsPanel.L("Odyle: available (+supplementary). Updated from received server data.","Odyle: verfügbar (+Zusatzbestand). Aktualisiert durch empfangene Spieldaten."):ControlPanelSettingsPanel.L("* Last received inventory balance. Continuous currency changes are not yet verified.","* Zuletzt empfangener Inventarbestand. Laufende Währungsänderungen sind noch nicht bestätigt.")});
+            var icon=new Image{Source=ResourceIcons.For(entry.Key),Width=18,Height=18,Margin=new Thickness(0,0,5,0),VerticalAlignment=VerticalAlignment.Center,ToolTip=entry.Name};DockPanel.SetDock(icon,Dock.Left);row.Children.Add(icon);
+            if(layout=="List")row.Children.Add(new TextBlock{VerticalAlignment=VerticalAlignment.Center,Text=entry.Name,Foreground=ThemeColors.Brush("#C49AF5"),TextTrimming=TextTrimming.CharacterEllipsis});
+            if(layout=="Grid")
+            {
+                row.Children.Clear();DockPanel.SetDock(icon,Dock.Left);row.Children.Add(icon);
+                var details=new StackPanel();details.Children.Add(new TextBlock{Text=entry.Name,FontSize=10,Foreground=ThemeColors.Brush("#C49AF5"),TextTrimming=TextTrimming.CharacterEllipsis});
+                value.Margin=new Thickness(0,2,0,0);details.Children.Add(value);row.Children.Add(details);
+            }
+            value.VerticalAlignment=VerticalAlignment.Center;
+            _rows.Children.Add(new Border{Width=layout=="List"?configuredWidth-4:layout=="Grid"?(configuredWidth-8)/2:double.NaN,Child=row,Background=ThemeColors.Brush("#D020242A"),CornerRadius=new CornerRadius(4),Margin=new Thickness(layout=="List"?0:1,1,layout=="List"?0:1,1),ToolTip=entry.Name+"\n"+(entry.Item==0?ControlPanelSettingsPanel.L("Odyle: available (+supplementary). Updated from received server data.","Odyle: verfügbar (+Zusatzbestand). Aktualisiert durch empfangene Spieldaten."):ControlPanelSettingsPanel.L("* Last received inventory balance. Continuous currency changes are not yet verified.","* Zuletzt empfangener Inventarbestand. Laufende Währungsänderungen sind noch nicht bestätigt."))});
         }
         if(_rows.Children.Count==0)_rows.Children.Add(new TextBlock{Text=ControlPanelSettingsPanel.L("Select resources in Settings.","Ressourcen in den Einstellungen auswählen."),Margin=new Thickness(6),Foreground=ThemeColors.Brush("#A9B8C7")});
     }
