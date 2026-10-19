@@ -305,6 +305,8 @@ public sealed class OverlayViewModel : ObservableObject
     }
     public bool IsActive { get => _isActive; set => Set(ref _isActive, value); }
     public bool HasData { get => _hasData; set => Set(ref _hasData, value); }
+    private bool _hasTimingBoss;
+    public bool HasTimingBoss {get=>_hasTimingBoss;set=>Set(ref _hasTimingBoss,value);}
     public bool HasBoss { get => _hasBoss; set => Set(ref _hasBoss, value); }
     /// <summary>"135,382,562 HP"</summary>
     public string BossHpText { get => _bossHpText; set => Set(ref _bossHpText, value); }

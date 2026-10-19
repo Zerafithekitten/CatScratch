@@ -338,10 +338,12 @@ public partial class OverlayWindow : Window, IDisplayAppearance
                 _vm.SetSegment("live", snap?.StartedAt.ToString("HH:mm"));
             }
             RefreshPersonal(_showingPartyPreview ? null : snap);
-            if(!_showingPartyPreview && snap is {IsActive:true,Boss:not null} && _settings.ShowBossPanel)activeBoss=snap.Boss.ActorId;
+            if(!_showingPartyPreview && snap is {IsActive:true,Boss:not null} && (_settings.ShowBossPanel || _settings.DetachBossTiming))activeBoss=snap.Boss.ActorId;
         }
         if (!_settings.Transient && !_meter.DemoRunning && _meter.LiveIdentity.ActorId is null)
             foreach (var row in _vm.Rows) row.IsSelf = false;
+        _vm.HasTimingBoss=activeBoss is not null;
+        InlineBossTiming.Visibility=_settings.DetachBossTiming?Visibility.Collapsed:Visibility.Visible;
         if (!_settings.ShowBossPanel) _vm.HasBoss = false;
         // The instance's time limit (or the wait after entering), whatever fight is shown: it is about where you are now.
         var wall = ClockOverride?.Invoke() ?? DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();

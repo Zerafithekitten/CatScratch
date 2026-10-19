@@ -1,0 +1,24 @@
+﻿<Window x:Class="AionMeter.App.Windows.BossTimingWindow"
+ xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+ xmlns:c="clr-namespace:AionMeter.App.Controls"
+ Width="350" MinWidth="300" MaxWidth="460" SizeToContent="Height" WindowStyle="None" ResizeMode="NoResize"
+ AllowsTransparency="True" Background="Transparent" Topmost="True" ShowActivated="False" ShowInTaskbar="False"
+ FontFamily="{StaticResource UiFont}" Foreground="{DynamicResource CustomBrush_EDF2F7}" UseLayoutRounding="True">
+ <Window.Resources><ResourceDictionary><ResourceDictionary.MergedDictionaries><ResourceDictionary Source="/CatScratch;component/Theme/MeterPreferences.xaml"/></ResourceDictionary.MergedDictionaries><c:VisibleIf x:Key="VisibleIf"/></ResourceDictionary></Window.Resources>
+ <Border Background="{DynamicResource CustomBrush_F0191D23}" BorderBrush="{DynamicResource CustomBrush_414A56}" BorderThickness="1" CornerRadius="7" Padding="8,5,8,7">
+  <StackPanel>
+   <DockPanel x:Name="Header" Height="20" Margin="0,0,0,3">
+    <Button x:Name="ReturnButton" DockPanel.Dock="Right" Style="{StaticResource IconButton}" Content="&#xE711;" Width="20" Height="20" Click="Return_Click"/>
+    <ContentControl x:Name="PinSlot" DockPanel.Dock="Right"/>
+    <Image x:Name="Paw" DockPanel.Dock="Left" Width="12" Height="12" Margin="0,0,5,0"/>
+    <TextBlock x:Name="Caption" FontSize="11" Foreground="{DynamicResource CustomBrush_C49AF5}" VerticalAlignment="Center"/>
+   </DockPanel>
+   <StackPanel x:Name="TimingBody" Visibility="{Binding HasTimingBoss, Converter={StaticResource VisibleIf}}">
+    <TextBlock Text="{Binding Title}" FontSize="11" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" Margin="0,0,0,2"/>
+    <c:BossTimingView x:Name="TimingView"/>
+   </StackPanel>
+   <TextBlock x:Name="Waiting" FontSize="11" Margin="0,3,0,2" Foreground="{DynamicResource CustomBrush_A9B8C7}"
+    Visibility="{Binding HasTimingBoss, Converter={StaticResource VisibleIf}, ConverterParameter=!}"/>
+  </StackPanel>
+ </Border>
+</Window>

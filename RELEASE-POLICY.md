@@ -43,3 +43,5 @@ On 2026-10-19 the owner reviewed the boss estimate readability image and explici
 On 2026-10-19 the owner reviewed all three inline Update title replacements and explicitly approved publishing them as Stable hotfix 3.0.7, with no separate notification popup and the normal CatScratch title when no prepared update exists.
 
 On 2026-10-19 the owner explicitly authorized Stable hotfix 3.0.8 after adding the configurable Checklist hotkey and a full review. The owner additionally requested preserving Checklist task positions across click-through toggles. Show actual images before publication, run complete release checks, and leave Light unchanged.
+
+On 2026-10-19 the owner reviewed the separate boss timing window image and explicitly authorized publishing it to Stable as v3.0.9. Run the complete release checks and keep Light unchanged.

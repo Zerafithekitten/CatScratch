@@ -5,6 +5,11 @@ public sealed partial class UiText
     private static readonly Dictionary<string,(string De,string Ru,string Fr)> LayoutComparisonText=new()
     {
         ["Choose a valid, different shortcut for each action."]=("Bitte wähle für jede Aktion ein gültiges, unterschiedliches Tastenkürzel.","Выберите допустимое отдельное сочетание клавиш для каждого действия.","Choisissez un raccourci valide et différent pour chaque action."),
+        ["Separate boss timing window"]=("Boss-Zeiten in eigenem Fenster","Отдельное окно таймеров босса","Fenêtre séparée des temps du boss"),
+        ["Boss timing"]=("Boss-Zeiten","Таймеры босса","Temps du boss"),
+        ["Waiting for a boss fight"]=("Warte auf einen Bosskampf","Ожидание боя с боссом","En attente d’un combat de boss"),
+        ["Move timers back to the DPS meter"]=("Zeiten zurück ins DPS-Meter verschieben","Вернуть таймеры в DPS-метр","Remettre les temps dans le compteur DPS"),
+        ["Moves Enrage time and Estimated defeat out of the DPS meter. Turn off to put them back."]=("Verschiebt Enrage time und die geschätzte Restkampfzeit aus dem DPS-Meter. Deaktivieren bringt beide Anzeigen zurück.","Переносит Enrage time и оценку времени до победы из DPS-метра. Отключите, чтобы вернуть их.","Déplace Enrage time et l’estimation de victoire hors du compteur DPS. Désactivez pour les remettre."),
         ["Automatically clear checkmarks at reset"]=("Häkchen beim Reset automatisch entfernen","Автоматически снимать отметки при сбросе","Effacer les coches à la réinitialisation"),
         ["Reset time (UTC)"]=("Reset-Zeit (UTC)","Время сброса (UTC)","Heure de réinitialisation (UTC)"),
         ["Weekly reset day"]=("Wöchentlicher Reset-Tag","День еженедельного сброса","Jour de réinitialisation hebdomadaire"),

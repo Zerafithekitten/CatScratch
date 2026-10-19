@@ -1,4 +1,19 @@
-﻿## CatScratch v3.0.8
+﻿## CatScratch v3.0.9
+
+### OPTIONAL SEPARATE BOSS TIMING WINDOW
+
+- **Settings > Combat > Separate boss timing window** moves **Enrage time** and **Estimated defeat** out of the DPS meter into a compact, independently movable window. The option is off by default, preserving the existing DPS layout until you enable it and Save.
+- Both displays use the same live data and calculations as the meter. They are removed from the DPS display while detached, avoiding duplicate rows. Boss HP and player damage rows stay in the DPS meter.
+- Disable the option or click the timing window's **X** to return both displays to the DPS meter. This closes only the separate timing window, not CatScratch. Save continues to keep Settings open.
+- The window has its own position pin and saved screen position. Mode, position and pin participate in overlay profiles. Global show/hide, click-through, display opacity and the selected target screen also apply.
+- Hiding the timing controls during click-through reserves their space, so the displayed boss and timing rows do not jump. The window remains a tool overlay without an additional taskbar entry.
+- Timing continues updating when the DPS display is hidden. Turning off the DPS boss HP panel does not suppress the detached timing display. Without an active boss, the window shows a waiting message rather than stale boss values.
+- **Enrage time** still requires a matching server-provided boss deadline. No timer is invented when that data is unavailable; the label does not imply separately confirmed enrage detection. **Estimated defeat** retains the existing recent boss HP-loss estimate, its insufficient-data state and deadline comparison.
+- Test mode includes an isolated timing-window preview when the option is enabled, using the same sample boss as its DPS preview. The existing module positions and real combat data remain separate from the preview.
+- Added localized settings, waiting text and window controls for English, German, Russian and French, plus focused checks for detaching, restoring, bindings, persistence, profiles, click-through and preview behavior.
+- Includes all Stable 3.0.8 changes. CatScratch light remains unchanged.
+
+## CatScratch v3.0.8
 
 ### CHECKLIST — CUSTOM SHORTCUT AND STABLE CLICK-THROUGH PLACEMENT
 

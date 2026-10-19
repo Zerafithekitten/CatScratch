@@ -336,23 +336,7 @@
                         </Grid>
                     </Grid>
                 </Border>
-                <Grid x:Name="BossLimitPanel" Grid.Row="1" Height="12" Margin="0,3,0,0" Visibility="{Binding HasBossLimit, Converter={StaticResource VisibleIf}}" ToolTip="{Binding BossLimitDescription}">
-                    <Border CornerRadius="3" Background="{DynamicResource CustomBrush_20242A}" BorderBrush="#505B4C38" BorderThickness="1"/>
-                    <Border CornerRadius="3" Background="#665B472B" HorizontalAlignment="Left">
-                        <Border.Width><MultiBinding Converter="{StaticResource FractionWidth}"><Binding Path="ActualWidth" ElementName="BossLimitPanel"/><Binding Path="BossLimitFraction"/></MultiBinding></Border.Width>
-                    </Border>
-                    <Grid Margin="6,0"><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
-                        <TextBlock Text="{Binding BossLimitLabel}" FontSize="8.5" Foreground="#E4C28A" VerticalAlignment="Center"/>
-                        <TextBlock Grid.Column="1" Text="{Binding BossLimitText}" FontSize="8.5" Foreground="#E4C28A" FontFamily="{StaticResource NumberFont}" VerticalAlignment="Center"/>
-                    </Grid>
-                </Grid>
-                <Border x:Name="BossDefeatSurface" Grid.Row="2" Margin="0,3,0,0" Padding="5,2" CornerRadius="4"
-                        Background="{DynamicResource CustomBrush_F0191D23}" BorderBrush="#70414A56" BorderThickness="1" ToolTip="{Binding DefeatTip}">
-                    <DockPanel>
-                        <TextBlock DockPanel.Dock="Right" Text="{Binding DefeatComparison}" Foreground="{Binding DefeatBrush}" FontSize="9" FontWeight="SemiBold" Margin="6,0,0,0" VerticalAlignment="Center"/>
-                        <TextBlock Text="{Binding DefeatText}" Foreground="{DynamicResource CustomBrush_EDF2F7}" FontSize="10" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
-                    </DockPanel>
-                </Border>
+                <c:BossTimingView x:Name="InlineBossTiming" Grid.Row="1" Grid.RowSpan="2"/>
             </Grid>
 
             <!-- Party: the rows share their value column widths -->

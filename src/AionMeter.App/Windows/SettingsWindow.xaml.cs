@@ -48,6 +48,7 @@ public partial class SettingsWindow : Window
     private readonly ControlPanelSettingsPanel _controlPanelPreferences;
     private readonly ChecklistSettingsPanel _checklistPreferences;
     private readonly MeterService _meter;
+    private bool _bossTimingDetachedAtOpen;
     private readonly TimerCards _cards;
     private readonly TimerCards _eventDraft;
     private readonly AppSettings _moduleDraft;
@@ -179,6 +180,10 @@ public partial class SettingsWindow : Window
         WindowOpacityValue.Value = s.WindowOpacity;
         BarsRelative.IsChecked = s.BarsRelativeToTop;
         ShowBoss.IsChecked = s.ShowBossPanel;
+        DetachBossTimingCheck.IsChecked=s.DetachBossTiming;
+        _bossTimingDetachedAtOpen=s.DetachBossTiming;
+        DetachBossTimingCheck.Content=T.Localize("Separate boss timing window");
+        DetachBossTimingHint.Text=T.Localize("Moves Enrage time and Estimated defeat out of the DPS meter. Turn off to put them back.");
         ShowPersonalCombatModule.IsChecked = s.ShowPersonalCombatModule;
         ShowHealingDone.IsChecked = s.ShowHealingDone;
         ShowGear.IsChecked = s.ShowGear;
@@ -323,6 +328,11 @@ public partial class SettingsWindow : Window
         s.ShowBossPanel = ShowBoss.IsChecked == true;
         s.UiScale=UiScaleValue.Value/100; s.StreamMode=StreamModeCheck.IsChecked==true;
         s.AutomaticFightEnd=AutomaticFightEndCheck.IsChecked==true;
+        // A timing-window X may have returned the rows while this draft was open.
+        if((DetachBossTimingCheck.IsChecked==true)!=_bossTimingDetachedAtOpen)
+            s.DetachBossTiming=DetachBossTimingCheck.IsChecked==true;
+        _bossTimingDetachedAtOpen=s.DetachBossTiming;
+        DetachBossTimingCheck.IsChecked=s.DetachBossTiming;
         s.ShowPersonalCombatModule = ShowPersonalCombatModule.IsChecked == true;
         s.ShowHealingDone = ShowHealingDone.IsChecked == true;
         s.ShowGear = ShowGear.IsChecked == true;

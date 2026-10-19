@@ -51,6 +51,7 @@ public partial class App : Application
     private PersonalBestsWindow? _personalBests;
     private LastPlayedWithWindow? _lastPlayedWith;
     private SettingsWindow? _settingsWindow;
+    private BossTimingWindow? _bossTimingWindow;
     private BossTimersWindow? _timersWindow;
     private TimerHubWindow? _timerHub;
     private EventScheduleWindow? _eventSchedule;
@@ -243,6 +244,13 @@ public partial class App : Application
             Log.Enabled=false;
             try{OverlayPlacementChecks.Run(placementPath);Shutdown();}
             catch(Exception error){File.WriteAllText(placementPath,error.ToString());Shutdown(1);}
+            return;
+        }
+        if(ArgValue(e.Args,"--check-boss-timing") is { } timingPath)
+        {
+            Log.Enabled=false;
+            try{BossTimingChecks.Run(timingPath);Shutdown();}
+            catch(Exception error){File.WriteAllText(timingPath,error.ToString());Shutdown(1);}
             return;
         }
         if(ArgValue(e.Args,"--check-enhancements") is { } enhancementsPath)
@@ -498,6 +506,7 @@ public partial class App : Application
         SyncHiddenCubes();
         SyncChecklist();
         _overlay.Refresh(); // The permanent panel also needs current fight, save and update state.
+        SyncBossTiming();
         if (++_ticks % 5 == 0)
         {
             WindowPresentation.MaintainTopmost();
@@ -525,6 +534,17 @@ public partial class App : Application
             _meterControls.Closed+=(_,_)=>_meterControls=null;
         }
         if(!_meterControls.IsVisible)_meterControls.Show();
+    }
+
+    private void SyncBossTiming()
+    {
+        if(_shutdownStarted || _modulePreview is not null)return;
+        if(!_meter.Settings.DetachBossTiming){_bossTimingWindow?.Close();return;}
+        if(_bossTimingWindow is not null || _windowVisibility.Hidden)return;
+        var window=_bossTimingWindow=new BossTimingWindow(_meter.Settings,_overlay.DataContext,()=>_overlay.Refresh());
+        WindowClickThrough.Attach(window,()=>_meter.Settings.ClickThrough,()=>_meter.Settings.WindowOpacity);
+        window.Closed+=(_,_)=>{if(ReferenceEquals(_bossTimingWindow,window))_bossTimingWindow=null;};
+        window.Show();_windowVisibility.Track(window);
     }
 
     private void SyncChecklist()
@@ -757,6 +777,7 @@ public partial class App : Application
         var reopenPets=_petWindow?.IsVisible==true;
         _petWindow?.Close();
         _hiddenCubeWindow?.Close();
+        _bossTimingWindow?.Close();
         foreach (var w in _breakdowns.Values.ToList()) w.Close();
         _history?.Close();
         _personalBests?.Close();
@@ -998,7 +1019,7 @@ public partial class App : Application
     {
         // Validate first, then close displays before restoring saved placement (close handlers write positions).
         OverlayProfiles.Apply(profile,new AppSettings(),new TimerCards.State());
-        _timerHub?.Close();_startedEvents?.Close();_petWindow?.Close();_hiddenCubeWindow?.Close();_timersWindow?.Close();_timerCards!.Dispose();
+        _timerHub?.Close();_startedEvents?.Close();_petWindow?.Close();_hiddenCubeWindow?.Close();_bossTimingWindow?.Close();_timersWindow?.Close();_timerCards!.Dispose();
         OverlayProfiles.Apply(profile,_meter.Settings,_timerCards.Saved);
         var placement=new Rect(_meter.Settings.OverlayLeft,_meter.Settings.OverlayTop,_meter.Settings.OverlayWidth,_meter.Settings.OverlayHeight);
         _meter.ApplySettings();
@@ -1105,6 +1126,7 @@ public partial class App : Application
         RegisterHotkeys();
         _overlay.ApplyAppearance();
         _overlay.Refresh();
+        SyncBossTiming();
     }
 
     /// <summary>The Settings window's row size slider, shown on the overlay before it is saved.</summary>

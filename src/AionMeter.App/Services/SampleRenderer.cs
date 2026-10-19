@@ -75,12 +75,13 @@ public static class SampleRenderer
         if (o.Window is not ("party" or "room"))
             meter.Tracker.Process(new InstanceTimerEvent(start, 600092, 2, start - 768_000, start + 2_832_000));
         if (o.Window == "overlay-crowd") fight.FeedCrowd(meter.Tracker, start + 20_000, 124);
-        if(o.Window is "overlay-boss-limit" or "overlay-boss-estimate" or "overlay-boss-estimate-locked")meter.Tracker.Process(new BossTimeLimitEvent(start,900001,start+300000));
+        if(o.Window is "overlay-boss-limit" or "overlay-boss-estimate" or "overlay-boss-estimate-locked" or "boss-timing" or "boss-timing-locked" or "overlay-timing-detached")meter.Tracker.Process(new BossTimeLimitEvent(start,900001,start+300000));
         if (o.Window == "history")
             foreach (var entry in meter.History.List().Take(20)) meter.PortraitOf(entry);
         WaitForPortraits(meter);
 
         ModulePreviewSession? workspace=null;
+        OverlayWindow? timingSource=null;
         Window host;
         Action refresh;
         switch (o.Window)
@@ -286,6 +287,13 @@ public static class SampleRenderer
                 host = new PatchNotesWindow(meter.Updates);
                 refresh = () => { };
                 break;
+            case "boss-timing":
+            case "boss-timing-locked":
+                meter.Settings.DetachBossTiming=true;
+                timingSource=new OverlayWindow(meter,exitOnClose:false);
+                var timing=new BossTimingWindow(meter.Settings,timingSource.DataContext,timingSource.Refresh);
+                WindowClickThrough.Attach(timing,()=>o.Window=="boss-timing-locked");
+                host=timing;refresh=timingSource.Refresh;break;
             case "checklist":
             case "checklist-locked":
                 ChecklistState.Normalize(meter.Settings);
@@ -326,6 +334,7 @@ public static class SampleRenderer
                 if (o.Window == "overlay-update") meter.Updates.Preview(SampleRelease(meter.Updates.Current)); // with the footer's update banner
                 if (o.Window is "clickthrough" or "overlay-boss-estimate-locked") meter.Settings.ClickThrough = true;
                 if (o.Window == "expanded") meter.Settings.CompactMode = false;
+                if(o.Window=="overlay-timing-detached")meter.Settings.DetachBossTiming=true;
                 var overlay = new OverlayWindow(meter) { Width = o.Width ?? 560, Height = o.Height ?? 820 };
                 host = overlay;
                 refresh = overlay.Refresh;
@@ -333,7 +342,8 @@ public static class SampleRenderer
         }
         if(host is OverlayWindow display && !display.ControlsDetached)
             display.MoveControlsTo(new MeterControlsWindow(meter.Settings,()=>{},()=>{}));
-        if(o.Window.StartsWith("overlay-boss-estimate",StringComparison.Ordinal) && host is OverlayWindow estimateDisplay)
+        var estimateDisplay=timingSource??host as OverlayWindow;
+        if((o.Window.StartsWith("overlay-boss-estimate",StringComparison.Ordinal) || timingSource is not null || o.Window=="overlay-timing-detached") && estimateDisplay is not null)
         {
             var hp=meter.Tracker.Snapshot(null,start+20000)!.Boss!.Hp;
             for(var i=0;i<=10;i++)
@@ -345,6 +355,7 @@ public static class SampleRenderer
         }
         Capture(host, refresh, path, o);
         workspace?.Dispose();
+        timingSource?.Close();
     }
 
     /// <summary>
@@ -414,6 +425,12 @@ public static class SampleRenderer
         refresh();
         var root = rootOverride ?? host.Content as FrameworkElement;
         if (root is null) return;
+        if(host is BossTimingWindow)
+        {
+            // Settle inherited bindings before freezing the offscreen screenshot height.
+            root.Measure(new Size(host.Width,double.PositiveInfinity));
+            root.Arrange(new Rect(new Point(),root.DesiredSize));root.UpdateLayout();
+        }
         if(double.IsNaN(host.Height))
         {
             root.Measure(new Size(host.Width,double.PositiveInfinity));

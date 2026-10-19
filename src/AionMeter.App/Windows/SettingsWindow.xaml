@@ -187,6 +187,8 @@
               </Border>
               <Border Style="{StaticResource Section}">
                 <StackPanel>
+                  <CheckBox x:Name="DetachBossTimingCheck" Style="{StaticResource DarkCheck}" Margin="0,0,0,6"/>
+                  <TextBlock x:Name="DetachBossTimingHint" Style="{StaticResource Hint}" TextWrapping="Wrap" Margin="0,0,0,12"/>
                   <CheckBox x:Name="AutomaticFightEndCheck" Style="{StaticResource DarkCheck}" Margin="0,0,0,6" />
                   <TextBlock x:Name="AutomaticFightEndHint" Style="{StaticResource Hint}" TextWrapping="Wrap" Margin="0,0,0,12" />
                   <TextBlock Text="{Binding Literal10, Source={x:Static s:UiText.Current}}" Style="{StaticResource SectionLabel}" Margin="0,0,0,8" />

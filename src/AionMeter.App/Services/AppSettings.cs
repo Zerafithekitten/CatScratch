@@ -75,6 +75,10 @@ public sealed class AppSettings
     /// <summary>Gear score and combat power after the names in the overlay (when the party roster gave them).</summary>
     public bool ShowGear { get; set; } = true;
     public bool? ShowCombatPower { get; set; }
+    public bool DetachBossTiming {get;set;}
+    public bool BossTimingPositionSaved {get;set;}
+    public double BossTimingLeft {get;set;}=500;
+    public double BossTimingTop {get;set;}=200;
     public bool ShowPersonalCombatModule { get; set; }
     public bool ShowDeathRecapModule { get; set; } = true;
     public bool ShowPetTrackerModule {get;set;}

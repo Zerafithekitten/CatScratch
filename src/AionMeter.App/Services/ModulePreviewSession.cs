@@ -32,6 +32,7 @@ internal sealed class ModulePreviewSession:IDisposable
         _userPositions["dps"]=new(source.OverlayLeft,source.OverlayTop);
         _userPositions["pets"]=new(source.PetModuleLeft,source.PetModuleTop);
         if(source.ChecklistPositionSaved)_userPositions["checklist"]=new(source.ChecklistLeft,source.ChecklistTop);
+        if(source.BossTimingPositionSaved)_userPositions["boss-timing"]=new(source.BossTimingLeft,source.BossTimingTop);
         if(source.HiddenCubePositionSaved)_userPositions["cubes"]=new(source.HiddenCubeLeft,source.HiddenCubeTop);
         var settings=source.CreateDraft();settings.DownloadIcons=false;settings.SaveHistory=false;
         settings.ClickThrough=false;settings.Locked=false;settings.ModulePins=[];settings.ChecklistAutoReset=false;
@@ -55,6 +56,7 @@ internal sealed class ModulePreviewSession:IDisposable
             display.MoveControlsTo(detached);
             display.Closed+=(_,_)=>detached.Close();
             Add("dps",display,display.Refresh);
+            if(settings.DetachBossTiming)Add("boss-timing",new BossTimingWindow(settings,display.DataContext,display.Refresh));
             var pets=new PetTrackerWindow(_meter);Add("pets",pets,pets.Refresh);
             var checklist=new ChecklistWindow(settings);Add("checklist",checklist,checklist.RefreshResetClock);
             Add("cubes",new HiddenCubeWindow(settings,preview:true));
