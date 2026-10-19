@@ -38,7 +38,7 @@ internal sealed class HiddenCubeSoundPanel : StackPanel
         Volume.ValueChanged+=(_,e)=>{draft.HiddenCubeSoundVolume=e.NewValue;Label();};Children.Add(Volume);Label();
         _error=new TextBlock {Foreground=ThemeColors.Brush("#F4A8A8"),TextWrapping=TextWrapping.Wrap,Visibility=Visibility.Collapsed,Margin=new(0,6,0,0)};Children.Add(_error);
     }
-    private string FileLabel()=>_draft.HiddenCubeSoundPath==CustomEventAudio.DefaultCubeSound?"Kitty meow (MP3)":string.IsNullOrWhiteSpace(_draft.HiddenCubeSoundPath)?T("No audio selected."):Path.GetFileName(_draft.HiddenCubeSoundPath);
+    private string FileLabel()=>_draft.HiddenCubeSoundPath==CustomEventAudio.DefaultCubeSound?"Kitty meow":string.IsNullOrWhiteSpace(_draft.HiddenCubeSoundPath)?T("No audio selected."):Path.GetFileName(_draft.HiddenCubeSoundPath);
     private void Busy(bool value){_busy=value;Choose.IsEnabled=Preview.IsEnabled=!value;}
     private void ErrorMessage(Exception error){Log.Error("Hidden cube audio selection or preview failed",error);_error.Text=T(error.Message);_error.Visibility=Visibility.Visible;}
     internal async Task<bool> ChooseAsync()

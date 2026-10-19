@@ -10,7 +10,7 @@ internal static class CustomEventAudio
     public static bool IsCustom(string sound) => sound is "Custom WAV" or "Custom audio";
     public static Uri FileUri(string path)
     {
-        var file = new FileInfo(path==DefaultCubeSound?Path.Combine(AppContext.BaseDirectory,"data","audio","kitty-meow.mp3"):path);
+        var file = new FileInfo(path==DefaultCubeSound?Path.Combine(AppContext.BaseDirectory,"data","audio","kitty-meow.wav"):path);
         if (!file.Exists) throw new InvalidDataException(UiText.Current.Localize("The selected audio file no longer exists. Choose it again."));
         if (file.Length <= 0) throw new InvalidDataException(UiText.Current.Localize("The selected audio file is empty."));
         if (file.Length > 10_000_000) throw new InvalidDataException(UiText.Current.Localize("The selected audio file exceeds 10 MB. Choose a smaller file."));
@@ -31,9 +31,9 @@ internal static class CustomEventAudio
     internal static async Task<TimeSpan> DurationAsync(string path)
     {
         var uri = FileUri(path);
-        if (Path.GetExtension(path).Equals(".wav", StringComparison.OrdinalIgnoreCase))
+        if (Path.GetExtension(uri.LocalPath).Equals(".wav", StringComparison.OrdinalIgnoreCase))
         {
-            try { using var wave=File.OpenRead(path); return Core.Audio.WaveSound.Validate(wave, int.MaxValue); }
+            try { using var wave=File.OpenRead(uri.LocalPath); return Core.Audio.WaveSound.Validate(wave, int.MaxValue); }
             catch (InvalidDataException) { /* Other WAV encodings still use the Windows decoder. */ }
         }
         var player = new MediaPlayer();

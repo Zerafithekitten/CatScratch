@@ -1,8 +1,8 @@
-﻿## CatScratch v3.0.12-beta.5
+﻿## CatScratch v3.0.12-beta.6
 
 - Upcoming and Started event cards retain their screen position when click-through hides their controls, including subsequent refreshes and repeated toggles.
 - Applied the same layout-preserving fix to the Pet tracker, Hidden cube alarm and shared module title bar. Hiding borders also retains their layout space in the alarm and death recap.
-- New installations use the owner-selected kitty meow MP3 for Hidden cube alerts. Existing saved sound choices, volume and enabled/disabled state stay unchanged.
+- New installations use the owner-selected kitty meow recording for Hidden cube alerts. Existing saved sound choices, volume and enabled/disabled state stay unchanged.
 - Added repeated lock/unlock geometry checks. Stable and Light are unchanged.
 
 ## CatScratch v3.0.12-beta.4
