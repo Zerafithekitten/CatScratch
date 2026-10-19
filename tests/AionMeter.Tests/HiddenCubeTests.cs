@@ -21,6 +21,20 @@ public class HiddenCubeTests
         Assert.Equal(new HiddenCubeSeenEvent(1000,7,HiddenCubePackets.ConfirmedTemplate),events[0]);
         Assert.Equal(new HiddenCubeGoneEvent(1000,7),events[1]);
     }
+    [Fact] public void VerteronObjectUsesTheSameAlertAndOpenLifecycle()
+    {
+        var cubes=new HiddenCubes();var events=new List<GameEvent>();
+        var parser=new PacketParser(GameData.Empty,e=>{events.Add(e);cubes.Observe(e);}){TimeMs=1000};
+        parser.Handle(0x3436,ObjectBody(HiddenCubePackets.VerteronTemplate));
+        Assert.Equal(new HiddenCubeSeenEvent(1000,7,1200039),Assert.Single(events));
+        Assert.Equal(1,cubes.Count(1000));Assert.Equal(1,cubes.DetectionVersion);
+        parser.Handle(0x3436,ObjectBody(HiddenCubePackets.VerteronTemplate));
+        Assert.Equal(1,cubes.Count(1000));Assert.Equal(1,cubes.DetectionVersion);
+        parser.Handle(0x3536,new byte[]{7,4,3,0});Assert.Equal(0,cubes.Count(1000));
+        parser.Handle(0x3436,ObjectBody(HiddenCubePackets.VerteronTemplate));Assert.Equal(0,cubes.Count(1000));
+    }
+    [Theory][InlineData(1200038)][InlineData(1200040)][InlineData(1500000)]
+    public void UnconfirmedNeighboringTemplatesAreNotCubeAlerts(int template)=>Assert.Null(HiddenCubePackets.Seen(1,ObjectBody(template)));
     [Theory][InlineData(1300865)][InlineData(1300891)][InlineData(2400751)]
     public void OtherWorldObjectsAreNotCubeAlerts(int template)=>Assert.Null(HiddenCubePackets.Seen(1,ObjectBody(template)));
     [Fact] public void TruncatedObjectsAndInvalidPositionsAreRejected()

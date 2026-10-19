@@ -1,4 +1,9 @@
-﻿## CatScratch v3.0.12-beta.3
+﻿## CatScratch v3.0.12-beta.4
+
+- Hidden cube alerts now recognize the additional variant confirmed in an enemy-side Verteron approach/open recording. The existing alarm and custom sound are reused; opening the cube clears the alert.
+- Both earlier cube recordings still pass. Other unverified variants remain unsupported. Stable and Light are unchanged.
+
+## CatScratch v3.0.12-beta.3
 
 - World bosses are watched only when you explicitly enable their bell. Detected kills and manual kill entries still save kill times and respawn timers without subscribing you automatically. Existing watch selections are preserved.
 

@@ -29,3 +29,12 @@ Nearby generic world-object templates `1300865` and `1300891` are not classified
 391 core tests passed, including seven cube cases covering decoding, other object types, truncation, invalid positions, duplicates, opening, context resets and expiry. Both capture replays returned the counts above. The application and CLI build cleanly. All 1,145 interaction checks passed, including the new window, independent pin, click-through, default-off preference, profile round-trip and discarded drafts. Shutdown left zero windows, and 55 existing compatibility checks passed.
 
 Private recordings and raw decoded diagnostics remain outside the repository. The alert requires a live-game test before its behavior can be considered verified beyond these captures. NuGet vulnerability metadata was unavailable during the local test run; the existing test-fixture compiler warnings are unchanged.
+
+
+## Verteron extension — 2026-10-19 (Beta 3.0.12-beta.4)
+
+The owner supplied an approach/open recording from the enemy side in Verteron. The previous detector emitted zero detections from its 3,670 packets. Its world-object announcement at 14:12:11.352 carries template `1200039`, object kind `04 00`, and the same 52-byte payload layout after the actor varint as the existing variant. At 14:12:30.852 the same actor receives the established `04 03 00` opened state. This matches the owner's reported find/open sequence.
+
+Added only template `1200039` to the explicit allowlist alongside `1301199`. The decoder retains the actual template ID and the shared detector accepts both. This is evidence for the recorded Verteron variant, not a claim that every cube on that side is covered. No general object-family, map or faction heuristic was added. Alarm appearance, custom sound, expiry, duplicate suppression and context resets use the existing shared path.
+
+Focused verification: 13 HiddenCubeTests pass, including the new variant's parser/alert/open/reannouncement lifecycle and rejected neighboring templates. Replaying the supplied Verteron recording now yields `seen=1, cleared=1, peak=1`. Both original approach/open captures still yield the same `1/1/1`. The app and CLI build with zero warnings/errors. Raw captures and actor/location data are not committed.

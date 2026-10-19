@@ -6,17 +6,19 @@ namespace AionMeter.Core.Game;
 public sealed record HiddenCubeSeenEvent(long TimeMs,uint ActorId,int TemplateId):GameEvent(TimeMs);
 public sealed record HiddenCubeGoneEvent(long TimeMs,uint ActorId):GameEvent(TimeMs);
 
-/// <summary>Only the object variant confirmed by two approach/open recordings. No NPC or map-position guesses.</summary>
+/// <summary>Only explicitly confirmed object variants from approach/open recordings. No NPC or map-position guesses.</summary>
 public static class HiddenCubePackets
 {
     public const int ConfirmedTemplate=1301199;
+    public const int VerteronTemplate=1200039;
+    public static bool IsConfirmedTemplate(int template)=>template is ConfirmedTemplate or VerteronTemplate;
     public static HiddenCubeSeenEvent? Seen(long time,ReadOnlySpan<byte> body)
     {
         var at=0;
         if(!Wire.TryVarint(body,ref at,out var actor) || actor==0 || body.Length-at!=52)return null;
-        if(body[at]!=4 || body[at+1]!=0 || Wire.U32(body,at+2)!=ConfirmedTemplate)return null;
+        if(body[at]!=4 || body[at+1]!=0 || !IsConfirmedTemplate((int)Wire.U32(body,at+2)))return null;
         for(var n=0;n<3;n++)if(!float.IsFinite(BitConverter.ToSingle(body.Slice(at+6+n*4,4))))return null;
-        return new(time,actor,ConfirmedTemplate);
+        return new(time,actor,(int)Wire.U32(body,at+2));
     }
     public static HiddenCubeGoneEvent? State(long time,ReadOnlySpan<byte> body)
     {
@@ -47,7 +49,7 @@ public sealed class HiddenCubes
                     var identity=(own.Name,own.ServerId);
                     if(_own is not null && _own!=identity){_active.Clear();_opened.Clear();}
                     _own=identity;break;
-                case HiddenCubeSeenEvent cube when cube.TemplateId==HiddenCubePackets.ConfirmedTemplate && !_opened.Contains(cube.ActorId):
+                case HiddenCubeSeenEvent cube when HiddenCubePackets.IsConfirmedTemplate(cube.TemplateId) && !_opened.Contains(cube.ActorId):
                     Expire(cube.TimeMs);
                     if(_active.Count<64 || _active.ContainsKey(cube.ActorId))
                     {

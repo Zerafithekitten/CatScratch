@@ -55,3 +55,5 @@ On 2026-10-19 the owner reviewed the individual world boss settings image and ex
 On 2026-10-19 the owner authorized "ab in die beta damit" for topmost recovery, then added restart click-through and missing transparent appearance to the same correction. Publish all verified fixes as v3.0.12-beta.2 with latest=false, preserving main, Stable 3.0.11 and Light.
 
 On 2026-10-19 the owner explicitly requested manual-only world boss watching and direct Beta publication as v3.0.12-beta.3. Preserve existing watch choices, kill/respawn records, Stable and Light.
+
+On 2026-10-19 the owner reviewed the Verteron cube alarm preview and explicitly requested Beta publication as v3.0.12-beta.4. Run full release validation; keep Stable and Light unchanged.
