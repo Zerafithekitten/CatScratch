@@ -7,7 +7,7 @@ A separate, always-on-top Windows DPS meter for **AION 2**, by Zerafithekitten. 
 | Channel | Current version | What it includes |
 | --- | --- | --- |
 | **Stable** | **[v3.0.11](https://github.com/Zerafithekitten/CatScratch/releases/tag/v3.0.11)** | Compact panel layouts, checklist with a custom hotkey, reset countdowns and stable click-through placement, Pet tracking modes and sounds, passive Hidden cube alerts, ONLY BOSS, defeat estimates, refined Test mode and DPS placement fixes. |
-| **Beta** | **[v3.0.12-beta.2](https://github.com/Zerafithekitten/CatScratch/releases/tag/v3.0.12-beta.2)** | Individual world bosses, favorites and sounds, plus topmost recovery and click-through startup fixes. |
+| **Beta** | **[v3.0.12-beta.3](https://github.com/Zerafithekitten/CatScratch/releases/tag/v3.0.12-beta.3)** | Individual world bosses, favorites and sounds, plus topmost recovery, click-through startup fixes and manual-only boss watching. |
 | **Light** | [v1.0.0](https://github.com/Zerafithekitten/CatScratch/releases/tag/light-v1.0.0) | Separate **DPS meter only** edition with essential settings. Independent ZIP download and settings; no additional CatScratch modules or automatic updater. |
 
 **CatScratch light** is installed separately from the full version. [Download its ZIP](https://github.com/Zerafithekitten/CatScratch/releases/download/light-v1.0.0/CatScratch-light-win-x64.zip) and extract it into its own folder. Light is maintained and updated **only on the owner's explicit request**; normal development continues on full CatScratch.
@@ -448,3 +448,5 @@ Stable 3.0.5 localizes checklist reset weekdays to the selected CatScratch langu
 Stable 3.0.6 improves the boss defeat estimate in click-through mode: a dedicated dark surface, brighter semibold text and slightly larger lettering keep it readable over the game. The time-limit comparison retains its semantic colors.
 
 ![Readable remaining boss fight time in click-through mode](docs/images/boss-estimate-clickthrough-stable306.png)
+
+**Beta 3.0.12-beta.3:** World bosses are added to Watched only with the bell. Neither detected kills nor manual kill entries enable watching; kill times, respawn timers and existing watch selections remain saved.

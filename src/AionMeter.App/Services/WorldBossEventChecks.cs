@@ -19,6 +19,18 @@ internal static class WorldBossEventChecks
         var passed=new List<string>();void Check(bool ok,string message){if(!ok)throw new InvalidOperationException(message);passed.Add(message);}
         using var meter=new MeterService(new AppSettings{Transient=true,DownloadIcons=false},null);
         using var cards=new TimerCards(meter,false);
+        using(var watchMeter=new MeterService(new AppSettings{Transient=true,DownloadIcons=false},null))
+        {
+            const int watchCode=2400800;
+            watchMeter.Timers.MarkKilled(2305,watchCode);
+            Check(!watchMeter.Timers.ForServer(2305).Single().Watch,"Manual kill entry does not automatically watch a boss");
+            watchMeter.Timers.SetWatch(2305,watchCode,true);
+            watchMeter.Timers.MarkKilled(2305,watchCode);
+            Check(watchMeter.Timers.ForServer(2305).Single().Watch,"A manually watched boss stays watched after a kill entry");
+            watchMeter.Timers.SetWatch(2305,watchCode,false);
+            watchMeter.Timers.OnNotice(new BossNotice(watchCode,1110,null,BossNoticeKind.Killed,DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),ServerId:2305));
+            Check(!watchMeter.Timers.ForServer(2305).Single().Watch,"Detected kills preserve an explicitly disabled watch");
+        }
         var now=new DateTimeOffset(2026,10,19,12,0,0,TimeSpan.Zero);
         const int code=2400800;var id=TimerCards.WorldBossKey(code);
         meter.Timers.SetCurrentServer(2305);
@@ -35,6 +47,7 @@ internal static class WorldBossEventChecks
             var tile=Find<Border>(hub).Single(b=>b.Child is Grid{Tag:TimerCardData});
             Check(tile.Effect is not null,"Favorited boss tiles have the established golden glow");
             meter.Timers.OnNotice(new BossNotice(code,1110,null,BossNoticeKind.Killed,now.ToUnixTimeMilliseconds(),ServerId:2305));
+            Check(!meter.Timers.ForServer(2305).Single(t=>t.NpcCode==code).Watch,"Detected kills preserve timers without automatically watching a boss");
             meter.Timers.SetRespawn(2305,code,120);hub.Reload();
             Check(cards.SelectedWorldBossCards().Single().Next==now.AddHours(2) && Find<Grid>(hub).Count(g=>g.Tag is TimerCardData)==1,"Chosen world boss stays visible beyond the usual one-hour window");
             cards.Saved.ShowAllWorldBosses=true;meter.Timers.SetRespawn(2305,code,30);hub.Reload();

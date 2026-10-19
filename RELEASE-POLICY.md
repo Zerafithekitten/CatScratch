@@ -53,3 +53,5 @@ On 2026-10-19 the owner explicitly authorized publishing the opt-in click-throug
 On 2026-10-19 the owner reviewed the individual world boss settings image and explicitly authorized "upload beta" for v3.0.12-beta.1. Run complete release checks; publish only beta and its prerelease tag with latest=false. Keep main, Stable 3.0.11 and Light unchanged.
 
 On 2026-10-19 the owner authorized "ab in die beta damit" for topmost recovery, then added restart click-through and missing transparent appearance to the same correction. Publish all verified fixes as v3.0.12-beta.2 with latest=false, preserving main, Stable 3.0.11 and Light.
+
+On 2026-10-19 the owner explicitly requested manual-only world boss watching and direct Beta publication as v3.0.12-beta.3. Preserve existing watch choices, kill/respawn records, Stable and Light.

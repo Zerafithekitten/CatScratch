@@ -1,4 +1,8 @@
-﻿## CatScratch v3.0.12-beta.2
+﻿## CatScratch v3.0.12-beta.3
+
+- World bosses are watched only when you explicitly enable their bell. Detected kills and manual kill entries still save kill times and respawn timers without subscribing you automatically. Existing watch selections are preserved.
+
+## CatScratch v3.0.12-beta.2
 
 ### Overlay visibility and click-through fixes
 

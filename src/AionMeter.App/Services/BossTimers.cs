@@ -258,7 +258,7 @@ public sealed class BossTimers
                     // Off the field maps a boss comes back with its instance, not on a clock: no timer for it.
                     t = t is null && !IsFieldMap(n.MapId)
                         ? null
-                        : (t ?? New(server, n.NpcCode)) with { LastKill = at, AlertedFor = null, Watch = true };
+                        : (t ?? New(server, n.NpcCode)) with { LastKill = at, AlertedFor = null };
                     break;
                 case BossNoticeKind.Alive when t is not null:
                     t = Learn(t, at) with { LastSeenAlive = at };
@@ -501,7 +501,7 @@ public sealed class BossTimers
         lock (_gate)
         {
             var t = _timers.TryGetValue((server, npcCode), out var old) ? old : New(server, npcCode);
-            _timers[(server, npcCode)] = t with { LastKill = DateTimeOffset.Now, AlertedFor = null, Watch = true };
+            _timers[(server, npcCode)] = t with { LastKill = DateTimeOffset.Now, AlertedFor = null };
         }
         Save();
     }
