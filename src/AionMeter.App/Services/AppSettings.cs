@@ -88,6 +88,12 @@ public sealed class AppSettings
     public bool PetNotify {get;set;}
     public bool PetOnHitOnly {get;set;}
     public string? PreferredDisplay {get;set;}
+    public bool ShowResourcesModule {get;set;}
+    public List<string> VisibleResources {get;set;}=["odyle","abyss","centuryroot","passcoin","fragment"];
+    public double ResourcesWidth {get;set;}=300;
+    public double ResourcesLeft {get;set;}=500;
+    public double ResourcesTop {get;set;}=300;
+    public bool ResourcesPositionSaved {get;set;}
     public bool ShowChecklistModule {get;set;}
     public bool ChecklistSectionsMigrated {get;set;}
     public Dictionary<string,CardPlacement> ModulePreviewLayout {get;set;}=[];

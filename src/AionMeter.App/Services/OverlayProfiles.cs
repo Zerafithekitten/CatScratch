@@ -15,6 +15,7 @@ public static class OverlayProfiles
         "ShowBossPanel","ShowPersonalCombatModule","PersonalCombatCollapsed","ShowHealingDone","ShowDeathRecapModule",
         "ShowPetTrackerModule","PetOnHitOnly","PetModuleLeft","PetModuleTop","PetModuleWidth","PetModuleHeight",
         "DetachBossTiming","BossTimingPositionSaved","BossTimingLeft","BossTimingTop",
+        "ShowResourcesModule","ResourcesWidth","ResourcesPositionSaved","ResourcesLeft","ResourcesTop",
         "ShowChecklistModule","ChecklistRows","ChecklistWidth","ChecklistPositionSaved","ChecklistLeft","ChecklistTop",
         "ShowHiddenCubeModule","HiddenCubePositionSaved","HiddenCubeLeft","HiddenCubeTop"];
     private static string PathName=>Path.Combine(AppSettings.AppDataDir,"overlay-profiles.json");

@@ -328,6 +328,10 @@ public static class SampleRenderer
                 var taskWindow=new ChecklistWindow(meter.Settings);
                 if(o.Window=="checklist-locked")taskWindow.SetDisplayOnly(true);
                 host=taskWindow;refresh=taskWindow.RefreshResetClock;break;
+            case "resources":
+                meter.Resources.Observe(new Core.Game.OdyleEnergyEvent(1,15,495));
+                meter.Resources.Observe(new Core.Game.ResourceBalanceSnapshot(1,new Dictionary<int,ulong>{{930100003,3188},{930100011,1670},{930100024,1000},{930100017,160}}));
+                host=new ResourcesWindow(meter);refresh=()=>{};break;
             case "hidden-cube":
             case "hidden-cube-locked":
                 var cubeWindow=new HiddenCubeWindow(meter.Settings);
@@ -348,7 +352,7 @@ public static class SampleRenderer
                 var settingsWindow = new SettingsWindow(meter) { Width = o.Width ?? 760, Height = o.Height ?? 660 };
                 if(o.Window=="settings-only-boss")settingsWindow.SelectTab("combat");
                 // Keep existing numeric screenshot selectors stable when the sidebar is reordered.
-                string[] tabIds=["appearance","combat","hotkeys","history","capture","general","updates","feedback","events","pets","profiles","help","cubes","checklist"];
+                string[] tabIds=["appearance","combat","hotkeys","history","capture","general","updates","feedback","events","pets","profiles","help","cubes","checklist","resources"];
                 if (int.TryParse(o.Tab,out var settingsTab) && settingsTab>=0 && settingsTab<tabIds.Length) settingsWindow.SelectTab(tabIds[settingsTab]);
                 else if(o.Tab is not null && tabIds.Contains(o.Tab)) settingsWindow.SelectTab(o.Tab);
                 host = settingsWindow;

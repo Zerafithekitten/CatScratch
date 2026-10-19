@@ -65,3 +65,5 @@ The owner replaced the proposed cube sound with freesound_community-kitty-meow-8
 On 2026-10-19 the owner explicitly requested Beta edge anchoring for Upcoming and Started, then additionally requested matching top-edge behavior and automatic recognition after dragging. Publish the verified changes as v3.0.12-beta.7; show actual growth/shrink images before upload and leave Stable and Light unchanged.
 
 On 2026-10-19 the owner reviewed the compact Hidden cube preview and approved "perfekt ... update". Publish it as v3.0.12-beta.8 after full validation; leave Stable and Light unchanged.
+
+On 2026-10-20 the owner explicitly requested Resources settings and Beta publication, then required each resource to be independently selectable. Actual module and Settings previews were shown. Publish the verified opt-in module as v3.0.12-beta.9; clearly mark last-received currency balances and do not claim verified live currency changes or guessed Odyle limits/deadlines. Stable and Light remain unchanged.

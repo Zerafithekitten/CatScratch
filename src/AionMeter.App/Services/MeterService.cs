@@ -146,7 +146,7 @@ public sealed class MeterService : IDisposable
     /// </summary>
     public void Replay(string path)
     {
-        HiddenCubes.Reset();
+        HiddenCubes.Reset(); Resources.Reset();
         StopDemo();
         LastPlayedWith.Reset();
         LiveIdentity.Reset(); PartyPreview.Reset(); Tracker.InvalidateParty();
@@ -187,7 +187,7 @@ public sealed class MeterService : IDisposable
         }
         if(!_replaying)
         {
-            HiddenCubes.Observe(resolved);
+            HiddenCubes.Observe(resolved); Resources.Observe(resolved);
             _realPets.Observe(resolved);
             if(resolved is Core.Events.SelfIdentifiedEvent own)_petProgress?.Identity(own);
         }
@@ -203,6 +203,7 @@ public sealed class MeterService : IDisposable
     }
     private readonly Core.Game.PetCollection _realPets=new();
     public Core.Game.PetCollection Pets => _testPets ?? _realPets;
+    public Core.Game.ResourceBalances Resources {get;}=new();
     public Core.Game.HiddenCubes HiddenCubes {get;}=new();
     public void StartCapture()
     {
@@ -216,7 +217,7 @@ public sealed class MeterService : IDisposable
                 _capture.EventDecoded += ProcessLiveEvent;
                 _capture.StatusChanged += status =>
                 {
-                    LiveIdentity.ObserveCaptureStatus(status, () => { HiddenCubes.Reset(); _realPets.InvalidateLocation(); PartyPreview.Reset(); LastPlayedWith.Reset(); _realTracker.InvalidateParty(); });
+                    LiveIdentity.ObserveCaptureStatus(status, () => { HiddenCubes.Reset(); Resources.Reset(); _realPets.InvalidateLocation(); PartyPreview.Reset(); LastPlayedWith.Reset(); _realTracker.InvalidateParty(); });
                 };
                 _capture.Start();
             }
@@ -248,7 +249,7 @@ public sealed class MeterService : IDisposable
         {
             previous?.Dispose();
             if (_exiting) return;
-            LiveIdentity.Suspend(); HiddenCubes.Reset(); _realPets.InvalidateLocation(); PartyPreview.Reset(); LastPlayedWith.Reset(); _realTracker.InvalidateParty();
+            LiveIdentity.Suspend(); HiddenCubes.Reset(); Resources.Reset(); _realPets.InvalidateLocation(); PartyPreview.Reset(); LastPlayedWith.Reset(); _realTracker.InvalidateParty();
             StartCapture();
         }
         finally
@@ -276,7 +277,7 @@ public sealed class MeterService : IDisposable
     public void StartDemo(int seconds = 45, bool animate = true)
     {
         if (_exiting || DemoRunning || _replaying) return;
-        HiddenCubes.Reset();
+        HiddenCubes.Reset(); Resources.Reset();
         _realTracker.Tick(DateTimeOffset.UtcNow.ToUnixTimeMilliseconds());
         _testTracker = new CombatTracker(Data,new MeterOptions { PartyOnly=false });
         _testPets = new();

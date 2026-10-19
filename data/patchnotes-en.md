@@ -1,4 +1,11 @@
-﻿## CatScratch v3.0.12-beta.8
+﻿## CatScratch v3.0.12-beta.9
+
+- Added an optional standalone Resources module under Settings > Resources. Individually select Odyle Energy, Abyss Points, Centuryroot Token, Deava Pass Shop Coin and Phantasmal Fragment; adjust width and save the selection.
+- Odyle displays available and supplementary energy separately and updates from confirmed login, regeneration and item-use packets. No recharge countdown or capacity is guessed.
+- The four currencies display last received, unambiguous inventory balances, marked with *. Live currency-change tracking is not yet verified; relog to obtain a fresh inventory snapshot. Missing/ambiguous values remain unknown.
+- Includes pinning, click-through without layout shifts, global visibility, saved placement and layout profiles. Character/capture changes discard old values. Stable and Light are unchanged.
+
+## CatScratch v3.0.12-beta.8
 
 - Hidden cube alerts use a narrower, compact background directly behind the warning text. The hidden header area stays transparent in click-through mode without shifting the alert.
 - Preserves animated red warning markers, sound preferences and saved placement. Stable and Light are unchanged.
