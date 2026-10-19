@@ -62,22 +62,24 @@ public sealed partial class TimerHubWindow : Window, IDisplayAppearance
                 if(source is System.Windows.Controls.Primitives.ButtonBase) return;
                 source=VisualTreeHelper.GetParent(source);
             }
-            if(e.LeftButton==System.Windows.Input.MouseButtonState.Pressed) { DragMove(); SavePlacement(); e.Handled=true; }
+            if(e.LeftButton==System.Windows.Input.MouseButtonState.Pressed) { DragMove(); CaptureEdge(); SavePlacement(); e.Handled=true; }
         };
         root.Children.Add(_list);
         var shell=new Border { Child=root, Background=Brushes.Transparent };
         shell.SizeChanged+=(_,_)=>shell.Clip=new RectangleGeometry(new Rect(0,0,shell.ActualWidth,shell.ActualHeight),14,14);
         Content=shell;
-        if(cards.Saved.Positions.TryGetValue(PlacementKey,out var p)) { Left=p.Left; Top=p.Top; Width=Math.Max(240,p.Width); }
+        if(cards.Saved.Positions.TryGetValue(PlacementKey,out var p)) { Left=p.Left; Top=p.Top; Width=Math.Max(240,p.Width); _verticalEdge=p.VerticalEdge; _edgeGap=p.EdgeGap; }
         else { Left=100; Top=_startedOnly?240:100; }
         _clock.Tick+=(_,_)=>Reload(); Loaded+=(_,_)=>{
             Left=Math.Clamp(Left,SystemParameters.VirtualScreenLeft,Math.Max(SystemParameters.VirtualScreenLeft,SystemParameters.VirtualScreenLeft+SystemParameters.VirtualScreenWidth-ActualWidth));
             Top=Math.Clamp(Top,SystemParameters.VirtualScreenTop,Math.Max(SystemParameters.VirtualScreenTop,SystemParameters.VirtualScreenTop+SystemParameters.VirtualScreenHeight-ActualHeight));
+            if(_verticalEdge==0)CaptureEdge();
+            ApplyEdge();
             if(_startedOnly) cards.Saved.StartedEventWindowOpen=true; else cards.Saved.EventWindowOpen=true;
             cards.Save(); Reload();_clock.Start();
         };
         Closed+=(_,_)=> { _clock.Stop(); foreach (var tile in _list.Children.OfType<Border>()) EventPulse.Apply(tile,EventPanelBrushes.Border,false); SavePlacement(); };
-        SizeChanged+=(_,_)=>Reload();
+        SizeChanged+=(_,_)=>{ApplyEdge();Reload();};
         Reload();
     }
     public void Reload()
@@ -113,7 +115,7 @@ public sealed partial class TimerHubWindow : Window, IDisplayAppearance
                     Background=EventPanelBrushes.Background, BorderBrush=accent, BorderThickness=new(1), Margin=new(2),
                     ToolTip=$"{UiText.Current.Localize(item.Name)} · {UiText.Current.Localize(item.Id.StartsWith("boss:") ? "Time from in-game boss list" : "Community schedule · Shugo.GG")} ({UiText.Current.Localize(_cards.Saved.EventRegion)}). {UiText.Current.Localize("Right-click to open a separate window.")}" };
                 tile.MouseLeftButtonDown+=(_,e)=> {
-                    if(e.LeftButton==System.Windows.Input.MouseButtonState.Pressed) { DragMove(); SavePlacement(); }
+                    if(e.LeftButton==System.Windows.Input.MouseButtonState.Pressed) { DragMove(); CaptureEdge(); SavePlacement(); }
                     e.Handled=true;
                 };
                 tile.MouseRightButtonUp+=(_,_)=> { var menu=new ContextMenu(); var detach=new MenuItem { Header=UiText.Current.Localize("Open separate window") }; detach.Click+=(_,_)=>_cards.Pin(item.Id.StartsWith("boss:") ? item.Id : "auto:"+item.Id); menu.Items.Add(detach); menu.IsOpen=true; };
@@ -138,7 +140,7 @@ public sealed partial class TimerHubWindow : Window, IDisplayAppearance
     }
     private void SavePlacement()
     {
-        _cards.Saved.Positions[PlacementKey]=new(){Left=Left,Top=Top,Width=Width,Height=ActualHeight};
+        _cards.Saved.Positions[PlacementKey]=new(){Left=Left,Top=Top,Width=Width,Height=ActualHeight,VerticalEdge=_verticalEdge,EdgeGap=_edgeGap};
         _cards.Save();
     }
 }

@@ -14,6 +14,8 @@ public sealed class CardPlacement
     public double Width { get; set; } = 330;
     public double Height { get; set; } = 180;
     public bool Open { get; set; }
+    public int VerticalEdge {get;set;} // -1 top, 1 bottom, 0 free
+    public double EdgeGap {get;set;}
 }
 public sealed partial class TimerCards : IDisposable
 {

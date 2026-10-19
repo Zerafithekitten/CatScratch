@@ -1,4 +1,10 @@
-﻿## CatScratch v3.0.12-beta.6
+﻿## CatScratch v3.0.12-beta.7
+
+- Upcoming and Started event modules automatically anchor to the upper or lower screen edge when dragged close to it. At the bottom, extra events expand upwards and disappearing rows shrink back down; at the top, the upper edge stays fixed.
+- Dragging away releases the edge anchor. Saved placements and overlay profiles retain the edge choice; freely positioned modules keep their existing behavior.
+- Includes checks for both modules, dynamic growth/shrink and repeated click-through toggles. Stable and Light are unchanged.
+
+## CatScratch v3.0.12-beta.6
 
 - Upcoming and Started event cards retain their screen position when click-through hides their controls, including subsequent refreshes and repeated toggles.
 - Applied the same layout-preserving fix to the Pet tracker, Hidden cube alarm and shared module title bar. Hiding borders also retains their layout space in the alarm and death recap.

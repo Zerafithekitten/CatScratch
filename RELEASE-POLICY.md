@@ -61,3 +61,5 @@ On 2026-10-19 the owner reviewed the Verteron cube alarm preview and explicitly 
 On 2026-10-19 the owner requested fixing click-through position shifts, especially Upcoming and Started events, in Beta. Actual before/after module images were shown; publish verified corrections as v3.0.12-beta.6, preserving Stable and Light.
 
 The owner replaced the proposed cube sound with freesound_community-kitty-meow-85182.mp3, then explicitly resumed Beta publication on 2026-10-19. Include it only as the new-install default; preserve existing audio preferences. Publish these changes together with the reviewed geometry corrections as v3.0.12-beta.6.
+
+On 2026-10-19 the owner explicitly requested Beta edge anchoring for Upcoming and Started, then additionally requested matching top-edge behavior and automatic recognition after dragging. Publish the verified changes as v3.0.12-beta.7; show actual growth/shrink images before upload and leave Stable and Light unchanged.

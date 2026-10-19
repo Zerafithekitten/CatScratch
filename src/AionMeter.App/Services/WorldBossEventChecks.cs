@@ -118,6 +118,54 @@ internal static class WorldBossEventChecks
                 }
                 finally{module.Close();}
             }
+            var edgePreview=new DrawingVisual();
+            using var previewDrawing=edgePreview.RenderOpen();
+            previewDrawing.DrawRectangle(ThemeColors.Brush("#101419"),null,new Rect(0,0,1500,420));
+            void PreviewEdge(Window window,int column,string caption)
+            {
+                var bitmap=new System.Windows.Media.Imaging.RenderTargetBitmap((int)Math.Ceiling(window.ActualWidth),(int)Math.Ceiling(window.ActualHeight),96,96,PixelFormats.Pbgra32);
+                bitmap.Render(window);
+                previewDrawing.DrawImage(bitmap,new Rect(column*500+8,390-window.ActualHeight,window.ActualWidth,window.ActualHeight));
+                previewDrawing.DrawLine(new Pen(Brushes.Gold,1),new Point(column*500+8,390),new Point(column*500+488,390));
+                previewDrawing.DrawText(new FormattedText(caption,System.Globalization.CultureInfo.InvariantCulture,FlowDirection.LeftToRight,new Typeface("Segoe UI"),16,Brushes.White,1),new Point(column*500+8,395));
+            }
+            var screenArea=new Rect(-1920,-1080,1920,1080);
+            foreach(var edge in new[]{-1,1})
+            {
+                var small=TimerHubWindow.EdgeTop(screenArea,-500,100,edge,4);
+                var large=TimerHubWindow.EdgeTop(screenArea,small,300,edge,4);
+                Check(edge<0?Math.Abs(small-large)<.1:Math.Abs(small+100-large-300)<.1,"Top/bottom edge stays fixed while the event module grows");
+                Check(Math.Abs(TimerHubWindow.EdgeTop(screenArea,large,100,edge,4)-small)<.1,"Event module returns to its original edge position after shrinking");
+            }
+            Check(TimerHubWindow.EdgeTop(screenArea,-500,300,0,0)==-500,"Freely placed modules retain their normal top position");
+            foreach(var eventWindow in new[]{hub,started})
+            {
+                var area=System.Windows.Forms.Screen.PrimaryScreen!.Bounds;
+                eventWindow.Left=area.Left+30;eventWindow.Top=area.Top;eventWindow.UpdateLayout();eventWindow.CaptureEdge();
+                var top=eventWindow.Top;
+                eventWindow.Width=240;eventWindow.Reload();eventWindow.UpdateLayout();
+                Check(Math.Abs(eventWindow.Top-top)<1,"Real event window preserves its top edge after content reflow");
+                eventWindow.Top=area.Bottom-eventWindow.ActualHeight;eventWindow.CaptureEdge();
+                var bottom=eventWindow.Top+eventWindow.ActualHeight;
+                eventWindow.Width=480;eventWindow.Reload();eventWindow.UpdateLayout();
+                Check(Math.Abs(eventWindow.Top+eventWindow.ActualHeight-bottom)<1,"Real event window preserves its bottom edge after content reflow");
+                var wrap=Find<WrapPanel>(eventWindow).Single();
+                if(eventWindow==hub)PreviewEdge(eventWindow,0,"Vorher · feste Unterkante");
+                var extraRow=new Grid{Tag=((Grid)wrap.Children.OfType<Border>().First().Child).Tag};
+                for(var label=0;label<3;label++)extraRow.Children.Add(new TextBlock{Text=label==0?"Additional event · test":"",Visibility=label==2?Visibility.Hidden:Visibility.Visible,Foreground=Brushes.White,Margin=new Thickness(8)});
+                var extra=new Border{Width=460,Height=84,Background=ThemeColors.Brush("#20242A"),Margin=new Thickness(2),Child=extraRow};
+                wrap.Children.Add(extra);eventWindow.UpdateLayout();
+                Check(Math.Abs(eventWindow.Top+eventWindow.ActualHeight-bottom)<1,"Additional event rows grow upwards from the fixed bottom edge");
+                if(eventWindow==hub)PreviewEdge(eventWindow,1,"Mehr Events · wächst nach oben");
+                wrap.Children.Remove(extra);eventWindow.UpdateLayout();
+                Check(Math.Abs(eventWindow.Top+eventWindow.ActualHeight-bottom)<1,"Removing event rows restores the same bottom edge");
+                if(eventWindow==hub)PreviewEdge(eventWindow,2,"Danach · wieder ursprüngliche Größe");
+
+            }
+            previewDrawing.Close();
+            var previewBitmap=new System.Windows.Media.Imaging.RenderTargetBitmap(1500,420,96,96,PixelFormats.Pbgra32);previewBitmap.Render(edgePreview);
+            var encoder=new System.Windows.Media.Imaging.PngBitmapEncoder();encoder.Frames.Add(System.Windows.Media.Imaging.BitmapFrame.Create(previewBitmap));
+            using(var imageFile=File.Create(output+".png"))encoder.Save(imageFile);
             var path=output+".settings.json";
             try{JsonSettingsFile.Write(path,cards.Saved);var restored=JsonSettingsFile.Read<TimerCards.State>(path)!;Check(restored.SelectedWorldBosses.SetEquals(cards.Saved.SelectedWorldBosses) && restored.FavoriteEvents.SetEquals(cards.Saved.FavoriteEvents) && restored.Sounds[id].Sound=="Ping","Boss selections, favorites and per-boss audio survive reload");}
             finally{foreach(var file in new[]{path,path+".bak"})if(File.Exists(file))File.Delete(file);}

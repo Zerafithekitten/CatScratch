@@ -16,7 +16,7 @@ public sealed partial class TimerHubWindow
         var name=new TextBlock{Text=boss.Name,FontSize=10,FontWeight=FontWeights.SemiBold,VerticalAlignment=VerticalAlignment.Center,TextTrimming=TextTrimming.CharacterEllipsis};Grid.SetColumn(name,1);row.Children.Add(name);
         var time=new TextBlock{FontSize=10,FontWeight=FontWeights.SemiBold,Foreground=ColorBrush("#D8C789"),Margin=new(8,0,0,0),VerticalAlignment=VerticalAlignment.Center};Grid.SetColumn(time,2);row.Children.Add(time);
         var tile=new Border{Child=row,CornerRadius=new(5),Padding=new(7,4,7,4),Height=28,Background=EventPanelBrushes.Background,BorderBrush=accent,BorderThickness=new(1),Margin=new(2),ToolTip=boss.Name+" · "+UiText.Current.Localize(boss.Source)};
-        tile.MouseLeftButtonDown+=(_,e)=>{if(e.LeftButton==System.Windows.Input.MouseButtonState.Pressed){DragMove();SavePlacement();}e.Handled=true;};
+        tile.MouseLeftButtonDown+=(_,e)=>{if(e.LeftButton==System.Windows.Input.MouseButtonState.Pressed){DragMove();CaptureEdge();SavePlacement();}e.Handled=true;};
         tile.MouseRightButtonUp+=(_,_)=>
         {
             var menu=new ContextMenu();var favorite=new MenuItem{Header=UiText.Current.Localize(_cards.IsFavorite(boss.Id)?"Remove favorite":"Favorite: always show in events")};

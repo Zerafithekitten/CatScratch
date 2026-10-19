@@ -29,7 +29,7 @@ public static class OverlayProfiles
     }
     public static OverlayProfile Capture(string name,AppSettings settings,TimerCards.State timers) => new(name,
         Fields.ToDictionary(f=>f,f=>JsonSerializer.SerializeToElement(typeof(AppSettings).GetProperty(f)!.GetValue(settings))),
-        timers.Positions.ToDictionary(p=>p.Key,p=>new CardPlacement {Left=p.Value.Left,Top=p.Value.Top,Width=p.Value.Width,Height=p.Value.Height,Open=p.Value.Open}),
+        timers.Positions.ToDictionary(p=>p.Key,p=>new CardPlacement {Left=p.Value.Left,Top=p.Value.Top,Width=p.Value.Width,Height=p.Value.Height,Open=p.Value.Open,VerticalEdge=p.Value.VerticalEdge,EdgeGap=p.Value.EdgeGap}),
         timers.EventWindowOpen,timers.StartedEventWindowOpen,timers.EventOpacity,Pins:new(settings.ModulePins));
     public static void Apply(OverlayProfile profile,AppSettings settings,TimerCards.State timers)
     {
@@ -45,7 +45,7 @@ public static class OverlayProfiles
         settings.PetModuleWidth=Math.Clamp(settings.PetModuleWidth,150,1600);settings.PetModuleHeight=Math.Clamp(settings.PetModuleHeight,60,1200);
         ChecklistState.Normalize(settings);
         settings.RowSize=Math.Clamp(settings.RowSize,AppSettings.MinRowSize,AppSettings.MaxRowSize);settings.MaxRows=Math.Clamp(settings.MaxRows,1,20);
-        timers.Positions=profile.Cards.ToDictionary(p=>p.Key,p=>new CardPlacement {Left=p.Value.Left,Top=p.Value.Top,Width=p.Value.Width,Height=p.Value.Height,Open=p.Value.Open});
+        timers.Positions=profile.Cards.ToDictionary(p=>p.Key,p=>new CardPlacement {Left=p.Value.Left,Top=p.Value.Top,Width=p.Value.Width,Height=p.Value.Height,Open=p.Value.Open,VerticalEdge=p.Value.VerticalEdge,EdgeGap=p.Value.EdgeGap});
         timers.EventWindowOpen=profile.Upcoming;timers.StartedEventWindowOpen=profile.Started;timers.EventOpacity=Math.Clamp(profile.EventOpacity,0.1,1);
     }
 }
