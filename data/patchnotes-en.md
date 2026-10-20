@@ -1,4 +1,9 @@
-﻿## CatScratch v3.0.12-beta.13
+﻿## CatScratch v3.0.12-beta.14
+
+- Removed the misleading * marker from live-updated Abyss Points, Centuryroot Token and Phantasmal Fragment balances. Only Deava Pass Shop Coin keeps the last-received snapshot marker. Updated the corresponding tooltips and Settings explanation.
+- Stable and Light are unchanged.
+
+## CatScratch v3.0.12-beta.13
 
 - Added an optional standalone Dungeon entries module under Settings > Dungeon entries. Independently select Daily Dungeon, Nightmare and Shugo Festival. Shows available (+extra) / server-reported capacity, with live confirmed consumption updates.
 - Includes independent pinning, saved position, global visibility, layout profiles and click-through without shifting rows. Missing data shows Relog!; unknown capacity stays unknown until a snapshot arrives. Character and capture changes clear old counts.

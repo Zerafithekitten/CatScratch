@@ -27,7 +27,9 @@ internal static class ResourceModuleChecks
             Check(ResourcesWindow.Entries.All(e=>ResourceIcons.For(e.Key) is System.Windows.Media.Imaging.BitmapSource {PixelWidth:>0,PixelHeight:>0,IsFrozen:true}),"Every resource has a bundled frozen game icon");
             Check(Find<Image>(window).Count(i=>i.Width==18)==5,"Each selected resource row displays its matching icon");
             Check(Find<TextBlock>(window).Any(t=>t.Text.Contains("(+495)")),"Odyle keeps available and supplementary values separate");
-            Check(Find<TextBlock>(window).Any(t=>t.Text.EndsWith(" *")),"Inventory balances are visibly marked as last received");
+            Check(Find<TextBlock>(window).Any(t=>t.Text.Contains("3") && t.Text.Contains("188") && !t.Text.EndsWith(" *")),"Live Abyss balance has no snapshot marker");
+            feed(new Core.Game.ResourceBalanceSnapshot(3,new Dictionary<int,ulong>{{930100024,1000},{930100011,1670},{930100017,160}}));window.Refresh();window.UpdateLayout();
+            Check(Find<TextBlock>(window).Count(t=>t.Text.EndsWith(" *"))==1,"Only Pass Shop Coin retains the snapshot marker");
             var height=window.ActualHeight;var top=window.Top;
             WindowClickThrough.ApplyAll(true);window.UpdateLayout();Check(Math.Abs(window.ActualHeight-height)<.5 && window.Top==top,"Click-through preserves resource geometry");
             WindowClickThrough.ApplyAll(false);

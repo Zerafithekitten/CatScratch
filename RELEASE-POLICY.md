@@ -75,3 +75,5 @@ On 2026-10-20 the owner chose to return to the normal online Beta workflow and e
 On 2026-10-20 the owner explicitly requested publishing the verified resource-preservation fixes first, deferring instance-entry work until further captures arrive. Publish v3.0.12-beta.12 after release verification. No visible UI redesign; preserve Stable and Light.
 
 On 2026-10-20 the owner explicitly authorized the standalone selectable Dungeon entries module and confirmed live currency updates for Beta. Actual module and Settings images were shown before publication. Publish v3.0.12-beta.13 after full checks; preserve Stable and Light.
+
+On 2026-10-20 the owner reviewed the corrected resource marker preview and explicitly approved "update es". Publish v3.0.12-beta.14 after full release checks; preserve Stable and Light.
