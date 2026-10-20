@@ -88,6 +88,11 @@ public sealed class AppSettings
     public bool PetNotify {get;set;}
     public bool PetOnHitOnly {get;set;}
     public string? PreferredDisplay {get;set;}
+    public bool ShowDungeonEntriesModule {get;set;}
+    public List<string> VisibleDungeonEntries {get;set;}=["daily","nightmare","shugo"];
+    public double DungeonEntriesLeft {get;set;}=510;
+    public double DungeonEntriesTop {get;set;}=400;
+    public bool DungeonEntriesPositionSaved {get;set;}
     public bool ShowResourcesModule {get;set;}
     public List<string> VisibleResources {get;set;}=["odyle","abyss","centuryroot","passcoin","fragment"];
     public string ResourcesLayout {get;set;}="List";

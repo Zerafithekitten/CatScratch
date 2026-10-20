@@ -53,6 +53,22 @@ internal static class ResourceModuleChecks
             meter.Resources.Observe(new Core.Game.OdyleEnergyEvent(1,0,0));window.Refresh();
             Check(Find<TextBlock>(window).Any(t=>t.Text.Contains("(+0)")) && !Find<TextBlock>(window).Any(t=>t.Text=="⚠ Relog!"),"Confirmed zero values replace the warning and remain visible");
             var path=output+".settings";try{JsonSettingsFile.Write(path,meter.Settings);var restored=JsonSettingsFile.Read<AppSettings>(path)!;Check(restored.VisibleResources.SequenceEqual(meter.Settings.VisibleResources),"Resource selections survive serialization");}finally{foreach(var f in new[]{path,path+".bak"})if(File.Exists(f))File.Delete(f);}
+            var dungeon=new DungeonEntriesWindow(meter){Left=-30000,Top=-30000};WindowClickThrough.Attach(dungeon,()=>false);
+            try
+            {
+                dungeon.Show();dungeon.UpdateLayout();
+                Check(Find<TextBlock>(dungeon).Count(t=>t.Text=="⚠ Relog!")==3,"Dungeon missing counts warn instead of guessing");
+                feed(new Core.Game.DungeonEntriesEvent(1,new Dictionary<uint,Core.Game.DungeonEntryValue>{{101,new(0,18,14)},{4,new(0,3,14)},{1,new(17,3,21)}}));dungeon.Refresh();dungeon.UpdateLayout();
+                Check(Find<TextBlock>(dungeon).Any(t=>t.Text=="0 (+18)/14") && Find<TextBlock>(dungeon).Any(t=>t.Text=="17 (+3)/21"),"Dungeon live events reach the separate display");
+                var before=new Size(dungeon.ActualWidth,dungeon.ActualHeight);var topBefore=dungeon.Top;
+                WindowClickThrough.ApplyAll(true);dungeon.UpdateLayout();
+                Check(before==new Size(dungeon.ActualWidth,dungeon.ActualHeight) && topBefore==dungeon.Top,"Dungeon click-through preserves position and dimensions");WindowClickThrough.ApplyAll(false);
+                meter.Settings.VisibleDungeonEntries=["nightmare"];dungeon.Refresh();dungeon.UpdateLayout();
+                Check(!Find<TextBlock>(dungeon).Any(t=>t.Text=="Daily Dungeon") && Find<TextBlock>(dungeon).Any(t=>t.Text=="Nightmare"),"Dungeon selection hides unselected rows");
+                var draftDungeon=meter.Settings.CreateDraft();var panelDungeon=new DungeonEntriesSettingsPanel(draftDungeon);var hostDungeon=new Window{Content=panelDungeon,Width=500,Height=400,Left=-30000,Top=-30000};
+                try{hostDungeon.Show();hostDungeon.UpdateLayout();var boxes=Find<CheckBox>(hostDungeon).ToArray();Check(boxes.Length==4,"Dungeon settings contain module toggle and three choices");boxes[1].IsChecked=true;boxes[1].RaiseEvent(new RoutedEventArgs(Button.ClickEvent));Check(draftDungeon.VisibleDungeonEntries.Contains("daily") && !meter.Settings.VisibleDungeonEntries.Contains("daily"),"Dungeon settings remain in draft until Save");}finally{hostDungeon.Close();}
+            }
+            finally{dungeon.Close();}
             File.WriteAllText(output,JsonSerializer.Serialize(passed));
         }
         finally{window.Close();}

@@ -6,6 +6,18 @@ public sealed record ResourceBalanceSnapshot(long TimeMs,IReadOnlyDictionary<int
 public static class ResourceInventoryPackets
 {
     public static readonly int[] Supported=[930100003,930100011,930100024,930100017];
+    public static ResourceBalanceSnapshot? Update(long time,ReadOnlySpan<byte> body)
+    {
+        // Confirmed Centuryroot spending, Abyss gain and Phantasmal Fragment records: 1B56 carries absolute item balances.
+        // Other currencies and deletion layouts still need their own verification.
+        if(body.Length<40 || body[0]==0)return null;
+        var snapshot=Snapshot(time,body);
+        if(snapshot is null)return null;
+        static bool Confirmed(int id)=>id is 930100011 or 930100003 or 930100017;
+        var values=snapshot.Values.Where(v=>Confirmed(v.Key)).ToDictionary(v=>v.Key,v=>v.Value);
+        var ambiguous=snapshot.Ambiguous?.Where(Confirmed).ToHashSet()??[];
+        return values.Count>0 || ambiguous.Count>0?new(time,values,ambiguous):null;
+    }
     public static ResourceBalanceSnapshot? Snapshot(long time,ReadOnlySpan<byte> body)
     {
         // Only the confirmed inventory snapshot and complete currency-item record shape.
@@ -29,7 +41,9 @@ public sealed class ResourceBalances
     private readonly Dictionary<int,ulong> _balances=[];
     private (string,int)? _identity;
     private OdyleEnergyEvent? _energy;
-    public void Reset(){lock(_gate){_balances.Clear();_energy=null;_identity=null;}}
+    private readonly Dictionary<uint,DungeonEntryValue> _entries=[];
+    public IReadOnlyDictionary<uint,DungeonEntryValue> ReadEntries(){lock(_gate)return new Dictionary<uint,DungeonEntryValue>(_entries);}
+    public void Reset(){lock(_gate){_balances.Clear();_energy=null;_entries.Clear();_identity=null;}}
     public void Observe(GameEvent e)
     {
         lock(_gate)
@@ -38,11 +52,13 @@ public sealed class ResourceBalances
             {
                 var changed=_identity is {} prior && (prior.Item1!=own.Name ||
                     prior.Item2>0 && own.ServerId>0 && prior.Item2!=own.ServerId);
-                if(changed){_balances.Clear();_energy=null;}
+                if(changed){_balances.Clear();_energy=null;_entries.Clear();}
                 var server=own.ServerId>0?own.ServerId:_identity is {} previous && previous.Item1==own.Name?previous.Item2:0;
                 _identity=(own.Name,server);
             }
             if(e is OdyleEnergyEvent energy)_energy=energy;
+            if(e is DungeonEntriesEvent entries)foreach(var item in entries.Values)
+                _entries[item.Key]=item.Value with {Capacity=item.Value.Capacity??(_entries.TryGetValue(item.Key,out var priorEntry)?priorEntry.Capacity:null)};
             if(e is ResourceBalanceSnapshot snapshot)
             {
                 // Inventory packets can cover different containers/sections. Missing entries do not mean zero.

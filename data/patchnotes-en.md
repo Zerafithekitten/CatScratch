@@ -1,4 +1,11 @@
-﻿## CatScratch v3.0.12-beta.12
+﻿## CatScratch v3.0.12-beta.13
+
+- Added an optional standalone Dungeon entries module under Settings > Dungeon entries. Independently select Daily Dungeon, Nightmare and Shugo Festival. Shows available (+extra) / server-reported capacity, with live confirmed consumption updates.
+- Includes independent pinning, saved position, global visibility, layout profiles and click-through without shifting rows. Missing data shows Relog!; unknown capacity stays unknown until a snapshot arrives. Character and capture changes clear old counts.
+- Resources now apply confirmed live balance changes for Abyss Points, Centuryroot Token and Phantasmal Fragment without requiring a relog. Odyle keeps its existing live updates; Deava Pass Shop Coin remains a last-received snapshot until change packets are verified. The * marker still means last received balance.
+- Removed an orphan Resources window allocation when opening Checklist. Stable and Light remain unchanged.
+
+## CatScratch v3.0.12-beta.12
 
 - Fixed received resource balances being erased by incomplete character records or later server identification during login. Resolved own-player identity now reaches resource tracking consistently.
 - Partial and unrelated inventory messages preserve other known resources; ambiguous duplicate entries invalidate only the affected resource. Confirmed character changes and capture resets still clear old values.

@@ -62,6 +62,7 @@ public partial class App : Application
     private HiddenCubeWindow? _hiddenCubeWindow;
     private ChecklistWindow? _checklistWindow;
     private ResourcesWindow? _resourcesWindow;
+    private DungeonEntriesWindow? _dungeonEntriesWindow;
     private EventSoundPlayer? _hiddenCubeSoundPlayer;
     private long _hiddenCubeSoundVersion;
     private long _deathRecapStamp;
@@ -160,7 +161,8 @@ public partial class App : Application
             _patchNotes = new PatchNotesWindow(_meter.Updates);
             _checklistWindow=new ChecklistWindow(_meter.Settings);
             _resourcesWindow=new ResourcesWindow(_meter);
-            foreach (var window in new Window[] { _overlay, _timerHub, _startedEvents, _timersWindow, _soundWindow, _patchNotes, _checklistWindow, _resourcesWindow })
+            _dungeonEntriesWindow=new DungeonEntriesWindow(_meter);
+            foreach (var window in new Window[] { _overlay, _timerHub, _startedEvents, _timersWindow, _soundWindow, _patchNotes, _checklistWindow, _resourcesWindow, _dungeonEntriesWindow })
             {
                 window.Left = -30000; window.Top = -30000;
                 window.ShowInTaskbar = false; window.ShowActivated = false; window.Show();
@@ -541,6 +543,7 @@ public partial class App : Application
         SyncHiddenCubes();
         SyncChecklist();
         SyncResources();
+        SyncDungeonEntries();
         _overlay.Refresh(); // The permanent panel also needs current fight, save and update state.
         SyncBossTiming();
         if (++_ticks % 5 == 0)
@@ -594,6 +597,18 @@ public partial class App : Application
         window.Show();_windowVisibility.Track(window);
     }
 
+    private void SyncDungeonEntries()
+    {
+        if(_shutdownStarted)return;
+        if(!_meter.Settings.ShowDungeonEntriesModule){_dungeonEntriesWindow?.Close();return;}
+        if(_dungeonEntriesWindow is not null){_dungeonEntriesWindow.Refresh();return;}
+        if(_windowVisibility.Hidden)return;
+        var window=_dungeonEntriesWindow=new DungeonEntriesWindow(_meter);
+        WindowClickThrough.Attach(window,()=>_meter.Settings.ClickThrough,()=>_meter.Settings.WindowOpacity);
+        window.Closed+=(_,_)=>{if(ReferenceEquals(_dungeonEntriesWindow,window))_dungeonEntriesWindow=null;};
+        window.Show();_windowVisibility.Track(window);
+    }
+
     private void SyncChecklist()
     {
         if(_shutdownStarted)return;
@@ -601,7 +616,6 @@ public partial class App : Application
         if(_checklistWindow is not null){_checklistWindow.ApplyPreferences();return;}
         if(_windowVisibility.Hidden)return;
         var window=_checklistWindow=new ChecklistWindow(_meter.Settings);
-            _resourcesWindow=new ResourcesWindow(_meter);
         WindowClickThrough.Attach(window,()=>_meter.Settings.ClickThrough,()=>_meter.Settings.WindowOpacity);
         window.Closed+=(_,_)=>{if(ReferenceEquals(_checklistWindow,window))_checklistWindow=null;};
         window.Show();_windowVisibility.Track(window);
@@ -824,7 +838,7 @@ public partial class App : Application
         WindowPinning.RefreshAll();
         var reopenPets=_petWindow?.IsVisible==true;
         _petWindow?.Close();
-        _hiddenCubeWindow?.Close();_resourcesWindow?.Close();
+        _hiddenCubeWindow?.Close();_resourcesWindow?.Close();_dungeonEntriesWindow?.Close();
         _bossTimingWindow?.Close();
         foreach (var w in _breakdowns.Values.ToList()) w.Close();
         _history?.Close();
@@ -1064,7 +1078,7 @@ public partial class App : Application
     {
         // Validate first, then close displays before restoring saved placement (close handlers write positions).
         OverlayProfiles.Apply(profile,new AppSettings(),new TimerCards.State());
-        _timerHub?.Close();_startedEvents?.Close();_petWindow?.Close();_hiddenCubeWindow?.Close();_resourcesWindow?.Close();_bossTimingWindow?.Close();_timersWindow?.Close();_timerCards!.Dispose();
+        _timerHub?.Close();_startedEvents?.Close();_petWindow?.Close();_hiddenCubeWindow?.Close();_resourcesWindow?.Close();_dungeonEntriesWindow?.Close();_bossTimingWindow?.Close();_timersWindow?.Close();_timerCards!.Dispose();
         OverlayProfiles.Apply(profile,_meter.Settings,_timerCards.Saved);
         var placement=new Rect(_meter.Settings.OverlayLeft,_meter.Settings.OverlayTop,_meter.Settings.OverlayWidth,_meter.Settings.OverlayHeight);
         _meter.ApplySettings();

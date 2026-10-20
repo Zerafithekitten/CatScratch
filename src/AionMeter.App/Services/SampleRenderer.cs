@@ -328,6 +328,9 @@ public static class SampleRenderer
                 var taskWindow=new ChecklistWindow(meter.Settings);
                 if(o.Window=="checklist-locked")taskWindow.SetDisplayOnly(true);
                 host=taskWindow;refresh=taskWindow.RefreshResetClock;break;
+            case "dungeons":
+                meter.Resources.Observe(new Core.Game.DungeonEntriesEvent(1,new Dictionary<uint,Core.Game.DungeonEntryValue>{{101,new(0,18,14)},{4,new(0,3,14)},{1,new(17,3,21)}}));
+                host=new DungeonEntriesWindow(meter);refresh=()=>{};break;
             case "resources":
             case "resources-strip":
             case "resources-grid":
@@ -359,7 +362,7 @@ public static class SampleRenderer
                 var settingsWindow = new SettingsWindow(meter) { Width = o.Width ?? 760, Height = o.Height ?? 660 };
                 if(o.Window=="settings-only-boss")settingsWindow.SelectTab("combat");
                 // Keep existing numeric screenshot selectors stable when the sidebar is reordered.
-                string[] tabIds=["appearance","combat","hotkeys","history","capture","general","updates","feedback","events","pets","profiles","help","cubes","checklist","resources"];
+                string[] tabIds=["appearance","combat","hotkeys","history","capture","general","updates","feedback","events","pets","profiles","help","cubes","checklist","resources","dungeons"];
                 if (int.TryParse(o.Tab,out var settingsTab) && settingsTab>=0 && settingsTab<tabIds.Length) settingsWindow.SelectTab(tabIds[settingsTab]);
                 else if(o.Tab is not null && tabIds.Contains(o.Tab)) settingsWindow.SelectTab(o.Tab);
                 host = settingsWindow;

@@ -48,14 +48,19 @@ public sealed class PacketParser
 
         switch (opcode)
         {
+            case 0x1B56:
+                if(ResourceInventoryPackets.Update(TimeMs,body) is { } resourceUpdate)Emit(resourceUpdate);
+                break;
             case 0x1156:
                 if(ResourceInventoryPackets.Snapshot(TimeMs,body) is { } resources)Emit(resources);
                 break;
             case 0x0B61:
                 if(OdyleEnergyPackets.Snapshot(TimeMs,body) is { } energySnapshot)Emit(energySnapshot);
+                if(DungeonEntryPackets.Snapshot(TimeMs,body) is { } entriesSnapshot)Emit(entriesSnapshot);
                 break;
             case 0x0C61:
                 if(OdyleEnergyPackets.Update(TimeMs,body) is { } energyUpdate)Emit(energyUpdate);
+                if(DungeonEntryPackets.Update(TimeMs,body) is { } entriesUpdate)Emit(entriesUpdate);
                 break;
             case Opcodes.Heartbeat:
                 Heartbeats++;
