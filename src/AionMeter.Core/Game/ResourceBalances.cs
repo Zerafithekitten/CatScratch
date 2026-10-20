@@ -2,7 +2,7 @@ using AionMeter.Core.Events;
 using AionMeter.Core.Protocol;
 namespace AionMeter.Core.Game;
 
-public sealed record ResourceBalanceSnapshot(long TimeMs,IReadOnlyDictionary<int,ulong> Values):GameEvent(TimeMs);
+public sealed record ResourceBalanceSnapshot(long TimeMs,IReadOnlyDictionary<int,ulong> Values,IReadOnlySet<int>? Ambiguous=null):GameEvent(TimeMs);
 public static class ResourceInventoryPackets
 {
     public static readonly int[] Supported=[930100003,930100011,930100024,930100017];
@@ -20,7 +20,7 @@ public static class ResourceInventoryPackets
             if(!found.TryAdd(id,amount))ambiguous.Add(id);
         }
         foreach(var id in ambiguous)found.Remove(id);
-        return new(time,found);
+        return found.Count>0 || ambiguous.Count>0?new(time,found,ambiguous):null;
     }
 }
 public sealed class ResourceBalances
@@ -34,14 +34,21 @@ public sealed class ResourceBalances
     {
         lock(_gate)
         {
-            if(e is SelfIdentifiedEvent own)
+            if(e is SelfIdentifiedEvent own && !string.IsNullOrWhiteSpace(own.Name))
             {
-                var id=(own.Name,own.ServerId);
-                if(_identity is not null && _identity!=id){_balances.Clear();_energy=null;}
-                _identity=id;
+                var changed=_identity is {} prior && (prior.Item1!=own.Name ||
+                    prior.Item2>0 && own.ServerId>0 && prior.Item2!=own.ServerId);
+                if(changed){_balances.Clear();_energy=null;}
+                var server=own.ServerId>0?own.ServerId:_identity is {} previous && previous.Item1==own.Name?previous.Item2:0;
+                _identity=(own.Name,server);
             }
             if(e is OdyleEnergyEvent energy)_energy=energy;
-            if(e is ResourceBalanceSnapshot snapshot){_balances.Clear();foreach(var item in snapshot.Values)_balances[item.Key]=item.Value;}
+            if(e is ResourceBalanceSnapshot snapshot)
+            {
+                // Inventory packets can cover different containers/sections. Missing entries do not mean zero.
+                if(snapshot.Ambiguous is {} ambiguous)foreach(var id in ambiguous)_balances.Remove(id);
+                foreach(var item in snapshot.Values)_balances[item.Key]=item.Value;
+            }
         }
     }
     public (OdyleEnergyEvent? Energy,IReadOnlyDictionary<int,ulong> Balances) Read(){lock(_gate)return (_energy,new Dictionary<int,ulong>(_balances));}

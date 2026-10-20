@@ -187,7 +187,7 @@ public sealed class MeterService : IDisposable
         }
         if(!_replaying)
         {
-            HiddenCubes.Observe(resolved); Resources.Observe(resolved);
+            HiddenCubes.Observe(resolved); Resources.Observe(identity ?? resolved);
             _realPets.Observe(resolved);
             if(resolved is Core.Events.SelfIdentifiedEvent own)_petProgress?.Identity(own);
         }

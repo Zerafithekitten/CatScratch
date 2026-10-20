@@ -37,4 +37,29 @@ public class ResourceBalanceTests
         var state=new ResourceBalances();state.Observe(new ResourceBalanceSnapshot(1,new Dictionary<int,ulong>{{930100003,10}}));
         var first=state.Read();state.Reset();Assert.Equal(10ul,first.Balances[930100003]);Assert.Empty(state.Read().Balances);
     }
+    [Fact] public void PlaceholderAndServerRefinementDoNotEraseReceivedValues()
+    {
+        var state=new ResourceBalances();state.Observe(new SelfIdentifiedEvent(1,1,"One",0,GameClass.Cleric));
+        state.Observe(new OdyleEnergyEvent(2,15,495));state.Observe(new ResourceBalanceSnapshot(2,new Dictionary<int,ulong>{{930100003,3188}}));
+        state.Observe(new SelfIdentifiedEvent(3,2,"",0,GameClass.Unknown));
+        state.Observe(new SelfIdentifiedEvent(4,2,"One",1,GameClass.Cleric));
+        Assert.Equal(495u,state.Read().Energy!.Supplementary);Assert.Equal(3188ul,state.Read().Balances[930100003]);
+        state.Observe(new SelfIdentifiedEvent(5,2,"One",0,GameClass.Cleric));
+        state.Observe(new SelfIdentifiedEvent(6,2,"One",2,GameClass.Cleric));
+        Assert.Null(state.Read().Energy);Assert.Empty(state.Read().Balances);
+    }
+    [Fact] public void PartialAndEmptyInventoryMessagesPreserveOtherResources()
+    {
+        var state=new ResourceBalances();state.Observe(new ResourceBalanceSnapshot(1,new Dictionary<int,ulong>{{930100003,3188},{930100017,160}}));
+        state.Observe(new ResourceBalanceSnapshot(2,new Dictionary<int,ulong>{{930100017,150}}));
+        state.Observe(new ResourceBalanceSnapshot(3,new Dictionary<int,ulong>()));
+        Assert.Equal(3188ul,state.Read().Balances[930100003]);Assert.Equal(150ul,state.Read().Balances[930100017]);
+        Assert.Null(ResourceInventoryPackets.Snapshot(4,new byte[40]));
+    }
+    [Fact] public void AmbiguousInventoryEntriesInvalidateOnlyTheAffectedResource()
+    {
+        var state=new ResourceBalances();state.Observe(new ResourceBalanceSnapshot(1,new Dictionary<int,ulong>{{930100003,3188},{930100017,160}}));
+        state.Observe(ResourceInventoryPackets.Snapshot(2,Inventory((930100003,100),(930100003,200)))!);
+        Assert.False(state.Read().Balances.ContainsKey(930100003));Assert.Equal(160ul,state.Read().Balances[930100017]);
+    }
 }

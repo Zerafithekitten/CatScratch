@@ -337,7 +337,7 @@ public static class SampleRenderer
                 meter.Resources.Observe(new Core.Game.OdyleEnergyEvent(1,15,495));
                 meter.Resources.Observe(new Core.Game.ResourceBalanceSnapshot(1,new Dictionary<int,ulong>{{930100003,3188},{930100011,1670},{930100024,1000},{930100017,160}}));
                 if(o.Window=="resources-missing")meter.Resources.Reset();
-                if(o.Window=="resources-partial")meter.Resources.Observe(new Core.Game.ResourceBalanceSnapshot(1,new Dictionary<int,ulong>()));
+                if(o.Window=="resources-partial"){meter.Resources.Reset();meter.Resources.Observe(new Core.Game.OdyleEnergyEvent(1,15,495));}
                 host=new ResourcesWindow(meter);refresh=()=>{};break;
             case "hidden-cube":
             case "hidden-cube-locked":

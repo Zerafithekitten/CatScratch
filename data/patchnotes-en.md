@@ -1,4 +1,10 @@
-﻿## CatScratch v3.0.12-beta.11
+﻿## CatScratch v3.0.12-beta.12
+
+- Fixed received resource balances being erased by incomplete character records or later server identification during login. Resolved own-player identity now reaches resource tracking consistently.
+- Partial and unrelated inventory messages preserve other known resources; ambiguous duplicate entries invalidate only the affected resource. Confirmed character changes and capture resets still clear old values.
+- Checked against the supplied login recording and added regression coverage. No active game-server queries, new currency-change decoders or instance-entry module are included. Stable and Light are unchanged.
+
+## CatScratch v3.0.12-beta.11
 
 - Missing resource data now shows an orange **Relog!** warning instead of a dash in List, Horizontal and Grid layouts. The tooltip explains returning to character selection and logging in again.
 - Received data replaces the warning. Confirmed zero balances remain visible as zero. Stable and Light are unchanged.

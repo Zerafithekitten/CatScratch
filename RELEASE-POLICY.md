@@ -71,3 +71,5 @@ On 2026-10-20 the owner explicitly requested Resources settings and Beta publica
 On 2026-10-20 the owner reviewed the resource icons and layout previews and explicitly requested "beta update". Publish them as v3.0.12-beta.10 after full release validation; preserve Stable and Light.
 
 On 2026-10-20 the owner chose to return to the normal online Beta workflow and explicitly requested publishing the latest reviewed Relog warning changes as v3.0.12-beta.11. Run full release verification; keep Stable and Light unchanged.
+
+On 2026-10-20 the owner explicitly requested publishing the verified resource-preservation fixes first, deferring instance-entry work until further captures arrive. Publish v3.0.12-beta.12 after release verification. No visible UI redesign; preserve Stable and Light.

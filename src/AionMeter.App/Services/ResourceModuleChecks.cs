@@ -13,7 +13,13 @@ internal static class ResourceModuleChecks
     {
         var passed=new List<string>();void Check(bool ok,string message){if(!ok)throw new InvalidOperationException(message);passed.Add(message);}
         using var meter=new MeterService(new AppSettings{Transient=true,DownloadIcons=false},null);
-        meter.Resources.Observe(new Core.Game.OdyleEnergyEvent(1,15,495));meter.Resources.Observe(new Core.Game.ResourceBalanceSnapshot(1,new Dictionary<int,ulong>{{930100003,3188}}));
+        var feed=typeof(MeterService).GetMethod("ProcessLiveEvent",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic)!.CreateDelegate<Action<Core.Events.GameEvent>>(meter);
+        feed(new Core.Events.SelfIdentifiedEvent(1,1,"Resource test",0,Core.Events.GameClass.Cleric));
+        feed(new Core.Game.OdyleEnergyEvent(2,15,495));feed(new Core.Game.ResourceBalanceSnapshot(2,new Dictionary<int,ulong>{{930100003,3188}}));
+        feed(new Core.Events.SelfIdentifiedEvent(3,2,"",0,Core.Events.GameClass.Unknown));
+        feed(new Core.Game.ResourceBalanceSnapshot(4,new Dictionary<int,ulong>()));
+        feed(new Core.Events.PlayerSeenEvent(5,2,"Resource test",2305,Core.Events.GameClass.Cleric));
+        Check(meter.Resources.Read().Energy?.Supplementary==495 && meter.Resources.Read().Balances.Count==1,"Live event routing preserves balances across placeholder identity, partial inventory and resolved player identity");
         var window=new ResourcesWindow(meter){Left=-30000,Top=-30000};WindowClickThrough.Attach(window,()=>false);
         try
         {
