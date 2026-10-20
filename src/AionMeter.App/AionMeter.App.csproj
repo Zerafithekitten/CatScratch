@@ -17,7 +17,7 @@
     <Product>CatScratch</Product>
     <AssemblyTitle>CatScratch</AssemblyTitle>
     <ApplicationIcon>Assets\app.ico</ApplicationIcon>
-    <Version>3.0.12-beta.21</Version>
+    <Version>3.0.12-beta.22</Version>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <NoWarn>$(NoWarn);WFO0003</NoWarn>

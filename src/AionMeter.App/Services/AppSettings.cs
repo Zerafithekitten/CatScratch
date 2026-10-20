@@ -95,6 +95,12 @@ public sealed class AppSettings
     public double DungeonEntriesLeft {get;set;}=510;
     public double DungeonEntriesTop {get;set;}=400;
     public bool DungeonEntriesPositionSaved {get;set;}
+    public bool SnapModules {get;set;}
+    public double ModuleSpacing {get;set;}=6;
+    public Dictionary<string,ResourceAlertRule> ResourceAlerts {get;set;}=[];
+    public bool ResourceAlertSoundEnabled {get;set;}
+    public string ResourceAlertSound {get;set;}="Chime";
+    public double ResourceAlertVolume {get;set;}=.5;
     public bool ShowResourcesModule {get;set;}
     public List<string> VisibleResources {get;set;}=["odyle","abyss","centuryroot","passcoin","fragment","oath"];
     public string ResourcesLayout {get;set;}="List";

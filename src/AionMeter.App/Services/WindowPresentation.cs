@@ -142,7 +142,7 @@ internal static class WindowPresentation
             if(msg==0x001C && wp==0 || msg==0x007E || msg==0x0047 && window.Topmost &&
                 ((long)NativeMethods.GetWindowLongPtr(hwnd,NativeMethods.GWL_EXSTYLE)&8)==0)QueueTopmostRecovery();
             if(msg==0x0231)NativeDragging.Add(window);
-            if(msg==0x0232){NativeDragging.Remove(window);Constrain(window);}
+            if(msg==0x0232){NativeDragging.Remove(window);ModuleSnapping.Apply(window);Constrain(window);}
             if(!Enabled || msg is not (0x0216 or 0x0214) || lp==0)return 0; // WM_MOVING / WM_SIZING
             var raw=Marshal.PtrToStructure<NativeRect>(lp);
             var monitor=Area(window,msg==0x0216 ? System.Windows.Forms.Screen.FromPoint(System.Windows.Forms.Cursor.Position) : System.Windows.Forms.Screen.FromHandle(hwnd));

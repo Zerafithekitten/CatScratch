@@ -206,6 +206,7 @@ public sealed class MeterService : IDisposable
     private readonly Core.Game.PetCollection _realPets=new();
     public Core.Game.PetCollection Pets => _testPets ?? _realPets;
     public Core.Game.ResourceBalances Resources {get;}=new();
+    internal IReadOnlyList<ResourceProgress> ResourceHistory=>_resourceProgress?.Snapshot()??(Resources.SavedProgress() is {} current?new[]{current}:Array.Empty<ResourceProgress>());
     public Core.Game.HiddenCubes HiddenCubes {get;}=new();
     public void StartCapture()
     {

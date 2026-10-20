@@ -1,4 +1,4 @@
-﻿using System.IO;
+using System.IO;
 using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Threading;
@@ -61,6 +61,7 @@ public partial class App : Application
     private DeathRecapWindow? _deathRecapWindow;
     private HiddenCubeWindow? _hiddenCubeWindow;
     private ChecklistWindow? _checklistWindow;
+    private readonly ResourceAlertMonitor _resourceAlerts=new();
     private ResourcesWindow? _resourcesWindow;
     private DungeonEntriesWindow? _dungeonEntriesWindow;
     private EventSoundPlayer? _hiddenCubeSoundPlayer;
@@ -249,6 +250,13 @@ public partial class App : Application
             Log.Enabled=false;
             try{OverlayPlacementChecks.Run(placementPath);Shutdown();}
             catch(Exception error){File.WriteAllText(placementPath,error.ToString());Shutdown(1);}
+            return;
+        }
+        if(ArgValue(e.Args,"--check-resource-tools") is {} toolsPath)
+        {
+            Log.Enabled=false;
+            try{ResourceToolsChecks.Run(toolsPath);Shutdown();}
+            catch(Exception error){File.WriteAllText(toolsPath,error.ToString());Shutdown(1);}
             return;
         }
         if(ArgValue(e.Args,"--check-resources") is { } resourcesPath)
@@ -543,6 +551,8 @@ public partial class App : Application
         SyncHiddenCubes();
         SyncChecklist();
         SyncResources();
+        _resourceAlerts.Tick(_meter);
+        _meterControls?.RefreshConnection(_meter);
         SyncDungeonEntries();
         _overlay.Refresh(); // The permanent panel also needs current fight, save and update state.
         SyncBossTiming();
@@ -1080,6 +1090,7 @@ public partial class App : Application
         OverlayProfiles.Apply(profile,new AppSettings(),new TimerCards.State());
         _timerHub?.Close();_startedEvents?.Close();_petWindow?.Close();_hiddenCubeWindow?.Close();_resourcesWindow?.Close();_dungeonEntriesWindow?.Close();_bossTimingWindow?.Close();_timersWindow?.Close();_timerCards!.Dispose();
         OverlayProfiles.Apply(profile,_meter.Settings,_timerCards.Saved);
+        ModuleSnapping.Configure(_meter.Settings);
         var placement=new Rect(_meter.Settings.OverlayLeft,_meter.Settings.OverlayTop,_meter.Settings.OverlayWidth,_meter.Settings.OverlayHeight);
         _meter.ApplySettings();
         // Scale/size events persist the old window geometry while applying appearance.
@@ -1180,6 +1191,7 @@ public partial class App : Application
 
     public void OnSettingsChanged(bool dpsVisibilityChanged=false)
     {
+        ModuleSnapping.Configure(_meter.Settings);
         _meterControls?.RefreshText();
         if(dpsVisibilityChanged)SetOverlayVisible(_meter.Settings.ShowDpsMeterModule);
         RegisterHotkeys();
@@ -1226,7 +1238,7 @@ public partial class App : Application
         _hotkeys?.Dispose();
         _tray?.Dispose();
         _eventSoundPlayer?.Dispose();
-        _hiddenCubeSoundPlayer?.Dispose();
+        _hiddenCubeSoundPlayer?.Dispose();_resourceAlerts.Dispose();
         if (_meter is not null)
         {
             try { _meter.Settings.Save(); }

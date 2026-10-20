@@ -1,5 +1,6 @@
 using System.Windows;
 using System.Windows.Controls;
+using AionMeter.App.Services;
 namespace AionMeter.App.Windows;
 internal sealed class DungeonEntriesSettingsPanel:StackPanel
 {
@@ -12,6 +13,7 @@ internal sealed class DungeonEntriesSettingsPanel:StackPanel
         Check(L("Show dungeon entry module","Dungeon-Eintritte anzeigen"),draft.ShowDungeonEntriesModule,v=>draft.ShowDungeonEntriesModule=v);
         draft.VisibleDungeonEntries??=[];
         foreach(var entry in DungeonEntriesWindow.Entries)Check(entry.Name,draft.VisibleDungeonEntries.Contains(entry.Key),v=>{draft.VisibleDungeonEntries.RemoveAll(k=>k==entry.Key);if(v)draft.VisibleDungeonEntries.Add(entry.Key);});
+        Children.Add(new Expander{Header=L("Low-balance warnings","Bestandswarnungen"),IsExpanded=false,Foreground=ThemeColors.Brush("#C49AF5"),Style=(Style)FindResource("SettingsExpander"),Margin=new Thickness(0,10,0,0),Content=new ResourceAlertsSettingsPanel(draft,DungeonEntriesWindow.Entries.Select(e=>(e.Key,e.Name)),false)});
         Children.Add(new TextBlock{Text=L("Layout","Layout"),Margin=new Thickness(0,12,0,4)});
         var layout=new ComboBox{Style=(Style)FindResource("MeterComboBox"),MinWidth=180,HorizontalAlignment=HorizontalAlignment.Left};
         foreach(var item in new[]{("List",L("List · vertical","Liste · vertikal")),("Strip",L("Horizontal · compact","Horizontal · kompakt")),("Grid",L("Grid · two columns","Raster · zwei Spalten"))})layout.Items.Add(new ComboBoxItem{Tag=item.Item1,Content=item.Item2});

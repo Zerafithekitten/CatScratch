@@ -7,7 +7,7 @@ A separate, always-on-top Windows DPS meter for **AION 2**, by Zerafithekitten. 
 | Channel | Current version | What it includes |
 | --- | --- | --- |
 | **Stable** | **[v3.0.11](https://github.com/Zerafithekitten/CatScratch/releases/tag/v3.0.11)** | Compact panel layouts, checklist with a custom hotkey, reset countdowns and stable click-through placement, Pet tracking modes and sounds, passive Hidden cube alerts, ONLY BOSS, defeat estimates, refined Test mode and DPS placement fixes. |
-| **Beta** | **[v3.0.12-beta.21](https://github.com/Zerafithekitten/CatScratch/releases/tag/v3.0.12-beta.21)** | Optional Dungeon entries for Daily, Nightmare and Shugo; live Odyle, Abyss Points, Centuryroot, Phantasmal Fragment and Oath Coin updates, plus the previous Beta improvements. |
+| **Beta** | **[v3.0.12-beta.22](https://github.com/Zerafithekitten/CatScratch/releases/tag/v3.0.12-beta.22)** | Optional Dungeon entries for Daily, Nightmare and Shugo; live Odyle, Abyss Points, Centuryroot, Phantasmal Fragment and Oath Coin updates, plus the previous Beta improvements. |
 | **Light** | [v1.0.0](https://github.com/Zerafithekitten/CatScratch/releases/tag/light-v1.0.0) | Separate **DPS meter only** edition with essential settings. Independent ZIP download and settings; no additional CatScratch modules or automatic updater. |
 
 **CatScratch light** is installed separately from the full version. [Download its ZIP](https://github.com/Zerafithekitten/CatScratch/releases/download/light-v1.0.0/CatScratch-light-win-x64.zip) and extract it into its own folder. Light is maintained and updated **only on the owner's explicit request**; normal development continues on full CatScratch.
@@ -461,4 +461,4 @@ Resource layouts (Beta 3.0.12-beta.10): choose **List**, **Horizontal** (icons a
 
 Missing resource data now displays an orange **Relog!** warning in all three layouts, with a tooltip explaining character selection and login. Confirmed zero balances remain visible as zero; received values replace the warning.
 
-Beta 3.0.12-beta.21 fixes resource state preservation during login: incomplete character records, later server identification and unrelated/partial inventory messages no longer erase received balances. Confirmed character changes and capture resets still discard old values. This does not add active server queries or verified live currency spending updates.
+Beta 3.0.12-beta.22 fixes resource state preservation during login: incomplete character records, later server identification and unrelated/partial inventory messages no longer erase received balances. Confirmed character changes and capture resets still discard old values. This does not add active server queries or verified live currency spending updates.

@@ -1,3 +1,12 @@
+## CatScratch v3.0.12-beta.22
+
+- Resource and Dungeon entry tooltips now show when each individual value was last confirmed, including its age. Approximate cached values retain their original confirmation time; older cache records explicitly show an unknown confirmation date.
+- Added a Character resources overview with saved resource balances and Dungeon entries grouped by character and server. Open it from Resources settings or the new compact character-card button beside the history tools in the control panel. Saved values remain approximate until confirmed, and stream mode masks character names.
+- Added independent, opt-in low-balance thresholds for each resource and dungeon, with optional bundled warning sounds and volume control. Odyle checks regular Energy; dungeons check regular plus additional entries. Only confirmed values trigger warnings, once per low-balance period and character; recovery rearms the warning.
+- Added optional module snapping under Appearance with adjustable spacing. Modules align to screen edges and other visible modules after dragging; hold Alt to bypass snapping. Pinned modules retain their positions, and layout profiles include the snapping preferences without replacing warning rules.
+- Added a compact capture-status indicator in the existing control panel, distinguishing incoming game data, waiting for character data and capture errors in its tooltip. The new overview icon has a unique character-card shape and matches the other button sizes in all three panel layouts.
+- Preserves existing selections, saved placements and click-through behavior. Stable and Light are unchanged.
+
 ## CatScratch v3.0.12-beta.21
 
 - Added character-and-server-specific last-known storage for resources, Odyle Energy and Dungeon entries. Restored values show ≈ until fresh server messages confirm or replace them. Existing unknown values still show Relog! when no baseline has been recorded.

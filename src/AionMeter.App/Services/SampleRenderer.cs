@@ -1,4 +1,4 @@
-﻿using System.IO;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -119,7 +119,7 @@ public static class SampleRenderer
                 var controlPanel=new MeterControlsWindow(meter.Settings,()=>{},()=>{});
                 controlOverlay.MoveControlsTo(controlPanel);
                 controlPanel.SizeToContent=SizeToContent.Height;controlPanel.Height=double.NaN;
-                host=controlPanel;refresh=()=>{controlOverlay.Refresh();if(o.Window.EndsWith("-update"))controlPanel.SetUpdateAvailable(true);};break;
+                host=controlPanel;refresh=()=>{controlOverlay.Refresh();controlPanel.RefreshConnection(meter);if(o.Window.EndsWith("-update"))controlPanel.SetUpdateAvailable(true);};break;
             case "color-picker":
                 host=new Window{Width=304,Height=198,Background=ThemeColors.Brush("#20242A"),Content=new Border{Padding=new(12),Child=new Controls.HsvColorPicker(Colors.Red)}};
                 refresh=()=>{};break;
@@ -338,7 +338,14 @@ public static class SampleRenderer
                 if(o.Window=="dungeons-cached")meter.Resources.MarkCached();
                 if(o.Window=="dungeons-strip-missing")meter.Resources.Reset();
                 host=new DungeonEntriesWindow(meter);refresh=()=>{};break;
+            case "resource-overview":
+                var historyNow=DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+                host=new ResourceOverviewWindow(meter,new[]{
+                    new Core.Game.ResourceProgress("Sample Cleric",2305,historyNow-60000,new(historyNow-60000,160,270),new(){{930100003,4600},{930100011,55},{930100017,6250},{930100019,4090},{930100024,3000}},new(){{1,new(16,3,21)},{4,new(14,0,14)},{101,new(0,18,14)}},new(){{"odyle",historyNow-60000},{"currency:930100003",historyNow-180000},{"dungeon:1",historyNow-90000}}),
+                    new Core.Game.ResourceProgress("Sample Ranger",2305,historyNow-3600000,new(historyNow-3600000,45,525),new(){{930100003,6759},{930100011,880},{930100017,2225},{930100019,3750},{930100024,1500}},new(){{1,new(17,3,21)},{4,new(0,3,14)},{101,new(0,17,14)}})
+                });refresh=()=>{};break;
             case "resources":
+            case "resources-low":
             case "resources-cached":
             case "resources-odyle":
             case "resources-strip":
@@ -347,6 +354,7 @@ public static class SampleRenderer
             case "resources-large":
             case "resources-missing":
             case "resources-partial":
+                if(o.Window=="resources-low")meter.Settings.ResourceAlerts["odyle"]=new(){Enabled=true,Threshold=30};
                 meter.Settings.ResourcesLayout=o.Window is "resources-strip" or "resources-strip-missing"?"Strip":o.Window is "resources-grid" or "resources-large" or "resources-missing" or "resources-partial"?"Grid":"List";
                 meter.Resources.Observe(new Core.Game.OdyleEnergyEvent(1,15,495));
                 meter.Resources.Observe(new Core.Game.ResourceBalanceSnapshot(1,new Dictionary<int,ulong>{{930100003,3188},{930100011,1670},{930100024,1000},{930100017,160},{930100019,3750}}));
@@ -372,6 +380,9 @@ public static class SampleRenderer
             case "settings-colors":
                 meter.Settings.Theme=new("#7FA9F5","#151A22","#F3F5FA");ThemeColors.Apply(meter.Settings.Theme);
                 goto case "settings";
+            case "settings-resource-alerts":
+                meter.Settings.ResourceAlerts["odyle"]=new(){Enabled=true,Threshold=30};
+                goto case "settings";
             case "settings":
                 var settingsWindow = new SettingsWindow(meter) { Width = o.Width ?? 760, Height = o.Height ?? 660 };
                 if(o.Window=="settings-only-boss")settingsWindow.SelectTab("combat");
@@ -379,6 +390,13 @@ public static class SampleRenderer
                 string[] tabIds=["appearance","combat","hotkeys","history","capture","general","updates","feedback","events","pets","profiles","help","cubes","checklist","resources","dungeons"];
                 if (int.TryParse(o.Tab,out var settingsTab) && settingsTab>=0 && settingsTab<tabIds.Length) settingsWindow.SelectTab(tabIds[settingsTab]);
                 else if(o.Tab is not null && tabIds.Contains(o.Tab)) settingsWindow.SelectTab(o.Tab);
+                if(o.Window=="settings-resource-alerts")
+                {
+                    settingsWindow.SelectTab("resources");
+                    var resourceTab=((TabControl)settingsWindow.FindName("SettingsTabs")).Items.OfType<TabItem>().Single(t=>Equals(t.Tag,"resources"));
+                    if(resourceTab.Content is ScrollViewer{Content:Border{Child:ResourcesSettingsPanel preferences}})
+                        foreach(var section in preferences.Children.OfType<Expander>())section.IsExpanded=true;
+                }
                 host = settingsWindow;
                 refresh = () => { };
                 break;

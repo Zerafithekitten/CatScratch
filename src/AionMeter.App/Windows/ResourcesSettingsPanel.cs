@@ -5,9 +5,11 @@ using AionMeter.App.Services;
 namespace AionMeter.App.Windows;
 internal sealed class ResourcesSettingsPanel:StackPanel
 {
-    internal ResourcesSettingsPanel(AppSettings draft)
+    internal ResourcesSettingsPanel(AppSettings draft,MeterService? meter=null)
     {
         Resources.MergedDictionaries.Add(new ResourceDictionary{Source=new Uri("/CatScratch;component/Theme/MeterPreferences.xaml",UriKind.Relative)});
+        var overview=new Button{Content=ControlPanelSettingsPanel.L("Character resources…","Charakterübersicht…"),Style=(Style)FindResource("GhostButton"),HorizontalAlignment=HorizontalAlignment.Left,Margin=new Thickness(0,0,0,8),IsEnabled=meter is not null};
+        overview.Click+=(_,_)=>{if(meter is not null)ResourceOverviewWindow.Open(meter);};Children.Add(overview);
         string L(string en,string de)=>ControlPanelSettingsPanel.L(en,de);
         Children.Add(new TextBlock{Text=L("Resources","Ressourcen"),FontSize=16,Margin=new Thickness(0,0,0,10)});
         void Check(string label,bool selected,Action<bool> change){var box=new CheckBox{Content=label,IsChecked=selected,Style=(Style)FindResource("DarkCheck"),Margin=new Thickness(0,4,0,4)};box.Click+=(_,_)=>change(box.IsChecked==true);Children.Add(box);}
@@ -19,6 +21,7 @@ internal sealed class ResourcesSettingsPanel:StackPanel
             var entry=ResourcesWindow.Entries.Single(e=>e.Name==box.Content?.ToString());
             var content=new StackPanel{Orientation=Orientation.Horizontal};content.Children.Add(new Image{Source=ResourceIcons.For(entry.Key),Width=18,Height=18,Margin=new Thickness(0,0,6,0)});content.Children.Add(new TextBlock{Text=entry.Name,VerticalAlignment=VerticalAlignment.Center});box.Content=content;
         }
+        Children.Add(new Expander{Header=L("Low-balance warnings","Bestandswarnungen"),IsExpanded=false,Foreground=ThemeColors.Brush("#C49AF5"),Style=(Style)FindResource("SettingsExpander"),Margin=new Thickness(0,10,0,0),Content=new ResourceAlertsSettingsPanel(draft,ResourcesWindow.Entries.Select(e=>(e.Key,e.Name)),true)});
         Children.Add(new TextBlock{Text=L("Layout","Layout"),Margin=new Thickness(0,12,0,4)});
         var layout=new ComboBox{Style=(Style)FindResource("MeterComboBox"),MinWidth=180,HorizontalAlignment=HorizontalAlignment.Left};
         foreach(var item in new[]{("List",L("List · names and values","Liste · Namen und Werte")),("Strip",L("Horizontal · icons and values","Horizontal · Symbole und Werte")),("Grid",L("Grid · two columns","Raster · zwei Spalten"))})layout.Items.Add(new ComboBoxItem{Tag=item.Item1,Content=item.Item2});

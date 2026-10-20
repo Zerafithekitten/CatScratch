@@ -119,7 +119,7 @@ public partial class SettingsWindow : Window
         SettingsTabs.Items.Add(new TabItem {Header=T.Localize("Overlay profiles"),Tag="profiles",Padding=new Thickness(12,10,12,10),Content=new ScrollViewer {VerticalScrollBarVisibility=ScrollBarVisibility.Auto,HorizontalScrollBarVisibility=ScrollBarVisibility.Auto,Padding=new Thickness(14,0,0,0),Content=new OverlayProfilesPanel()}});
         // Fold secondary sections and reflow rows instead of forcing a wide inner canvas.
         SettingsTabs.Items.Add(new TabItem {Header=ControlPanelSettingsPanel.L("Help & symbols","Hilfe & Symbole"),Tag="help",Padding=new Thickness(12,10,12,10),Content=new ScrollViewer {VerticalScrollBarVisibility=ScrollBarVisibility.Auto,HorizontalScrollBarVisibility=ScrollBarVisibility.Disabled,Padding=new Thickness(14,0,0,0),Content=new SymbolHelpPanel(meter.Settings)}});
-        SettingsTabs.Items.Add(new TabItem{Header=ControlPanelSettingsPanel.L("Resources","Ressourcen"),Tag="resources",Content=new ScrollViewer{VerticalScrollBarVisibility=ScrollBarVisibility.Auto,Padding=new Thickness(14,0,0,0),Content=new Border{Child=new ResourcesSettingsPanel(_moduleDraft),Style=(Style)FindResource("Section")}}});
+        SettingsTabs.Items.Add(new TabItem{Header=ControlPanelSettingsPanel.L("Resources","Ressourcen"),Tag="resources",Content=new ScrollViewer{VerticalScrollBarVisibility=ScrollBarVisibility.Auto,Padding=new Thickness(14,0,0,0),Content=new Border{Child=new ResourcesSettingsPanel(_moduleDraft,meter),Style=(Style)FindResource("Section")}}});
         SettingsTabs.Items.Add(new TabItem{Header=ControlPanelSettingsPanel.L("Dungeon entries","Dungeon-Eintritte"),Tag="dungeons",Content=new ScrollViewer{VerticalScrollBarVisibility=ScrollBarVisibility.Auto,Padding=new Thickness(14,0,0,0),Content=new Border{Child=new DungeonEntriesSettingsPanel(_moduleDraft),Style=(Style)FindResource("Section")}}});
         var orderedTabs=new[]{"general","appearance","profiles","combat","events","pets","checklist","cubes","resources","dungeons","hotkeys","history","capture","updates","feedback","help"}.Select(Tab).ToArray();
         SettingsTabs.Items.Clear();
@@ -388,6 +388,9 @@ public partial class SettingsWindow : Window
         s.DungeonEntriesLayout=_moduleDraft.DungeonEntriesLayout;
         s.DungeonEntriesWidth=_moduleDraft.DungeonEntriesWidth;
         s.VisibleDungeonEntries=new(_moduleDraft.VisibleDungeonEntries??[]);
+        s.SnapModules=_moduleDraft.SnapModules;s.ModuleSpacing=_moduleDraft.ModuleSpacing;
+        s.ResourceAlerts=(_moduleDraft.ResourceAlerts??[]).ToDictionary(p=>p.Key,p=>new ResourceAlertRule{Enabled=p.Value.Enabled,Threshold=p.Value.Threshold});
+        s.ResourceAlertSoundEnabled=_moduleDraft.ResourceAlertSoundEnabled;s.ResourceAlertSound=_moduleDraft.ResourceAlertSound;s.ResourceAlertVolume=_moduleDraft.ResourceAlertVolume;
         s.ShowResourcesModule=_moduleDraft.ShowResourcesModule;
         s.VisibleResources=new(_moduleDraft.VisibleResources??[]);
         s.ResourcesWidth=_moduleDraft.ResourcesWidth;

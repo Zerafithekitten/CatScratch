@@ -91,3 +91,5 @@ On 2026-10-20 the owner explicitly requested all Dungeon entry layout options an
 On 2026-10-20 the owner explicitly requested uploading the verified multi-byte Odyle/Dungeon snapshot decoder correction as a fix. Publish v3.0.12-beta.20 after full checks and a corrected-value preview; preserve Stable and Light.
 
 On 2026-10-20 the owner reviewed the last-known resource/Dungeon cache with visible approximate markers and approved "dann mach mal nen update". Publish v3.0.12-beta.21 after full checks; preserve Stable and Light.
+
+On 2026-10-20 the owner reviewed the resource tools and corrected character-card icon previews and explicitly approved "okay ab in die beta". Publish v3.0.12-beta.22 after full release verification; preserve Stable and Light.

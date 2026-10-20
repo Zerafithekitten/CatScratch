@@ -42,6 +42,7 @@ internal sealed class ResourceProgressCache:IDisposable
             Remember();
         }
     }
+    internal IReadOnlyList<ResourceProgress> Snapshot(){lock(_gate)return _records.Values.OrderByDescending(p=>p.TimeMs).ToArray();}
     private void Remember()
     {
         if(_resources.SavedProgress() is not {} progress)return;

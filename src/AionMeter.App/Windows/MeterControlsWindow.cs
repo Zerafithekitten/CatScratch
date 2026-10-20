@@ -13,6 +13,7 @@ internal sealed class MeterControlsWindow : Window
 {
     private readonly AppSettings _settings;
     private readonly TextBlock _status=new();
+    private readonly Border _captureDot=new(){IsHitTestVisible=false,Width=4,Height=4,CornerRadius=new CornerRadius(2),HorizontalAlignment=HorizontalAlignment.Right,VerticalAlignment=VerticalAlignment.Top};
     private Border _backdrop=null!;
     private Grid? _header;
     private WrapPanel? _buttons;
@@ -39,7 +40,7 @@ internal sealed class MeterControlsWindow : Window
 
     internal MeterControlsWindow(AppSettings settings,Action openSettings,Action restore,Action<double,double>? moved=null)
     {
-        _settings=settings;
+        _settings=settings;ModuleSnapping.Configure(settings);
         UseLayoutRounding=true;SnapsToDevicePixels=true;
         Title="CatScratch";Width=280;Height=48;WindowStyle=WindowStyle.None;ResizeMode=ResizeMode.NoResize;
         AllowsTransparency=true;Background=Brushes.Transparent;Topmost=true;ShowInTaskbar=false;ShowActivated=false;
@@ -80,7 +81,8 @@ internal sealed class MeterControlsWindow : Window
         buttons.Children.Add(RestoreButton);
         SettingsButton=settingsButton;
         _verticalActions=new Grid {Margin=new(3,1,3,0),Visibility=Visibility.Collapsed};
-        for(var i=0;i<4;i++){_verticalActions.ColumnDefinitions.Add(new(){Width=new(1,GridUnitType.Star)});_verticalActions.RowDefinitions.Add(new(){Height=new(18)});}
+        for(var i=0;i<4;i++)_verticalActions.ColumnDefinitions.Add(new(){Width=new(1,GridUnitType.Star)});
+        for(var i=0;i<5;i++)_verticalActions.RowDefinitions.Add(new(){Height=new(18)});
         _verticalFooter=new Grid {Margin=new(4,1,4,3),Visibility=Visibility.Collapsed};
         _verticalFooter.ColumnDefinitions.Add(new(){Width=GridLength.Auto});_verticalFooter.ColumnDefinitions.Add(new(){Width=new(1,GridUnitType.Star)});
         var root=_layoutRoot=new StackPanel();root.Children.Add(header);root.Children.Add(buttons);root.Children.Add(_verticalActions);root.Children.Add(_verticalFooter);
@@ -107,6 +109,11 @@ internal sealed class MeterControlsWindow : Window
         _inlineUpdate.SetBinding(HeightProperty,new System.Windows.Data.Binding(nameof(ActualHeight)){Source=_brandTitle});
         titleSlot.Children.Add(_inlineUpdate);branding.Children.Insert(0,titleSlot);
         RefreshUpdateBranding();
+        var overview=new Button{Name="ResourceOverviewButton",Content="\uE716",ToolTip=ControlPanelSettingsPanel.L("Character resources","Charakterübersicht"),Style=(Style)FindResource("IconButton"),Width=18,Height=18,Padding=new Thickness(0)};
+        var characterIcon=new System.Windows.Shapes.Path{Data=Geometry.Parse("M1,1 H15 V12 H1 Z M5,3 A1.5,1.5 0 1 0 5,6 A1.5,1.5 0 1 0 5,3 M2.8,10 C2.8,7 7.2,7 7.2,10 M10,4 H13 M10,7 H13 M10,10 H12"),Width=13,Height=12,Stretch=Stretch.Uniform,StrokeThickness=1.1,StrokeLineJoin=PenLineJoin.Round};
+        characterIcon.SetBinding(System.Windows.Shapes.Shape.StrokeProperty,new System.Windows.Data.Binding(nameof(Control.Foreground)){Source=overview});overview.Content=characterIcon;
+        overview.Click+=(_,_)=>ResourceOverviewWindow.Open(overlay.Meter);_buttons.Children.Add(overview);
+        _captureDot.Name="CaptureStateDot";_header.Children.Add(_captureDot);
         _horizontalItems=_buttons.Children.Cast<UIElement>().ToArray();
         foreach(var item in _horizontalItems.OfType<FrameworkElement>().Concat([_personalButton,_petButton]))
             _horizontalSizing[item]=(item.Width,item.Height,item.Margin,item.HorizontalAlignment);
@@ -151,6 +158,13 @@ internal sealed class MeterControlsWindow : Window
         _inlineUpdate.ContentTemplate=IsVerticalRail?new DataTemplate{VisualTree=text}:null;
     }
 
+    internal void RefreshConnection(MeterService meter)
+    {
+        var status=CaptureIndicator.Describe(meter.CaptureStatus,meter.LiveIdentity.Current is not null);
+        _captureDot.Background=ThemeColors.Brush(status.Color);_captureDot.ToolTip=status.Text+"\n"+meter.CaptureStatus.Message;
+        var click=_header?.Children.OfType<Button>().FirstOrDefault(b=>b.Name=="ShellClickButton");
+        if(click is not null)click.ToolTip=UiText.Current.Localize("Click-through")+" · "+_settings.HotkeyClickThrough+"\n"+status.Text;
+    }
     internal void RefreshText()
     {
         ApplyAppearance();
@@ -183,7 +197,7 @@ internal sealed class MeterControlsWindow : Window
             _layout=_settings.ControlsLayout;
             var vertical=_layout==ControlsLayout.Grid;
             var rail=_layout==ControlsLayout.Vertical;
-            Width=vertical?112:rail?52:316;
+            Width=vertical?112:rail?52:334;
             _layoutRoot!.Orientation=rail?Orientation.Horizontal:Orientation.Vertical;
             _header.LayoutTransform=rail?new RotateTransform(90):Transform.Identity;
             _header.Width=rail?304:double.NaN;
@@ -220,6 +234,7 @@ internal sealed class MeterControlsWindow : Window
                 Grid.SetRow(child,0);Grid.SetColumnSpan(child,1);
                 switch(child.Name)
                 {
+                    case "CaptureStateDot":Grid.SetRow(child,vertical?1:0);Grid.SetColumn(child,vertical?1:4);break;
                     case "ShellCaption":Grid.SetColumn(child,0);Grid.SetColumnSpan(child,vertical?3:1);break;
                     case "ShellClockPanel":Grid.SetRow(child,vertical?1:0);Grid.SetColumn(child,vertical?0:1);break;
                     case "ShellClickButton":Grid.SetRow(child,vertical?1:0);Grid.SetColumn(child,vertical?1:4);break;
@@ -254,7 +269,7 @@ internal sealed class MeterControlsWindow : Window
         // Matching functional columns vertically and matching groups from left to right horizontally.
         var groups=new[]{
             new[]{Item("DeathRecapButton"),_personalButton!,_petButton!,Item("ChecklistButton")},
-            new[]{Item("CompactHistory"),Item("DetailsLink"),Item("BossRecordsButton"),Item("LastPlayedButton")},
+            new[]{Item("CompactHistory"),Item("DetailsLink"),Item("BossRecordsButton"),Item("LastPlayedButton"),Item("ResourceOverviewButton")},
             new[]{RestoreButton,Item("BossTimersLink"),Item("SaveLastFightButton"),Item("ChatExportButton")},
             new[]{Item("RestartButton"),Item("LockButton"),Item("PatchNotesButton"),Item("CheckUpdatesButton")}
         };
@@ -273,7 +288,7 @@ internal sealed class MeterControlsWindow : Window
                 if(vertical)
                 {
                     separator.HorizontalAlignment=HorizontalAlignment.Right;separator.Margin=new(0,1,0,1);
-                    Grid.SetColumn(separator,column);Grid.SetRowSpan(separator,4);_verticalActions.Children.Add(separator);
+                    Grid.SetColumn(separator,column);Grid.SetRowSpan(separator,5);_verticalActions.Children.Add(separator);
                 }
                 else
                 {

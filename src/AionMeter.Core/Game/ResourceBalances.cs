@@ -30,7 +30,7 @@ public static class ResourceInventoryPackets
         return found.Count>0 || ambiguous.Count>0?new(time,found,ambiguous):null;
     }
 }
-public sealed record ResourceProgress(string Name,int ServerId,long TimeMs,OdyleEnergyEvent? Energy,Dictionary<int,ulong> Balances,Dictionary<uint,DungeonEntryValue> Entries);
+public sealed record ResourceProgress(string Name,int ServerId,long TimeMs,OdyleEnergyEvent? Energy,Dictionary<int,ulong> Balances,Dictionary<uint,DungeonEntryValue> Entries,Dictionary<string,long>? ConfirmedAt=null);
 public sealed record ResourceCacheMarkers(bool Energy,IReadOnlySet<int> Currencies,IReadOnlySet<uint> Entries);
 public sealed class ResourceBalances
 {
@@ -42,6 +42,8 @@ public sealed class ResourceBalances
     private readonly HashSet<int> _cachedCurrencies=[],_ambiguous=[];
     private readonly HashSet<uint> _cachedEntries=[];
     private long _lastDataTimeMs;
+    private readonly Dictionary<string,long> _confirmedAt=[];
+    public long ConfirmedAt(string key){lock(_gate)return _confirmedAt.GetValueOrDefault(key);}
     private int _mapId=-1;
     private bool _awaitingIdentity;
     private readonly List<GameEvent> _pending=[];
@@ -50,7 +52,7 @@ public sealed class ResourceBalances
     public ResourceProgress? SavedProgress()
     {
         lock(_gate)return _identity is {} own && own.Item2>0 && (_energy is not null || _balances.Count>0 || _entries.Count>0)
-            ?new(own.Item1,own.Item2,_lastDataTimeMs,_energy,new(_balances),new(_entries)):null;
+            ?new(own.Item1,own.Item2,_lastDataTimeMs,_energy,new(_balances),new(_entries),new(_confirmedAt)):null;
     }
     public void MarkCached(){lock(_gate){_cachedEnergy=_energy is not null;_cachedCurrencies.UnionWith(_balances.Keys);_cachedEntries.UnionWith(_entries.Keys);}}
     public bool RestoreProgress(ResourceProgress progress)
@@ -59,16 +61,16 @@ public sealed class ResourceBalances
         {
             if(_identity is not {} own || own.Item1!=progress.Name || own.Item2<=0 || own.Item2!=progress.ServerId || progress.Balances is null || progress.Entries is null)return false;
             var restored=false;
-            if(_energy is null && progress.Energy is {} energy){_energy=energy;_cachedEnergy=true;restored=true;}
+            if(_energy is null && progress.Energy is {} energy){_energy=energy;_cachedEnergy=true;_confirmedAt["odyle"]=progress.ConfirmedAt?.GetValueOrDefault("odyle")??0;restored=true;}
             foreach(var p in progress.Balances.Where(p=>ResourceInventoryPackets.Supported.Contains(p.Key) && p.Value<=1_000_000_000_000))
-                if(!_ambiguous.Contains(p.Key) && _balances.TryAdd(p.Key,p.Value)){_cachedCurrencies.Add(p.Key);restored=true;}
+                if(!_ambiguous.Contains(p.Key) && _balances.TryAdd(p.Key,p.Value)){_cachedCurrencies.Add(p.Key);_confirmedAt["currency:"+p.Key]=progress.ConfirmedAt?.GetValueOrDefault("currency:"+p.Key)??0;restored=true;}
             foreach(var p in progress.Entries.Where(p=>p.Key is 1 or 4 or 101 && p.Value is not null))
-                if(_entries.TryAdd(p.Key,p.Value)){_cachedEntries.Add(p.Key);restored=true;}
+                if(_entries.TryAdd(p.Key,p.Value)){_cachedEntries.Add(p.Key);_confirmedAt["dungeon:"+p.Key]=progress.ConfirmedAt?.GetValueOrDefault("dungeon:"+p.Key)??0;restored=true;}
             if(restored)_lastDataTimeMs=Math.Max(_lastDataTimeMs,progress.TimeMs);
             return restored;
         }
     }
-    private void ClearValues(){_balances.Clear();_energy=null;_entries.Clear();_cachedEnergy=false;_cachedCurrencies.Clear();_cachedEntries.Clear();_ambiguous.Clear();_lastDataTimeMs=0;}
+    private void ClearValues(){_balances.Clear();_energy=null;_entries.Clear();_cachedEnergy=false;_cachedCurrencies.Clear();_cachedEntries.Clear();_ambiguous.Clear();_confirmedAt.Clear();_lastDataTimeMs=0;}
     private readonly Dictionary<uint,DungeonEntryValue> _entries=[];
     public IReadOnlyDictionary<uint,DungeonEntryValue> ReadEntries(){lock(_gate)return new Dictionary<uint,DungeonEntryValue>(_entries);}
     public void Reset(){lock(_gate){ClearValues();_identity=null;_pending.Clear();_awaitingIdentity=false;_mapId=-1;}}
@@ -100,17 +102,17 @@ public sealed class ResourceBalances
                     foreach(var update in pending)Observe(update);
                 }
             }
-            if(e is OdyleEnergyEvent energy){_energy=energy;_cachedEnergy=false;_lastDataTimeMs=energy.TimeMs;}
+            if(e is OdyleEnergyEvent energy){_energy=energy;_cachedEnergy=false;_lastDataTimeMs=energy.TimeMs;_confirmedAt["odyle"]=energy.TimeMs;}
             if(e is DungeonEntriesEvent entries)foreach(var item in entries.Values)
             {
                 _entries[item.Key]=item.Value with {Capacity=item.Value.Capacity??(_entries.TryGetValue(item.Key,out var priorEntry)?priorEntry.Capacity:null)};
-                _cachedEntries.Remove(item.Key);_lastDataTimeMs=entries.TimeMs;
+                _cachedEntries.Remove(item.Key);_lastDataTimeMs=entries.TimeMs;_confirmedAt["dungeon:"+item.Key]=entries.TimeMs;
             }
             if(e is ResourceBalanceSnapshot snapshot)
             {
                 // Inventory packets can cover different containers/sections. Missing entries do not mean zero.
                 if(snapshot.Ambiguous is {} ambiguous)foreach(var id in ambiguous){_balances.Remove(id);_cachedCurrencies.Remove(id);_ambiguous.Add(id);}
-                foreach(var item in snapshot.Values){_balances[item.Key]=item.Value;_cachedCurrencies.Remove(item.Key);_ambiguous.Remove(item.Key);_lastDataTimeMs=snapshot.TimeMs;}
+                foreach(var item in snapshot.Values){_balances[item.Key]=item.Value;_cachedCurrencies.Remove(item.Key);_ambiguous.Remove(item.Key);_lastDataTimeMs=snapshot.TimeMs;_confirmedAt["currency:"+item.Key]=snapshot.TimeMs;}
             }
         }
     }

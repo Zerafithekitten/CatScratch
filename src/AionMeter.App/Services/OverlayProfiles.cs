@@ -10,7 +10,7 @@ public sealed record OverlayProfile(string Name, Dictionary<string,JsonElement> 
 /// <summary>Layout only: never restore capture, updates, hotkeys, names or game-start preferences.</summary>
 public static class OverlayProfiles
 {
-    private static readonly string[] Fields=["ControlsLayout","ControlsAnchor","ControlsLeft","ControlsTop","OverlayLeft","OverlayTop","OverlayWidth","OverlayHeight","CompactMode","UiScale",
+    private static readonly string[] Fields=["SnapModules","ModuleSpacing","ControlsLayout","ControlsAnchor","ControlsLeft","ControlsTop","OverlayLeft","OverlayTop","OverlayWidth","OverlayHeight","CompactMode","UiScale",
         "WindowOpacity","BackgroundOpacity","Locked","ClickThrough","OverlayVisible","ShowDpsMeterModule","RowSize","MaxRows","ShowGear","ShowCombatPower",
         "ShowBossPanel","ShowPersonalCombatModule","PersonalCombatCollapsed","ShowHealingDone","ShowDeathRecapModule",
         "ShowPetTrackerModule","PetOnHitOnly","PetModuleLeft","PetModuleTop","PetModuleWidth","PetModuleHeight",

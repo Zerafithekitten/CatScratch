@@ -70,4 +70,17 @@ public class ResourceCacheTests
         state.Observe(new ResourceBalanceSnapshot(201,new Dictionary<int,ulong>{{930100024,100}}));
         Assert.False(state.AwaitingIdentity);Assert.Equal(100ul,state.Read().Balances[930100024]);
     }
+    [Fact] public void ConfirmationTimesArePerValueAndSurviveCacheWithoutInventingLegacyTimes()
+    {
+        var state=new ResourceBalances();state.Observe(Own());
+        state.Observe(new OdyleEnergyEvent(100,160,270));
+        state.Observe(new ResourceBalanceSnapshot(200,new Dictionary<int,ulong>{{930100024,3000}}));
+        state.Observe(new DungeonEntriesEvent(300,new Dictionary<uint,DungeonEntryValue>{{1,new(16,3,21)}}));
+        Assert.Equal(100,state.ConfirmedAt("odyle"));Assert.Equal(200,state.ConfirmedAt("currency:930100024"));Assert.Equal(300,state.ConfirmedAt("dungeon:1"));
+        var restored=new ResourceBalances();restored.Observe(Own());restored.RestoreProgress(state.SavedProgress()!);
+        Assert.Equal(100,restored.ConfirmedAt("odyle"));Assert.Equal(200,restored.ConfirmedAt("currency:930100024"));
+        restored.Observe(new ResourceBalanceSnapshot(400,new Dictionary<int,ulong>{{930100024,1500}}));
+        Assert.Equal(400,restored.ConfirmedAt("currency:930100024"));Assert.Equal(100,restored.ConfirmedAt("odyle"));
+        var legacy=new ResourceBalances();legacy.Observe(Own());legacy.RestoreProgress(Baseline());Assert.Equal(0,legacy.ConfirmedAt("currency:930100024"));
+    }
 }

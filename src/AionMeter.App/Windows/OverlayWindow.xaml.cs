@@ -18,6 +18,7 @@ namespace AionMeter.App.Windows;
 public partial class OverlayWindow : Window, IDisplayAppearance
 {
     private readonly MeterService _meter;
+    internal MeterService Meter=>_meter;
     private readonly AppSettings _settings;
     private readonly OverlayViewModel _vm = new();
     private nint _hwnd;
