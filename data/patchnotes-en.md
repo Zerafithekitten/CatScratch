@@ -1,3 +1,142 @@
+## CatScratch v4.0.0
+
+[Deutsche Patchnotes](https://github.com/Zerafithekitten/CatScratch/blob/v4.0.0/data/patchnotes-de.md)
+
+### 🐾 A little more cat, a lot more overview
+
+This one grew a little. What started as “could I see my resources?” turned into two new modules, a character overview and a few helpers I now wouldn't want to play without.
+
+I've also spent this round chasing the less charming habits: windows shuffling around when locked, values disappearing, and quick character switches confusing whose pockets we were looking into.
+
+Thank you for the reports, recordings and patience through all those Betas. There's one person — and one cat fursona — behind CatScratch. Your testing helped me catch things I couldn't have found on my own. 💜
+
+<!-- contents -->
+### At a glance
+
+- [Resources: your energy and currencies](#resources)
+- [Dungeon entries: what's left to run?](#dungeons)
+- [Character overview: check your alts](#characters)
+- [Low-balance warnings and sounds](#warnings)
+- [How fresh are those numbers?](#data)
+- [World bosses, your way](#bosses)
+- [Tidier windows and optional snapping](#windows)
+- [Click-through and staying on top](#clickthrough)
+- [Hidden Cubes, now with a little meow](#cubes)
+- [The smaller fixes — and a better welcome after updates](#polish)
+<!-- /contents -->
+
+<a id="resources"></a>
+### 💰 Resources: your energy and currencies
+
+A separate Resources module brings these balances together:
+
+- Odyle Energy
+- Abyss Points
+- Centuryroot Token
+- Deava Pass Shop Coin
+- Phantasmal Fragment
+- Oath Coins
+
+Choose each resource independently under Settings → Resources. Pick a vertical list, a compact horizontal strip or a two-column grid, with the matching game icons.
+
+Odyle keeps regular and supplementary Energy separate. Confirmed regeneration, item use and currency changes update the display as their game messages arrive, including supported spending updates. There is no need to relog for every change.
+
+Your selection, layout, position and pin survive a restart. No guessed recharge countdowns are added.
+
+<a id="dungeons"></a>
+### 🎟️ Dungeon entries: what's left to run?
+
+Daily Dungeon, Nightmare and Shugo Festival now have their own optional module under Settings → Dungeon entries. Enable just the ones you want and choose List, Horizontal or Grid.
+
+Each entry shows the regular count, additional entries in brackets and the capacity reported by the game. The module has its own saved position and pin and works with layout profiles and click-through.
+
+Counts update when the game confirms consumption. Depending on the dungeon, that can happen at completion or when claiming a reward. Walking into a zone alone won't deduct an entry, and missing messages aren't guessed into a new balance.
+
+<a id="characters"></a>
+### 👤 Character overview: check your alts
+
+Wondering what you left on another character? The character-card button beside the history tools opens a table of saved resources and Dungeon entries, separated by character and server. You can also open it from Resources settings.
+
+The window now matches Last played with, with clear row and column dividers and centered values. Hover over a value to see its own last confirmation. Stream mode masks names here too.
+
+Quick switching has also been fixed: login balances can arrive before the new character's name. CatScratch now holds those messages until it knows who they belong to, rather than putting them in the previous character's pockets. Similar names such as Zerafi and Zerafí stay separate.
+
+If an earlier Beta saved mixed-up balances, logging into each affected character again after this update refreshes their records. Offline characters show saved information; CatScratch doesn't query them in the background.
+
+<a id="warnings"></a>
+### 🔔 Low-balance warnings and sounds
+
+Set an optional threshold for each resource or dungeon, with a choice of bundled warning sounds and volume.
+
+- Odyle checks regular available Energy.
+- Dungeons check regular plus additional entries.
+- Only freshly confirmed values trigger a warning.
+- A low balance warns once. It rearms after recovering above the threshold and dropping again.
+
+Everything is opt-in. If you haven't enabled a warning, the cat stays quiet.
+
+<a id="data"></a>
+### 🕒 How fresh are those numbers?
+
+A normal value is confirmed from received game data. A value marked ≈ is the last known balance, waiting for fresh confirmation. Relog! means no usable baseline has been recorded for that value yet.
+
+Tooltips now show when each individual value was last confirmed and how old it is. Older saved records without a timestamp say so rather than inventing one.
+
+Known balances are retained as approximate during capture restarts. Test mode no longer clears real resource data. Character and server identities keep saved records separate, and fresh messages replace the corresponding cached values.
+
+A small status dot in the control panel adds a tooltip distinguishing incoming game data, waiting for character data and capture errors.
+
+<a id="bosses"></a>
+### 👑 World bosses, your way
+
+Settings → Events now includes a searchable list of known world bosses. Choose individual bosses, mark favorites and give each one a built-in or custom WAV/MP3 notification sound, with reminder lead time and volume.
+
+Selected bosses and favorites remain visible beyond the normal one-hour window. Favorites have the familiar gold frame; confirmed living bosses appear in Started events. Unknown spawn times stay visibly unknown.
+
+Watching is manual: detecting or recording a kill still saves the kill time and respawn timer, but no longer switches on that boss's watch bell for you. Existing selections are kept.
+
+<a id="windows"></a>
+### 📐 Tidier windows and optional snapping
+
+Upcoming and Started events can anchor to the top or bottom of the screen when dragged near an edge. At the bottom, extra rows grow upward and shrink back down as they disappear. At the top, the upper edge stays put. Drag away to release the anchor; saved placements and profiles remember your choice.
+
+Optional snapping under Settings → Appearance helps align modules with screen edges and other visible modules. Choose the gap yourself, or hold Alt while dragging to bypass it. Pinned modules remain fixed.
+
+Profiles include snapping preferences without overwriting resource selections or warning thresholds.
+
+<a id="clickthrough"></a>
+### 🔒 Click-through and staying on top
+
+The startup option is now called Start with click-through enabled. Enable it and Save to start locked even if you temporarily unlocked the overlays before closing.
+
+Opening Upcoming or Started events no longer silently unlocks everything. Their cards, the Pet tracker and Hidden Cube display keep their coordinates when controls disappear, including repeated lock/unlock changes. The control panel stays clickable so you can unlock again.
+
+I've also strengthened foreground recovery after window and display changes, with an independent periodic check that preserves position, transparency and the game's keyboard focus.
+
+<a id="cubes"></a>
+### 🐱 Hidden Cubes, now with a little meow
+
+The additional Cube variant confirmed on the enemy side of Verteron is recognized. The alert background is smaller and sits closer around its text; locking the overlay no longer moves it.
+
+New installations use the selected kitty meow as their default Cube sound. Existing sound choices, volume and enabled/disabled preferences stay yours. I couldn't resist a small meow for new arrivals.
+
+<a id="polish"></a>
+### 🛠️ The smaller fixes — and a better welcome after updates
+
+- Incomplete character records and partial inventory messages no longer erase unrelated known balances.
+- Odyle values of 128 and above decode correctly, along with accompanying Dungeon entries.
+- Confirmed consumption is applied as an absolute count, avoiding double subtraction.
+- Resource and Dungeon modules avoid rebuilding unchanged rows unnecessarily.
+- Icons, numbers and Relog! labels are aligned more neatly; large balances fit narrow tiles better.
+- Old snapshot-only currency stars are gone for the supported live-updated currencies. Approximate saved values use ≈.
+- Help now reflects Save keeping Settings open and X discarding later unsaved changes.
+- Patch notes use this more personal style from now on. German app language gets German notes; all other languages get English, with English fallback for older releases without a translation.
+- After upgrading to a Stable release, its patch notes open once on the next start. Normal restarts and Beta updates don't keep bringing them back. They remain available from the panel whenever you want another look.
+
+Everything from the 3.0.12 Beta series is included here, together with the final character-switch and table fixes. CatScratch light remains its separate edition.
+
+Thanks for sticking your paws into all those test builds. Have fun with 4.0.0 — and may the next Cube be loud enough. 🐾
+
 ## CatScratch v3.0.12-beta.22
 
 - Resource and Dungeon entry tooltips now show when each individual value was last confirmed, including its age. Approximate cached values retain their original confirmation time; older cache records explicitly show an unknown confirmation date.

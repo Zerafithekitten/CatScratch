@@ -49,6 +49,8 @@ public static class ReleaseNotes
                 open = false;
                 continue;
             }
+            if(line.StartsWith("<!--",StringComparison.Ordinal) || line.StartsWith("<a ",StringComparison.OrdinalIgnoreCase) || line=="---")
+            {open=false;continue;}
             var heading = Regex.Match(line, @"^#{1,6}\s+(.*)$");
             var item = Regex.IsMatch(line, @"^([-*+]|\d+[.)])\s+");
             line = Clean(heading.Success ? heading.Groups[1].Value : line);

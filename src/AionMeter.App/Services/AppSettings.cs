@@ -157,10 +157,16 @@ public sealed class AppSettings
     // Older copies have no preference: follow the installed build until explicitly selected.
     public string? UpdateChannel { get; set; }
     public string? LastStartedRelease { get; set; }
+    public string? PendingStablePatchNotes {get;set;}
+    public string? LastShownStablePatchNotes {get;set;}
+    internal bool HasPendingStablePatchNotes(ReleaseVersion current)=>current.Channel==Core.Updates.UpdateChannel.Stable && PendingStablePatchNotes==current.Display && LastShownStablePatchNotes!=current.Display;
+    internal void MarkStablePatchNotesShown(ReleaseVersion current){LastShownStablePatchNotes=current.Display;PendingStablePatchNotes=null;}
     /// <summary>Promoted Stable builds return Beta subscribers to Stable once per actual build transition.</summary>
     internal bool ApplyReleaseTransition(ReleaseVersion current)
     {
         var previous = ReleaseVersion.Parse(LastStartedRelease);
+        if(current.Channel==Core.Updates.UpdateChannel.Stable && previous is not null && previous!=current && LastShownStablePatchNotes!=current.Display)
+            PendingStablePatchNotes=current.Display;
         var promoted = current.Channel == Core.Updates.UpdateChannel.Stable && previous != current
             && Enum.TryParse<UpdateChannel>(UpdateChannel, true, out var selected) && selected == Core.Updates.UpdateChannel.Beta;
         if (promoted) { UpdateChannel = Core.Updates.UpdateChannel.Stable.ToString(); SkippedUpdate = null; }

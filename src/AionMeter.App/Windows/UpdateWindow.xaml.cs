@@ -95,9 +95,10 @@ public partial class UpdateWindow : Window
 
     private void ShowNotes(string markdown)
     {
+        markdown=PatchNotesWindow.LocalizedForRelease(Release.Tag,markdown);
         Notes.Inlines.Clear();
         var gold = (Brush)FindResource("Gold");
-        foreach (var (text, heading) in ReleaseNotes.Lines(markdown, UiText.Current.Code))
+        foreach (var (text, heading) in ReleaseNotes.Lines(markdown, PatchNotesWindow.NotesLanguage(UiText.Current.Code)))
         {
             if (Notes.Inlines.Count > 0) Notes.Inlines.Add(new LineBreak());
             Notes.Inlines.Add(heading ? new Run(text) { FontWeight = FontWeights.SemiBold, Foreground = gold } : new Run(text));

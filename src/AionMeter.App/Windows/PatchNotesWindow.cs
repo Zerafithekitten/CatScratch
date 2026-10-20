@@ -14,6 +14,18 @@ namespace AionMeter.App.Windows;
 public sealed class PatchNotesWindow : Window
 {
     private readonly StackPanel _notes = new();
+    private static bool German=>UiText.Current.Code=="de";
+    private static string L(string en,string de)=>German?de:en;
+    private readonly IReadOnlyList<ReleaseNotePage> _localized;
+    internal static string NotesLanguage(string language)=>language=="de"?"de":"en";
+    internal string NotesLanguageCode{get;}=NotesLanguage(UiText.Current.Code);
+    internal static string LocalizedForRelease(string tag,string fallback)
+    {
+        if(!German)return fallback;
+        var path=Path.Combine(AppContext.BaseDirectory,"data","patchnotes-de.md");
+        if(!File.Exists(path))return fallback;
+        return ReleaseNotePage.Bundled(File.ReadAllText(path)).FirstOrDefault(p=>ReleaseVersion.Parse(p.Tag)==ReleaseVersion.Parse(tag))?.OwnMarkdown??fallback;
+    }
     private readonly StackPanel _tabs = new();
     private readonly ScrollViewer _scroll = new() { VerticalScrollBarVisibility = ScrollBarVisibility.Auto };
     private IReadOnlyList<ReleaseNotePage> _pages = [];
@@ -27,7 +39,7 @@ public sealed class PatchNotesWindow : Window
     public PatchNotesWindow(Updater updater)
     {
         AppIcon.Apply(this);
-        Title = "CatScratch · Patch notes"; Width = 580; Height = 540; MinWidth = 380; MinHeight = 300; Topmost = true;
+        Title = "CatScratch · "+L("Patch notes","Patchnotes"); Width = 820; Height = 680; MinWidth = 380; MinHeight = 300; Topmost = true;
         WindowStyle = WindowStyle.None; ResizeMode = ResizeMode.CanResize;
         System.Windows.Shell.WindowChrome.SetWindowChrome(this, new System.Windows.Shell.WindowChrome { CaptionHeight = 0, ResizeBorderThickness = new Thickness(6), GlassFrameThickness = new Thickness(0) });
         Background = ThemeColors.Brush("#20242A"); Foreground = ThemeColors.Brush("#EDF2F7");
@@ -41,10 +53,10 @@ public sealed class PatchNotesWindow : Window
         close.Click += (_, _) => Close(); DockPanel.SetDock(close,Dock.Right); titleBar.Children.Add(close);
         var title = new StackPanel { Orientation = Orientation.Horizontal };
         title.Children.Add(new Image { Source = Icon, Width = 18, Height = 18, Margin = new Thickness(0,0,7,0) });
-        title.Children.Add(new TextBlock { Text = "Patch notes", FontSize = 16, FontWeight = FontWeights.SemiBold, Foreground = ThemeColors.Brush("#C49AF5") });
+        title.Children.Add(new TextBlock { Text = L("Patch notes","Patchnotes"), FontSize = 16, FontWeight = FontWeights.SemiBold, Foreground = ThemeColors.Brush("#C49AF5") });
         titleBar.Children.Add(title); header.Children.Add(titleBar);
         title.MouseLeftButtonDown += (_, e) => { if (e.LeftButton == System.Windows.Input.MouseButtonState.Pressed) DragMove(); };
-        var refresh = new Button { Content = "Refresh from GitHub", HorizontalAlignment = HorizontalAlignment.Left, Padding = new Thickness(10,5,10,5), Margin = new Thickness(0,12,0,0) };
+        var refresh = new Button { Content = L("Refresh from GitHub","Von GitHub aktualisieren"), HorizontalAlignment = HorizontalAlignment.Left, Padding = new Thickness(10,5,10,5), Margin = new Thickness(0,12,0,0) };
         header.Children.Add(refresh); header.Children.Add(_state);
         var body = new DockPanel();
         var sidebar = new ScrollViewer { Content = _tabs, Width = 122, Margin = new Thickness(0,0,10,0),
@@ -52,13 +64,15 @@ public sealed class PatchNotesWindow : Window
         DockPanel.SetDock(sidebar, Dock.Left); body.Children.Add(sidebar); root.Children.Add(body);
         _scroll.Content = _notes;
         body.Children.Add(new Border { Background = ThemeColors.Brush("#191D23"), BorderBrush = ThemeColors.Brush("#414A56"), BorderThickness = new Thickness(1), CornerRadius = new CornerRadius(7), Padding = new Thickness(12), Child = _scroll }); Content = root;
+        var localizedPath=Path.Combine(AppContext.BaseDirectory,"data","patchnotes-"+NotesLanguage(UiText.Current.Code)+".md");
+        _localized=German && File.Exists(localizedPath)?ReleaseNotePage.Bundled(File.ReadAllText(localizedPath)):[];
         var path = Path.Combine(AppContext.BaseDirectory, "data", "patchnotes-en.md");
         var bundled = File.Exists(path) ? ReleaseNotePage.Bundled(File.ReadAllText(path)) : [];
         SetReleases((updater.Latest is { } release ? new[] { new ReleaseNotePage(release.Tag, release.Notes) } : [])
             .Concat(bundled), updater.Channel);
         refresh.Click += async (_, _) =>
         {
-            refresh.IsEnabled = false; _state.Text = "Checking GitHub…";
+            refresh.IsEnabled = false; _state.Text = L("Checking GitHub…","GitHub wird geprüft…");
             try
             {
                 using var feed = new UpdateFeed("CatScratch-PatchNotes/1.0");
@@ -66,11 +80,11 @@ public sealed class PatchNotesWindow : Window
                 if (!_lifetime.IsCancellationRequested)
                 {
                     if (releases.Count > 0) SetReleases(releases.Concat(_pages).Concat(bundled), updater.Channel);
-                    else _state.Text = "No release notes found. Displaying the saved notes.";
+                    else _state.Text = L("No release notes found. Displaying the saved notes.","Keine Patchnotes gefunden. Die gespeicherten Texte werden angezeigt.");
                 }
             }
             catch (Exception error) when (error is System.Net.Http.HttpRequestException or OperationCanceledException or System.Text.Json.JsonException or InvalidOperationException)
-            { if (!_lifetime.IsCancellationRequested) _state.Text = "GitHub unavailable. Displaying the saved notes."; }
+            { if (!_lifetime.IsCancellationRequested) _state.Text = L("GitHub unavailable. Displaying the saved notes.","GitHub ist nicht erreichbar. Die gespeicherten Texte werden angezeigt."); }
             finally { if (!_lifetime.IsCancellationRequested) refresh.IsEnabled = true; }
         };
         Closed += (_, _) => { _lifetime.Cancel(); _images.Dispose(); };
@@ -78,7 +92,7 @@ public sealed class PatchNotesWindow : Window
     internal void SetReleases(IEnumerable<ReleaseNotePage> pages, UpdateChannel channel)
     {
         var selected = SelectedRelease;
-        _pages = ReleaseNotePage.Latest(pages, channel);
+        _pages = ReleaseNotePage.Latest(_localized.Concat(pages), channel);
         _tabs.Children.Clear();
         foreach (var page in _pages)
         {
@@ -88,7 +102,7 @@ public sealed class PatchNotesWindow : Window
         }
         var index = _pages.ToList().FindIndex(p => p.Tag == selected);
         if (_pages.Count > 0) ((RadioButton)_tabs.Children[Math.Max(0, index)]).IsChecked = true;
-        else ShowNotes("No bundled patch notes available.", "Patch notes");
+        else ShowNotes(L("No bundled patch notes available.","Keine gespeicherten Patchnotes verfügbar."),L("Patch notes","Patchnotes"));
     }
     internal void SelectRelease(string tag)
     {
@@ -96,7 +110,7 @@ public sealed class PatchNotesWindow : Window
         SelectedRelease = tag;
         foreach (RadioButton tab in _tabs.Children) tab.IsChecked = Equals(tab.Tag, tag);
         _scroll.ScrollToTop();
-        ShowNotes(page.OwnMarkdown, "Release · " + tag);
+        ShowNotes(page.OwnMarkdown, L("Release · ","Version · ") + tag);
     }
     private async void ShowNotes(string markdown, string caption)
     {
@@ -105,11 +119,15 @@ public sealed class PatchNotesWindow : Window
         _notes.Children.Clear();
         ContentsCount = 0;
         var contents = new StackPanel();
-        contents.Children.Add(new TextBlock { Text = "Contents", FontWeight = FontWeights.SemiBold,
+        contents.Children.Add(new TextBlock { Text = L("At a glance","Auf einen Blick"), FontWeight = FontWeights.SemiBold,
             Foreground = ThemeColors.Brush("#C49AF5"), Margin = new Thickness(0,0,0,5) });
         var pending = new List<(Image Image, TextBlock Status, Uri Uri)>();
+        var skipContents=false;
         foreach (var line in markdown.Split('\n'))
         {
+            if(line.Contains("<!-- contents -->")){skipContents=true;continue;}
+            if(line.Contains("<!-- /contents -->")){skipContents=false;continue;}
+            if(skipContents || line.TrimStart().StartsWith("<a ") || line.Trim()=="---")continue;
             var match = Regex.Match(line, "<img\\b[^>]*\\bsrc=[\"'](?<url>[^\"']+)[\"']|!\\[[^\\]]*\\]\\((?<url>[^\\s)]+)\\)", RegexOptions.IgnoreCase);
             if (match.Success && Uri.TryCreate(match.Groups["url"].Value, UriKind.Absolute, out var uri) &&
                 uri.Scheme == "https" && uri.Host == "raw.githubusercontent.com" &&
@@ -121,7 +139,7 @@ public sealed class PatchNotesWindow : Window
                 pending.Add((image,status,uri));
                 continue;
             }
-            foreach (var (text, heading) in ReleaseNotes.Lines(line, "en"))
+            foreach (var (text, heading) in ReleaseNotes.Lines(line, NotesLanguage(UiText.Current.Code)))
             {
                 var majorHeading=heading && line.StartsWith("### ",StringComparison.Ordinal);
                 var block = new TextBlock { Text = text, TextWrapping = TextWrapping.Wrap, FontSize = majorHeading ? 18 : heading ? 14 : 12, LineHeight = majorHeading ? 24 : 19,
@@ -140,7 +158,7 @@ public sealed class PatchNotesWindow : Window
             }
         }
         if (ContentsCount > 0) _notes.Children.Insert(0, new Border { Child = contents,
-            Background = ThemeColors.Brush("#202A35"), CornerRadius = new CornerRadius(5),
+            Background = ThemeColors.Brush("#20242A"), CornerRadius = new CornerRadius(5),
             Padding = new Thickness(10), Margin = new Thickness(0,0,0,10) });
         foreach (var preview in pending)
         {

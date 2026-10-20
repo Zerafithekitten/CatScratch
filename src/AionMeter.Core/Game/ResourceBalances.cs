@@ -78,10 +78,12 @@ public sealed class ResourceBalances
     {
         lock(_gate)
         {
+            if(e is ResourceSnapshotStartedEvent)
+            {MarkCached();_awaitingIdentity=true;_pending.Clear();return;}
             if(e is ZoneChangedEvent zone)
             {
                 if(!zone.IsTeleport && zone.MapId!=_mapId && _identity is not null)
-                {MarkCached();_awaitingIdentity=true;_pending.Clear();}
+                {MarkCached();if(!_awaitingIdentity)_pending.Clear();_awaitingIdentity=true;}
                 _mapId=zone.MapId;return;
             }
             if(_awaitingIdentity && e is OdyleEnergyEvent or ResourceBalanceSnapshot or DungeonEntriesEvent)

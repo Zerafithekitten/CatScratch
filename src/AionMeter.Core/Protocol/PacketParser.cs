@@ -55,8 +55,12 @@ public sealed class PacketParser
                 if(ResourceInventoryPackets.Snapshot(TimeMs,body) is { } resources)Emit(resources);
                 break;
             case 0x0B61:
-                if(OdyleEnergyPackets.Snapshot(TimeMs,body) is { } energySnapshot)Emit(energySnapshot);
-                if(DungeonEntryPackets.Snapshot(TimeMs,body) is { } entriesSnapshot)Emit(entriesSnapshot);
+                var energySnapshot=OdyleEnergyPackets.Snapshot(TimeMs,body);
+                var entriesSnapshot=DungeonEntryPackets.Snapshot(TimeMs,body);
+                // Full login tables precede the own-character record, including same-map quick switches.
+                if(energySnapshot is not null && entriesSnapshot is not null)Emit(new ResourceSnapshotStartedEvent(TimeMs));
+                if(energySnapshot is not null)Emit(energySnapshot);
+                if(entriesSnapshot is not null)Emit(entriesSnapshot);
                 break;
             case 0x0C61:
                 if(OdyleEnergyPackets.Update(TimeMs,body) is { } energyUpdate)Emit(energyUpdate);

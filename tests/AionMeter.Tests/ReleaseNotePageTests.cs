@@ -61,4 +61,13 @@ public sealed class ReleaseNotePageTests
         Assert.Equal("Updated", stable[1].Markdown);
         Assert.Equal("v2.5.11-beta.2", ReleaseNotePage.Latest(pages, UpdateChannel.Beta)[0].Tag);
     }
+
+    [Fact] public void PersonalNotesHideHtmlAnchorsAndCommentMarkers()
+    {
+        var notes="<!-- contents -->\n- [Resources](#resources)\n<!-- /contents -->\n<a id=\"resources\"></a>\n### Resources\n---\nBalances update live.";
+        var lines=ReleaseNotes.Lines(notes,"en");
+        Assert.DoesNotContain(lines,p=>p.Text.Contains("<!--") || p.Text.Contains("<a ") || p.Text=="---");
+        Assert.Contains(lines,p=>p.Heading && p.Text=="Resources");
+        Assert.Contains(lines,p=>p.Text.Contains("Balances update live."));
+    }
 }

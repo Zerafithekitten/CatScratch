@@ -14,9 +14,10 @@ public sealed class LiveIdentity
     public SelfIdentifiedEvent? KnownCharacter { get { lock (_gate) return _known; } }
     public SelfIdentifiedEvent? Observe(GameEvent value)
     {
-        if (value is not (SelfIdentifiedEvent or PlayerSeenEvent or ZoneChangedEvent)) return null;
+        if (value is not (SelfIdentifiedEvent or PlayerSeenEvent or ZoneChangedEvent or ResourceSnapshotStartedEvent)) return null;
         lock (_gate)
         {
+            if(value is ResourceSnapshotStartedEvent){_current=_known=null;_actorId=null;_awaitingZoneIdentity=false;return null;}
             if (value is ZoneChangedEvent zone)
             {
                 var changed = !zone.IsTeleport && zone.MapId != _mapId;

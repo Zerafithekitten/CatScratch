@@ -6,13 +6,13 @@ A separate, always-on-top Windows DPS meter for **AION 2**, by Zerafithekitten. 
 
 | Channel | Current version | What it includes |
 | --- | --- | --- |
-| **Stable** | **[v3.0.11](https://github.com/Zerafithekitten/CatScratch/releases/tag/v3.0.11)** | Compact panel layouts, checklist with a custom hotkey, reset countdowns and stable click-through placement, Pet tracking modes and sounds, passive Hidden cube alerts, ONLY BOSS, defeat estimates, refined Test mode and DPS placement fixes. |
-| **Beta** | **[v3.0.12-beta.22](https://github.com/Zerafithekitten/CatScratch/releases/tag/v3.0.12-beta.22)** | Optional Dungeon entries for Daily, Nightmare and Shugo; live Odyle, Abyss Points, Centuryroot, Phantasmal Fragment and Oath Coin updates, plus the previous Beta improvements. |
+| **Stable** | **[v4.0.0](https://github.com/Zerafithekitten/CatScratch/releases/tag/v4.0.0)** | Resources and Dungeon entry modules, character overview, low-balance alerts, individual world bosses, optional snapping, quick-switch fixes and all previous Stable features. |
+| **Beta** | **[v3.0.12-beta.22](https://github.com/Zerafithekitten/CatScratch/releases/tag/v3.0.12-beta.22)** | Previous test build; its features are included in Stable 4.0.0, with final fixes. Beta subscribers move to Stable when 4.0.0 starts. |
 | **Light** | [v1.0.0](https://github.com/Zerafithekitten/CatScratch/releases/tag/light-v1.0.0) | Separate **DPS meter only** edition with essential settings. Independent ZIP download and settings; no additional CatScratch modules or automatic updater. |
 
 **CatScratch light** is installed separately from the full version. [Download its ZIP](https://github.com/Zerafithekitten/CatScratch/releases/download/light-v1.0.0/CatScratch-light-win-x64.zip) and extract it into its own folder. Light is maintained and updated **only on the owner's explicit request**; normal development continues on full CatScratch.
 
-English is the default. German, Russian and French are also available. Screenshots use synthetic sample data; names and numbers are examples. All features described below are included in **Stable v3.0.11** unless a limitation is stated.
+English is the default. German, Russian and French are also available. Screenshots use synthetic sample data; names and numbers are examples. All features described below are included in **Stable v4.0.0** unless a limitation is stated.
 
 ## Contents
 
@@ -266,17 +266,17 @@ Choose an optional **MP3 or WAV** in the same tab, adjust its independent **Volu
 
 Opening the cube or changing context clears the warning; announcements also expire after 60 seconds without a refresh. An announcement confirms that the server sent the object, rather than a measured distance or continued visual presence. Other cube variants, map placement, direction and distance remain unverified. No screenshot capture or game-memory access is used.
 
-### Overlay recovery and startup (Beta 3.0.12-beta.2)
+### Overlay recovery and startup (Stable 4.0.0)
 
-**Beta only.** Topmost recovery has an independent refresh loop and periodic native repair. It does not move or reveal hidden windows, or take keyboard focus. Settings and interactive CatScratch dialogs remain usable.
+Topmost recovery has an independent refresh loop and periodic native repair. It does not move or reveal hidden windows, or take keyboard focus. Settings and interactive CatScratch dialogs remain usable.
 
 The existing restart preference is now labeled **Settings > Appearance > Modules > Start with click-through enabled**. With it enabled, startup activates click-through even if the previous session temporarily unlocked it. Existing enabled preferences carry over. Event modules no longer switch global click-through off when opened; unlock explicitly from the panel, shortcut or tray.
 
 ![Clear click-through startup preference](docs/images/clickthrough-startup-beta2.png)
 
-### Individual world bosses (Beta 3.0.12-beta.1)
+### Individual world bosses (Stable 4.0.0)
 
-**Beta only.** Settings > Events provides individual choices for known world bosses, a search field, favorite stars and an expandable sound picker for each boss. Favorites and selected bosses remain visible in the event modules beyond one hour; unknown times stay labeled as unknown. Confirmed living bosses appear in Started events. Favorites use the gold frame. Open a map's boss list in the game to discover additional world bosses.
+Settings > Events provides individual choices for known world bosses, a search field, favorite stars and an expandable sound picker for each boss. Favorites and selected bosses remain visible in the event modules beyond one hour; unknown times stay labeled as unknown. Confirmed living bosses appear in Started events. Favorites use the gold frame. Open a map's boss list in the game to discover additional world bosses.
 
 Per-boss sounds support the existing built-in choices and validated WAV/MP3 files. They use the event reminder lead time and volume, only the current server's known respawn, and notify once per occurrence. Settings are drafts until Save. Display choice, favorites and sounds survive restart.
 
@@ -296,7 +296,7 @@ The green **Update!** button appears **only after the update is fully prepared**
 
 After a successful new startup, the old backup, staged payload and downloaded ZIP are removed. Failed updates retain recovery files. Settings, saved fights, personal bests, recent players and captures are preserved. Update staging stays under `userdata/temp/updates`; a writable program folder is required.
 
-When a Beta is promoted and its Stable build starts, Beta subscribers automatically return to the Stable update channel. A later deliberate switch back to Beta is respected until the next Stable transition. The installed version then shows the Stable number, currently **3.0.11** without a beta suffix.
+When a Beta is promoted and its Stable build starts, Beta subscribers automatically return to the Stable update channel. A later deliberate switch back to Beta is respected until the next Stable transition. The installed version then shows the Stable number, currently **4.0.0** without a beta suffix.
 
 Use **Check now** in Settings or **Check for updates** in the tray menu for a manual check. Automatic checking and preparation can be disabled in Settings. CatScratch also reduces data-loading allocations and moves optional startup work behind the first meter display.
 
@@ -449,16 +449,26 @@ Stable 3.0.6 improves the boss defeat estimate in click-through mode: a dedicate
 
 ![Readable remaining boss fight time in click-through mode](docs/images/boss-estimate-clickthrough-stable306.png)
 
-**Beta 3.0.12-beta.3:** World bosses are added to Watched only with the bell. Neither detected kills nor manual kill entries enable watching; kill times, respawn timers and existing watch selections remain saved.
+### Resources, Dungeon entries and character overview (Stable 4.0.0)
 
-### Resources module (Beta 3.0.12-beta.9)
+World boss watching is manual: neither detected kills nor manual kill entries enable the bell automatically. Existing watch selections, kill times and respawn timers remain saved.
 
-Enable it in **Settings > Resources**, choose any of the five individual rows and adjust the width. The compact display is movable, pinnable, supports global click-through and show/hide, and saves its placement. Odyle Energy shows available (+supplementary) values, using confirmed login, regeneration and item-use packets. Capacity and the next recharge time are not inferred.
+Enable **Settings > Resources** and choose Odyle Energy, Abyss Points, Centuryroot Token, Deava Pass Shop Coin, Phantasmal Fragment and Oath Coins independently. Bundled game icons accompany live confirmed balances; Odyle shows regular (+supplementary) Energy. Use List, Horizontal or Grid; placement, width, pin and layout are saved. No game memory or active server queries are used.
 
-Abyss Points, Centuryroot Token, Deava Pass Shop Coin and Phantasmal Fragment show the last unambiguous received inventory balance, marked **\***. Continuous currency-change updates are not yet verified. Missing or ambiguous values show a dash; return to character selection and log in again to refresh the snapshot. No resources are read from game memory.
+**Settings > Dungeon entries** offers Daily Dungeon, Nightmare and Shugo Festival with the same layout choices, independent selection and placement. Counts show regular (+additional) / reported capacity and update on confirmed consumption; a zone change alone does not deduct entries.
 
-Resource layouts (Beta 3.0.12-beta.10): choose **List**, **Horizontal** (icons and values, names in tooltips) or **Grid** (two columns) in Settings > Resources. All five resources have bundled game icons, also shown beside their Settings choices. Horizontal width fits the selected values automatically; List and Grid use the width slider. Layout choices are saved and included in overlay profiles.
+![Character resources table](docs/screenshots/character-resources.png)
 
-Missing resource data now displays an orange **Relog!** warning in all three layouts, with a tooltip explaining character selection and login. Confirmed zero balances remain visible as zero; received values replace the warning.
+The character-card button beside history opens the **Character resources** table. It compares last-known values by character and server, with per-value confirmation times in tooltips and stream-mode name masking. Quick-switch login data waits for the correct character identity, including similar accented names. Refresh previously mixed records by logging into each affected character after updating.
 
-Beta 3.0.12-beta.22 fixes resource state preservation during login: incomplete character records, later server identification and unrelated/partial inventory messages no longer erase received balances. Confirmed character changes and capture resets still discard old values. This does not add active server queries or verified live currency spending updates.
+A normal value is confirmed; **≈** means last known and awaiting fresh confirmation; **Relog!** means no usable baseline has been received. The control-panel capture dot explains incoming data, pending identity and capture errors. Known resources survive capture restarts as approximate values.
+
+Opt-in thresholds warn on confirmed low balances, optionally with bundled audio and volume. Odyle checks regular Energy; dungeons check regular plus additional entries. Warnings rearm after recovery and never trigger from approximate cached values.
+
+Under **Appearance**, optional module snapping aligns to screen edges and other visible modules with a configurable gap. Hold Alt to bypass. Profiles carry snapping layout preferences without replacing resource selections or warning rules.
+
+### Patch notes in your language
+
+[Read the 4.0.0 English patch notes](data/patchnotes-en.md) · [Deutsche Patchnotes](data/patchnotes-de.md)
+
+German app language uses German patch notes; every other app language uses English. Older releases without a German translation fall back to English. The ten-version sidebar and clickable contents remain available offline. After an upgrade to a Stable release, its notes open once on startup; ordinary restarts and Beta updates do not reopen them.

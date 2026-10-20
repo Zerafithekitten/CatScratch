@@ -93,3 +93,5 @@ On 2026-10-20 the owner explicitly requested uploading the verified multi-byte O
 On 2026-10-20 the owner reviewed the last-known resource/Dungeon cache with visible approximate markers and approved "dann mach mal nen update". Publish v3.0.12-beta.21 after full checks; preserve Stable and Light.
 
 On 2026-10-20 the owner reviewed the resource tools and corrected character-card icon previews and explicitly approved "okay ab in die beta". Publish v3.0.12-beta.22 after full release verification; preserve Stable and Light.
+
+On 2026-10-20 the owner explicitly authorized preparing and publishing Stable v4.0.0, including the full Beta series, reviewed character table, quick-switch ownership fix, personal English/German patch notes and one-time Stable-upgrade notes display. Run complete release checks, publish as latest on main and retain the independent Light edition.

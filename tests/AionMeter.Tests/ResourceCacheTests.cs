@@ -83,4 +83,41 @@ public class ResourceCacheTests
         Assert.Equal(400,restored.ConfirmedAt("currency:930100024"));Assert.Equal(100,restored.ConfirmedAt("odyle"));
         var legacy=new ResourceBalances();legacy.Observe(Own());legacy.RestoreProgress(Baseline());Assert.Equal(0,legacy.ConfirmedAt("currency:930100024"));
     }
+
+    [Fact] public void QuickSwitchQueuesLoginValuesBeforeSameMapAndKeepsAccentNamesDistinct()
+    {
+        var state=new ResourceBalances();var identity=new LiveIdentity();
+        void Send(GameEvent e){state.Observe(identity.Observe(e)??e);}
+        Send(new SelfIdentifiedEvent(1,99,"Zerafí",2305,GameClass.Cleric));
+        Send(new OdyleEnergyEvent(2,60,525));Send(new ZoneChangedEvent(3,1110,"Same map",false));
+        Send(new SelfIdentifiedEvent(4,99,"Zerafí",2305,GameClass.Cleric));
+        Send(new ResourceSnapshotStartedEvent(5));
+        Assert.Null(identity.Current);Assert.Null(identity.KnownCharacter);
+        Send(new OdyleEnergyEvent(6,175,270));
+        Send(new DungeonEntriesEvent(6,new Dictionary<uint,DungeonEntryValue>{{4,new(14,0,14)}}));
+        Send(new ResourceBalanceSnapshot(6,new Dictionary<int,ulong>{{930100003,4600}}));
+        Send(new ZoneChangedEvent(7,1110,"Same map",false));
+        Assert.True(state.AwaitingIdentity);Assert.Equal(60u,state.Read().Energy!.Available);
+        // An unrelated sighting of the previous character must not authorize the new login values.
+        Send(new PlayerSeenEvent(8,99,"Zerafí",2305,GameClass.Cleric));Assert.Null(identity.Current);
+        Send(new SelfIdentifiedEvent(9,102,"Zerafi",2305,GameClass.Elementalist));
+        Assert.False(state.AwaitingIdentity);Assert.Equal("Zerafi",state.SavedProgress()!.Name);
+        Assert.Equal(175u,state.Read().Energy!.Available);Assert.Equal(270u,state.Read().Energy!.Supplementary);
+        Assert.Equal(4600ul,state.Read().Balances[930100003]);Assert.Equal(14u,state.ReadEntries()[4].Available);
+    }
+    [Fact] public void PendingLoginValuesSurviveTheLaterDifferentMapAnnouncement()
+    {
+        var state=new ResourceBalances();state.Observe(Own());state.RestoreProgress(Baseline());
+        state.Observe(new ResourceSnapshotStartedEvent(200));state.Observe(new OdyleEnergyEvent(201,175,270));
+        state.Observe(new ZoneChangedEvent(202,2220,"Another map",false));state.Observe(Own("Other"));
+        Assert.Equal(175u,state.Read().Energy!.Available);Assert.Equal("Other",state.SavedProgress()!.Name);
+    }
+    [Fact] public void ParserAnnouncesFullLoginTableBeforeItsValuesButNotLiveUpdates()
+    {
+        var events=new List<GameEvent>();var parser=new AionMeter.Core.Protocol.PacketParser(GameData.Empty,events.Add);
+        parser.Handle(0x0B61,Convert.FromHexString("050C01000000100304040000000E0865000000120C01879303A0018E02040687930315"));
+        Assert.Collection(events,e=>Assert.IsType<ResourceSnapshotStartedEvent>(e),e=>Assert.IsType<OdyleEnergyEvent>(e),e=>Assert.IsType<DungeonEntriesEvent>(e));
+        events.Clear();parser.Handle(0x0C61,Convert.FromHexString("000C01879303A0018E0202"));
+        Assert.IsType<OdyleEnergyEvent>(Assert.Single(events));
+    }
 }

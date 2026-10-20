@@ -40,7 +40,7 @@ jobs:
           if ($LASTEXITCODE) { throw 'Publish failed' }
           Copy-Item LICENSE dist/payload
           Copy-Item INSTALL.txt dist/payload
-          foreach ($file in @('CatScratch.GameWatcher.exe', 'sounds/Chime.wav', 'sounds/Bell.wav', 'sounds/Ping.wav', 'data/audio/kitty-meow.wav', 'data/patchnotes-en.md', 'data/pets/catalog.json', 'data/pets/locations.json')) {
+          foreach ($file in @('CatScratch.GameWatcher.exe', 'sounds/Chime.wav', 'sounds/Bell.wav', 'sounds/Ping.wav', 'data/audio/kitty-meow.wav', 'data/patchnotes-en.md', 'data/patchnotes-de.md', 'data/pets/catalog.json', 'data/pets/locations.json')) {
             if (-not (Test-Path -LiteralPath "dist/payload/$file")) { throw "Required app resource missing: $file" }
           }
           Compress-Archive -Path dist/payload/* -DestinationPath dist/CatScratch-win-x64.zip

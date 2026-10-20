@@ -37,6 +37,9 @@ public enum GameClass : byte
 /// <summary>Everything the combat engine consumes. Time is Unix milliseconds taken from the packet capture.</summary>
 public abstract record GameEvent(long TimeMs);
 
+/// <summary>A validated full resource/login property table begins before its own character identity arrives.</summary>
+public sealed record ResourceSnapshotStartedEvent(long TimeMs):GameEvent(TimeMs);
+
 /// <param name="Damage">Total damage of the record, additional hits included.</param>
 /// <param name="HitCount">1 + number of additional hits carried by the record.</param>
 /// <param name="PowerScalar">The actor's damage multiplier in 1/100 % (players 16000–22000, mobs 10000); 0 if absent.

@@ -404,6 +404,13 @@ public partial class App : Application
         if (settings.ApplyReleaseTransition(_meter.Updates.CurrentIdentity))
             Log.Info("Stable release promotion: update channel changed from Beta to Stable.");
         settings.Save();
+        Dispatcher.BeginInvoke(()=>
+        {
+            if(IsExiting || !settings.HasPendingStablePatchNotes(_meter.Updates.CurrentIdentity))return;
+            ShowPatchNotes();
+            _patchNotes?.SelectRelease("v"+_meter.Updates.CurrentIdentity.Display);
+            settings.MarkStablePatchNotesShown(_meter.Updates.CurrentIdentity);settings.Save();
+        },DispatcherPriority.ApplicationIdle);
         _timerCards = new TimerCards(_meter);
         Log.Info($"Started. Data: {_meter.Data.Skills.Count} skills, {_meter.Data.Npcs.Count} npcs.");
         _meter.StartCapture();
@@ -1053,7 +1060,11 @@ public partial class App : Application
 
     public void ShowPatchNotes()
     {
-        if (_patchNotes is { IsLoaded: true }) { Activate(_patchNotes); return; }
+        if (_patchNotes is { IsLoaded: true })
+        {
+            if(_patchNotes.NotesLanguageCode==PatchNotesWindow.NotesLanguage(UiText.Current.Code)){Activate(_patchNotes);return;}
+            _patchNotes.Close();
+        }
         _patchNotes = new PatchNotesWindow(_meter.Updates);
         _patchNotes.Closed += (_, _) => _patchNotes = null;
         _patchNotes.Show();

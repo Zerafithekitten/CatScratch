@@ -31,6 +31,7 @@ internal sealed class ResourceProgressCache:IDisposable
         lock(_gate)
         {
             if(_disposed)return;
+            if(value is ResourceSnapshotStartedEvent){_awaitingIdentity=true;return;}
             if(value is ZoneChangedEvent){if(_resources.AwaitingIdentity)_awaitingIdentity=true;return;}
             if(value is SelfIdentifiedEvent own)
             {

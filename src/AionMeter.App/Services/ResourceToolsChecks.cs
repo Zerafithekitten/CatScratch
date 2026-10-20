@@ -15,6 +15,23 @@ internal static class ResourceToolsChecks
     internal static void Run(string output)
     {
         var passed=new List<string>();void Check(bool value,string text){if(!value)throw new InvalidOperationException(text);passed.Add(text);}
+
+        var cacheDir=Path.Combine(Path.GetTempPath(),"catscratch-switch-"+Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(cacheDir);
+        var switching=new ResourceBalances();var liveIdentity=new LiveIdentity();
+        using(var cache=new ResourceProgressCache(switching,cacheDir))
+        {
+            void Send(GameEvent e){var resolved=liveIdentity.Observe(e)??e;switching.Observe(resolved);cache.Observe(resolved);}
+            Send(new SelfIdentifiedEvent(1,99,"Zerafí",2305,GameClass.Cleric));Send(new OdyleEnergyEvent(2,60,525));
+            Send(new ResourceSnapshotStartedEvent(3));Send(new OdyleEnergyEvent(4,175,270));
+            Send(new DungeonEntriesEvent(4,new Dictionary<uint,DungeonEntryValue>{{4,new(14,0,14)}}));
+            Check(cache.Snapshot().Single().Energy!.Available==60,"Quick-switch login packets do not overwrite the previous character cache");
+            Send(new ZoneChangedEvent(5,1110,"Same map",false));Send(new SelfIdentifiedEvent(6,102,"Zerafi",2305,GameClass.Elementalist));
+            Check(cache.Snapshot().Count==2 && cache.Snapshot().Single(p=>p.Name=="Zerafí").Energy!.Available==60 && cache.Snapshot().Single(p=>p.Name=="Zerafi").Energy!.Available==175,"Accented and plain character names retain separate cached resource values");
+            Check(cache.Snapshot().Single(p=>p.Name=="Zerafi").Entries[4].Available==14,"Queued dungeon counts belong to the newly confirmed character");
+        }
+        using(var restoredCache=new ResourceProgressCache(new ResourceBalances(),cacheDir))Check(restoredCache.Snapshot().Count==2,"Both quick-switched character records survive a cache reload");
+        foreach(var file in Directory.GetFiles(cacheDir))File.Delete(file);Directory.Delete(cacheDir);
         var settings=new AppSettings{Transient=true,DownloadIcons=false};settings.ResourceAlerts["odyle"]=new(){Enabled=true,Threshold=30};settings.ResourceAlerts["daily"]=new(){Enabled=true,Threshold=0};
         var state=new ResourceBalances();state.Observe(new SelfIdentifiedEvent(1,1,"One",2305,GameClass.Cleric));state.Observe(new OdyleEnergyEvent(2,15,500));state.Observe(new DungeonEntriesEvent(3,new Dictionary<uint,DungeonEntryValue>{{101,new(0,18,14)}}));
         using(var monitor=new ResourceAlertMonitor())

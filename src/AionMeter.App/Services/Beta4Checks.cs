@@ -40,10 +40,47 @@ internal static class Beta4Checks
         }
     }
 
+    private static IEnumerable<string> FindNotesText(DependencyObject root)
+    {
+        if(root is TextBlock text)yield return text.Text;
+        for(var i=0;i<System.Windows.Media.VisualTreeHelper.GetChildrenCount(root);i++)
+            foreach(var value in FindNotesText(System.Windows.Media.VisualTreeHelper.GetChild(root,i)))yield return value;
+    }
     public static async Task RunAsync(string path)
     {
         var checks = new List<string>();
         void Check(bool ok, string text) { if (!ok) throw new InvalidOperationException(text); checks.Add(text); }
+        var stable400=ReleaseVersion.Parse("4.0.0")!;
+        var first400=new AppSettings{LastStartedRelease="3.0.11",UpdateChannel="Stable"};
+        first400.ApplyReleaseTransition(stable400);Check(first400.HasPendingStablePatchNotes(stable400),"A Stable upgrade queues its own patch notes");
+        var pending400=JsonSerializer.Deserialize<AppSettings>(JsonSerializer.Serialize(first400))!;pending400.ApplyReleaseTransition(stable400);
+        Check(pending400.HasPendingStablePatchNotes(stable400),"A queued Stable welcome survives a restart until displayed");
+        pending400.MarkStablePatchNotesShown(stable400);pending400.ApplyReleaseTransition(stable400);
+        Check(!pending400.HasPendingStablePatchNotes(stable400),"Stable patch notes appear only once, not on ordinary restarts");
+        var beta400=new AppSettings{LastStartedRelease="3.0.11"};var betaVersion=ReleaseVersion.Parse("4.0.1-beta.1")!;beta400.ApplyReleaseTransition(betaVersion);
+        Check(!beta400.HasPendingStablePatchNotes(betaVersion),"Beta upgrades never queue the Stable welcome");
+        var clean400=new AppSettings();clean400.ApplyReleaseTransition(stable400);Check(!clean400.HasPendingStablePatchNotes(stable400),"A fresh installation is not mistaken for an update");
+        var promotion400=new AppSettings{LastStartedRelease="3.0.12-beta.22",UpdateChannel="Beta"};promotion400.ApplyReleaseTransition(stable400);
+        Check(promotion400.UpdateChannel=="Stable" && promotion400.HasPendingStablePatchNotes(stable400),"4.0.0 promotes Beta subscribers and queues the Stable notes once");
+        Check(PatchNotesWindow.NotesLanguage("de")=="de" && new[]{"en","ru","fr"}.All(l=>PatchNotesWindow.NotesLanguage(l)=="en"),"German notes follow German UI; all other languages use English");
+        var oldLanguage=UiText.Current.Code;
+        using(var notesMeter=new MeterService(new AppSettings{Transient=true,DownloadIcons=false},null))
+        {
+            foreach(var code in new[]{"de","en","ru","fr"})
+            {
+                UiText.Use(code);var notesWindow=new PatchNotesWindow(notesMeter.Updates);
+                try
+                {
+                    notesWindow.Show();notesWindow.UpdateLayout();
+                    var text=string.Join(" ",FindNotesText(notesWindow));
+                    Check(text.Contains(code=="de"?"Mehr Überblick, weniger Hin und Her":"A little more cat, a lot more overview"),"Bundled 4.0.0 notes use the correct language for "+code);
+                    Check(notesWindow.SelectedRelease=="v4.0.0" && notesWindow.ContentsCount==11,"4.0.0 provides eleven working contents destinations for "+code);
+                    Check(!text.Contains("<!--") && !text.Contains("<a id="),"Patch-note markup stays hidden for "+code);
+                }
+                finally{notesWindow.Close();}
+            }
+        }
+        UiText.Use(oldLanguage);
         var layoutSettings=new AppSettings {Transient=true,OverlayLeft=-1200,OverlayWidth=500,ShowPetTrackerModule=true,UpdateChannel="Beta",FollowGame=true};
         var layoutTimers=new TimerCards.State {EventWindowOpen=false,Positions=new(){{"auto-events",new(){Left=300,Top=100,Width=280,Open=true}}}};
         layoutSettings.ModulePins["meter"]=true;
