@@ -1,7 +1,7 @@
 CatScratch — AION 2 for Windows
 
 RELEASE CHANNELS
-Stable: v4.0.4 — Optional Patreon packages, designs, sounds, supporter paw and more resilient custom audio.
+Stable: v4.0.5 — Optional Patreon packages, designs, sounds, supporter paw and more resilient custom audio.
 Beta: v3.0.12-beta.22 — Previous test build; its features are now included in Stable 4.0.0.
 Downloads: https://github.com/Zerafithekitten/CatScratch/releases
 The current GitHub README describes availability by channel.

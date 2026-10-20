@@ -60,6 +60,7 @@ public partial class App : Application
     private PetTrackerWindow? _petWindow;
     private DeathRecapWindow? _deathRecapWindow;
     private HiddenCubeWindow? _hiddenCubeWindow;
+    private SupporterCatWindow? _supporterCatWindow;
     private ChecklistWindow? _checklistWindow;
     private readonly ResourceAlertMonitor _resourceAlerts=new();
     private ResourcesWindow? _resourcesWindow;
@@ -251,6 +252,15 @@ public partial class App : Application
             try{OverlayPlacementChecks.Run(placementPath);Shutdown();}
             catch(Exception error){File.WriteAllText(placementPath,error.ToString());Shutdown(1);}
             return;
+        }
+        if(ArgValue(e.Args,"--check-supporter-cat") is {} catResult)
+        {
+            Log.Enabled=false;
+            Dispatcher.BeginInvoke(async()=>
+            {
+                try{await SupporterCatChecks.RunAsync(catResult,ArgValue(e.Args,"--supporter-package"));Shutdown();}
+                catch(Exception error){File.WriteAllText(catResult,error.ToString());Shutdown(1);}
+            });return;
         }
         if(ArgValue(e.Args,"--check-supporter") is {} supporterPath)
         {
@@ -564,6 +574,7 @@ public partial class App : Application
         SyncDeathRecap();
         SyncHiddenCubes();
         SyncChecklist();
+        SyncSupporterCat();
         SyncResources();
         _resourceAlerts.Tick(_meter);
         _meterControls?.RefreshConnection(_meter);
@@ -630,6 +641,17 @@ public partial class App : Application
         var window=_dungeonEntriesWindow=new DungeonEntriesWindow(_meter);
         WindowClickThrough.Attach(window,()=>_meter.Settings.ClickThrough,()=>_meter.Settings.WindowOpacity);
         window.Closed+=(_,_)=>{if(ReferenceEquals(_dungeonEntriesWindow,window))_dungeonEntriesWindow=null;};
+        window.Show();_windowVisibility.Track(window);
+    }
+
+    private void SyncSupporterCat()
+    {
+        if(_shutdownStarted || _modulePreview is not null)return;
+        if(!_meter.Settings.ShowSupporterCat || SupporterPacks.CatPack is null){_supporterCatWindow?.Close();return;}
+        if(_supporterCatWindow is not null || _windowVisibility.Hidden)return;
+        var window=_supporterCatWindow=new SupporterCatWindow(_meter.Settings,SupporterPacks.CatPack);
+        WindowClickThrough.Attach(window,()=>_meter.Settings.ClickThrough,()=>_meter.Settings.WindowOpacity);
+        window.Closed+=(_,_)=>{if(ReferenceEquals(_supporterCatWindow,window))_supporterCatWindow=null;};
         window.Show();_windowVisibility.Track(window);
     }
 
@@ -862,7 +884,7 @@ public partial class App : Application
         WindowPinning.RefreshAll();
         var reopenPets=_petWindow?.IsVisible==true;
         _petWindow?.Close();
-        _hiddenCubeWindow?.Close();_resourcesWindow?.Close();_dungeonEntriesWindow?.Close();
+        _hiddenCubeWindow?.Close();_supporterCatWindow?.Close();_resourcesWindow?.Close();_dungeonEntriesWindow?.Close();
         _bossTimingWindow?.Close();
         foreach (var w in _breakdowns.Values.ToList()) w.Close();
         _history?.Close();
@@ -1106,7 +1128,7 @@ public partial class App : Application
     {
         // Validate first, then close displays before restoring saved placement (close handlers write positions).
         OverlayProfiles.Apply(profile,new AppSettings(),new TimerCards.State());
-        _timerHub?.Close();_startedEvents?.Close();_petWindow?.Close();_hiddenCubeWindow?.Close();_resourcesWindow?.Close();_dungeonEntriesWindow?.Close();_bossTimingWindow?.Close();_timersWindow?.Close();_timerCards!.Dispose();
+        _timerHub?.Close();_startedEvents?.Close();_petWindow?.Close();_hiddenCubeWindow?.Close();_supporterCatWindow?.Close();_resourcesWindow?.Close();_dungeonEntriesWindow?.Close();_bossTimingWindow?.Close();_timersWindow?.Close();_timerCards!.Dispose();
         OverlayProfiles.Apply(profile,_meter.Settings,_timerCards.Saved);
         ModuleSnapping.Configure(_meter.Settings);
         var placement=new Rect(_meter.Settings.OverlayLeft,_meter.Settings.OverlayTop,_meter.Settings.OverlayWidth,_meter.Settings.OverlayHeight);

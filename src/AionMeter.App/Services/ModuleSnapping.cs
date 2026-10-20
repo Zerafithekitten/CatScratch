@@ -7,7 +7,7 @@ internal static class ModuleSnapping
     internal static bool Enabled {get;private set;}
     internal static double Gap {get;private set;}=6;
     internal static void Configure(AppSettings settings){Enabled=settings.SnapModules;Gap=double.IsFinite(settings.ModuleSpacing)?Math.Clamp(settings.ModuleSpacing,0,20):6;}
-    internal static bool IsModule(Window w)=>w is Windows.OverlayWindow or Windows.MeterControlsWindow or Windows.ResourcesWindow or Windows.DungeonEntriesWindow or Windows.ChecklistWindow or Windows.TimerHubWindow or Windows.HiddenCubeWindow or Windows.PetTrackerWindow or Windows.BossTimingWindow or Windows.DeathRecapWindow or Windows.TimerCardWindow;
+    internal static bool IsModule(Window w)=>w is Windows.SupporterCatWindow or Windows.OverlayWindow or Windows.MeterControlsWindow or Windows.ResourcesWindow or Windows.DungeonEntriesWindow or Windows.ChecklistWindow or Windows.TimerHubWindow or Windows.HiddenCubeWindow or Windows.PetTrackerWindow or Windows.BossTimingWindow or Windows.DeathRecapWindow or Windows.TimerCardWindow;
     internal static Rect Snap(Rect bounds,Rect area,IEnumerable<Rect> others,double gap,double distance)
     {
         double x=bounds.X,y=bounds.Y,dx=distance+.001,dy=distance+.001;

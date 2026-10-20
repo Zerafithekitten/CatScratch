@@ -12,14 +12,16 @@ internal sealed class PatreonSettingsPanel:StackPanel
     private readonly StackPanel _catalog=new();
     private readonly TextBlock _status=new(){Visibility=Visibility.Collapsed,TextWrapping=TextWrapping.Wrap,Margin=new(0,8,0,8)};
     private readonly CheckBox _paw;
+    private readonly CheckBox _cat;
+    private readonly Slider _catScale;
     private EventSoundPlayer? _preview;
     private static string L(string en,string de)=>ControlPanelSettingsPanel.L(en,de);
     internal PatreonSettingsPanel(AppSettings draft,Action<ThemePreferences> setTheme)
     {
         _draft=draft;_setTheme=setTheme;
         Resources.MergedDictionaries.Add(new(){Source=new Uri("/CatScratch;component/Theme/MeterPreferences.xaml",UriKind.Relative)});
-        Children.Add(new TextBlock{Text="Patreon · Paw Supporter",FontSize=18,Foreground=ThemeColors.Brush("#C49AF5"),Margin=new(0,0,0,8)});
-        Hint(L("A little extra cat for your CatScratch. Optional designs, sounds and a golden supporter paw.","Ein bisschen mehr Katze für CatScratch. Optionale Designs, Sounds und eine goldene Supporter-Pfote."));
+        Children.Add(new TextBlock{Text=L("Patreon · Supporter extras","Patreon · Supporter-Extras"),FontSize=18,Foreground=ThemeColors.Brush("#C49AF5"),Margin=new(0,0,0,8)});
+        Hint(L("A little extra cat for your CatScratch. Optional designs, sounds, a golden supporter paw and a cat companion.","Ein bisschen mehr Katze für CatScratch. Optionale Designs, Sounds, eine goldene Supporter-Pfote und ein Katzenbegleiter."));
         var actions=new WrapPanel{Margin=new(0,6,0,8)};Children.Add(actions);
         Button Action(string text,Action click){var b=new Button{Content=text,Style=(Style)FindResource("GhostButton"),Padding=new(10,6,10,6),Margin=new(0,0,8,6)};b.Click+=(_,_)=>click();actions.Children.Add(b);return b;}
         Action(L("Visit Patreon","Patreon öffnen"),()=>{try{Process.Start(new ProcessStartInfo(SupporterPacks.PatreonUrl){UseShellExecute=true});}catch(Exception e)when(e is System.ComponentModel.Win32Exception or InvalidOperationException){Status(e.Message,true);}});
@@ -28,11 +30,19 @@ internal sealed class PatreonSettingsPanel:StackPanel
             var dialog=new Microsoft.Win32.OpenFileDialog{Filter="CatScratch supporter package (*.cspack)|*.cspack",CheckFileExists=true,Multiselect=false};
             if(dialog.ShowDialog(Window.GetWindow(this))!=true)return;
             try{var pack=SupporterPacks.Import(dialog.FileName);_draft.ShowSupporterPaw=pack.Pack.Manifest.SupporterPaw||_draft.ShowSupporterPaw;Refresh();Status(L("Package installed. Choose your extras, then Save to apply.","Paket installiert. Extras auswählen und mit Speichern übernehmen."));}
-            catch(Exception e)when(e is IOException or UnauthorizedAccessException or System.Text.Json.JsonException or System.Security.Cryptography.CryptographicException or ArgumentException or NotSupportedException){Status(L("Could not import this package. Use an original CatScratch .cspack file. ","Paket konnte nicht importiert werden. Bitte eine originale CatScratch-.cspack-Datei verwenden. ")+e.Message,true);}
+            catch(Exception e)when(e is IOException or UnauthorizedAccessException or System.Text.Json.JsonException or System.Security.Cryptography.CryptographicException or ArgumentException or NotSupportedException or FormatException){Status(L("Could not import this package. Use an original CatScratch .cspack file. ","Paket konnte nicht importiert werden. Bitte eine originale CatScratch-.cspack-Datei verwenden. ")+e.Message,true);}
         });
-        Hint(L("Package import installs content immediately. Designs, sound assignments and the paw change only after Save. No subscription check or automatic downloads.","Der Import installiert die Inhalte sofort. Design, Sound-Zuordnung und Pfote werden erst mit Speichern übernommen. Keine Abo-Prüfung und keine automatischen Downloads."));
+        Hint(L("Package import installs content immediately. Designs, sound assignments, the paw and cat visibility change only after Save. No subscription check or automatic downloads.","Der Import installiert die Inhalte sofort. Design, Sound-Zuordnung, Pfote und Katzensichtbarkeit werden erst mit Speichern übernommen. Keine Abo-Prüfung und keine automatischen Downloads."));
         _paw=new CheckBox{Content=L("Show supporter paw in the control panel","Supporter-Pfote im Bedienfeld anzeigen"),Style=(Style)FindResource("DarkCheck"),Margin=new(0,10,0,8)};
         _paw.Click+=(_,_)=>_draft.ShowSupporterPaw=_paw.IsChecked==true;Children.Add(_paw);
+        _cat=new CheckBox{Content=L("Show animated CatScratch cat","Animierte CatScratch-Katze anzeigen"),Style=(Style)FindResource("DarkCheck"),Margin=new(0,0,0,8)};
+        _cat.Click+=(_,_)=>_draft.ShowSupporterCat=_cat.IsChecked==true;Children.Add(_cat);
+        var scaleLabel=new TextBlock{Foreground=ThemeColors.Brush("#C49AF5"),Margin=new(0,2,0,4)};
+        _catScale=new Slider{Minimum=.5,Maximum=2,TickFrequency=.1,IsSnapToTickEnabled=true,Value=SupporterCatWindow.NormalizeScale(draft.SupporterCatScale),Margin=new(0,0,0,10)};
+        void ScaleLabel()=>scaleLabel.Text=L("Cat size","Katzengröße")+" · "+Math.Round(_catScale.Value*100)+"%";
+        _catScale.ValueChanged+=(_,_)=>{_draft.SupporterCatScale=_catScale.Value;ScaleLabel();};ScaleLabel();
+        Children.Add(scaleLabel);Children.Add(_catScale);
+        Hint(L("The cat is a separate optional package. Drag it into place; its animation pauses while hidden. Global click-through and show/hide apply to it too.","Die Katze ist ein eigenes optionales Paket. Ziehe sie an ihren Platz; ausgeblendet pausiert ihre Animation. Globaler Durchklick-Modus und Ein-/Ausblenden gelten auch für sie."));
         Children.Add(_status);Children.Add(_catalog);
         Hint(L("Development notes and occasional polls live on Patreon. Package downloads stay usable after your membership ends; the public app keeps its existing features.","Entwicklungs-Einblicke und gelegentliche Abstimmungen findest du auf Patreon. Heruntergeladene Pakete bleiben nach dem Ende einer Mitgliedschaft nutzbar; die öffentliche App behält ihre bisherigen Funktionen."));
         Unloaded+=(_,_)=>{_preview?.Dispose();_preview=null;};Refresh();
@@ -42,10 +52,12 @@ internal sealed class PatreonSettingsPanel:StackPanel
     internal void Refresh()
     {
         _catalog.Children.Clear();var packs=SupporterPacks.All();_paw.IsEnabled=SupporterPacks.HasPaw;_paw.IsChecked=_draft.ShowSupporterPaw&&_paw.IsEnabled;
+        _cat.IsEnabled=SupporterPacks.CatPack is not null;_cat.IsChecked=_draft.ShowSupporterCat&&_cat.IsEnabled;_catScale.IsEnabled=_cat.IsEnabled;
         if(packs.Count==0){_catalog.Children.Add(new TextBlock{Text=L("No supporter package installed yet.","Noch kein Supporter-Paket installiert."),Foreground=ThemeColors.Brush("#A9B8C7"),Margin=new(0,6,0,14)});return;}
         foreach(var p in packs)
         {
             var content=new StackPanel();content.Children.Add(new TextBlock{Text=p.Label,FontWeight=FontWeights.SemiBold,Foreground=ThemeColors.Brush("#C49AF5"),Margin=new(0,0,0,10)});
+            if(p.Pack.Manifest.Mascot is not null)content.Children.Add(new TextBlock{Text=L("Animated CatScratch cat · blink, tail sway and a little paw wave. Enable it above, then Save.","Animierte CatScratch-Katze · Blinzeln, Schwanzbewegung und ein kleines Winken. Oben einschalten und speichern."),TextWrapping=TextWrapping.Wrap,Margin=new(0,0,0,10)});
             foreach(var theme in p.Pack.Manifest.Themes)
             {
                 var row=new DockPanel{Margin=new(0,0,0,7)};

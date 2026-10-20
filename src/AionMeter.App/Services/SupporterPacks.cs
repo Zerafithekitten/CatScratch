@@ -35,7 +35,7 @@ Yvy+hUuPqenS85/WpGTIfu67Gtt9A8+RQo5Za3GneMEq+p/eRDTpWKEiWA==
             if(!Directory.Exists(Root))return [];
             foreach(var path in Directory.EnumerateFiles(Root,"*.cspack").Take(32))
                 try{var verified=SupporterPackage.Read(ReadArchive(path),PublicKey);_installed.Add(Materialize(verified));}
-                catch(Exception e)when(e is IOException or UnauthorizedAccessException or System.Text.Json.JsonException or CryptographicException or ArgumentException or NotSupportedException){Log.Error("Supporter package was ignored",e);}
+                catch(Exception e)when(e is IOException or UnauthorizedAccessException or System.Text.Json.JsonException or CryptographicException or ArgumentException or NotSupportedException or FormatException){Log.Error("Supporter package was ignored",e);}
             return _installed.ToArray();
         }
     }
@@ -62,8 +62,21 @@ Yvy+hUuPqenS85/WpGTIfu67Gtt9A8+RQo5Za3GneMEq+p/eRDTpWKEiWA==
             if(File.Exists(target)&&new FileInfo(target).Length==sound.Value.Length&&SHA256.HashData(File.ReadAllBytes(target)).SequenceEqual(SHA256.HashData(sound.Value)))continue;
             File.WriteAllBytes(target,sound.Value);
         }
+        if(pack.MascotImage is {} image && pack.Manifest.Mascot is {} mascot)
+        {
+            var target=Path.Combine(directory,Path.GetFileName(mascot.Path));
+            // Decode on import/reload, before making the optional cat available.
+            using(var stream=new MemoryStream(image))
+            {
+                var decoder=System.Windows.Media.Imaging.BitmapDecoder.Create(stream,System.Windows.Media.Imaging.BitmapCreateOptions.PreservePixelFormat,System.Windows.Media.Imaging.BitmapCacheOption.OnLoad);
+                var frame=decoder.Frames[0];
+                if(decoder.Frames.Count!=1||frame.PixelWidth!=mascot.Columns*mascot.FrameWidth||frame.PixelHeight!=((mascot.Frames+mascot.Columns-1)/mascot.Columns)*mascot.FrameHeight)throw new InvalidDataException("Invalid mascot image.");
+            }
+            if(!File.Exists(target)||!SHA256.HashData(File.ReadAllBytes(target)).SequenceEqual(SHA256.HashData(image)))File.WriteAllBytes(target,image);
+        }
         return new(pack,directory);
     }
+    internal static InstalledSupporterPack? CatPack=>All().FirstOrDefault(p=>p.Pack.Manifest.Mascot is not null);
     internal static bool HasPaw=>All().Any(p=>p.Pack.Manifest.SupporterPaw);
     internal static string SoundId(InstalledSupporterPack p,AionMeter.Core.Supporter.SupporterSound s)=>"supporter:"+p.Pack.Fingerprint+":"+Path.GetFileName(s.Path);
     internal static string? ResolveSound(string id)

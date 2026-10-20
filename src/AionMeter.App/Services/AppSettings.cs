@@ -1,4 +1,4 @@
-﻿using System.IO;
+using System.IO;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using AionMeter.Core.Combat;
@@ -28,6 +28,11 @@ public sealed class AppSettings
         Converters = { new JsonStringEnumConverter() },
     };
 
+    public bool ShowSupporterCat {get;set;}
+    public double SupporterCatScale {get;set;}=1;
+    public bool SupporterCatPositionSaved {get;set;}
+    public double SupporterCatLeft {get;set;}
+    public double SupporterCatTop {get;set;}
     public bool ShowSupporterPaw {get;set;}
     public ThemePreferences? Theme { get; set; } = new();
 

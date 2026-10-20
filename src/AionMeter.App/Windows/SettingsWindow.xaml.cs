@@ -1,4 +1,4 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
@@ -393,6 +393,8 @@ public partial class SettingsWindow : Window
         s.ResourceAlerts=(_moduleDraft.ResourceAlerts??[]).ToDictionary(p=>p.Key,p=>new ResourceAlertRule{Enabled=p.Value.Enabled,Threshold=p.Value.Threshold});
         s.ResourceAlertSoundEnabled=_moduleDraft.ResourceAlertSoundEnabled;s.ResourceAlertSound=_moduleDraft.ResourceAlertSound;s.ResourceAlertVolume=_moduleDraft.ResourceAlertVolume;
         s.ShowSupporterPaw=_moduleDraft.ShowSupporterPaw;
+        s.ShowSupporterCat=_moduleDraft.ShowSupporterCat;
+        s.SupporterCatScale=SupporterCatWindow.NormalizeScale(_moduleDraft.SupporterCatScale);
         s.ShowResourcesModule=_moduleDraft.ShowResourcesModule;
         s.VisibleResources=new(_moduleDraft.VisibleResources??[]);
         s.ResourcesWidth=_moduleDraft.ResourcesWidth;

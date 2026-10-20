@@ -18,6 +18,7 @@ public static class OverlayProfiles
         "ShowDungeonEntriesModule","DungeonEntriesLayout","DungeonEntriesWidth","DungeonEntriesPositionSaved","DungeonEntriesLeft","DungeonEntriesTop",
         "ShowResourcesModule","ResourcesLayout","ResourcesWidth","ResourcesPositionSaved","ResourcesLeft","ResourcesTop",
         "ShowChecklistModule","ChecklistRows","ChecklistWidth","ChecklistPositionSaved","ChecklistLeft","ChecklistTop",
+        "SupporterCatPositionSaved","SupporterCatLeft","SupporterCatTop",
         "ShowHiddenCubeModule","HiddenCubePositionSaved","HiddenCubeLeft","HiddenCubeTop"];
     private static string PathName=>Path.Combine(AppSettings.AppDataDir,"overlay-profiles.json");
     public static List<OverlayProfile> Load()

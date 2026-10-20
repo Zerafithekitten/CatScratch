@@ -1,3 +1,19 @@
+## CatScratch v4.0.5
+
+[English patch notes](https://github.com/Zerafithekitten/CatScratch/blob/v4.0.5/data/patchnotes-en.md)
+
+<!-- contents -->
+### Auf einen Blick
+- [Ein kleines Geheimnis](#little-secret)
+<!-- /contents -->
+
+<a id="little-secret"></a>
+### ✨ Ein kleines Geheimnis
+
+In diesem Update habe ich eine kleine Überraschung versteckt. Die bleibt vorerst unter meiner Pfote — mehr verrate ich, wenn es Zeit für ihren Auftritt ist. 🐾
+
+Heute also nur ein leises Update und ein Dankeschön, dass ihr dabei seid. Ich hoffe, die Überraschung bringt euch später zum Schmunzeln. 💜
+
 ## CatScratch v4.0.4
 
 [English patch notes](https://github.com/Zerafithekitten/CatScratch/blob/v4.0.4/data/patchnotes-en.md)

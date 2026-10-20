@@ -19,7 +19,7 @@ internal static class SupporterChecks
         try
         {
             host.Show();host.UpdateLayout();
-            Check(!SupporterPacks.HasPaw && !Find<CheckBox>(host).Single().IsEnabled,"The public app has no supporter badge without a verified package");
+            Check(!SupporterPacks.HasPaw && !Find<CheckBox>(host).Single(c=>c.Content?.ToString()=="Show supporter paw in the control panel").IsEnabled,"The public app has no supporter badge without a verified package");
             Check(Find<Button>(host).Any(b=>b.Content?.ToString()=="Visit Patreon")&&Find<Button>(host).Any(b=>b.Content?.ToString()=="Import package…"),"Patreon tab offers the correct link and explicit local import");
             Check(ReferenceEquals(SupporterBranding.Source(settings),AppIcon.Image),"Public branding remains the existing purple paw");
             if(packagePath is not null)

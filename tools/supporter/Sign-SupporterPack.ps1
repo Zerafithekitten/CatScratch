@@ -25,6 +25,15 @@ foreach($sound in $data.Sounds){
  if($bytes.Length -gt 4000000 -or (Get-FileHash -LiteralPath $path -Algorithm SHA256).Hash -ne $sound.Sha256){throw 'Audio hash or size mismatch'}
  $files[$sound.Path]=$bytes
 }
+if($null -ne $data.Mascot){
+ $mascot=$data.Mascot
+ if($mascot.Path -cnotmatch '^mascots/[a-z0-9-]{1,48}\.png$'){throw 'Invalid mascot path'}
+ $path=[IO.Path]::GetFullPath((Join-Path $root $mascot.Path))
+ if(-not $path.StartsWith($root,[StringComparison]::OrdinalIgnoreCase)){throw 'Mascot path escapes package directory'}
+ $bytes=[IO.File]::ReadAllBytes($path)
+ if($bytes.Length -gt 4000000 -or (Get-FileHash -LiteralPath $path -Algorithm SHA256).Hash -ne $mascot.Sha256){throw 'Mascot hash or size mismatch'}
+ $files[$mascot.Path]=$bytes
+}
 $out=[IO.Path]::GetFullPath($OutputPath)
 if(Test-Path -LiteralPath $out){throw 'Output already exists; choose a new version or filename'}
 $stream=[IO.File]::Create($out)

@@ -368,6 +368,12 @@ public static class SampleRenderer
                 if(o.Window is "resources-missing" or "resources-strip-missing")meter.Resources.Reset();
                 if(o.Window=="resources-partial"){meter.Resources.Reset();meter.Resources.Observe(new Core.Game.OdyleEnergyEvent(1,15,495));}
                 host=new ResourcesWindow(meter);refresh=()=>{};break;
+            case "supporter-cat":
+            case "supporter-cat-locked":
+                var catPack=SupporterPacks.CatPack??throw new InvalidDataException("Import a cat package for this preview.");
+                var catWindow=new SupporterCatWindow(meter.Settings,catPack);
+                if(o.Window=="supporter-cat-locked")catWindow.SetDisplayOnly(true);
+                host=catWindow;refresh=()=>{};break;
             case "hidden-cube":
             case "hidden-cube-locked":
                 var cubeWindow=new HiddenCubeWindow(meter.Settings);
@@ -452,6 +458,22 @@ public static class SampleRenderer
         if(o.SupporterPackage is not null)meter.Settings.ShowSupporterPaw=true;
         meter.Settings.UiScale=o.UiScale;meter.Settings.StreamMode=o.StreamMode;
         if(o.TestMode)meter.StartDemo(animate:false);
+        if(o.Window is "supporter-cat" or "supporter-cat-locked")
+        {
+            var pack=SupporterPacks.CatPack??throw new InvalidDataException("Import a cat package for this preview.");
+            var cat=new SupporterCatWindow(meter.Settings,pack);
+            try
+            {
+                cat.SetDisplayOnly(o.Window=="supporter-cat-locked");Directory.CreateDirectory(folder);
+                for(var f=0;f<(int)Math.Round(seconds*fps);f++)
+                {
+                    cat.SetFrame((int)(f*1000.0/fps/pack.Pack.Manifest.Mascot!.FrameMilliseconds)%cat.FrameCount);
+                    Capture(cat,()=>{},Path.Combine(folder,$"frame_{f:000}.png"),o);
+                }
+            }
+            finally{cat.Close();}
+            return;
+        }
         WaitForPortraits(meter);
         var start = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() - 600_000;
         var fight = new SampleFight(start, seconds);
