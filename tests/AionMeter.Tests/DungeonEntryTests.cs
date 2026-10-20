@@ -47,4 +47,29 @@ public class DungeonEntryTests
         Assert.Equal(new DungeonEntryValue(14,0,null),result.Values[4]);
         Assert.Equal(new DungeonEntryValue(0,18,null),result.Values[101]);
     }
+    [Fact] public void ShugoItemGrantReplacesApproximateCountsAndConfirmsOnlyShugo()
+    {
+        // Server packet from the 2026-10-20 Shugo item-use capture.
+        var body=Convert.FromHexString("010C0100000012040101000000");
+        var events=new List<GameEvent>();
+        var parser=new PacketParser(GameData.Empty,events.Add){TimeMs=200};
+        parser.Handle(0x0C61,body);
+        var update=Assert.IsType<DungeonEntriesEvent>(Assert.Single(events));
+        Assert.Equal(new DungeonEntryValue(18,4,null),update.Values[1]);
+        var store=new ResourceBalances();
+        store.Observe(new SelfIdentifiedEvent(1,1,"One",2305,GameClass.Cleric));
+        store.RestoreProgress(new ResourceProgress("One",2305,100,null,new(),new()
+            {{1,new(18,3,21)},{4,new(0,3,14)}}));
+        Assert.Contains(1u,store.CacheMarkers().Entries);
+        store.Observe(update);store.Observe(update);
+        Assert.Equal(new DungeonEntryValue(18,4,21),store.ReadEntries()[1]);
+        Assert.DoesNotContain(1u,store.CacheMarkers().Entries);
+        Assert.Contains(4u,store.CacheMarkers().Entries);
+        Assert.Equal(200,store.ConfirmedAt("dungeon:1"));
+        for(var n=0;n<body.Length;n++)Assert.Null(DungeonEntryPackets.Update(1,body.AsSpan(0,n)));
+        Assert.Null(DungeonEntryPackets.Update(1,body.Concat(new byte[]{0}).ToArray()));
+        body[^5]=2;Assert.Null(DungeonEntryPackets.Update(1,body));
+        body[^5]=1;body[^4]=0;Assert.Null(DungeonEntryPackets.Update(1,body));
+        body[^4]=1;body[0]=2;Assert.Null(DungeonEntryPackets.Update(1,body));
+    }
 }

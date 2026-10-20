@@ -1,3 +1,29 @@
+## CatScratch v4.0.4
+
+[English patch notes](https://github.com/Zerafithekitten/CatScratch/blob/v4.0.4/data/patchnotes-en.md)
+
+Ein kleiner Fix für einen Schlüssel, der im Spiel ankam, aber in CatScratch nicht mitgezählt wurde. Danke für den Mitschnitt — damit konnte ich genau sehen, welches Update die Katze übersehen hatte. 🐾
+
+<!-- contents -->
+### Auf einen Blick
+- [Shugo-Schlüssel nach Gegenstandsverwendung live aktualisiert](#shugo-keys)
+- [Was die Ungefähr-Markierung bedeutet](#approximate-values)
+<!-- /contents -->
+
+<a id="shugo-keys"></a>
+### 🔑 Shugo-Schlüssel nach Gegenstandsverwendung live aktualisiert
+
+Wenn ihr mit einem Gegenstand einen Shugo Reward Key hinzufügt, aktualisiert sich das Dungeon-Eintritte-Modul jetzt live. Die Verbrauchsmeldung kannte CatScratch bereits; beim Hinzufügen verwendet das Spiel aber eine andere Paketform. Diese wurde bisher ignoriert.
+
+Im gelieferten Mitschnitt meldet der Server **18 reguläre und 4 zusätzliche Schlüssel**. CatScratch übernimmt diese absoluten Bestände jetzt, statt auf **18 (+3)/21** stehenzubleiben. Das bekannte Maximum bleibt erhalten. Ein erneut eintreffendes identisches Paket fügt keinen weiteren Schlüssel hinzu.
+
+<a id="approximate-values"></a>
+### ≈ Gespeicherte Werte können weiterhin live aktualisiert werden
+
+Die Ungefähr-Markierung bedeutet nicht, dass ein Wert gesperrt ist. Sie kennzeichnet einen früher gespeicherten Stand, der auf eine frische Bestätigung wartet. Ein erkanntes Live-Update ersetzt diesen Stand und entfernt die Markierung für den betroffenen Eintrag. Andere noch unbestätigte Einträge behalten ihre Markierung.
+
+Der Fix fragt das Spiel nicht aktiv ab und erfindet keine fehlenden Werte. CatScratch muss weiterhin ein unterstütztes Server-Update empfangen. Danke, dass ihr mir geholfen habt, dieses fehlende Update zu finden. 💜
+
 ## CatScratch v4.0.3
 
 [English patch notes](https://github.com/Zerafithekitten/CatScratch/blob/v4.0.3/data/patchnotes-en.md)

@@ -37,9 +37,14 @@ public static class DungeonEntryPackets
     }
     public static DungeonEntriesEvent? Update(long time,ReadOnlySpan<byte> body)
     {
-        if(body.Length<8||body[0]!=0)return null;
+        if(body.Length<8||body[0]>1)return null;
         var at=1;
-        if(!Entry(body,ref at,out var id,out var value)||!Supported.Contains(id)||at!=body.Length-1||body[at]!=3)return null;
+        if(!Entry(body,ref at,out var id,out var value)||!Supported.Contains(id))return null;
+        // Consumption and item grants carry the absolute counts, with different trailers.
+        // The grant trailer also includes a positive item amount; never add it to cached counts.
+        var valid=body[0]==0?at==body.Length-1 && body[at]==3:
+            at==body.Length-5 && body[at]==1 && Wire.U32(body,at+1)>0;
+        if(!valid)return null;
         return new(time,new Dictionary<uint,DungeonEntryValue>{{id,value}});
     }
 }

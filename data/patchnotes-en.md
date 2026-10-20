@@ -1,3 +1,29 @@
+## CatScratch v4.0.4
+
+[Deutsche Patchnotes](https://github.com/Zerafithekitten/CatScratch/blob/v4.0.4/data/patchnotes-de.md)
+
+A small fix for a key that reached the game but never made it into CatScratch's count. Thanks for the recording — it showed me exactly where the cat had missed an update. 🐾
+
+<!-- contents -->
+### At a glance
+- [Shugo keys now refresh after using an item](#shugo-keys)
+- [What the approximate marker means](#approximate-values)
+<!-- /contents -->
+
+<a id="shugo-keys"></a>
+### 🔑 Shugo keys now refresh after using an item
+
+Adding a Shugo Reward Key through an item now updates the Dungeon entries module live. CatScratch already understood the consumption message, but the game sends item grants in a different packet form. That form was being ignored.
+
+In the supplied recording, the server reports **18 regular keys and 4 additional keys**. CatScratch now takes those absolute counts instead of leaving the old **18 (+3)/21** on screen. The known capacity is retained, and receiving the same packet again does not add another key.
+
+<a id="approximate-values"></a>
+### ≈ A stored value still accepts live updates
+
+The approximate marker never meant that a value was locked. It marks a previously recorded balance awaiting fresh confirmation. A recognized live update replaces that balance and clears the marker for the affected entry; other unconfirmed entries keep theirs.
+
+This fix does not query the game or invent missing values. CatScratch still needs to receive a supported server update. Thanks for helping me catch this missing one. 💜
+
 ## CatScratch v4.0.3
 
 [Deutsche Patchnotes](https://github.com/Zerafithekitten/CatScratch/blob/v4.0.3/data/patchnotes-de.md)

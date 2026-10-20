@@ -101,3 +101,5 @@ On 2026-10-20 the owner explicitly requested publishing the prepared manual-meas
 On 2026-10-20 the owner supplied the reported MP3 and explicitly approved publishing the audio hardening together with the reviewed Patreon tab, signed package import and supporter extras to Stable. Publish v4.0.2 after full release verification; distinguish the locally verified valid MP3 from the original unreproduced intermittent Windows failure. Preserve Light and keep paid assets/private signing material outside the public repository.
 
 On 2026-10-20 the owner explicitly requested a Stable hotfix for the corrected Patreon URL https://www.patreon.com/cw/Zerafithekitten after reviewing the local link correction. Publish v4.0.3 with English/German hotfix notes and complete release verification. This is a nonvisual link correction; preserve Light.
+
+On 2026-10-20 the owner explicitly requested publishing the reviewed Shugo item-grant packet correction as a Stable hotfix. Publish v4.0.4 after full verification, with English/German notes explaining absolute live counts and removal of the affected approximate marker. This is a nonvisual parser correction; preserve Light.
