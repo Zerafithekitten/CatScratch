@@ -40,6 +40,18 @@ internal static class ResourceModuleChecks
                 var before=new Size(window.ActualWidth,window.ActualHeight);WindowClickThrough.ApplyAll(true);window.UpdateLayout();
                 Check(Math.Abs(window.ActualWidth-before.Width)<.5 && Math.Abs(window.ActualHeight-before.Height)<.5,"Click-through preserves layout geometry: "+layoutName);WindowClickThrough.ApplyAll(false);
             }
+            foreach(var missingStrip in new[]{false,true})
+            {
+                meter.Settings.ResourcesLayout="Strip";
+                if(missingStrip)meter.Resources.Reset();
+                window.Refresh();window.UpdateLayout();
+                foreach(var tile in Find<Border>(window).Where(b=>b.CornerRadius.TopLeft==4))
+                {
+                    var group=Find<StackPanel>(tile).Single(p=>p.Orientation==Orientation.Horizontal);
+                    var box=group.TransformToAncestor(tile).TransformBounds(new Rect(group.RenderSize));
+                    Check(Math.Abs(box.Left+box.Width/2-tile.ActualWidth/2)<=.6 && Math.Abs(box.Top+box.Height/2-tile.ActualHeight/2)<=.6,"Horizontal resource group is centered with "+(missingStrip?"Relog warning":"balance"));
+                }
+            }
             var retained=Find<Image>(window).First(i=>i.Width==18);window.Refresh();
             Check(ReferenceEquals(retained,Find<Image>(window).First(i=>i.Width==18)),"Unchanged resource refresh retains existing controls");
             var previousWidth=meter.Settings.ResourcesWidth;

@@ -1,4 +1,9 @@
-﻿## CatScratch v3.0.12-beta.16
+﻿## CatScratch v3.0.12-beta.17
+
+- Centered resource icons and balances/Relog warnings together in Horizontal layout, with symmetric outer spacing and a consistent icon-to-text gap.
+- Raised the text slightly for optical alignment with the game icons. Preserves compact tile dimensions and click-through placement. Stable and Light are unchanged.
+
+## CatScratch v3.0.12-beta.16
 
 - Refined Resources grid alignment: equal tile heights and full large balances scaled to fit narrow tiles. Resources and Dungeon entries use layout rounding, and dungeon labels/values are vertically centered.
 - Removed unnecessary full row rebuilds in Resources and Dungeon entries when displayed values and preferences are unchanged. Live changes, selections, layout, width and language still refresh immediately.

@@ -51,6 +51,14 @@ internal sealed class ResourcesWindow:Window,IDisplayAppearance
                 values.Balances.TryGetValue(entry.Item,out var count)?$"{count:N0}{(entry.Item==930100024?" *":"")}":"–";
             var value=new TextBlock{Text=missing?"⚠ Relog!":text,FontWeight=FontWeights.SemiBold,Foreground=ThemeColors.Brush(missing?"#FFB454":"#EDF2F7"),Margin=new Thickness(8,0,0,0)};DockPanel.SetDock(value,Dock.Right);row.Children.Add(value);
             var icon=new Image{Source=ResourceIcons.For(entry.Key),Width=18,Height=18,Margin=new Thickness(0,0,5,0),VerticalAlignment=VerticalAlignment.Center,ToolTip=entry.Name};DockPanel.SetDock(icon,Dock.Left);row.Children.Add(icon);
+            if(layout=="Strip")
+            {
+                row.Children.Clear();row.Height=18;
+                icon.Margin=new Thickness(0,0,6,0);value.Margin=new Thickness(0);
+                value.RenderTransform=new TranslateTransform(0,-1);
+                var group=new StackPanel{Orientation=Orientation.Horizontal,HorizontalAlignment=HorizontalAlignment.Center,VerticalAlignment=VerticalAlignment.Center};
+                group.Children.Add(icon);group.Children.Add(value);row.Children.Add(group);
+            }
             if(layout=="List")row.Children.Add(new TextBlock{VerticalAlignment=VerticalAlignment.Center,Text=entry.Name,Foreground=ThemeColors.Brush("#C49AF5"),TextTrimming=TextTrimming.CharacterEllipsis});
             if(layout=="Grid")
             {
