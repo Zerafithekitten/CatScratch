@@ -71,14 +71,12 @@ internal static class PolishChecks
         try
         {
             WindowClickThrough.Attach(cubeWindow,()=>cubeSettings.ClickThrough);cubeWindow.Show();cubeWindow.UpdateLayout();
-            check(Visuals(cubeWindow).OfType<TextBlock>().Any(t=>t.Text=="HIDDEN CUBE DETECTED") && !cubeWindow.ShowInTaskbar && !cubeWindow.ShowActivated,
+            check(Visuals(cubeWindow).OfType<TextBlock>().Any(t=>t.Text=="Cube detected!") && !cubeWindow.ShowInTaskbar && !cubeWindow.ShowActivated,
                 "Cube detection has a compact separate warning without taskbar entries or focus activation");
-            var cubeText=Visuals(cubeWindow).OfType<TextBlock>().Single(t=>t.Text=="HIDDEN CUBE DETECTED");
-            var cubeMarkers=Visuals(cubeWindow).OfType<TextBlock>().Where(t=>t.Text=="!").ToArray();
-            check(cubeText.Foreground is System.Windows.Media.SolidColorBrush {Color:{R:255}} && cubeMarkers.Length==2 && cubeMarkers.All(t=>t.HasAnimatedProperties),
-                "Cube warning uses bright red text and a pulsing exclamation mark at each end");
+            check(cubeWindow.ActualHeight<=135 && cubeWindow.KeyText=="Key stock unknown" && cubeWindow.AlertAnimationRunning,
+                "Cube banner stays compact, explicitly marks unknown keys and gently pulses its accent frame");
             cubeWindow.Hide();
-            check(cubeMarkers.All(t=>!t.HasAnimatedProperties),"Cube alert animations stop while the window is hidden");
+            check(!cubeWindow.AlertAnimationRunning,"Cube banner animations stop while hidden");
             cubeWindow.Show();
             var cubePin=WindowPinning.ButtonFor(cubeWindow)!;cubePin.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             check(WindowPinning.IsPinned(cubeWindow),"Cube alerts have their own independent position pin");

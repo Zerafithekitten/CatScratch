@@ -49,9 +49,11 @@ public sealed class PacketParser
         switch (opcode)
         {
             case 0x1B56:
+                if(HiddenCubeKeyPackets.Update(TimeMs,body) is {} keyUpdate)Emit(keyUpdate);
                 if(ResourceInventoryPackets.Update(TimeMs,body) is { } resourceUpdate)Emit(resourceUpdate);
                 break;
             case 0x1156:
+                if(HiddenCubeKeyPackets.Snapshot(TimeMs,body) is {} keySnapshot)Emit(keySnapshot);
                 if(ResourceInventoryPackets.Snapshot(TimeMs,body) is { } resources)Emit(resources);
                 break;
             case 0x0B61:

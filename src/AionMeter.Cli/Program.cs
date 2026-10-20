@@ -15,6 +15,7 @@ var data = GameData.Load(dataDir, langAt >= 0 && langAt + 1 < args.Length ? args
 return args.FirstOrDefault() switch
 {
     "cubes" when args.Length>1=>Cubes(args[1]),
+    "cube-keys" when args.Length>1=>CubeKeys(args[1]),
     "petpositions" when args.Length>1=>PetPositions(args[1]),
     "petclientpositions" when args.Length>1=>PetClientPositions(args[1]),
     "petscan" when args.Length > 1 => PetScan(args[1]),
@@ -37,6 +38,14 @@ return args.FirstOrDefault() switch
     "update-check" => UpdateCheck(args.Skip(1).ToArray()),
     _ => Usage(),
 };
+
+int CubeKeys(string path)
+{
+    using var replay=new PcapReplaySource(data,path,false);var keys=new ResourceBalances();var identity=new LiveIdentity();var snapshots=0;var updates=0;
+    replay.EventDecoded+=e=>{keys.Observe(e);if(identity.Observe(e) is {} own)keys.Observe(own);if(e is CubeKeyInventoryEvent k){if(k.IsSnapshot)snapshots++;else updates++;}};
+    var packets=replay.RunToEnd();var stock=keys.ReadCubeKeys();
+    Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(new{packets,snapshots,updates,stock.Count,stock.Cached}));return 0;
+}
 
 int Cubes(string path)
 {

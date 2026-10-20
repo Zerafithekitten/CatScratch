@@ -376,7 +376,10 @@ public static class SampleRenderer
                 host=catWindow;refresh=()=>{};break;
             case "hidden-cube":
             case "hidden-cube-locked":
-                var cubeWindow=new HiddenCubeWindow(meter.Settings);
+            case "hidden-cube-unknown":
+            case "hidden-cube-cached":
+            case "hidden-cube-zero":
+                var cubeWindow=new HiddenCubeWindow(meter.Settings,keyStock:()=>o.Window=="hidden-cube-unknown"?(null,false,0):((ulong?)(o.Window=="hidden-cube-zero"?0:20),o.Window=="hidden-cube-cached",0));
                 if(o.Window=="hidden-cube-locked")cubeWindow.SetDisplayOnly(true);
                 host=cubeWindow;
                 refresh=()=>{};

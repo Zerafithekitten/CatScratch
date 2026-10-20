@@ -106,7 +106,7 @@ public partial class SettingsWindow : Window
         previewCube.Click+=(_,_)=>
         {
             if(cubePreview is not null){cubePreview.Show();return;}
-            var preview=cubePreview=new HiddenCubeWindow(meter.Settings,preview:true);
+            var preview=cubePreview=new HiddenCubeWindow(meter.Settings,preview:true,keyStock:meter.Resources.ReadCubeKeys);
             WindowClickThrough.Attach(preview,()=>false,()=>meter.Settings.WindowOpacity);
             preview.Closed+=(_,_)=>cubePreview=null;preview.Show();
         };

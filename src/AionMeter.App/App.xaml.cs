@@ -253,6 +253,13 @@ public partial class App : Application
             catch(Exception error){File.WriteAllText(placementPath,error.ToString());Shutdown(1);}
             return;
         }
+        if(ArgValue(e.Args,"--check-cube-banner") is {} cubeBannerOutput)
+        {
+            Log.Enabled=false;
+            try{CubeBannerChecks.Run(cubeBannerOutput);Shutdown();}
+            catch(Exception error){File.WriteAllText(cubeBannerOutput,error.ToString());Shutdown(1);}
+            return;
+        }
         if(ArgValue(e.Args,"--check-supporter-cat") is {} catResult)
         {
             Log.Enabled=false;
@@ -681,8 +688,9 @@ public partial class App : Application
         {_hiddenCubeWindow?.Close();_hiddenCubeWindow=null;return;}
         if(newDetection && _meter.Settings.HiddenCubeSoundEnabled && !string.IsNullOrWhiteSpace(_meter.Settings.HiddenCubeSoundPath))
             (_hiddenCubeSoundPlayer??=new()).Play(new EventSoundPreference {Enabled=true,Sound="Custom audio",FilePath=_meter.Settings.HiddenCubeSoundPath},_meter.Settings.HiddenCubeSoundVolume);
-        if(_windowVisibility.Hidden || _hiddenCubeWindow is not null)return;
-        var window=_hiddenCubeWindow=new HiddenCubeWindow(_meter.Settings);
+        if(_hiddenCubeWindow is not null){_hiddenCubeWindow.RefreshKeyStock();return;}
+        if(_windowVisibility.Hidden)return;
+        var window=_hiddenCubeWindow=new HiddenCubeWindow(_meter.Settings,keyStock:_meter.Resources.ReadCubeKeys);
         window.Closed+=(_,_)=>{if(ReferenceEquals(_hiddenCubeWindow,window))_hiddenCubeWindow=null;};
         WindowClickThrough.Attach(window,()=>_meter.Settings.ClickThrough,()=>_meter.Settings.WindowOpacity);
         window.Show();_windowVisibility.Track(window);

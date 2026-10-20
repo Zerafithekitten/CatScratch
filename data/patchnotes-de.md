@@ -1,3 +1,32 @@
+## CatScratch v4.0.7
+
+[English patch notes](https://github.com/Zerafithekitten/CatScratch/blob/v4.0.7/data/patchnotes-en.md)
+
+Die Würfelmeldung hat jetzt etwas mehr CatScratch in sich. Ich habe ihr einen neuen Look gegeben und den Schlüsselbestand direkt dort ergänzt, wo ihr ihn braucht. 🐾
+
+<!-- contents -->
+### Auf einen Blick
+- [Ein neues Gesicht für versteckte Würfel](#cube-banner)
+- [Eure Schlüssel direkt in der Meldung](#cube-keys)
+
+<!-- /contents -->
+
+<a id="cube-banner"></a>
+### 🐱 Ein neues Gesicht für versteckte Würfel
+
+Die Meldung erscheint jetzt als kompakter dunkler Banner mit sanft leuchtendem violettem Rahmen, unserem aufmerksamen Maskottchen und einem Katzenprofil am rechten Rand. Gespeicherte Position, Fixierung und Durchklickmodus funktionieren weiterhin wie gewohnt.
+
+![Neue Würfelmeldung](https://raw.githubusercontent.com/Zerafithekitten/CatScratch/v4.0.7/docs/images/hidden-cube-v4.0.7.png)
+
+<a id="cube-keys"></a>
+### 🔑 Eure Schlüssel direkt in der Meldung
+
+Der Banner kann jetzt den Bestand von **Key: Hidden Cube (Bound)** aus unterstützten Inventarnachrichten anzeigen. Erkannte Änderungen aktualisieren die Zahl auch bei geöffneter Meldung. Gespeicherte Bestände bleiben nach Charakter getrennt.
+
+Ein **≈** kennzeichnet den zuletzt gespeicherten Bestand, der noch auf eine frische Bestätigung wartet. Ist kein Bestand bekannt, steht das ausdrücklich dabei – fehlende Daten werden nicht als null Schlüssel ausgegeben. Unterstützt wird zunächst der gebundene Schlüssel; andere Varianten müssen noch gesondert geprüft werden.
+
+Danke für die Mitschnitte und eure vielen kleinen Gestaltungsideen. Sie helfen mir dabei, CatScratch ein bisschen mehr Zuhause zu geben. 💜
+
 ## CatScratch v4.0.6
 
 [English patch notes](https://github.com/Zerafithekitten/CatScratch/blob/v4.0.6/data/patchnotes-en.md)

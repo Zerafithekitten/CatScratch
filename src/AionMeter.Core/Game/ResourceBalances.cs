@@ -30,11 +30,16 @@ public static class ResourceInventoryPackets
         return found.Count>0 || ambiguous.Count>0?new(time,found,ambiguous):null;
     }
 }
-public sealed record ResourceProgress(string Name,int ServerId,long TimeMs,OdyleEnergyEvent? Energy,Dictionary<int,ulong> Balances,Dictionary<uint,DungeonEntryValue> Entries,Dictionary<string,long>? ConfirmedAt=null);
+public sealed record ResourceProgress(string Name,int ServerId,long TimeMs,OdyleEnergyEvent? Energy,Dictionary<int,ulong> Balances,Dictionary<uint,DungeonEntryValue> Entries,Dictionary<string,long>? ConfirmedAt=null,CubeKeyProgress? CubeKeys=null);
+public sealed record CubeKeyProgress(Dictionary<ulong,uint> Stacks);
 public sealed record ResourceCacheMarkers(bool Energy,IReadOnlySet<int> Currencies,IReadOnlySet<uint> Entries);
 public sealed class ResourceBalances
 {
     private readonly object _gate=new();
+    private readonly Dictionary<ulong,uint> _cubeKeyStacks=[];
+    private readonly HashSet<ulong> _cachedCubeKeys=[];
+    private bool _cubeKeyBaseline;
+    public (ulong? Count,bool Cached,long ConfirmedAt) ReadCubeKeys(){lock(_gate)return (_cubeKeyBaseline?_cubeKeyStacks.Values.Aggregate(0UL,(sum,n)=>sum+n):null,_cachedCubeKeys.Count>0,_confirmedAt.GetValueOrDefault("cube-keys"));}
     private readonly Dictionary<int,ulong> _balances=[];
     private (string,int)? _identity;
     private OdyleEnergyEvent? _energy;
@@ -51,10 +56,10 @@ public sealed class ResourceBalances
     public ResourceCacheMarkers CacheMarkers(){lock(_gate)return new(_cachedEnergy,new HashSet<int>(_cachedCurrencies),new HashSet<uint>(_cachedEntries));}
     public ResourceProgress? SavedProgress()
     {
-        lock(_gate)return _identity is {} own && own.Item2>0 && (_energy is not null || _balances.Count>0 || _entries.Count>0)
-            ?new(own.Item1,own.Item2,_lastDataTimeMs,_energy,new(_balances),new(_entries),new(_confirmedAt)):null;
+        lock(_gate)return _identity is {} own && own.Item2>0 && (_energy is not null || _balances.Count>0 || _entries.Count>0 || _cubeKeyBaseline)
+            ?new(own.Item1,own.Item2,_lastDataTimeMs,_energy,new(_balances),new(_entries),new(_confirmedAt),_cubeKeyBaseline?new(new(_cubeKeyStacks)):null):null;
     }
-    public void MarkCached(){lock(_gate){_cachedEnergy=_energy is not null;_cachedCurrencies.UnionWith(_balances.Keys);_cachedEntries.UnionWith(_entries.Keys);}}
+    public void MarkCached(){lock(_gate){_cachedEnergy=_energy is not null;_cachedCurrencies.UnionWith(_balances.Keys);_cachedEntries.UnionWith(_entries.Keys);if(_cubeKeyBaseline)_cachedCubeKeys.UnionWith(_cubeKeyStacks.Keys);}}
     public bool RestoreProgress(ResourceProgress progress)
     {
         lock(_gate)
@@ -66,11 +71,16 @@ public sealed class ResourceBalances
                 if(!_ambiguous.Contains(p.Key) && _balances.TryAdd(p.Key,p.Value)){_cachedCurrencies.Add(p.Key);_confirmedAt["currency:"+p.Key]=progress.ConfirmedAt?.GetValueOrDefault("currency:"+p.Key)??0;restored=true;}
             foreach(var p in progress.Entries.Where(p=>p.Key is 1 or 4 or 101 && p.Value is not null))
                 if(_entries.TryAdd(p.Key,p.Value)){_cachedEntries.Add(p.Key);_confirmedAt["dungeon:"+p.Key]=progress.ConfirmedAt?.GetValueOrDefault("dungeon:"+p.Key)??0;restored=true;}
+            if(!_cubeKeyBaseline&&progress.CubeKeys?.Stacks is {} keys&&keys.Count is >0 and <=2048&&keys.All(p=>p.Key!=0&&p.Value<=100))
+            {
+                foreach(var p in keys)if(_cubeKeyStacks.TryAdd(p.Key,p.Value))_cachedCubeKeys.Add(p.Key);
+                _cubeKeyBaseline=true;if(!_confirmedAt.ContainsKey("cube-keys"))_confirmedAt["cube-keys"]=progress.ConfirmedAt?.GetValueOrDefault("cube-keys")??0;restored=true;
+            }
             if(restored)_lastDataTimeMs=Math.Max(_lastDataTimeMs,progress.TimeMs);
             return restored;
         }
     }
-    private void ClearValues(){_balances.Clear();_energy=null;_entries.Clear();_cachedEnergy=false;_cachedCurrencies.Clear();_cachedEntries.Clear();_ambiguous.Clear();_confirmedAt.Clear();_lastDataTimeMs=0;}
+    private void ClearValues(){_cubeKeyStacks.Clear();_cachedCubeKeys.Clear();_cubeKeyBaseline=false;_balances.Clear();_energy=null;_entries.Clear();_cachedEnergy=false;_cachedCurrencies.Clear();_cachedEntries.Clear();_ambiguous.Clear();_confirmedAt.Clear();_lastDataTimeMs=0;}
     private readonly Dictionary<uint,DungeonEntryValue> _entries=[];
     public IReadOnlyDictionary<uint,DungeonEntryValue> ReadEntries(){lock(_gate)return new Dictionary<uint,DungeonEntryValue>(_entries);}
     public void Reset(){lock(_gate){ClearValues();_identity=null;_pending.Clear();_awaitingIdentity=false;_mapId=-1;}}
@@ -86,7 +96,7 @@ public sealed class ResourceBalances
                 {MarkCached();if(!_awaitingIdentity)_pending.Clear();_awaitingIdentity=true;}
                 _mapId=zone.MapId;return;
             }
-            if(_awaitingIdentity && e is OdyleEnergyEvent or ResourceBalanceSnapshot or DungeonEntriesEvent)
+            if(_awaitingIdentity && e is OdyleEnergyEvent or ResourceBalanceSnapshot or DungeonEntriesEvent or CubeKeyInventoryEvent)
             {
                 if(_pending.Count==128)_pending.RemoveAt(0);
                 _pending.Add(e);return;
@@ -103,6 +113,16 @@ public sealed class ResourceBalances
                     _awaitingIdentity=false;var pending=_pending.ToArray();_pending.Clear();
                     foreach(var update in pending)Observe(update);
                 }
+            }
+            if(e is CubeKeyInventoryEvent keys)
+            {
+                if(keys.IsSnapshot){_cubeKeyStacks.Clear();_cachedCubeKeys.Clear();_cubeKeyBaseline=true;}
+                foreach(var p in keys.Stacks)
+                {
+                    if(!_cubeKeyStacks.ContainsKey(p.Key)&&_cubeKeyStacks.Count>=2048){_cubeKeyBaseline=false;break;}
+                    _cubeKeyStacks[p.Key]=p.Value;_cachedCubeKeys.Remove(p.Key);
+                }
+                _confirmedAt["cube-keys"]=keys.TimeMs;_lastDataTimeMs=keys.TimeMs;
             }
             if(e is OdyleEnergyEvent energy){_energy=energy;_cachedEnergy=false;_lastDataTimeMs=energy.TimeMs;_confirmedAt["odyle"]=energy.TimeMs;}
             if(e is DungeonEntriesEvent entries)foreach(var item in entries.Values)

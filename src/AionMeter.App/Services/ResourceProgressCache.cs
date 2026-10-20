@@ -39,7 +39,7 @@ internal sealed class ResourceProgressCache:IDisposable
                 _awaitingIdentity=false;
                 if(_records.TryGetValue(Key(own.Name,own.ServerId),out var cached))_resources.RestoreProgress(cached);
             }
-            else if(_awaitingIdentity || value is not (OdyleEnergyEvent or ResourceBalanceSnapshot or DungeonEntriesEvent))return;
+            else if(_awaitingIdentity || value is not (OdyleEnergyEvent or ResourceBalanceSnapshot or DungeonEntriesEvent or CubeKeyInventoryEvent))return;
             Remember();
         }
     }

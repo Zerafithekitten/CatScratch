@@ -6,13 +6,13 @@ A separate, always-on-top Windows DPS meter for **AION 2**, by Zerafithekitten. 
 
 | Channel | Current version | What it includes |
 | --- | --- | --- |
-| **Stable** | **[v4.0.6](https://github.com/Zerafithekitten/CatScratch/releases/tag/v4.0.6)** | Optional Patreon supporter packs, designs, sounds and a supporter paw; more resilient custom audio, plus all previous Stable features. |
+| **Stable** | **[v4.0.7](https://github.com/Zerafithekitten/CatScratch/releases/tag/v4.0.7)** | Redesigned Hidden Cube alerts with bound-key inventory counts, plus all previous Stable features. |
 | **Beta** | **[v3.0.12-beta.22](https://github.com/Zerafithekitten/CatScratch/releases/tag/v3.0.12-beta.22)** | Previous test build; its features are included in Stable 4.0.0, with final fixes. Beta subscribers move to Stable when 4.0.0 starts. |
 | **Light** | [v1.0.0](https://github.com/Zerafithekitten/CatScratch/releases/tag/light-v1.0.0) | Separate **DPS meter only** edition with essential settings. Independent ZIP download and settings; no additional CatScratch modules or automatic updater. |
 
 **CatScratch light** is installed separately from the full version. [Download its ZIP](https://github.com/Zerafithekitten/CatScratch/releases/download/light-v1.0.0/CatScratch-light-win-x64.zip) and extract it into its own folder. Light is maintained and updated **only on the owner's explicit request**; normal development continues on full CatScratch.
 
-English is the default. German, Russian and French are also available. Screenshots use synthetic sample data; names and numbers are examples. All features described below are included in **Stable v4.0.6** unless a limitation is stated.
+English is the default. German, Russian and French are also available. Screenshots use synthetic sample data; names and numbers are examples. All features described below are included in **Stable v4.0.7** unless a limitation is stated.
 
 ## Contents
 
@@ -269,7 +269,7 @@ The module has its own pin and X. Checkboxes remain clickable in global click-th
 
 ## Hidden cubes (experimental)
 
-Enable **Settings > Hidden cubes > Enable hidden cube alerts (experimental)** to show a compact, movable **HIDDEN CUBE DETECTED** warning for the cube type confirmed in two recordings. The module is off by default. It supports an independent pin, click-through, saved position and overlay profiles. The warning uses bold red text with gently pulsing exclamation marks. **Show test alert** lets you position and pin a labeled preview even without a detected cube; closing Settings also closes the preview.
+Enable **Settings > Hidden cubes > Enable hidden cube alerts (experimental)** to show a compact, movable **Hidden Cube** banner for the cube type confirmed in two recordings. The module is off by default. It supports an independent pin, click-through, saved position and overlay profiles. The dark banner uses an original alert mascot, a cropped purple cat profile and a gently glowing frame. It displays **Key: Hidden Cube (Bound)** stock from supported backpack messages and absolute stack updates. Cached counts are marked **≈** and kept per character; missing inventory data remains unknown rather than becoming zero. Other key variants are not yet verified. **Show test alert** lets you position and pin a labeled preview even without a detected cube; closing Settings also closes the preview.
 
 Choose an optional **MP3 or WAV** in the same tab, adjust its independent **Volume**, and use **Preview** to listen before saving. One notification plays for each newly detected cube, rather than every repeated announcement. Visual test alerts stay silent. Files must be at most **10 seconds / 10 MB** and remain at their selected location.
 
@@ -305,7 +305,7 @@ The green **Update!** button appears **only after the update is fully prepared**
 
 After a successful new startup, the old backup, staged payload and downloaded ZIP are removed. Failed updates retain recovery files. Settings, saved fights, personal bests, recent players and captures are preserved. Update staging stays under `userdata/temp/updates`; a writable program folder is required.
 
-When a Beta is promoted and its Stable build starts, Beta subscribers automatically return to the Stable update channel. A later deliberate switch back to Beta is respected until the next Stable transition. The installed version then shows the Stable number, currently **4.0.6** without a beta suffix.
+When a Beta is promoted and its Stable build starts, Beta subscribers automatically return to the Stable update channel. A later deliberate switch back to Beta is respected until the next Stable transition. The installed version then shows the Stable number, currently **4.0.7** without a beta suffix.
 
 Use **Check now** in Settings or **Check for updates** in the tray menu for a manual check. Automatic checking and preparation can be disabled in Settings. CatScratch also reduces data-loading allocations and moves optional startup work behind the first meter display.
 

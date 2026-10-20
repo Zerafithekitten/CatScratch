@@ -1,4 +1,4 @@
-﻿using System.Windows;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Interop;
@@ -186,7 +186,7 @@ internal sealed class MeterControlsWindow : Window
 
     internal void ApplyAppearance()
     {
-        if(_brandPaw is not null){_brandPaw.Source=SupporterBranding.Source(_settings);_brandPaw.ToolTip=_settings.ShowSupporterPaw&&SupporterPacks.HasPaw?"Paw Supporter · Thank you!":"CatScratch";}
+        if(_brandPaw is not null){SupporterBranding.Apply(_brandPaw,_settings);_brandPaw.ToolTip=_settings.ShowSupporterPaw&&SupporterPacks.HasPaw?"Paw Supporter · Thank you!":"CatScratch";}
         Opacity=Math.Clamp(_settings.WindowOpacity,.4,1);
         _backdrop.Opacity=Math.Clamp(_settings.BackgroundOpacity,0,1);
         ApplyLayout();

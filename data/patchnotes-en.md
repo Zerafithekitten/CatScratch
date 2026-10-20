@@ -1,3 +1,32 @@
+## CatScratch v4.0.7
+
+[Deutsche Patchnotes](https://github.com/Zerafithekitten/CatScratch/blob/v4.0.7/data/patchnotes-de.md)
+
+The cube alert has a little more CatScratch in it now. I've given it a new look and added the key count right where you need it. 🐾
+
+<!-- contents -->
+### At a glance
+- [A new face for Hidden Cubes](#cube-banner)
+- [Your keys beside the alert](#cube-keys)
+
+<!-- /contents -->
+
+<a id="cube-banner"></a>
+### 🐱 A new face for Hidden Cubes
+
+The alert now uses a compact dark banner with a softly glowing purple frame, our alert mascot and a cat profile peeking in from the right. Your saved position, pin and click-through controls still work as before.
+
+![Hidden Cube alert](https://raw.githubusercontent.com/Zerafithekitten/CatScratch/v4.0.7/docs/images/hidden-cube-v4.0.7.png)
+
+<a id="cube-keys"></a>
+### 🔑 Your keys beside the alert
+
+The banner can now show your **Key: Hidden Cube (Bound)** stock from supported inventory messages. Recognized updates refresh the count while the alert is open, and stored counts stay separate for each character.
+
+A **≈** means the count comes from the last recorded inventory and is waiting for fresh confirmation. If no count is known, the banner says so rather than pretending you have zero keys. This currently covers the bound key; other variants still need their own verification.
+
+Thanks for the recordings and all the little design suggestions. They help me make this feel more like home. 💜
+
 ## CatScratch v4.0.6
 
 [Deutsche Patchnotes](https://github.com/Zerafithekitten/CatScratch/blob/v4.0.6/data/patchnotes-de.md)
