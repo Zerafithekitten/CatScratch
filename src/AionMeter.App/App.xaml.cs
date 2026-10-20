@@ -214,7 +214,7 @@ public partial class App : Application
             Log.Enabled=false;
             Dispatcher.BeginInvoke(async () =>
             {
-                try { var duration=await CustomEventAudio.DurationAsync(audio); await CustomEventAudio.ValidateAsync(audio); File.WriteAllText(audioResult,"Accepted: "+duration.TotalSeconds); Shutdown(); }
+                try { await AudioFileChecks.RunAsync(audio,audioResult); Shutdown(); }
                 catch(Exception ex) { File.WriteAllText(audioResult,ex.Message); Shutdown(1); }
             });
             return;
@@ -250,6 +250,13 @@ public partial class App : Application
             Log.Enabled=false;
             try{OverlayPlacementChecks.Run(placementPath);Shutdown();}
             catch(Exception error){File.WriteAllText(placementPath,error.ToString());Shutdown(1);}
+            return;
+        }
+        if(ArgValue(e.Args,"--check-supporter") is {} supporterPath)
+        {
+            Log.Enabled=false;
+            try{SupporterChecks.Run(supporterPath,ArgValue(e.Args,"--supporter-package"));Shutdown();}
+            catch(Exception error){File.WriteAllText(supporterPath,error.ToString());Shutdown(1);}
             return;
         }
         if(ArgValue(e.Args,"--check-resource-tools") is {} toolsPath)
@@ -330,7 +337,7 @@ public partial class App : Application
                     System.Globalization.CultureInfo.InvariantCulture, out var scale) ? scale : 1.5,
                 int.TryParse(ArgValue(e.Args, "--row-size"), out var rowSize) ? rowSize : 100,
                 double.TryParse(ArgValue(e.Args,"--ui-scale"),System.Globalization.NumberStyles.Float,System.Globalization.CultureInfo.InvariantCulture,out var uiScale)?uiScale:1,
-                e.Args.Contains("--stream"),e.Args.Contains("--test-mode"));
+                e.Args.Contains("--stream"),e.Args.Contains("--test-mode"),ArgValue(e.Args,"--supporter-package"));
             var language = ArgValue(e.Args, "--lang") ?? "en";
             if (double.TryParse(ArgValue(e.Args, "--animate"), System.Globalization.NumberStyles.Float,
                     System.Globalization.CultureInfo.InvariantCulture, out var seconds))

@@ -49,12 +49,16 @@ public static class SampleRenderer
     /// <param name="Backdrop">Behind the translucent overlay: game (a stand-in colour), dark (a navy gradient) or none (transparent).</param>
     /// <param name="RowSize">Overlay row size in percent (Settings → Overlay → Row size).</param>
     public sealed record Options(string Window = "overlay", int? Width = null, int? Height = null, string? Tab = null,
-        string Backdrop = "game", double Scale = 1.5, int RowSize = 100, double UiScale = 1, bool StreamMode = false, bool TestMode = false);
+        string Backdrop = "game", double Scale = 1.5, int RowSize = 100, double UiScale = 1, bool StreamMode = false, bool TestMode = false,string? SupporterPackage = null);
 
     public static void Render(string path, string language, Options o)
     {
         WindowPresentation.SetScale(o.UiScale);StreamNames.Enabled=o.StreamMode;
+        var previewRoot=Path.Combine(Path.GetTempPath(),"catscratch-supporter-preview-"+Guid.NewGuid().ToString("N"));
+        using var isolatedSupporter=SupporterPacks.Isolate(previewRoot);
+        if(o.SupporterPackage is not null)SupporterPacks.Import(o.SupporterPackage);
         using var meter = CreateMeter(language, o.RowSize);
+        if(o.SupporterPackage is not null)meter.Settings.ShowSupporterPaw=true;
         meter.Settings.UiScale=o.UiScale;meter.Settings.StreamMode=o.StreamMode;
         if(o.TestMode)meter.StartDemo(animate:false);
         var start = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() - 20_500; // a fight that is still going
@@ -387,7 +391,7 @@ public static class SampleRenderer
                 var settingsWindow = new SettingsWindow(meter) { Width = o.Width ?? 760, Height = o.Height ?? 660 };
                 if(o.Window=="settings-only-boss")settingsWindow.SelectTab("combat");
                 // Keep existing numeric screenshot selectors stable when the sidebar is reordered.
-                string[] tabIds=["appearance","combat","hotkeys","history","capture","general","updates","feedback","events","pets","profiles","help","cubes","checklist","resources","dungeons"];
+                string[] tabIds=["appearance","combat","hotkeys","history","capture","general","updates","feedback","events","pets","profiles","help","cubes","checklist","resources","dungeons","patreon"];
                 if (int.TryParse(o.Tab,out var settingsTab) && settingsTab>=0 && settingsTab<tabIds.Length) settingsWindow.SelectTab(tabIds[settingsTab]);
                 else if(o.Tab is not null && tabIds.Contains(o.Tab)) settingsWindow.SelectTab(o.Tab);
                 if(o.Window=="settings-resource-alerts")
@@ -441,7 +445,11 @@ public static class SampleRenderer
     public static void Animate(string folder, string language, Options o, double seconds, int fps)
     {
         WindowPresentation.SetScale(o.UiScale);StreamNames.Enabled=o.StreamMode;
+        var previewRoot=Path.Combine(Path.GetTempPath(),"catscratch-supporter-preview-"+Guid.NewGuid().ToString("N"));
+        using var isolatedSupporter=SupporterPacks.Isolate(previewRoot);
+        if(o.SupporterPackage is not null)SupporterPacks.Import(o.SupporterPackage);
         using var meter = CreateMeter(language, o.RowSize);
+        if(o.SupporterPackage is not null)meter.Settings.ShowSupporterPaw=true;
         meter.Settings.UiScale=o.UiScale;meter.Settings.StreamMode=o.StreamMode;
         if(o.TestMode)meter.StartDemo(animate:false);
         WaitForPortraits(meter);

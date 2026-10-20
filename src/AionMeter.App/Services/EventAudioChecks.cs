@@ -54,6 +54,7 @@ internal static class EventAudioChecks
             var legacy=AppSettings.LoadFrom(newSettingsPath);
             Require(!legacy.HiddenCubeSoundEnabled && legacy.HiddenCubeSoundPath is null,"Older saved configurations do not gain an unsolicited sound");
             SoundPlaybackChecks.Run(shortFile,Require);
+            await SoundPlaybackChecks.CheckProbeAsync(shortFile,Require);
             combo.SelectedIndex=3;await Wait(()=>choose.IsEnabled);
             Require(cards.Saved.Sounds["shugo"].FilePath==shortFile && combo.SelectedItem?.ToString()=="valid short sound.wav","Valid selection was not saved or displayed");
             preview.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));await Wait(()=>preview.IsEnabled);

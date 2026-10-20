@@ -43,7 +43,7 @@ internal sealed class WindowsEventSoundOutput : IEventSoundOutput
 /// <summary>Bounded queued audio with a fresh decoder for each clip and recovery from missing decoder callbacks.</summary>
 internal sealed class EventSoundPlayer : IDisposable
 {
-    private readonly Queue<(Uri File,double Volume)> _queue=new();
+    private readonly Queue<(Uri File,double Volume,int Attempt)> _queue=new();
     private readonly Func<IEventSoundOutput> _create;
     private readonly Func<long> _clock;
     private readonly DispatcherTimer _watchdog=new(){Interval=TimeSpan.FromMilliseconds(500)};
@@ -58,7 +58,7 @@ internal sealed class EventSoundPlayer : IDisposable
     public void Play(EventSoundPreference preference,double volume,bool preview=false)
     {
         if(_disposed || !preview && !preference.Enabled)return;
-        var path=CustomEventAudio.IsCustom(preference.Sound)?preference.FilePath:
+        var path=preference.Sound.StartsWith("supporter:",StringComparison.Ordinal)?SupporterPacks.ResolveSound(preference.Sound):CustomEventAudio.IsCustom(preference.Sound)?preference.FilePath:
             Path.Combine(AppContext.BaseDirectory,"sounds",preference.Sound is "Bell" or "Ping"?preference.Sound+".wav":"Chime.wav");
         if(path is null){Log.Info("Configured event sound is missing.");return;}
         Uri file;
@@ -68,7 +68,7 @@ internal sealed class EventSoundPlayer : IDisposable
         if(preview){_queue.Clear();ReleaseCurrent();}
         RecoverStalledPlayback();
         if(_queue.Count>=16)return;
-        _queue.Enqueue((file,double.IsFinite(volume)?Math.Clamp(volume,0,1):.6));PlayNext();
+        _queue.Enqueue((file,double.IsFinite(volume)?Math.Clamp(volume,0,1):.6,0));PlayNext();
     }
     internal void RecoverStalledPlayback()
     {
@@ -86,15 +86,21 @@ internal sealed class EventSoundPlayer : IDisposable
         if(!ReferenceEquals(_current,sound) || _disposed)return;
         ReleaseCurrent();PlayNext();
     }
-    private void PlayNext()
+    private void PlayNext((Uri File,double Volume,int Attempt)? retry=null)
     {
-        if(_disposed || _current is not null || !_queue.TryDequeue(out var clip))return;
+        if(_disposed || _current is not null)return;
+        var clip=retry??(_queue.TryDequeue(out var queued)?queued:default);
+        if(clip.File is null)return;
         try
         {
             CustomEventAudio.FileUri(clip.File.LocalPath);
             var sound=_current=_create();
-            sound.Opened+=()=>
+            sound.Opened+=async ()=>
             {
+                if(!ReferenceEquals(_current,sound) || _disposed)return;
+                var until=Environment.TickCount64+4000;
+                while(!sound.Duration.HasTimeSpan && ReferenceEquals(_current,sound) && !_disposed && Environment.TickCount64<until)
+                    await Task.Delay(25);
                 if(!ReferenceEquals(_current,sound) || _disposed)return;
                 if(!CustomEventAudio.AllowedDuration(sound.Duration)){Finish(sound);return;}
                 // Files are limited to ten seconds. Never depend solely on MediaEnded to release a decoder.
@@ -104,7 +110,13 @@ internal sealed class EventSoundPlayer : IDisposable
                 {Log.Error("Event sound could not play",error);Finish(sound);}
             };
             sound.Ended+=()=>Finish(sound);
-            sound.Failed+=error=>{if(ReferenceEquals(_current,sound)){Log.Error("Event sound could not be played",error);Finish(sound);}};
+            sound.Failed+=error=>
+            {
+                if(!ReferenceEquals(_current,sound) || _disposed)return;
+                Log.Error("Event sound could not be played",error);
+                ReleaseCurrent();
+                if(clip.Attempt==0)PlayNext((clip.File,clip.Volume,1));else PlayNext();
+            };
             _deadline=_clock()+5000;_watchdog.Start();sound.Open(clip.File,clip.Volume);
         }
         catch(Exception error) when(error is InvalidDataException or IOException or UnauthorizedAccessException or InvalidOperationException or ArgumentException)

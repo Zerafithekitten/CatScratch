@@ -58,7 +58,7 @@ internal sealed class ThemeSettingsPanel : StackPanel
         Unloaded+=(_,_)=>{if(_picker is not null)_picker.IsOpen=false;};
     }
 
-    private void Set(ThemePreferences theme)
+    internal void Set(ThemePreferences theme)
     { _party=theme.MarioParty;_fields[0].Text=theme.Accent;_fields[1].Text=theme.Background;_fields[2].Text=theme.Text;RefreshPreview(); }
 
     internal bool TryGet(out ThemePreferences theme)

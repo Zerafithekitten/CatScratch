@@ -65,8 +65,8 @@ public sealed class EventSoundsWindow : Window
             var feedback = new TextBlock { Foreground=Brush("#F4A8A8"), TextWrapping=TextWrapping.Wrap, Margin=new Thickness(20,5,0,0), Visibility=Visibility.Collapsed };
             void ShowError(Exception error) { Log.Error("Event audio selection or preview failed",error); feedback.Text=UiText.Current.Localize(error.Message); feedback.Visibility=Visibility.Visible; }
             if (CustomEventAudio.IsCustom(preference.Sound)) preference.Sound = "Custom audio";
-            var soundIds=new[] { "Chime", "Bell", "Ping", "Custom audio" };
-            var labels = new System.Collections.ObjectModel.ObservableCollection<string>(soundIds.Select(UiText.Current.Localize));
+            var soundIds=new[] { "Chime", "Bell", "Ping", "Custom audio" }.Concat(SupporterPacks.SoundIds()).ToArray();
+            var labels = new System.Collections.ObjectModel.ObservableCollection<string>(soundIds.Select(id=>id.StartsWith("supporter:",StringComparison.Ordinal)?SupporterPacks.SoundLabel(id):UiText.Current.Localize(id)));
             labels[3] = CustomSoundLabel(preference);
             var sound = new ComboBox { Width = 160, ItemsSource = labels, SelectedIndex = Array.IndexOf(soundIds,preference.Sound), ToolTip = preference.FilePath };
             if (sound.SelectedIndex < 0) sound.SelectedIndex = 0;

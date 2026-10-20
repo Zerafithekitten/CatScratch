@@ -1,3 +1,61 @@
+## CatScratch v4.0.2
+
+[English patch notes](https://github.com/Zerafithekitten/CatScratch/blob/v4.0.2/data/patchnotes-en.md)
+
+### 🐾 Ein bisschen mehr Katze
+
+Ich habe ein kleines Dankeschön für alle vorbereitet, die CatScratch unterstützen möchten: ein paar Designs, ein paar Sounds und eine goldene Pfote. Die nützlichen Funktionen bleiben für alle verfügbar. Die Extras sind einfach ein bisschen mehr Katze für diejenigen, die Lust darauf haben.
+
+Außerdem bekommt die Windows-Audioanbindung etwas mehr Geduld, nachdem eine eigentlich gültige MP3 abgelehnt wurde.
+
+<!-- contents -->
+### Auf einen Blick
+- [Ein eigener Platz für Patreon](#patreon)
+- [First Paws: Designs, Sounds und Supporter-Pfote](#first-paws)
+- [So funktionieren die Pakete](#packages)
+- [Eigene MP3- und WAV-Sounds](#custom-audio)
+<!-- /contents -->
+
+<a id="patreon"></a>
+### 💜 Ein eigener Platz für Patreon
+
+In den Einstellungen gibt es jetzt den Reiter **Patreon**, zwischen Updates und Feedback. Dort findet ihr den Link zu [meiner Patreon-Seite](https://www.patreon.com/cw/deuzear_yuma) und könnt heruntergeladene CatScratch-Supporter-Pakete importieren.
+
+Entwicklungs-Einblicke und gelegentliche Abstimmungen finden auf Patreon statt. Ein zusätzliches Konto innerhalb von CatScratch braucht ihr dafür nicht.
+
+![Patreon-Einstellungen mit dem optionalen First-Paws-Paket](https://raw.githubusercontent.com/Zerafithekitten/CatScratch/v4.0.2/docs/screenshots/patreon.png)
+
+<a id="first-paws"></a>
+### ✨ First Paws
+
+Im ersten separat verteilten Supporter-Paket stecken:
+
+- **Drei Designs:** Midnight Cat, Moonlight und Golden Paw.
+- **Drei eigene Sounds:** Paw Chime, Moon Ping und Soft Purr.
+- **Eine optionale goldene Pfote** im bisherigen Bedienfeld. Gleiche Größe, gleicher Platz und jederzeit abschaltbar.
+
+Im Patreon-Reiter könnt ihr ein Design auswählen oder einen Sound zuordnen und anschließend **Speichern**. Die Sounds lassen sich für Hidden Cubes, Pet Tracker und Ressourcen-Warnungen verwenden. Nach erneutem Öffnen der Einstellungen erscheinen sie auch in der Event-Soundauswahl. Ob ein Ton aktiviert ist und wie laut er eingestellt ist, bleibt erhalten.
+
+<a id="packages"></a>
+### 📦 Herunterladen, importieren, behalten
+
+Das Mitglieder-Paket wird separat heruntergeladen. Entpackt die äußere ZIP und wählt unter Einstellungen → Patreon → Paket importieren die **.cspack**-Datei aus. Die .cspack selbst bleibt gepackt.
+
+- Der Import installiert die Inhalte sofort. Farben, Sound-Zuordnungen und Pfote werden mit Speichern übernommen.
+- Die Pakete enthalten signierte Designs und Audiodateien, keine ausführbaren Plugins. CatScratch prüft die Inhalte vor dem Import.
+- Nach dem Import funktioniert alles offline. Kein Patreon-Login, keine Abo-Prüfung und keine automatischen Downloads.
+- Erhaltene Pakete bleiben nach dem Ende einer Mitgliedschaft nutzbar. Die Signatur bestätigt den Herausgeber, sie ist keine Mitgliedschaftssperre.
+- Bisherige öffentliche Funktionen, eigene Farben, eigene Sounds und Fehlerkorrekturen bleiben für alle verfügbar. Ein Import allein überschreibt eure Einstellungen nicht.
+
+<a id="custom-audio"></a>
+### 🔊 Etwas mehr Geduld mit eigenen Sounds
+
+Windows kann eine Audiodatei als geöffnet melden, bevor ihre Dauer verfügbar ist. CatScratch wartet jetzt kurz auf diese Angabe und versucht die Prüfung bei einem Fehler einmal mit einem frischen Decoder erneut. Auch die Wiedergabe bekommt nach einem Decoderfehler einen zweiten Versuch.
+
+Die gemeldete **ALARM ALARM.mp3** ist gültig: Sie hat hier wiederholte Prüfungen mit etwa **4,10 Sekunden** bestanden und wurde von Windows bis zum Ende abgespielt. Die ursprüngliche zeitweilige Ablehnung konnte ich nicht nachstellen; ihre genaue Ursache ist deshalb nicht bestätigt. Ungültige Dateien und Sounds über zehn Sekunden werden weiterhin abgelehnt. Eine fehlgeschlagene Auswahl behält euren bisherigen Sound bei.
+
+Danke, dass ihr dieses Ein-Personen-Katzenprojekt unterstützt – ob auf Patreon, mit einer hilfreichen Fehlermeldung oder beim gemeinsamen Testen einer störrischen Kleinigkeit. 💜
+
 ## CatScratch v4.0.1
 
 Ein kleiner Hotfix vor dem nächsten Abenteuer. Eine Messung zurückzusetzen sollte einen frischen Kampf ermöglichen – und CatScratch nicht vergessen lassen, wer überhaupt in der Gruppe ist. Genau das konnte bisher passieren.

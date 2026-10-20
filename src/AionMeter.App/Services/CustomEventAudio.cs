@@ -36,19 +36,35 @@ internal static class CustomEventAudio
             try { using var wave=File.OpenRead(uri.LocalPath); return Core.Audio.WaveSound.Validate(wave, int.MaxValue); }
             catch (InvalidDataException) { /* Other WAV encodings still use the Windows decoder. */ }
         }
-        var player = new MediaPlayer();
-        var completion = new TaskCompletionSource<TimeSpan>();
-        player.MediaOpened += (_, _) => completion.TrySetResult(player.NaturalDuration.HasTimeSpan ? player.NaturalDuration.TimeSpan : TimeSpan.Zero);
-        player.MediaFailed += (_, _) => completion.TrySetResult(TimeSpan.Zero);
-        try
+        return await ProbeDurationAsync(uri, () => new WindowsEventSoundOutput());
+    }
+
+    // MediaOpened can precede a usable NaturalDuration. Keep the decoder alive while
+    // metadata settles, then retry one fresh decoder after a transient Windows failure.
+    internal static async Task<TimeSpan> ProbeDurationAsync(Uri uri, Func<IEventSoundOutput> create)
+    {
+        Exception? last = null;
+        for (var attempt = 0; attempt < 2; attempt++)
         {
-            player.Open(uri);
-            var duration = await completion.Task.WaitAsync(TimeSpan.FromSeconds(5));
-            if (duration <= TimeSpan.Zero)
-                throw new InvalidDataException(UiText.Current.Localize("Windows could not decode this audio file or determine its duration. Choose another WAV or MP3 file."));
-            return duration;
+            using var player = create();
+            var completion = new TaskCompletionSource();
+            player.Opened += () => completion.TrySetResult();
+            player.Failed += error => completion.TrySetException(error);
+            try
+            {
+                player.Open(uri, 0);
+                await completion.Task.WaitAsync(TimeSpan.FromSeconds(5));
+                var until = Environment.TickCount64 + 5000;
+                while (!player.Duration.HasTimeSpan && Environment.TickCount64 < until)
+                    await Task.Delay(25);
+                if (player.Duration.HasTimeSpan && player.Duration.TimeSpan > TimeSpan.Zero)
+                    return player.Duration.TimeSpan;
+                last = new InvalidDataException("Windows returned no audio duration.");
+            }
+            catch (Exception error) when (error is TimeoutException or InvalidOperationException or ArgumentException or System.Runtime.InteropServices.COMException or IOException or NotSupportedException or FormatException)
+            { last = error; }
+            if (attempt == 0) await Task.Delay(150);
         }
-        catch (TimeoutException) { throw new InvalidDataException("The audio file could not be opened. Choose another WAV or MP3 file."); }
-        finally { player.Close(); }
+        throw new InvalidDataException(UiText.Current.Localize("Windows could not decode this audio file or determine its duration. Choose another WAV or MP3 file."), last);
     }
 }

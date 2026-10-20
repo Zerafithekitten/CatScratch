@@ -12,11 +12,11 @@ internal sealed class PetSoundSettingsPanel : StackPanel
     {
         Resources.MergedDictionaries.Add(new ResourceDictionary {Source=new Uri("/CatScratch;component/Theme/MeterPreferences.xaml",UriKind.Relative)});
         string T(string text)=>UiText.Current.Localize(text);
-        string[] sounds=["Chime","Bell","Ping"];
+        string[] sounds=["Chime","Bell","Ping",..SupporterPacks.SoundIds()];
         Margin=new Thickness(0,2,0,12);
         Children.Add(new TextBlock {Text=T("Sound"),Margin=new Thickness(0,0,0,5)});
         var row=new Grid();row.ColumnDefinitions.Add(new ColumnDefinition());row.ColumnDefinitions.Add(new ColumnDefinition {Width=GridLength.Auto});
-        Sound=new ComboBox {ItemsSource=sounds.Select(T).ToArray(),SelectedIndex=Math.Max(0,Array.IndexOf(sounds,draft.PetSound)),MinWidth=120,HorizontalAlignment=HorizontalAlignment.Stretch};
+        Sound=new ComboBox {ItemsSource=sounds.Select(s=>s.StartsWith("supporter:",StringComparison.Ordinal)?SupporterPacks.SoundLabel(s):T(s)).ToArray(),SelectedIndex=Math.Max(0,Array.IndexOf(sounds,draft.PetSound)),MinWidth=120,HorizontalAlignment=HorizontalAlignment.Stretch};
         Sound.SelectionChanged+=(_,_)=>{if(Sound.SelectedIndex>=0)draft.PetSound=sounds[Sound.SelectedIndex];};
         row.Children.Add(Sound);
         var play=new Button {Content=T("Preview"),Style=(Style)FindResource("GhostButton"),Margin=new Thickness(8,0,0,0),Padding=new Thickness(10,4,10,4)};

@@ -75,3 +75,5 @@ The Checklist shortcut is configurable in Settings > Hotkeys, default Shift+F3. 
 On 2026-10-20 the owner made the personal 4.0.0 patch-note style permanent: write as the solo creator with a cat fursona, warmly and naturally, with a linked overview and clear feature sections. English is primary; German app language uses German notes and all other languages use English. Keep Beta notes proportionate and Stable notes detailed. Stable upgrades open their own notes once after restart; ordinary restarts and Beta upgrades do not.
 
 Future patch notes should include useful example images for visible features and short GIF demonstrations when supported and helpful. Use synthetic/sample data; do not add decorative screenshots to nonvisual fixes.
+
+Supporter packages are optional signed data archives, never executable plugins. Preserve existing free customization and gameplay features. Keep creator private signing keys and paid pack contents outside the public repository; retain the pinned public key so previously issued packages continue working. Patreon posts, prices and uploads require separate user authorization.

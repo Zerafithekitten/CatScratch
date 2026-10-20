@@ -28,6 +28,7 @@ public sealed class AppSettings
         Converters = { new JsonStringEnumConverter() },
     };
 
+    public bool ShowSupporterPaw {get;set;}
     public ThemePreferences? Theme { get; set; } = new();
 
     // Overlay window

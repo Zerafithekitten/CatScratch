@@ -12,6 +12,7 @@ namespace AionMeter.App.Windows;
 internal sealed class MeterControlsWindow : Window
 {
     private readonly AppSettings _settings;
+    private Image? _brandPaw;
     private readonly TextBlock _status=new();
     private readonly Border _captureDot=new(){IsHitTestVisible=false,Width=4,Height=4,CornerRadius=new CornerRadius(2),HorizontalAlignment=HorizontalAlignment.Right,VerticalAlignment=VerticalAlignment.Top};
     private Border _backdrop=null!;
@@ -53,7 +54,7 @@ internal sealed class MeterControlsWindow : Window
         var pin=WindowPinning.CreateButton(this,settings,"controls");DockPanel.SetDock(pin,Dock.Right);header.Children.Add(pin);
         RestoreButton=new Button {Content="\uE7B3",ToolTip=UiText.Current.Localize("Show DPS meter")+" · "+settings.HotkeyToggleOverlay,Style=(Style)FindResource("IconButton"),Width=24,Height=24};
         RestoreButton.Click+=(_,_)=>restore();DockPanel.SetDock(RestoreButton,Dock.Right);header.Children.Add(RestoreButton);
-        var paw=new Image {Source=AppIcon.Image,Width=22,Height=22,Margin=new(0,0,8,0),VerticalAlignment=VerticalAlignment.Center};
+        var paw=_brandPaw=new Image {Source=AppIcon.Image,Width=22,Height=22,Margin=new(0,0,8,0),VerticalAlignment=VerticalAlignment.Center};
         DockPanel.SetDock(paw,Dock.Left);header.Children.Add(paw);
         var label=new StackPanel {VerticalAlignment=VerticalAlignment.Center};
         label.Children.Add(new TextBlock {Text="CatScratch",Foreground=ThemeColors.Brush("#C49AF5"),FontSize=13,FontWeight=FontWeights.SemiBold});
@@ -97,6 +98,7 @@ internal sealed class MeterControlsWindow : Window
         foreach(var slider in _buttons.Children.OfType<Slider>())slider.Width=40;
         foreach(var button in _header.Children.OfType<Button>()){button.Width=20;button.Height=20;}
         _caption=_header.Children.OfType<StackPanel>().Single(p=>p.Name=="ShellCaption");
+        _brandPaw=(Image)_caption.Children[0];
         _personalButton=_caption.Children.OfType<FrameworkElement>().Single(p=>p.Name=="PersonalCombatButton");
         _petButton=_caption.Children.OfType<FrameworkElement>().Single(p=>p.Name=="PetTrackerButton");
         var branding=(StackPanel)_caption.Children[1];
@@ -117,7 +119,7 @@ internal sealed class MeterControlsWindow : Window
         _horizontalItems=_buttons.Children.Cast<UIElement>().ToArray();
         foreach(var item in _horizontalItems.OfType<FrameworkElement>().Concat([_personalButton,_petButton]))
             _horizontalSizing[item]=(item.Width,item.Height,item.Margin,item.HorizontalAlignment);
-        SizeToContent=SizeToContent.Height;Height=double.NaN;ApplyLayout();
+        SizeToContent=SizeToContent.Height;Height=double.NaN;ApplyAppearance();
     }
 
     internal static Button CreateInlineUpdateButton(FrameworkElement resources)
@@ -184,6 +186,7 @@ internal sealed class MeterControlsWindow : Window
 
     internal void ApplyAppearance()
     {
+        if(_brandPaw is not null){_brandPaw.Source=SupporterBranding.Source(_settings);_brandPaw.ToolTip=_settings.ShowSupporterPaw&&SupporterPacks.HasPaw?"Paw Supporter · Thank you!":"CatScratch";}
         Opacity=Math.Clamp(_settings.WindowOpacity,.4,1);
         _backdrop.Opacity=Math.Clamp(_settings.BackgroundOpacity,0,1);
         ApplyLayout();

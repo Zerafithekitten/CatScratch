@@ -1,3 +1,61 @@
+## CatScratch v4.0.2
+
+[Deutsche Patchnotes](https://github.com/Zerafithekitten/CatScratch/blob/v4.0.2/data/patchnotes-de.md)
+
+### 🐾 A little extra cat
+
+I've been putting together a small thank-you for anyone who wants to support CatScratch: a few designs, a few sounds and a golden paw. The useful parts of the app stay available to everyone. This is just a little extra cat for those who'd like one.
+
+This update also gives the Windows audio connection a little more patience after a report of a valid MP3 being rejected.
+
+<!-- contents -->
+### At a glance
+- [A new home for Patreon](#patreon)
+- [First Paws: designs, sounds and a supporter paw](#first-paws)
+- [How the packages work](#packages)
+- [Custom MP3 and WAV sounds](#custom-audio)
+<!-- /contents -->
+
+<a id="patreon"></a>
+### 💜 A new home for Patreon
+
+Settings now has a **Patreon** tab, grouped between Updates and Feedback. It links to [my Patreon page](https://www.patreon.com/cw/deuzear_yuma) and lets you import a downloaded CatScratch supporter package directly.
+
+I'll also use Patreon for development insights and occasional polls. Those live on Patreon; you don't need another account inside CatScratch.
+
+![Patreon settings with the optional First Paws pack installed](https://raw.githubusercontent.com/Zerafithekitten/CatScratch/v4.0.2/docs/screenshots/patreon.png)
+
+<a id="first-paws"></a>
+### ✨ First Paws
+
+The first separately distributed supporter pack contains:
+
+- **Three designs:** Midnight Cat, Moonlight and Golden Paw.
+- **Three original sounds:** Paw Chime, Moon Ping and Soft Purr.
+- **An optional golden paw** in the existing control panel. Same size, same space, and you can switch it off whenever you like.
+
+Choose a design or assign a sound in the Patreon tab, then press **Save**. Sounds can be assigned to Hidden Cubes, the Pet tracker and Resource warnings; installed sounds also appear in the event sound picker after reopening Settings. Your existing sound enablement and volume are kept.
+
+<a id="packages"></a>
+### 📦 Download, import, keep
+
+Download the member package separately, extract its outer ZIP and select the **.cspack** file under Settings → Patreon → Import package. Leave the .cspack itself intact.
+
+- Import installs content immediately. Colors, sound assignments and the paw apply when you save your choices.
+- Packages contain signed designs and audio, with no executable plugins. CatScratch checks their contents before importing them.
+- Everything works offline after import. There's no Patreon sign-in, subscription check or automatic download.
+- Received packages remain usable after a membership ends. The signature verifies who issued a pack; it isn't a membership lock.
+- Existing public features, custom colors, custom sounds and fixes remain available to everyone. Importing a pack doesn't replace your settings on its own.
+
+<a id="custom-audio"></a>
+### 🔊 A little more patience with custom sounds
+
+Windows can announce an opened audio file before its duration is ready. CatScratch now waits briefly for that information and retries once with a fresh decoder after a validation failure. Playback also retries one decoder failure, so a temporary failure has a chance to recover before the next notification.
+
+The reported **ALARM ALARM.mp3** is valid: it passed repeated checks here at about **4.10 seconds**, and Windows completed playback. I couldn't reproduce the original intermittent rejection, so I won't call its cause confirmed. Invalid files and sounds longer than ten seconds are still rejected, and a failed selection keeps your previous sound.
+
+Thank you for supporting this one-person cat project, whether that's through Patreon, a useful bug report or testing an awkward little edge case with me. 💜
+
 ## CatScratch v4.0.1
 
 [Deutsche Patchnotes](https://github.com/Zerafithekitten/CatScratch/blob/v4.0.1/data/patchnotes-de.md)

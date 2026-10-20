@@ -26,6 +26,8 @@ internal sealed class HiddenCubeSoundPanel : StackPanel
         _enabled=new CheckBox {Content=T("Play a sound when a hidden cube is detected"),IsChecked=draft.HiddenCubeSoundEnabled,Style=(Style)FindResource("DarkCheck")};
         _enabled.Click+=(_,_)=>draft.HiddenCubeSoundEnabled=_enabled.IsChecked==true;Children.Add(_enabled);
         _file=new TextBlock {Text=FileLabel(),TextTrimming=TextTrimming.CharacterEllipsis,ToolTip=draft.HiddenCubeSoundPath,Margin=new(0,8,0,5)};Children.Add(_file);
+        Loaded+=(_,_)=>{_file.Text=FileLabel();_file.ToolTip=_draft.HiddenCubeSoundPath;};
+
         var buttons=new WrapPanel();
         Choose=new Button {Content=T("Choose audio…"),Style=(Style)FindResource("GhostButton"),Padding=new(10,5,10,5),Margin=new(0,0,8,0)};
         Preview=new Button {Content=T("Preview"),Style=(Style)FindResource("GhostButton"),Padding=new(10,5,10,5)};
