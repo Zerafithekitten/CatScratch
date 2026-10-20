@@ -1,4 +1,4 @@
-﻿using System.Windows;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using AionMeter.App.Services;
@@ -8,10 +8,12 @@ internal sealed class DungeonEntriesWindow:Window,IDisplayAppearance
 {
     internal static readonly (string Key,string Name,uint Id)[] Entries=[("daily","Daily Dungeon",101),("nightmare","Nightmare",4),("shugo","Shugo Festival",1)];
     private readonly MeterService _meter;
+    private string? _renderKey;
     private readonly WrapPanel _rows=new();
     private readonly DockPanel _header=new(){Height=24,Margin=new(0,0,0,3),Background=ThemeColors.Brush("#DF20242A")};
     internal DungeonEntriesWindow(MeterService meter)
     {
+        UseLayoutRounding=true;SnapsToDevicePixels=true;
         _meter=meter;Title=ControlPanelSettingsPanel.L("Dungeon entries","Dungeon-Eintritte");
         WindowStyle=WindowStyle.None;AllowsTransparency=true;Background=Brushes.Transparent;Topmost=true;ShowInTaskbar=false;ShowActivated=false;ResizeMode=ResizeMode.NoResize;
         MinWidth=220;MaxWidth=600;SizeToContent=SizeToContent.Height;
@@ -30,15 +32,20 @@ internal sealed class DungeonEntriesWindow:Window,IDisplayAppearance
     }
     internal void Refresh()
     {
-        Width=300;var values=_meter.Resources.ReadEntries();_rows.Children.Clear();
-        foreach(var entry in Entries.Where(e=>(_meter.Settings.VisibleDungeonEntries??[]).Contains(e.Key)))
+        var values=_meter.Resources.ReadEntries();
+        var selected=Entries.Where(e=>(_meter.Settings.VisibleDungeonEntries??[]).Contains(e.Key)).ToArray();
+        var key=$"{UiText.Current.Code}:{System.Globalization.CultureInfo.CurrentCulture.Name}:"+string.Join("|",selected.Select(e=>$"{e.Key}:{(values.TryGetValue(e.Id,out var value)?value.ToString():"missing")}"));
+        if(_renderKey==key)return;
+        _renderKey=key;
+        Width=300;_rows.Children.Clear();
+        foreach(var entry in selected)
         {
             var row=new DockPanel{Margin=new Thickness(7,5,7,5)};
             var known=values.TryGetValue(entry.Id,out var value);
             var text=known?$"{value!.Available:N0} (+{value.Supplementary:N0})/{(value.Capacity is {} cap?cap.ToString():"?")}":"⚠ Relog!";
-            var count=new TextBlock{Text=text,FontWeight=FontWeights.SemiBold,Foreground=ThemeColors.Brush(known?"#EDF2F7":"#FFB454")};
+            var count=new TextBlock{VerticalAlignment=VerticalAlignment.Center,Text=text,FontWeight=FontWeights.SemiBold,Foreground=ThemeColors.Brush(known?"#EDF2F7":"#FFB454")};
             DockPanel.SetDock(count,Dock.Right);row.Children.Add(count);
-            row.Children.Add(new TextBlock{Text=entry.Name,Foreground=ThemeColors.Brush("#C49AF5"),Margin=new Thickness(0,0,8,0)});
+            row.Children.Add(new TextBlock{Text=entry.Name,VerticalAlignment=VerticalAlignment.Center,TextTrimming=TextTrimming.CharacterEllipsis,Foreground=ThemeColors.Brush("#C49AF5"),Margin=new Thickness(0,0,8,0)});
             _rows.Children.Add(new Border{Width=296,Child=row,Background=ThemeColors.Brush("#D020242A"),CornerRadius=new CornerRadius(4),Margin=new Thickness(0,1,0,1),ToolTip=ControlPanelSettingsPanel.L("Available (+extra) / capacity. Updates from received game data. If missing, return to character selection and log in again.","Verfügbar (+Zusatzbestand) / Maximum. Aktualisiert durch empfangene Spieldaten. Bei fehlenden Daten kurz in die Charakterauswahl wechseln und neu einloggen.")});
         }
         if(_rows.Children.Count==0)_rows.Children.Add(new TextBlock{Text=ControlPanelSettingsPanel.L("Select dungeons in Settings.","Dungeons in den Einstellungen auswählen."),Margin=new Thickness(6)});

@@ -40,6 +40,23 @@ internal static class ResourceModuleChecks
                 var before=new Size(window.ActualWidth,window.ActualHeight);WindowClickThrough.ApplyAll(true);window.UpdateLayout();
                 Check(Math.Abs(window.ActualWidth-before.Width)<.5 && Math.Abs(window.ActualHeight-before.Height)<.5,"Click-through preserves layout geometry: "+layoutName);WindowClickThrough.ApplyAll(false);
             }
+            var retained=Find<Image>(window).First(i=>i.Width==18);window.Refresh();
+            Check(ReferenceEquals(retained,Find<Image>(window).First(i=>i.Width==18)),"Unchanged resource refresh retains existing controls");
+            var previousWidth=meter.Settings.ResourcesWidth;
+            meter.Resources.Observe(new Core.Game.ResourceBalanceSnapshot(6,new Dictionary<int,ulong>{{930100003,999999999999},{930100011,999999999999},{930100024,999999999999},{930100017,999999999999},{930100019,999999999999}}));
+            foreach(var width in new[]{220d,300d,600d})
+            {
+                meter.Settings.ResourcesLayout="Grid";meter.Settings.ResourcesWidth=width;window.Refresh();window.UpdateLayout();
+                foreach(var value in Find<TextBlock>(window).Where(t=>t.Text.Length>10 && char.IsDigit(t.Text[0]) && t.Text.Contains("999")))
+                {
+                    var tile=Find<Border>(window).First(b=>b.CornerRadius.TopLeft==4 && b.IsAncestorOf(value));
+                    var bounds=value.TransformToAncestor(tile).TransformBounds(new Rect(value.RenderSize));
+                    Check(bounds.Left>=0 && bounds.Right<=tile.ActualWidth+.6,"Large resource number remains inside its tile at width "+width);
+                }
+                var rows=Find<Border>(window).Where(b=>b.CornerRadius.TopLeft==4).ToArray();
+                Check(rows.Max(b=>b.ActualHeight)-rows.Min(b=>b.ActualHeight)<.6,"Resource grid tiles have matching heights at width "+width);
+            }
+            meter.Settings.ResourcesWidth=previousWidth;
             meter.Settings.VisibleResources=["odyle"];window.Refresh();window.UpdateLayout();
             Check(!Find<TextBlock>(window).Any(t=>t.Text=="Abyss Points") && Find<TextBlock>(window).Any(t=>t.Text=="Odyle Energy"),"Only selected resources appear");
             meter.Settings.ResourcesLayout="List";var draft=meter.Settings.CreateDraft();var panel=new ResourcesSettingsPanel(draft);
@@ -65,6 +82,8 @@ internal static class ResourceModuleChecks
                 var before=new Size(dungeon.ActualWidth,dungeon.ActualHeight);var topBefore=dungeon.Top;
                 WindowClickThrough.ApplyAll(true);dungeon.UpdateLayout();
                 Check(before==new Size(dungeon.ActualWidth,dungeon.ActualHeight) && topBefore==dungeon.Top,"Dungeon click-through preserves position and dimensions");WindowClickThrough.ApplyAll(false);
+                var retainedDungeon=Find<TextBlock>(dungeon).First(t=>t.Text=="Daily Dungeon");dungeon.Refresh();
+                Check(ReferenceEquals(retainedDungeon,Find<TextBlock>(dungeon).First(t=>t.Text=="Daily Dungeon")),"Unchanged dungeon refresh retains existing controls");
                 meter.Settings.VisibleDungeonEntries=["nightmare"];dungeon.Refresh();dungeon.UpdateLayout();
                 Check(!Find<TextBlock>(dungeon).Any(t=>t.Text=="Daily Dungeon") && Find<TextBlock>(dungeon).Any(t=>t.Text=="Nightmare"),"Dungeon selection hides unselected rows");
                 var draftDungeon=meter.Settings.CreateDraft();var panelDungeon=new DungeonEntriesSettingsPanel(draftDungeon);var hostDungeon=new Window{Content=panelDungeon,Width=500,Height=400,Left=-30000,Top=-30000};

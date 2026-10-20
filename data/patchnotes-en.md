@@ -1,4 +1,11 @@
-﻿## CatScratch v3.0.12-beta.15
+﻿## CatScratch v3.0.12-beta.16
+
+- Refined Resources grid alignment: equal tile heights and full large balances scaled to fit narrow tiles. Resources and Dungeon entries use layout rounding, and dungeon labels/values are vertically centered.
+- Removed unnecessary full row rebuilds in Resources and Dungeon entries when displayed values and preferences are unchanged. Live changes, selections, layout, width and language still refresh immediately.
+- Corrected Help to reflect Save keeping Settings open and X discarding later unsaved changes.
+- Completed the full review: 425 tests, all 16 native check groups, color persistence across restart, and visual checks of module/settings layouts including four languages and enlarged control panels. Stable and Light are unchanged.
+
+## CatScratch v3.0.12-beta.15
 
 - Added Oath Coins as an independently selectable currency under Settings > Resources, with the original game icon in all three layouts. Existing resource selections are preserved; enable Oath Coins manually on existing installations.
 - Confirmed Oath Coin change messages update the absolute balance live, including spending, without a relog or duplicate accumulation. Missing data still shows Relog!; character and capture resets clear old balances.

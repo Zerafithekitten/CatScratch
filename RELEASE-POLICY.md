@@ -79,3 +79,5 @@ On 2026-10-20 the owner explicitly authorized the standalone selectable Dungeon 
 On 2026-10-20 the owner reviewed the corrected resource marker preview and explicitly approved "update es". Publish v3.0.12-beta.14 after full release checks; preserve Stable and Light.
 
 On 2026-10-20 the owner reviewed Oath Coins with the original icon and approved "upload". Publish v3.0.12-beta.15 after full release verification; preserve Stable and Light.
+
+On 2026-10-20 the owner reviewed the full UI/function audit and actual correction images, then approved "oki ab in die beta". Publish v3.0.12-beta.16 using the completed review checks and final packaged CI checks; preserve Stable and Light.

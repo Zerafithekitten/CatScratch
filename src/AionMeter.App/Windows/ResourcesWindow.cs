@@ -8,10 +8,12 @@ internal sealed class ResourcesWindow:Window,IDisplayAppearance
 {
     internal static readonly (string Key,string Name,int Item)[] Entries=[("odyle","Odyle Energy",0),("abyss","Abyss Points",930100003),("centuryroot","Centuryroot Token",930100011),("passcoin","Deava Pass Shop Coin",930100024),("fragment","Phantasmal Fragment",930100017),("oath","Oath Coins",930100019)];
     private readonly MeterService _meter;
+    private string? _renderKey;
     private readonly WrapPanel _rows=new();
     private readonly DockPanel _header=new(){Height=24,Margin=new(0,0,0,3),Background=ThemeColors.Brush("#DF20242A")};
     internal ResourcesWindow(MeterService meter)
     {
+        UseLayoutRounding=true;SnapsToDevicePixels=true;
         _meter=meter;Title=ControlPanelSettingsPanel.L("Resources","Ressourcen");
         WindowStyle=WindowStyle.None;AllowsTransparency=true;Background=Brushes.Transparent;Topmost=true;ShowInTaskbar=false;ShowActivated=false;ResizeMode=ResizeMode.NoResize;
         MinWidth=220;MaxWidth=600;SizeToContent=SizeToContent.Height;
@@ -32,11 +34,16 @@ internal sealed class ResourcesWindow:Window,IDisplayAppearance
     {
         var layout=_meter.Settings.ResourcesLayout is "Strip" or "Grid"?_meter.Settings.ResourcesLayout:"List";
         var configuredWidth=double.IsFinite(_meter.Settings.ResourcesWidth)?Math.Clamp(_meter.Settings.ResourcesWidth,220,600):300;
+        var values=_meter.Resources.Read();
+        var selected=Entries.Where(e=>(_meter.Settings.VisibleResources??[]).Contains(e.Key)).ToArray();
+        var key=$"{layout}:{configuredWidth:R}:{UiText.Current.Code}:{System.Globalization.CultureInfo.CurrentCulture.Name}:"+string.Join("|",selected.Select(e=>$"{e.Key}:{(e.Item==0?values.Energy?.ToString():values.Balances.TryGetValue(e.Item,out var balance)?balance.ToString():"missing")}"));
+        if(_renderKey==key)return;
+        _renderKey=key;
         MinWidth=layout=="Strip"?160:220;
         SizeToContent=layout=="Strip"?SizeToContent.WidthAndHeight:SizeToContent.Height;
         Width=layout=="Strip"?double.NaN:configuredWidth;
-        var values=_meter.Resources.Read();_rows.Children.Clear();
-        foreach(var entry in Entries.Where(e=>(_meter.Settings.VisibleResources??[]).Contains(e.Key)))
+        _rows.Children.Clear();
+        foreach(var entry in selected)
         {
             var row=new DockPanel{Margin=new Thickness(7,3,7,3)};
             var missing=entry.Item==0?values.Energy is null:!values.Balances.ContainsKey(entry.Item);
@@ -47,9 +54,9 @@ internal sealed class ResourcesWindow:Window,IDisplayAppearance
             if(layout=="List")row.Children.Add(new TextBlock{VerticalAlignment=VerticalAlignment.Center,Text=entry.Name,Foreground=ThemeColors.Brush("#C49AF5"),TextTrimming=TextTrimming.CharacterEllipsis});
             if(layout=="Grid")
             {
-                row.Children.Clear();DockPanel.SetDock(icon,Dock.Left);row.Children.Add(icon);
+                row.Children.Clear();row.Height=30;row.VerticalAlignment=VerticalAlignment.Center;DockPanel.SetDock(icon,Dock.Left);row.Children.Add(icon);
                 var details=new StackPanel();details.Children.Add(new TextBlock{Text=entry.Name,FontSize=10,Foreground=ThemeColors.Brush("#C49AF5"),TextTrimming=TextTrimming.CharacterEllipsis});
-                value.Margin=new Thickness(0,2,0,0);details.Children.Add(value);row.Children.Add(details);
+                value.Margin=new Thickness(0,2,0,0);details.Children.Add(new Viewbox{Child=value,Height=16,Stretch=Stretch.Uniform,StretchDirection=StretchDirection.DownOnly,HorizontalAlignment=HorizontalAlignment.Left});row.Children.Add(details);
             }
             value.VerticalAlignment=VerticalAlignment.Center;
             _rows.Children.Add(new Border{Width=layout=="List"?configuredWidth-4:layout=="Grid"?(configuredWidth-8)/2:double.NaN,Child=row,Background=ThemeColors.Brush("#D020242A"),CornerRadius=new CornerRadius(4),Margin=new Thickness(layout=="List"?0:1,1,layout=="List"?0:1,1),ToolTip=entry.Name+"\n"+(missing?ControlPanelSettingsPanel.L("No data received. Return to character selection and log in again.","Noch keine Daten empfangen. Kurz in die Charakterauswahl wechseln und wieder einloggen."):entry.Item is 930100011 or 930100003 or 930100017 or 930100019?ControlPanelSettingsPanel.L("Confirmed inventory change messages are applied immediately.","Bestätigte Inventar-Änderungsmeldungen werden sofort übernommen."):entry.Item==0?ControlPanelSettingsPanel.L("Odyle: available (+supplementary). Updated from received server data.","Odyle: verfügbar (+Zusatzbestand). Aktualisiert durch empfangene Spieldaten."):ControlPanelSettingsPanel.L("* Last received inventory balance. Continuous currency changes are not yet verified.","* Zuletzt empfangener Inventarbestand. Laufende Währungsänderungen sind noch nicht bestätigt."))});
