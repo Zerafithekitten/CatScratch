@@ -7,7 +7,7 @@ using AionMeter.App.Windows;
 namespace AionMeter.App.Services;
 internal static class SupporterCatChecks
 {
-    internal static async Task RunAsync(string output,string? package)
+    internal static async Task RunAsync(string output,string? package,string? previousPackage=null)
     {
         var results=new List<string>();void Check(bool ok,string text){if(!ok)throw new InvalidOperationException(text);results.Add(text);}
         var root=Path.Combine(Path.GetTempPath(),"catscratch-cat-check-"+Guid.NewGuid().ToString("N"));
@@ -17,9 +17,11 @@ internal static class SupporterCatChecks
             Check(SupporterPacks.CatPack is null,"No cat is enabled without its separate signed package");
             Check(SupporterCatWindow.NormalizeScale(double.NaN)==1&&SupporterCatWindow.NormalizeScale(99)==2&&SupporterCatWindow.NormalizeScale(.1)==.5,"Cat scale is bounded and invalid settings fall back to 100 percent");
             if(package is null){File.WriteAllText(output,JsonSerializer.Serialize(results));return;}
+            if(previousPackage is not null)SupporterPacks.Import(previousPackage);
             var pack=SupporterPacks.Import(package);
+            Check(SupporterPacks.CatPack?.Pack.Fingerprint==pack.Pack.Fingerprint,"The latest installed cat package is selected over older artwork");
             Check(pack.Pack.Manifest.Mascot is not null&&pack.Pack.Manifest.Sounds.Length==0&&pack.Pack.Manifest.Themes.Length==0&&!SupporterPacks.HasPaw,"The cat package is independent of designs, sounds and the supporter paw");
-            Check(SupporterPacks.Import(package).Pack.Fingerprint==pack.Pack.Fingerprint&&SupporterPacks.All().Count==1,"Repeated cat imports are idempotent");
+            Check(SupporterPacks.Import(package).Pack.Fingerprint==pack.Pack.Fingerprint&&SupporterPacks.All().Count==(previousPackage is null?1:2),"Repeated cat imports are idempotent");
             var settings=new AppSettings{Transient=true,SupporterCatPositionSaved=true,SupporterCatLeft=80,SupporterCatTop=80};
             var draft=settings.CreateDraft();draft.ShowSupporterCat=true;
             Check(!settings.ShowSupporterCat,"Enabling the cat stays in the Settings draft");
@@ -43,6 +45,21 @@ internal static class SupporterCatChecks
                 await Task.Delay(200);Check(cat.FrameIndex==paused,"Hidden animation does not keep advancing");
                 cat.Show();Check(cat.AnimationRunning,"Showing the cat resumes animation");
                 WindowClickThrough.ApplyAll(false);cat.UpdateLayout();Check(cat.Left==left&&cat.Top==top,"Unlocking restores controls at the same position");
+                settings.ShowSupporterCat=true;
+                var handle=new System.Windows.Interop.WindowInteropHelper(cat).Handle;
+                foreach(var locked in new[]{false,true})
+                {
+                    WindowClickThrough.ApplyAll(locked);
+                    foreach(var scale in new[]{.5,2.0,1.5,1.0})
+                    {
+                        var frame=cat.FrameIndex;settings.SupporterCatScale=scale;cat.ApplyPreferences();
+                        Check(cat.FrameIndex==frame&&cat.AnimationRunning&&settings.ShowSupporterCat,"Applying a saved size keeps the cat enabled and does not restart its animation");
+                        cat.UpdateLayout();await Task.Delay(50);
+                        Check(cat.ActualWidth==160*scale&&cat.ActualHeight==160*scale+24&&cat.Left==left&&cat.Top==top,"The existing cat resizes without toggling visibility in click-through="+locked+" at "+scale*100+" percent");
+                        Check(new System.Windows.Interop.WindowInteropHelper(cat).Handle==handle,"Saved size changes reuse the same native cat window");
+                    }
+                }
+                WindowClickThrough.ApplyAll(false);
             }
             finally{cat.Close();}
             Check(!cat.AnimationRunning&&settings.SupporterCatPositionSaved,"Closing releases the timer and retains placement");

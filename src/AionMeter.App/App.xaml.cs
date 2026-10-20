@@ -258,7 +258,7 @@ public partial class App : Application
             Log.Enabled=false;
             Dispatcher.BeginInvoke(async()=>
             {
-                try{await SupporterCatChecks.RunAsync(catResult,ArgValue(e.Args,"--supporter-package"));Shutdown();}
+                try{await SupporterCatChecks.RunAsync(catResult,ArgValue(e.Args,"--supporter-package"),ArgValue(e.Args,"--previous-supporter-package"));Shutdown();}
                 catch(Exception error){File.WriteAllText(catResult,error.ToString());Shutdown(1);}
             });return;
         }
@@ -647,9 +647,15 @@ public partial class App : Application
     private void SyncSupporterCat()
     {
         if(_shutdownStarted || _modulePreview is not null)return;
-        if(!_meter.Settings.ShowSupporterCat || SupporterPacks.CatPack is null){_supporterCatWindow?.Close();return;}
-        if(_supporterCatWindow is not null || _windowVisibility.Hidden)return;
-        var window=_supporterCatWindow=new SupporterCatWindow(_meter.Settings,SupporterPacks.CatPack);
+        var pack=SupporterPacks.CatPack;
+        if(!_meter.Settings.ShowSupporterCat || pack is null){_supporterCatWindow?.Close();return;}
+        if(_supporterCatWindow is not null)
+        {
+            if(_supporterCatWindow.PackFingerprint==pack.Pack.Fingerprint){_supporterCatWindow.ApplyPreferences();return;}
+            _supporterCatWindow.Close();
+        }
+        if(_windowVisibility.Hidden)return;
+        var window=_supporterCatWindow=new SupporterCatWindow(_meter.Settings,pack);
         WindowClickThrough.Attach(window,()=>_meter.Settings.ClickThrough,()=>_meter.Settings.WindowOpacity);
         window.Closed+=(_,_)=>{if(ReferenceEquals(_supporterCatWindow,window))_supporterCatWindow=null;};
         window.Show();_windowVisibility.Track(window);
@@ -1238,6 +1244,7 @@ public partial class App : Application
         _overlay.ApplyAppearance();
         _overlay.Refresh();
         SyncBossTiming();
+        SyncSupporterCat();
     }
 
     /// <summary>The Settings window's row size slider, shown on the overlay before it is saved.</summary>

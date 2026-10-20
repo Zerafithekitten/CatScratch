@@ -10,6 +10,9 @@ namespace AionMeter.App.Windows;
 
 internal sealed class SupporterCatWindow : Window,IDisplayAppearance
 {
+    private readonly AppSettings _settings;
+    private readonly StackPanel _root;
+    internal string PackFingerprint {get;}
     private readonly DockPanel _header;
     private readonly Image _image;
     private readonly BitmapSource[] _frames;
@@ -22,6 +25,7 @@ internal sealed class SupporterCatWindow : Window,IDisplayAppearance
     internal int FrameCount=>_frames.Length;
     internal SupporterCatWindow(AppSettings settings,InstalledSupporterPack pack)
     {
+        _settings=settings;PackFingerprint=pack.Pack.Fingerprint;
         var mascot=pack.Pack.Manifest.Mascot??throw new InvalidDataException("This package contains no cat.");
         using(var stream=new MemoryStream(pack.Pack.MascotImage!))
         {
@@ -39,7 +43,7 @@ internal sealed class SupporterCatWindow : Window,IDisplayAppearance
         SizeToContent=SizeToContent.WidthAndHeight;
         Resources.MergedDictionaries.Add(new(){Source=new Uri("/CatScratch;component/Theme/MeterPreferences.xaml",UriKind.Relative)});
         var size=160*NormalizeScale(settings.SupporterCatScale);
-        var root=new StackPanel{Width=size,Background=Brushes.Transparent};
+        var root=_root=new StackPanel{Width=size,Background=Brushes.Transparent};
         _header=new DockPanel{Height=24,Background=ThemeColors.Brush("#DF20242A")};
         var close=new Button{Content="\uE711",Style=(Style)FindResource("IconButton"),Width=22,Height=22,ToolTip=ControlPanelSettingsPanel.L("Hide cat","Katze ausblenden")};
         close.Click+=(_,_)=>{settings.ShowSupporterCat=false;settings.Save();Close();};
@@ -57,6 +61,13 @@ internal sealed class SupporterCatWindow : Window,IDisplayAppearance
         else{Left=SystemParameters.WorkArea.Right-size-20;Top=SystemParameters.WorkArea.Bottom-size-50;}
         Controls.DragAnywhere.Attach(this);
         Closed+=(_,_)=>{_timer.Stop();settings.SupporterCatLeft=Left;settings.SupporterCatTop=Top;settings.SupporterCatPositionSaved=true;settings.Save();};
+    }
+    internal void ApplyPreferences()
+    {
+        var size=160*NormalizeScale(_settings.SupporterCatScale);
+        if(_image.Width==size)return;
+        _root.Width=size;_image.Width=size;_image.Height=size;
+        SizeToContent=SizeToContent.WidthAndHeight;
     }
     internal void SetFrame(int frame){_frame=Math.Clamp(frame,0,_frames.Length-1);_image.Source=_frames[_frame];}
     public void SetDisplayOnly(bool enabled)=>_header.Visibility=enabled?Visibility.Hidden:Visibility.Visible;

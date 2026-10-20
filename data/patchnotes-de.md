@@ -1,3 +1,19 @@
+## CatScratch v4.0.6
+
+[English patch notes](https://github.com/Zerafithekitten/CatScratch/blob/v4.0.6/data/patchnotes-en.md)
+
+<!-- contents -->
+### Auf einen Blick
+- [Ein bisschen Feinschliff](#small-polish)
+<!-- /contents -->
+
+<a id="small-polish"></a>
+### 🛠️ Ein bisschen Feinschliff
+
+Heute gibt es ein kleines Wartungsupdate von mir. Gespeicherte Anzeigeeinstellungen werden zuverlässiger übernommen, damit Änderungen ohne zusätzliches Aus- und Einschalten ankommen.
+
+Danke für die schnellen Rückmeldungen und dafür, dass ihr mir helft, die kleinen Ecken und Kanten auszubessern. 💜
+
 ## CatScratch v4.0.5
 
 [English patch notes](https://github.com/Zerafithekitten/CatScratch/blob/v4.0.5/data/patchnotes-en.md)

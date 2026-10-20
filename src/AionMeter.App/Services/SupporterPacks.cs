@@ -76,7 +76,7 @@ Yvy+hUuPqenS85/WpGTIfu67Gtt9A8+RQo5Za3GneMEq+p/eRDTpWKEiWA==
         }
         return new(pack,directory);
     }
-    internal static InstalledSupporterPack? CatPack=>All().FirstOrDefault(p=>p.Pack.Manifest.Mascot is not null);
+    internal static InstalledSupporterPack? CatPack=>All().Where(p=>p.Pack.Manifest.Mascot is not null).OrderByDescending(p=>Version.Parse(p.Pack.Manifest.Version)).FirstOrDefault();
     internal static bool HasPaw=>All().Any(p=>p.Pack.Manifest.SupporterPaw);
     internal static string SoundId(InstalledSupporterPack p,AionMeter.Core.Supporter.SupporterSound s)=>"supporter:"+p.Pack.Fingerprint+":"+Path.GetFileName(s.Path);
     internal static string? ResolveSound(string id)

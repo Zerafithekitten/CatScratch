@@ -1,3 +1,19 @@
+## CatScratch v4.0.6
+
+[Deutsche Patchnotes](https://github.com/Zerafithekitten/CatScratch/blob/v4.0.6/data/patchnotes-de.md)
+
+<!-- contents -->
+### At a glance
+- [A little polish](#small-polish)
+<!-- /contents -->
+
+<a id="small-polish"></a>
+### 🛠️ A little polish
+
+A small maintenance update from me today. I've tightened up how saved display settings are applied, so changes take effect more consistently without extra toggling.
+
+Thanks for the quick feedback and for helping me smooth out the little rough edges. 💜
+
 ## CatScratch v4.0.5
 
 [Deutsche Patchnotes](https://github.com/Zerafithekitten/CatScratch/blob/v4.0.5/data/patchnotes-de.md)
