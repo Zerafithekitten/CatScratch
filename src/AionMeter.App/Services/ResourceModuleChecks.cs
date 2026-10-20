@@ -29,7 +29,7 @@ internal static class ResourceModuleChecks
             Check(Find<TextBlock>(window).Any(t=>t.Text.Contains("(+495)")),"Odyle keeps available and supplementary values separate");
             Check(Find<TextBlock>(window).Any(t=>t.Text.Contains("3") && t.Text.Contains("188") && !t.Text.EndsWith(" *")),"Live Abyss balance has no snapshot marker");
             feed(new Core.Game.ResourceBalanceSnapshot(3,new Dictionary<int,ulong>{{930100024,1000},{930100011,1670},{930100017,160}}));window.Refresh();window.UpdateLayout();
-            Check(Find<TextBlock>(window).Count(t=>t.Text.EndsWith(" *"))==1,"Only Pass Shop Coin retains the snapshot marker");
+            Check(Find<TextBlock>(window).Count(t=>t.Text.EndsWith(" *"))==0,"All confirmed live currency balances have no snapshot marker");
             var height=window.ActualHeight;var top=window.Top;
             WindowClickThrough.ApplyAll(true);window.UpdateLayout();Check(Math.Abs(window.ActualHeight-height)<.5 && window.Top==top,"Click-through preserves resource geometry");
             WindowClickThrough.ApplyAll(false);

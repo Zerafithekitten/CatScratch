@@ -8,15 +8,10 @@ public static class ResourceInventoryPackets
     public static readonly int[] Supported=[930100003,930100011,930100024,930100017,930100019];
     public static ResourceBalanceSnapshot? Update(long time,ReadOnlySpan<byte> body)
     {
-        // Confirmed Centuryroot spending, Abyss gain and Phantasmal Fragment records: 1B56 carries absolute item balances.
-        // Other currencies and deletion layouts still need their own verification.
+        // Confirmed absolute balance-change records for all supported currencies.
+        // Deletion-to-zero layouts still require separate verification.
         if(body.Length<40 || body[0]==0)return null;
-        var snapshot=Snapshot(time,body);
-        if(snapshot is null)return null;
-        static bool Confirmed(int id)=>id is 930100011 or 930100003 or 930100017 or 930100019;
-        var values=snapshot.Values.Where(v=>Confirmed(v.Key)).ToDictionary(v=>v.Key,v=>v.Value);
-        var ambiguous=snapshot.Ambiguous?.Where(Confirmed).ToHashSet()??[];
-        return values.Count>0 || ambiguous.Count>0?new(time,values,ambiguous):null;
+        return Snapshot(time,body);
     }
     public static ResourceBalanceSnapshot? Snapshot(long time,ReadOnlySpan<byte> body)
     {

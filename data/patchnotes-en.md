@@ -1,7 +1,8 @@
-﻿## CatScratch v3.0.12-beta.17
+## CatScratch v3.0.12-beta.18
 
-- Centered resource icons and balances/Relog warnings together in Horizontal layout, with symmetric outer spacing and a consistent icon-to-text gap.
-- Raised the text slightly for optical alignment with the game icons. Preserves compact tile dimensions and click-through placement. Stable and Light are unchanged.
+- Added confirmed live balance updates for Deava Pass Shop Coin, including spending. Removed its snapshot-only * marker; all supported currencies now apply confirmed change messages immediately.
+- Centered resource icons and balances/Relog warnings together in Horizontal layout, with symmetric outer spacing and a consistent gap. Raised text slightly for optical alignment with the icons.
+- Preserves compact tile dimensions, click-through placement and existing settings. Stable and Light are unchanged. Beta.17 was held before publication; its approved alignment fix is included here.
 
 ## CatScratch v3.0.12-beta.16
 

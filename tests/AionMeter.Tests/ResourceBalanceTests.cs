@@ -70,7 +70,7 @@ public class ResourceBalanceTests
         var parser=new AionMeter.Core.Protocol.PacketParser(GameData.Empty,state.Observe){TimeMs=2};
         parser.Handle(0x1B56,body);parser.Handle(0x1B56,body);
         Assert.Equal(150ul,state.Read().Balances[930100011]);Assert.Equal(7188ul,state.Read().Balances[930100003]);
-        var unverified=Inventory((930100024,100));unverified[0]=1;Assert.Null(ResourceInventoryPackets.Update(3,unverified));
+        var unverified=Inventory((930100099,100));unverified[0]=1;Assert.Null(ResourceInventoryPackets.Update(3,unverified));
         Assert.Null(ResourceInventoryPackets.Update(3,body.AsSpan(0,20)));
     }
     [Fact] public void AbyssGainUpdatesEvenWithoutLoginSnapshotAndDoesNotAccumulateDuplicates()
@@ -106,5 +106,16 @@ public class ResourceBalanceTests
         Assert.Equal(3750ul,state.Read().Balances[930100019]);Assert.Equal(8207ul,state.Read().Balances[930100003]);
         Assert.Equal(3750ul,ResourceInventoryPackets.Snapshot(3,Inventory((930100019,3750)))!.Values[930100019]);
         body[23]=255;Assert.Null(ResourceInventoryPackets.Update(4,body));
+    }
+    [Fact] public void PassShopCoinSpendingUpdatesAbsoluteBalancesWithoutAccumulation()
+    {
+        var state=new ResourceBalances();state.Observe(new ResourceBalanceSnapshot(1,new Dictionary<int,ulong>{{930100024,10500},{930100019,3750}}));
+        var parser=new AionMeter.Core.Protocol.PacketParser(GameData.Empty,state.Observe);
+        foreach(var amount in new ulong[]{5500,1500,1500})
+        {
+            var body=Inventory((930100024,amount),(535910112,1));body[0]=2;
+            parser.Handle(0x1B56,body);Assert.Equal(amount,state.Read().Balances[930100024]);
+        }
+        Assert.Equal(3750ul,state.Read().Balances[930100019]);
     }
 }
