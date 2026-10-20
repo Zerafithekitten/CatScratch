@@ -329,14 +329,17 @@ public static class SampleRenderer
                 if(o.Window=="checklist-locked")taskWindow.SetDisplayOnly(true);
                 host=taskWindow;refresh=taskWindow.RefreshResetClock;break;
             case "dungeons":
+            case "dungeons-cached":
             case "dungeons-strip":
             case "dungeons-grid":
             case "dungeons-strip-missing":
                 meter.Settings.DungeonEntriesLayout=o.Window=="dungeons-grid"?"Grid":o.Window.StartsWith("dungeons-strip")?"Strip":"List";
                 meter.Resources.Observe(new Core.Game.DungeonEntriesEvent(1,new Dictionary<uint,Core.Game.DungeonEntryValue>{{101,new(0,18,14)},{4,new(0,3,14)},{1,new(17,3,21)}}));
+                if(o.Window=="dungeons-cached")meter.Resources.MarkCached();
                 if(o.Window=="dungeons-strip-missing")meter.Resources.Reset();
                 host=new DungeonEntriesWindow(meter);refresh=()=>{};break;
             case "resources":
+            case "resources-cached":
             case "resources-odyle":
             case "resources-strip":
             case "resources-strip-missing":
@@ -347,6 +350,7 @@ public static class SampleRenderer
                 meter.Settings.ResourcesLayout=o.Window is "resources-strip" or "resources-strip-missing"?"Strip":o.Window is "resources-grid" or "resources-large" or "resources-missing" or "resources-partial"?"Grid":"List";
                 meter.Resources.Observe(new Core.Game.OdyleEnergyEvent(1,15,495));
                 meter.Resources.Observe(new Core.Game.ResourceBalanceSnapshot(1,new Dictionary<int,ulong>{{930100003,3188},{930100011,1670},{930100024,1000},{930100017,160},{930100019,3750}}));
+                if(o.Window=="resources-cached")meter.Resources.MarkCached();
                 if(o.Window=="resources-odyle")meter.Resources.Observe(new Core.Game.OdyleEnergyEvent(2,160,270));
                 if(o.Window=="resources-large"){meter.Settings.ResourcesWidth=220;meter.Resources.Observe(new Core.Game.ResourceBalanceSnapshot(2,new Dictionary<int,ulong>{{930100003,999999999999},{930100011,999999999999},{930100024,999999999999},{930100017,999999999999},{930100019,999999999999}}));}
                 if(o.Window is "resources-missing" or "resources-strip-missing")meter.Resources.Reset();

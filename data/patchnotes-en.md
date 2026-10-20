@@ -1,3 +1,10 @@
+## CatScratch v3.0.12-beta.21
+
+- Added character-and-server-specific last-known storage for resources, Odyle Energy and Dungeon entries. Restored values show ≈ until fresh server messages confirm or replace them. Existing unknown values still show Relog! when no baseline has been recorded.
+- Capture restarts retain existing values as approximate, and Test mode no longer erases live resources. Disk restoration requires a matching freshly identified character; confirmed character changes clear the previous display.
+- Confirmed dungeon consumption replaces the stored absolute count without double subtraction. A zone change alone does not spend entries; missing consumption messages cannot be inferred. Login values arriving before a new character identity are held for the correct character.
+- Preserves all layouts, pinning, click-through and resource selections. Stable and Light are unchanged.
+
 ## CatScratch v3.0.12-beta.20
 
 - Fixed available Odyle Energy values of 128 or higher being rejected: the shared property table uses unsigned variable-length numbers, not a single byte. Verified the supplied second-character login recording as 160 (+270).

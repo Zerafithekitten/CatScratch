@@ -34,6 +34,7 @@ public sealed class MeterService : IDisposable
     private IEventSource? _replay;
     private DemoFightSource? _demo;
     private readonly PetProgressCache? _petProgress;
+    private readonly ResourceProgressCache? _resourceProgress;
 
     public MeterService(AppSettings settings, Func<GameData, IEventSource>? captureFactory, PersonalBestStore? personalBests = null, LastPlayedWithStore? lastPlayedWith = null, string? historyDirectory = null)
     {
@@ -50,7 +51,7 @@ public sealed class MeterService : IDisposable
         }
         CaptureFactory = captureFactory;
         Data = GameData.Load(DataDirectory, UiText.Normalize(settings.Language));
-        if(!settings.Transient){PetFarmCache.Restore(Pets);_petProgress=new PetProgressCache(Pets,Data);}
+        if(!settings.Transient){PetFarmCache.Restore(Pets);_petProgress=new PetProgressCache(Pets,Data);_resourceProgress=new ResourceProgressCache(Resources);}
         Icons = new SkillIcons(DataDirectory, settings.DownloadIcons);
         Portraits = new BossPortraits(DataDirectory, settings.DownloadIcons);
         Options = new MeterOptions();
@@ -188,6 +189,7 @@ public sealed class MeterService : IDisposable
         if(!_replaying)
         {
             HiddenCubes.Observe(resolved); Resources.Observe(identity ?? resolved);
+            _resourceProgress?.Observe(identity ?? resolved);
             _realPets.Observe(resolved);
             if(resolved is Core.Events.SelfIdentifiedEvent own)_petProgress?.Identity(own);
         }
@@ -217,7 +219,7 @@ public sealed class MeterService : IDisposable
                 _capture.EventDecoded += ProcessLiveEvent;
                 _capture.StatusChanged += status =>
                 {
-                    LiveIdentity.ObserveCaptureStatus(status, () => { HiddenCubes.Reset(); Resources.Reset(); _realPets.InvalidateLocation(); PartyPreview.Reset(); LastPlayedWith.Reset(); _realTracker.InvalidateParty(); });
+                    LiveIdentity.ObserveCaptureStatus(status, () => { HiddenCubes.Reset(); Resources.Reset(); _resourceProgress?.Suspend(); _realPets.InvalidateLocation(); PartyPreview.Reset(); LastPlayedWith.Reset(); _realTracker.InvalidateParty(); });
                 };
                 _capture.Start();
             }
@@ -249,7 +251,7 @@ public sealed class MeterService : IDisposable
         {
             previous?.Dispose();
             if (_exiting) return;
-            LiveIdentity.Suspend(); HiddenCubes.Reset(); Resources.Reset(); _realPets.InvalidateLocation(); PartyPreview.Reset(); LastPlayedWith.Reset(); _realTracker.InvalidateParty();
+            LiveIdentity.Suspend(); HiddenCubes.Reset(); Resources.MarkCached(); _resourceProgress?.Suspend(); _realPets.InvalidateLocation(); PartyPreview.Reset(); LastPlayedWith.Reset(); _realTracker.InvalidateParty();
             StartCapture();
         }
         finally
@@ -277,7 +279,7 @@ public sealed class MeterService : IDisposable
     public void StartDemo(int seconds = 45, bool animate = true)
     {
         if (_exiting || DemoRunning || _replaying) return;
-        HiddenCubes.Reset(); Resources.Reset();
+        HiddenCubes.Reset();
         _realTracker.Tick(DateTimeOffset.UtcNow.ToUnixTimeMilliseconds());
         _testTracker = new CombatTracker(Data,new MeterOptions { PartyOnly=false });
         _testPets = new();
@@ -514,6 +516,7 @@ public sealed class MeterService : IDisposable
         }
         Updates.Dispose();
         _petProgress?.Dispose();
+        _resourceProgress?.Dispose();
         if(!Settings.Transient)PetFarmCache.Save(Pets);
         Icons.Dispose();
         Portraits.Dispose();

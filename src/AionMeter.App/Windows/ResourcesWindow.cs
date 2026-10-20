@@ -35,8 +35,9 @@ internal sealed class ResourcesWindow:Window,IDisplayAppearance
         var layout=_meter.Settings.ResourcesLayout is "Strip" or "Grid"?_meter.Settings.ResourcesLayout:"List";
         var configuredWidth=double.IsFinite(_meter.Settings.ResourcesWidth)?Math.Clamp(_meter.Settings.ResourcesWidth,220,600):300;
         var values=_meter.Resources.Read();
+        var cached=_meter.Resources.CacheMarkers();
         var selected=Entries.Where(e=>(_meter.Settings.VisibleResources??[]).Contains(e.Key)).ToArray();
-        var key=$"{layout}:{configuredWidth:R}:{UiText.Current.Code}:{System.Globalization.CultureInfo.CurrentCulture.Name}:"+string.Join("|",selected.Select(e=>$"{e.Key}:{(e.Item==0?values.Energy?.ToString():values.Balances.TryGetValue(e.Item,out var balance)?balance.ToString():"missing")}"));
+        var key=$"{cached.Energy}:{string.Join(",",cached.Currencies.Order())}:{layout}:{configuredWidth:R}:{UiText.Current.Code}:{System.Globalization.CultureInfo.CurrentCulture.Name}:"+string.Join("|",selected.Select(e=>$"{e.Key}:{(e.Item==0?values.Energy?.ToString():values.Balances.TryGetValue(e.Item,out var balance)?balance.ToString():"missing")}"));
         if(_renderKey==key)return;
         _renderKey=key;
         MinWidth=layout=="Strip"?160:220;
@@ -49,7 +50,8 @@ internal sealed class ResourcesWindow:Window,IDisplayAppearance
             var missing=entry.Item==0?values.Energy is null:!values.Balances.ContainsKey(entry.Item);
             var text=entry.Item==0?(values.Energy is {} energy?$"{energy.Available:N0} (+{energy.Supplementary:N0})":"–"):
                 values.Balances.TryGetValue(entry.Item,out var count)?$"{count:N0}":"–";
-            var value=new TextBlock{Text=missing?"⚠ Relog!":text,FontWeight=FontWeights.SemiBold,Foreground=ThemeColors.Brush(missing?"#FFB454":"#EDF2F7"),Margin=new Thickness(8,0,0,0)};DockPanel.SetDock(value,Dock.Right);row.Children.Add(value);
+            var fromCache=entry.Item==0?cached.Energy:cached.Currencies.Contains(entry.Item);
+            var value=new TextBlock{Text=missing?"⚠ Relog!":(fromCache?"≈ ":"")+text,FontWeight=FontWeights.SemiBold,Foreground=ThemeColors.Brush(missing?"#FFB454":"#EDF2F7"),Margin=new Thickness(8,0,0,0)};DockPanel.SetDock(value,Dock.Right);row.Children.Add(value);
             var icon=new Image{Source=ResourceIcons.For(entry.Key),Width=18,Height=18,Margin=new Thickness(0,0,5,0),VerticalAlignment=VerticalAlignment.Center,ToolTip=entry.Name};DockPanel.SetDock(icon,Dock.Left);row.Children.Add(icon);
             if(layout=="Strip")
             {
@@ -67,7 +69,7 @@ internal sealed class ResourcesWindow:Window,IDisplayAppearance
                 value.Margin=new Thickness(0,2,0,0);details.Children.Add(new Viewbox{Child=value,Height=16,Stretch=Stretch.Uniform,StretchDirection=StretchDirection.DownOnly,HorizontalAlignment=HorizontalAlignment.Left});row.Children.Add(details);
             }
             value.VerticalAlignment=VerticalAlignment.Center;
-            _rows.Children.Add(new Border{Width=layout=="List"?configuredWidth-4:layout=="Grid"?(configuredWidth-8)/2:double.NaN,Child=row,Background=ThemeColors.Brush("#D020242A"),CornerRadius=new CornerRadius(4),Margin=new Thickness(layout=="List"?0:1,1,layout=="List"?0:1,1),ToolTip=entry.Name+"\n"+(missing?ControlPanelSettingsPanel.L("No data received. Return to character selection and log in again.","Noch keine Daten empfangen. Kurz in die Charakterauswahl wechseln und wieder einloggen."):entry.Item!=0?ControlPanelSettingsPanel.L("Confirmed inventory change messages are applied immediately.","Bestätigte Inventar-Änderungsmeldungen werden sofort übernommen."):ControlPanelSettingsPanel.L("Odyle: available (+supplementary). Updated from received server data.","Odyle: verfügbar (+Zusatzbestand). Aktualisiert durch empfangene Spieldaten."))});
+            _rows.Children.Add(new Border{Width=layout=="List"?configuredWidth-4:layout=="Grid"?(configuredWidth-8)/2:double.NaN,Child=row,Background=ThemeColors.Brush("#D020242A"),CornerRadius=new CornerRadius(4),Margin=new Thickness(layout=="List"?0:1,1,layout=="List"?0:1,1),ToolTip=entry.Name+"\n"+(fromCache?ControlPanelSettingsPanel.L("≈ Last known value for this character; not yet confirmed again. Fresh server messages replace it.","≈ Letzter bekannter Stand dieses Charakters; noch nicht erneut bestätigt. Neue Servermeldungen ersetzen ihn."):missing?ControlPanelSettingsPanel.L("No data received. Return to character selection and log in again.","Noch keine Daten empfangen. Kurz in die Charakterauswahl wechseln und wieder einloggen."):entry.Item!=0?ControlPanelSettingsPanel.L("Confirmed inventory change messages are applied immediately.","Bestätigte Inventar-Änderungsmeldungen werden sofort übernommen."):ControlPanelSettingsPanel.L("Odyle: available (+supplementary). Updated from received server data.","Odyle: verfügbar (+Zusatzbestand). Aktualisiert durch empfangene Spieldaten."))});
         }
         if(_rows.Children.Count==0)_rows.Children.Add(new TextBlock{Text=ControlPanelSettingsPanel.L("Select resources in Settings.","Ressourcen in den Einstellungen auswählen."),Margin=new Thickness(6),Foreground=ThemeColors.Brush("#A9B8C7")});
     }

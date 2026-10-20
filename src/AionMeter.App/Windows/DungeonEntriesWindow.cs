@@ -35,8 +35,9 @@ internal sealed class DungeonEntriesWindow:Window,IDisplayAppearance
         var layout=_meter.Settings.DungeonEntriesLayout is "Strip" or "Grid"?_meter.Settings.DungeonEntriesLayout:"List";
         var width=double.IsFinite(_meter.Settings.DungeonEntriesWidth)?Math.Clamp(_meter.Settings.DungeonEntriesWidth,220,600):300;
         var values=_meter.Resources.ReadEntries();
+        var cached=_meter.Resources.CacheMarkers().Entries;
         var selected=Entries.Where(e=>(_meter.Settings.VisibleDungeonEntries??[]).Contains(e.Key)).ToArray();
-        var key=$"{layout}:{width:R}:{UiText.Current.Code}:{System.Globalization.CultureInfo.CurrentCulture.Name}:"+string.Join("|",selected.Select(e=>$"{e.Key}:{(values.TryGetValue(e.Id,out var value)?value.ToString():"missing")}"));
+        var key=$"{string.Join(",",cached.Order())}:{layout}:{width:R}:{UiText.Current.Code}:{System.Globalization.CultureInfo.CurrentCulture.Name}:"+string.Join("|",selected.Select(e=>$"{e.Key}:{(values.TryGetValue(e.Id,out var value)?value.ToString():"missing")}"));
         if(_renderKey==key)return;
         _renderKey=key;
         MinWidth=layout=="Strip"?160:220;SizeToContent=layout=="Strip"?SizeToContent.WidthAndHeight:SizeToContent.Height;
@@ -46,6 +47,8 @@ internal sealed class DungeonEntriesWindow:Window,IDisplayAppearance
             var row=new DockPanel{Margin=new Thickness(7,5,7,5)};
             var known=values.TryGetValue(entry.Id,out var value);
             var text=known?$"{value!.Available:N0} (+{value.Supplementary:N0})/{(value.Capacity is {} cap?cap.ToString():"?")}":"⚠ Relog!";
+            var fromCache=cached.Contains(entry.Id);
+            if(known && fromCache)text="≈ "+text;
             var count=new TextBlock{VerticalAlignment=VerticalAlignment.Center,Text=text,FontWeight=FontWeights.SemiBold,Foreground=ThemeColors.Brush(known?"#EDF2F7":"#FFB454")};
             DockPanel.SetDock(count,Dock.Right);row.Children.Add(count);
             var label=new TextBlock{Text=entry.Name,VerticalAlignment=VerticalAlignment.Center,TextTrimming=TextTrimming.CharacterEllipsis,Foreground=ThemeColors.Brush("#C49AF5"),Margin=new Thickness(0,0,8,0)};
@@ -65,7 +68,7 @@ internal sealed class DungeonEntriesWindow:Window,IDisplayAppearance
                 count.Margin=new Thickness(0,2,0,0);details.Children.Add(label);
                 details.Children.Add(new Viewbox{Child=count,Height=16,Stretch=Stretch.Uniform,StretchDirection=StretchDirection.DownOnly,HorizontalAlignment=HorizontalAlignment.Left});row.Children.Add(details);
             }
-            _rows.Children.Add(new Border{Width=layout=="List"?width-4:layout=="Grid"?(width-8)/2:double.NaN,Child=row,Background=ThemeColors.Brush("#D020242A"),CornerRadius=new CornerRadius(4),Margin=new Thickness(layout=="List"?0:1,1,layout=="List"?0:1,1),ToolTip=entry.Name+"\n"+ControlPanelSettingsPanel.L("Available (+extra) / capacity. Updates from received game data. If missing, return to character selection and log in again.","Verfügbar (+Zusatzbestand) / Maximum. Aktualisiert durch empfangene Spieldaten. Bei fehlenden Daten kurz in die Charakterauswahl wechseln und neu einloggen.")});
+            _rows.Children.Add(new Border{Width=layout=="List"?width-4:layout=="Grid"?(width-8)/2:double.NaN,Child=row,Background=ThemeColors.Brush("#D020242A"),CornerRadius=new CornerRadius(4),Margin=new Thickness(layout=="List"?0:1,1,layout=="List"?0:1,1),ToolTip=entry.Name+"\n"+(fromCache?ControlPanelSettingsPanel.L("≈ Last known count. Confirmed consumption messages replace it without double subtraction.","≈ Letzter bekannter Stand. Bestätigte Verbrauchsmeldungen ersetzen ihn ohne doppelten Abzug."):ControlPanelSettingsPanel.L("Available (+extra) / capacity. Updates from received game data. If missing, return to character selection and log in again.","Verfügbar (+Zusatzbestand) / Maximum. Aktualisiert durch empfangene Spieldaten. Bei fehlenden Daten kurz in die Charakterauswahl wechseln und neu einloggen."))});
         }
         if(_rows.Children.Count==0)_rows.Children.Add(new TextBlock{Text=ControlPanelSettingsPanel.L("Select dungeons in Settings.","Dungeons in den Einstellungen auswählen."),Margin=new Thickness(6)});
     }

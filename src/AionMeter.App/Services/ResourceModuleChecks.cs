@@ -126,6 +126,30 @@ internal static class ResourceModuleChecks
             try{JsonSettingsFile.Write(dungeonSettingsPath,meter.Settings);var restored=JsonSettingsFile.Read<AppSettings>(dungeonSettingsPath)!;Check(restored.DungeonEntriesLayout=="Grid" && restored.DungeonEntriesWidth==360,"Dungeon layout and width survive serialization");}
             finally{foreach(var dungeonFile in new[]{dungeonSettingsPath,dungeonSettingsPath+".bak"})if(File.Exists(dungeonFile))File.Delete(dungeonFile);}
 
+            var cacheDirectory=output+".cache";
+            var cacheStore=new Core.Game.ResourceBalances();
+            var cacheOwn=new Core.Events.SelfIdentifiedEvent(1,1,"Cache test",2305,Core.Events.GameClass.Cleric);
+            using(var cache=new ResourceProgressCache(cacheStore,cacheDirectory))
+            {
+                cacheStore.Observe(cacheOwn);cache.Observe(cacheOwn);
+                var balance=new Core.Game.ResourceBalanceSnapshot(2,new Dictionary<int,ulong>{{930100024,1500}});cacheStore.Observe(balance);cache.Observe(balance);
+                var entries=new Core.Game.DungeonEntriesEvent(3,new Dictionary<uint,Core.Game.DungeonEntryValue>{{1,new(16,3,21)}});cacheStore.Observe(entries);cache.Observe(entries);
+            }
+            var restoredCache=new Core.Game.ResourceBalances();
+            using(var cache=new ResourceProgressCache(restoredCache,cacheDirectory))
+            {
+                Check(restoredCache.Read().Balances.Count==0,"Disk cache never restores before fresh own identity");
+                restoredCache.Observe(cacheOwn);cache.Observe(cacheOwn);
+                Check(restoredCache.Read().Balances[930100024]==1500 && restoredCache.ReadEntries()[1].Available==16 && restoredCache.CacheMarkers().Currencies.Contains(930100024),"Disk cache restores matching character resources and dungeon counts as approximate");
+                var spend=new Core.Game.DungeonEntriesEvent(4,new Dictionary<uint,Core.Game.DungeonEntryValue>{{1,new(15,3,null)}});restoredCache.Observe(spend);cache.Observe(spend);
+                Check(restoredCache.ReadEntries()[1].Available==15 && !restoredCache.CacheMarkers().Entries.Contains(1),"Confirmed consumption replaces restored count without duplicate subtraction");
+                var other=cacheOwn with {Name="Other character"};restoredCache.Observe(other);cache.Observe(other);
+                Check(restoredCache.Read().Balances.Count==0 && restoredCache.ReadEntries().Count==0,"Character switch cannot display another character's cached data");
+            }
+            meter.Settings.VisibleResources=["passcoin"];meter.Resources.Observe(new Core.Game.ResourceBalanceSnapshot(1,new Dictionary<int,ulong>{{930100024,1500}}));meter.Resources.MarkCached();window.Refresh();window.UpdateLayout();
+            Check(Find<TextBlock>(window).Any(t=>t.Text.StartsWith("≈ ")),"Approximate resource values have an explicit visible marker");
+            meter.Resources.Observe(new Core.Game.ResourceBalanceSnapshot(2,new Dictionary<int,ulong>{{930100024,1500}}));window.Refresh();window.UpdateLayout();
+            Check(!Find<TextBlock>(window).Any(t=>t.Text.StartsWith("≈ ")),"Equal live confirmation removes the approximate marker and redraws the resource row");
             File.WriteAllText(output,JsonSerializer.Serialize(passed));
         }
         finally{window.Close();}
