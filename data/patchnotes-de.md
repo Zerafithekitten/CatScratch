@@ -1,3 +1,28 @@
+## CatScratch v4.0.1
+
+Ein kleiner Hotfix vor dem nächsten Abenteuer. Eine Messung zurückzusetzen sollte einen frischen Kampf ermöglichen – und CatScratch nicht vergessen lassen, wer überhaupt in der Gruppe ist. Genau das konnte bisher passieren.
+
+<!-- contents -->
+### Auf einen Blick
+- [Schadensanzeige nach dem Zurücksetzen](#meter-reset)
+- [Was behoben ist und was noch untersucht wird](#untersuchung)
+<!-- /contents -->
+
+<a id="meter-reset"></a>
+### 🛠️ Schadensanzeige nach dem Zurücksetzen
+
+- Ein manueller Messungs-Neustart behält jetzt die bereits bestätigte Charakter- und Gruppenzuordnung der laufenden Spielsitzung. Neue Schadensdaten können wieder gezählt werden, ohne auf erneut gesendete Namen und Gruppenlisten zu warten.
+- Der Kampf wird weiterhin zurückgesetzt und die Erfassung neu verbunden. Vorhandene Ressourcenstände werden bis zur Bestätigung als ungefähr markiert; ihre laufende Speicherung bleibt verfügbar.
+- Echte Logins, Charakterwechsel und das Beenden des Spiels verwerfen weiterhin die alte Zuordnung. Auch beim Schnellwechsel auf derselben Karte hebt eine neue Login-Tabelle die bisherige Gruppenbestätigung auf.
+- Wird die Erfassung durch geänderte Erfassungseinstellungen neu gestartet, bleibt eine frische Bestätigung erforderlich.
+
+<a id="untersuchung"></a>
+### 🔎 Was noch untersucht wird
+
+Behoben ist der bestätigte Fehler nach dem Zurücksetzen. Die separate Meldung einer leeren Bossanzeige schon davor bleibt offen: Der gelieferte Mitschnitt beginnt erst nach dem Reset und kann die frühere Ursache deshalb nicht belegen. Falls es erneut passiert, bitte sofort vor dem Zurücksetzen den aktuellen Mitschnitt speichern. Er enthält die letzte Minute.
+
+Danke fürs Melden und fürs Helfen, die beiden Probleme auseinanderzuhalten. Eine Stelle weniger, an der die Katze den Faden verliert. 🐾
+
 ## CatScratch v4.0.0
 
 ### 🐾 Mehr Überblick, weniger Hin und Her

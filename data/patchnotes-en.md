@@ -1,3 +1,30 @@
+## CatScratch v4.0.1
+
+[Deutsche Patchnotes](https://github.com/Zerafithekitten/CatScratch/blob/v4.0.1/data/patchnotes-de.md)
+
+A small hotfix before the next adventure. Resetting the measurement should give you a fresh fight, not make CatScratch forget who's in your party. That was exactly what could happen.
+
+<!-- contents -->
+### At a glance
+- [Damage after resetting the meter](#meter-reset)
+- [What this fixes — and what is still being investigated](#investigation)
+<!-- /contents -->
+
+<a id="meter-reset"></a>
+### 🛠️ Damage after resetting the meter
+
+- A manual measurement restart now retains the already confirmed character and party for the current game session. New damage can be counted without waiting for the game to resend names and the party roster.
+- The fight still resets and capture reconnects as before. Existing resource balances become approximate until confirmed; their ongoing storage remains available.
+- Real logins, character changes and game exits still invalidate old session information. A fresh login table also clears old party proof during a quick switch on the same map.
+- Capture restarts caused by changing capture settings still require fresh confirmation.
+
+<a id="investigation"></a>
+### 🔎 What is still being investigated
+
+This fixes the confirmed restart-related problem. A separate report of a blank boss display before resetting is still open: the supplied recording starts after the reset, so it cannot establish that earlier cause. If it happens again, please save the recent recording immediately, before resetting; it contains the last minute.
+
+Thanks for reporting it and helping me separate the two issues. One less place for the cat to lose the thread. 🐾
+
 ## CatScratch v4.0.0
 
 [Deutsche Patchnotes](https://github.com/Zerafithekitten/CatScratch/blob/v4.0.0/data/patchnotes-de.md)

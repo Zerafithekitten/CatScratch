@@ -35,6 +35,7 @@ internal static class InteractionChecks
         }
         try
         {
+            MeterRestartChecks.Run(Check);
             static bool HasPurplePaw(System.Drawing.Bitmap bitmap)
             {
                 for(var y=0;y<bitmap.Height;y++)for(var x=0;x<bitmap.Width;x++)

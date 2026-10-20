@@ -71,7 +71,7 @@ internal static class Beta4Checks
                 UiText.Use(code);var notesWindow=new PatchNotesWindow(notesMeter.Updates);
                 try
                 {
-                    notesWindow.Show();notesWindow.UpdateLayout();
+                    notesWindow.Show();notesWindow.SelectRelease("v4.0.0");notesWindow.UpdateLayout();
                     var text=string.Join(" ",FindNotesText(notesWindow));
                     Check(text.Contains(code=="de"?"Mehr Überblick, weniger Hin und Her":"A little more cat, a lot more overview"),"Bundled 4.0.0 notes use the correct language for "+code);
                     Check(notesWindow.SelectedRelease=="v4.0.0" && notesWindow.ContentsCount==11,"4.0.0 provides eleven working contents destinations for "+code);

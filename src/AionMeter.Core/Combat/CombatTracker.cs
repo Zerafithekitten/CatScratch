@@ -228,6 +228,10 @@ public sealed partial class CombatTracker
                 case BattleStateEvent b:
                     OnBattleState(b);
                     break;
+                case ResourceSnapshotStartedEvent:
+                    // A fresh login may precede a same-map switch: old actors are no longer proof.
+                    _freshSelf=false;_pendingPartyRoster=null;ClearParty();
+                    break;
                 case ZoneChangedEvent z:
                     _effectiveHealing.Clear();
                     // A reload of the map we are on keeps every id: an in-map teleport, or the revive after dying on a

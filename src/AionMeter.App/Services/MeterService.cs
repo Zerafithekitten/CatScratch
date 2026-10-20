@@ -233,12 +233,12 @@ public sealed class MeterService : IDisposable
         }
     }
 
-    public void RestartCapture()
+    public void RestartCapture(bool preserveSession=false)
     {
-        lock (_restartGate) RestartCaptureCore();
+        lock (_restartGate) RestartCaptureCore(preserveSession);
     }
 
-    private void RestartCaptureCore()
+    private void RestartCaptureCore(bool preserveSession)
     {
         IEventSource? previous;
         lock (_captureGate)
@@ -252,7 +252,10 @@ public sealed class MeterService : IDisposable
         {
             previous?.Dispose();
             if (_exiting) return;
-            LiveIdentity.Suspend(); HiddenCubes.Reset(); Resources.MarkCached(); _resourceProgress?.Suspend(); _realPets.InvalidateLocation(); PartyPreview.Reset(); LastPlayedWith.Reset(); _realTracker.InvalidateParty();
+            // Measurement reset retains the current session's already confirmed identity and party.
+            // A settings-driven capture restart still requires fresh confirmation.
+            if(!preserveSession){LiveIdentity.Suspend();PartyPreview.Reset();LastPlayedWith.Reset();_realTracker.InvalidateParty();_resourceProgress?.Suspend();}
+            HiddenCubes.Reset();Resources.MarkCached();_realPets.InvalidateLocation();
             StartCapture();
         }
         finally
@@ -273,7 +276,7 @@ public sealed class MeterService : IDisposable
         Tracker.Reset();
         if (_replaying) return;
         _restarting = true;
-        Task.Run(RestartCapture); // closing the adapter can take a moment: not on the UI thread
+        Task.Run(()=>RestartCapture(preserveSession:true)); // closing the adapter can take a moment: not on the UI thread
     }
 
     private bool _animateTest;

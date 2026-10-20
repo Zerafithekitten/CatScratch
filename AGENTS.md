@@ -73,3 +73,5 @@ The owner replaced the separate Update popup on 2026-10-19: Update! must replace
 The Checklist shortcut is configurable in Settings > Hotkeys, default Shift+F3. Preserve user bindings and exclude them from layout profiles. The hidden checklist title must reserve its layout space in click-through mode so task coordinates and checkbox hit targets never shift.
 
 On 2026-10-20 the owner made the personal 4.0.0 patch-note style permanent: write as the solo creator with a cat fursona, warmly and naturally, with a linked overview and clear feature sections. English is primary; German app language uses German notes and all other languages use English. Keep Beta notes proportionate and Stable notes detailed. Stable upgrades open their own notes once after restart; ordinary restarts and Beta upgrades do not.
+
+Future patch notes should include useful example images for visible features and short GIF demonstrations when supported and helpful. Use synthetic/sample data; do not add decorative screenshots to nonvisual fixes.

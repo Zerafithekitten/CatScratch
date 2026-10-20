@@ -113,4 +113,13 @@ public class PartyOnlyTests
         t.InvalidateParty(); Assert.False(t.PartyConfirmed);
         Hit(t,1,301); Hit(t,2,301); Assert.Null(t.Snapshot(null,302));
     }
+
+    [Fact] public void MeasurementResetKeepsConfirmedPartyButANewLoginInvalidatesIt()
+    {
+        var tracker=Setup();Hit(tracker,2);tracker.Reset();
+        Assert.True(tracker.PartyConfirmed);Hit(tracker,2,300);
+        Assert.Equal(100,tracker.Snapshot(null,301)!.TotalDamage);
+        tracker.Process(new ResourceSnapshotStartedEvent(400));
+        Assert.False(tracker.PartyConfirmed);Hit(tracker,2,401);Assert.Null(tracker.Snapshot(null,402));
+    }
 }
