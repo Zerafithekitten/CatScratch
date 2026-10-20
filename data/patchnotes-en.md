@@ -1,3 +1,21 @@
+## CatScratch v4.0.3
+
+[Deutsche Patchnotes](https://github.com/Zerafithekitten/CatScratch/blob/v4.0.3/data/patchnotes-de.md)
+
+A quick correction from me: the Patreon button in the last update pointed to the wrong creator address. This little cat took a wrong turn. 🐾
+
+<!-- contents -->
+### At a glance
+- [The correct Patreon page](#patreon-link)
+<!-- /contents -->
+
+<a id="patreon-link"></a>
+### 💜 The correct Patreon page
+
+**Settings → Patreon → Visit Patreon** now opens [Zerafithekitten on Patreon](https://www.patreon.com/cw/Zerafithekitten). The README, package documentation and bundled English/German patch notes use that same corrected address.
+
+This is a link-only hotfix. The supporter package import, designs, sounds and paw work as in 4.0.2; your settings and installed packs stay as they are. Thanks for catching it so quickly!
+
 ## CatScratch v4.0.2
 
 [Deutsche Patchnotes](https://github.com/Zerafithekitten/CatScratch/blob/v4.0.2/data/patchnotes-de.md)
@@ -19,7 +37,7 @@ This update also gives the Windows audio connection a little more patience after
 <a id="patreon"></a>
 ### 💜 A new home for Patreon
 
-Settings now has a **Patreon** tab, grouped between Updates and Feedback. It links to [my Patreon page](https://www.patreon.com/cw/deuzear_yuma) and lets you import a downloaded CatScratch supporter package directly.
+Settings now has a **Patreon** tab, grouped between Updates and Feedback. It links to [my Patreon page](https://www.patreon.com/cw/Zerafithekitten) and lets you import a downloaded CatScratch supporter package directly.
 
 I'll also use Patreon for development insights and occasional polls. Those live on Patreon; you don't need another account inside CatScratch.
 

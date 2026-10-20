@@ -1,3 +1,21 @@
+## CatScratch v4.0.3
+
+[English patch notes](https://github.com/Zerafithekitten/CatScratch/blob/v4.0.3/data/patchnotes-en.md)
+
+Eine schnelle Korrektur von mir: Der Patreon-Button aus dem letzten Update führte zur falschen Creator-Adresse. Da ist die Katze einmal falsch abgebogen. 🐾
+
+<!-- contents -->
+### Auf einen Blick
+- [Die richtige Patreon-Seite](#patreon-link)
+<!-- /contents -->
+
+<a id="patreon-link"></a>
+### 💜 Die richtige Patreon-Seite
+
+**Einstellungen → Patreon → Patreon öffnen** führt jetzt zu [Zerafithekitten auf Patreon](https://www.patreon.com/cw/Zerafithekitten). README, Paket-Dokumentation und die mitgelieferten englischen/deutschen Patchnotes verwenden ebenfalls die korrigierte Adresse.
+
+Dieser Hotfix korrigiert nur den Link. Paketimport, Designs, Sounds und Pfote funktionieren wie in 4.0.2; eure Einstellungen und installierten Pakete bleiben erhalten. Danke für den schnellen Hinweis!
+
 ## CatScratch v4.0.2
 
 [English patch notes](https://github.com/Zerafithekitten/CatScratch/blob/v4.0.2/data/patchnotes-en.md)
@@ -19,7 +37,7 @@ Außerdem bekommt die Windows-Audioanbindung etwas mehr Geduld, nachdem eine eig
 <a id="patreon"></a>
 ### 💜 Ein eigener Platz für Patreon
 
-In den Einstellungen gibt es jetzt den Reiter **Patreon**, zwischen Updates und Feedback. Dort findet ihr den Link zu [meiner Patreon-Seite](https://www.patreon.com/cw/deuzear_yuma) und könnt heruntergeladene CatScratch-Supporter-Pakete importieren.
+In den Einstellungen gibt es jetzt den Reiter **Patreon**, zwischen Updates und Feedback. Dort findet ihr den Link zu [meiner Patreon-Seite](https://www.patreon.com/cw/Zerafithekitten) und könnt heruntergeladene CatScratch-Supporter-Pakete importieren.
 
 Entwicklungs-Einblicke und gelegentliche Abstimmungen finden auf Patreon statt. Ein zusätzliches Konto innerhalb von CatScratch braucht ihr dafür nicht.
 

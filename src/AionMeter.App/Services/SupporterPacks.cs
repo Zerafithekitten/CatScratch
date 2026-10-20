@@ -10,7 +10,7 @@ internal sealed record InstalledSupporterPack(VerifiedSupporterPack Pack,string 
 internal sealed record SupporterSoundOption(string Id,string Label);
 internal static class SupporterPacks
 {
-    internal const string PatreonUrl="https://www.patreon.com/cw/deuzear_yuma";
+    internal const string PatreonUrl="https://www.patreon.com/cw/Zerafithekitten";
     internal const string PublicKey="""
 -----BEGIN PUBLIC KEY-----
 MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE2nNt8U7kJyHzz3bHikZN7vnyCtM4

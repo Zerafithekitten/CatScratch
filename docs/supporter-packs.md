@@ -1,6 +1,6 @@
 # Supporter packages (Stable 4.0.2+)
 
-Settings > Patreon links to https://www.patreon.com/cw/deuzear_yuma and imports local `.cspack` data archives. Public app features, custom colors and existing custom audio remain available. Imported assets and opting in to the gold paw are independent from overlay profiles.
+Settings > Patreon links to https://www.patreon.com/cw/Zerafithekitten and imports local `.cspack` data archives. Public app features, custom colors and existing custom audio remain available. Imported assets and opting in to the gold paw are independent from overlay profiles.
 
 Import is an immediate content-management action. Choosing a theme, assigning sounds and showing the paw use Settings drafts and apply with Save. X discards later unsaved preferences but does not undo imported files.
 

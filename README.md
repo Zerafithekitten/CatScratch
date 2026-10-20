@@ -6,13 +6,13 @@ A separate, always-on-top Windows DPS meter for **AION 2**, by Zerafithekitten. 
 
 | Channel | Current version | What it includes |
 | --- | --- | --- |
-| **Stable** | **[v4.0.2](https://github.com/Zerafithekitten/CatScratch/releases/tag/v4.0.2)** | Optional Patreon supporter packs, designs, sounds and a supporter paw; more resilient custom audio, plus all previous Stable features. |
+| **Stable** | **[v4.0.3](https://github.com/Zerafithekitten/CatScratch/releases/tag/v4.0.3)** | Optional Patreon supporter packs, designs, sounds and a supporter paw; more resilient custom audio, plus all previous Stable features. |
 | **Beta** | **[v3.0.12-beta.22](https://github.com/Zerafithekitten/CatScratch/releases/tag/v3.0.12-beta.22)** | Previous test build; its features are included in Stable 4.0.0, with final fixes. Beta subscribers move to Stable when 4.0.0 starts. |
 | **Light** | [v1.0.0](https://github.com/Zerafithekitten/CatScratch/releases/tag/light-v1.0.0) | Separate **DPS meter only** edition with essential settings. Independent ZIP download and settings; no additional CatScratch modules or automatic updater. |
 
 **CatScratch light** is installed separately from the full version. [Download its ZIP](https://github.com/Zerafithekitten/CatScratch/releases/download/light-v1.0.0/CatScratch-light-win-x64.zip) and extract it into its own folder. Light is maintained and updated **only on the owner's explicit request**; normal development continues on full CatScratch.
 
-English is the default. German, Russian and French are also available. Screenshots use synthetic sample data; names and numbers are examples. All features described below are included in **Stable v4.0.2** unless a limitation is stated.
+English is the default. German, Russian and French are also available. Screenshots use synthetic sample data; names and numbers are examples. All features described below are included in **Stable v4.0.3** unless a limitation is stated.
 
 ## Contents
 
@@ -161,7 +161,7 @@ It closes when fresh positive own HP or a map reload confirms the character is a
 
 ## Patreon and supporter packages
 
-Settings > Patreon opens [the creator page](https://www.patreon.com/cw/deuzear_yuma) and imports downloaded `.cspack` files. The optional First Paws supporter pack offers three designs, three original sounds and a golden paw in the existing control panel. Choose extras and press Save to apply them. Imported content remains installed if you close Settings without saving a draft.
+Settings > Patreon opens [the creator page](https://www.patreon.com/cw/Zerafithekitten) and imports downloaded `.cspack` files. The optional First Paws supporter pack offers three designs, three original sounds and a golden paw in the existing control panel. Choose extras and press Save to apply them. Imported content remains installed if you close Settings without saving a draft.
 
 ![Patreon settings with the optional First Paws pack](docs/screenshots/patreon.png)
 
@@ -305,7 +305,7 @@ The green **Update!** button appears **only after the update is fully prepared**
 
 After a successful new startup, the old backup, staged payload and downloaded ZIP are removed. Failed updates retain recovery files. Settings, saved fights, personal bests, recent players and captures are preserved. Update staging stays under `userdata/temp/updates`; a writable program folder is required.
 
-When a Beta is promoted and its Stable build starts, Beta subscribers automatically return to the Stable update channel. A later deliberate switch back to Beta is respected until the next Stable transition. The installed version then shows the Stable number, currently **4.0.2** without a beta suffix.
+When a Beta is promoted and its Stable build starts, Beta subscribers automatically return to the Stable update channel. A later deliberate switch back to Beta is respected until the next Stable transition. The installed version then shows the Stable number, currently **4.0.3** without a beta suffix.
 
 Use **Check now** in Settings or **Check for updates** in the tray menu for a manual check. Automatic checking and preparation can be disabled in Settings. CatScratch also reduces data-loading allocations and moves optional startup work behind the first meter display.
 
@@ -489,3 +489,7 @@ Manual measurement resets preserve the current session’s confirmed identity an
 ### Stable 4.0.2: a little extra cat
 
 Patreon settings support local signed packages with optional designs, sounds and the golden supporter paw. Custom audio now waits for delayed Windows duration metadata and retries one failed decoder; playback also retries one decoder failure. The reported MP3 passed repeated validation and completed playback locally, but the original intermittent failure could not be reproduced.
+
+### Stable 4.0.3: Patreon link hotfix
+
+The Patreon button now opens the correct Zerafithekitten creator page. The README, package documentation and bundled English/German patch notes use the same corrected address.
