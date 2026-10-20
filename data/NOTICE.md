@@ -45,3 +45,5 @@ Pet farming location facts in pets/locations.json were retrieved from https://ai
 | Centuryroot Token | `Icon_Item_Currency_Drop_Junk_A_r_076.png` |
 | Daeva Pass Shop Coin | `icon_battlepass.png` |
 | Phantasmal Fragment | `Icon_Usable_Potion_Skillpoint_002.png` |
+
+Oath Coins: original NCSOFT `icon_season` game icon, retrieved from the [Oath Coin item entry](https://aion2maps.com/items/oath-coin/) / `https://aion2maps.com/map/assets/icons/items/icon_season.webp` on 2026-10-20. Converted losslessly from WebP to PNG for WPF display; no visual edits.

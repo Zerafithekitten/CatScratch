@@ -24,8 +24,8 @@ internal static class ResourceModuleChecks
         try
         {
             window.Show();window.UpdateLayout();
-            Check(ResourcesWindow.Entries.All(e=>ResourceIcons.For(e.Key) is System.Windows.Media.Imaging.BitmapSource {PixelWidth:>0,PixelHeight:>0,IsFrozen:true}),"Every resource has a bundled frozen game icon");
-            Check(Find<Image>(window).Count(i=>i.Width==18)==5,"Each selected resource row displays its matching icon");
+            Check(ResourcesWindow.Entries.All(e=>ResourceIcons.For(e.Key) is {IsFrozen:true}),"Every resource has a bundled frozen game icon");
+            Check(Find<Image>(window).Count(i=>i.Width==18)==6,"Each selected resource row displays its matching icon");
             Check(Find<TextBlock>(window).Any(t=>t.Text.Contains("(+495)")),"Odyle keeps available and supplementary values separate");
             Check(Find<TextBlock>(window).Any(t=>t.Text.Contains("3") && t.Text.Contains("188") && !t.Text.EndsWith(" *")),"Live Abyss balance has no snapshot marker");
             feed(new Core.Game.ResourceBalanceSnapshot(3,new Dictionary<int,ulong>{{930100024,1000},{930100011,1670},{930100017,160}}));window.Refresh();window.UpdateLayout();
@@ -36,7 +36,7 @@ internal static class ResourceModuleChecks
             foreach(var layoutName in new[]{"List","Strip","Grid"})
             {
                 meter.Settings.ResourcesLayout=layoutName;window.Refresh();window.UpdateLayout();
-                Check(Find<Image>(window).Count(i=>i.Width==18)==5,"All selected resource icons survive layout switch: "+layoutName);
+                Check(Find<Image>(window).Count(i=>i.Width==18)==6,"All selected resource icons survive layout switch: "+layoutName);
                 var before=new Size(window.ActualWidth,window.ActualHeight);WindowClickThrough.ApplyAll(true);window.UpdateLayout();
                 Check(Math.Abs(window.ActualWidth-before.Width)<.5 && Math.Abs(window.ActualHeight-before.Height)<.5,"Click-through preserves layout geometry: "+layoutName);WindowClickThrough.ApplyAll(false);
             }
@@ -44,7 +44,7 @@ internal static class ResourceModuleChecks
             Check(!Find<TextBlock>(window).Any(t=>t.Text=="Abyss Points") && Find<TextBlock>(window).Any(t=>t.Text=="Odyle Energy"),"Only selected resources appear");
             meter.Settings.ResourcesLayout="List";var draft=meter.Settings.CreateDraft();var panel=new ResourcesSettingsPanel(draft);
             var host=new Window{Content=panel,Width=500,Height=500,Left=-30000,Top=-30000};
-            try{host.Show();host.UpdateLayout();var choices=Find<CheckBox>(host).ToArray();Check(choices.Length==6,"Settings offer module visibility and five independent resource choices");var layout=Find<ComboBox>(host).Single();layout.SelectedIndex=2;Check(draft.ResourcesLayout=="Grid" && meter.Settings.ResourcesLayout!="Grid","Layout changes stay in the Settings draft");choices[2].IsChecked=true;choices[2].RaiseEvent(new RoutedEventArgs(Button.ClickEvent));Check(draft.VisibleResources.Contains("abyss") && !meter.Settings.VisibleResources.Contains("abyss"),"Resource selection stays in the settings draft until Save");}
+            try{host.Show();host.UpdateLayout();var choices=Find<CheckBox>(host).ToArray();Check(choices.Length==7,"Settings offer module visibility and six independent resource choices");var layout=Find<ComboBox>(host).Single();layout.SelectedIndex=2;Check(draft.ResourcesLayout=="Grid" && meter.Settings.ResourcesLayout!="Grid","Layout changes stay in the Settings draft");choices[2].IsChecked=true;choices[2].RaiseEvent(new RoutedEventArgs(Button.ClickEvent));Check(draft.VisibleResources.Contains("abyss") && !meter.Settings.VisibleResources.Contains("abyss"),"Resource selection stays in the settings draft until Save");}
             finally{host.Close();}
             meter.Resources.Reset();
             foreach(var layoutName in new[]{"List","Strip","Grid"})

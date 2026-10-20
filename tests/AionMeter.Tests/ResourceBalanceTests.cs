@@ -96,4 +96,15 @@ public class ResourceBalanceTests
         Assert.Equal(1165ul,state.Read().Balances[930100017]);Assert.Equal(8207ul,state.Read().Balances[930100003]);Assert.Equal(150ul,state.Read().Balances[930100011]);
         body[23]=255;Assert.Null(ResourceInventoryPackets.Update(3,body));
     }
+    [Fact] public void OathCoinsUseAbsoluteLiveBalanceAndPreserveOtherCurrencies()
+    {
+        var body=new byte[80];body[0]=2;body[1]=1;
+        BitConverter.GetBytes(930100019).CopyTo(body,11);BitConverter.GetBytes(3750ul).CopyTo(body,15);body[23]=1;body[24]=9;
+        var state=new ResourceBalances();state.Observe(new ResourceBalanceSnapshot(1,new Dictionary<int,ulong>{{930100019,27750},{930100003,8207}}));
+        var parser=new AionMeter.Core.Protocol.PacketParser(GameData.Empty,state.Observe){TimeMs=2};
+        parser.Handle(0x1B56,body);parser.Handle(0x1B56,body);
+        Assert.Equal(3750ul,state.Read().Balances[930100019]);Assert.Equal(8207ul,state.Read().Balances[930100003]);
+        Assert.Equal(3750ul,ResourceInventoryPackets.Snapshot(3,Inventory((930100019,3750)))!.Values[930100019]);
+        body[23]=255;Assert.Null(ResourceInventoryPackets.Update(4,body));
+    }
 }

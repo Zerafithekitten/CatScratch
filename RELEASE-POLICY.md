@@ -77,3 +77,5 @@ On 2026-10-20 the owner explicitly requested publishing the verified resource-pr
 On 2026-10-20 the owner explicitly authorized the standalone selectable Dungeon entries module and confirmed live currency updates for Beta. Actual module and Settings images were shown before publication. Publish v3.0.12-beta.13 after full checks; preserve Stable and Light.
 
 On 2026-10-20 the owner reviewed the corrected resource marker preview and explicitly approved "update es". Publish v3.0.12-beta.14 after full release checks; preserve Stable and Light.
+
+On 2026-10-20 the owner reviewed Oath Coins with the original icon and approved "upload". Publish v3.0.12-beta.15 after full release verification; preserve Stable and Light.

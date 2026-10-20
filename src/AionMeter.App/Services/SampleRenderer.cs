@@ -338,7 +338,7 @@ public static class SampleRenderer
             case "resources-partial":
                 meter.Settings.ResourcesLayout=o.Window=="resources-strip"?"Strip":o.Window is "resources-grid" or "resources-missing" or "resources-partial"?"Grid":"List";
                 meter.Resources.Observe(new Core.Game.OdyleEnergyEvent(1,15,495));
-                meter.Resources.Observe(new Core.Game.ResourceBalanceSnapshot(1,new Dictionary<int,ulong>{{930100003,3188},{930100011,1670},{930100024,1000},{930100017,160}}));
+                meter.Resources.Observe(new Core.Game.ResourceBalanceSnapshot(1,new Dictionary<int,ulong>{{930100003,3188},{930100011,1670},{930100024,1000},{930100017,160},{930100019,3750}}));
                 if(o.Window=="resources-missing")meter.Resources.Reset();
                 if(o.Window=="resources-partial"){meter.Resources.Reset();meter.Resources.Observe(new Core.Game.OdyleEnergyEvent(1,15,495));}
                 host=new ResourcesWindow(meter);refresh=()=>{};break;
