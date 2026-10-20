@@ -87,3 +87,5 @@ On 2026-10-20 the owner approved the centered Horizontal resource groups and fin
 On 2026-10-20 the owner stopped publication of beta.17; its workflow was cancelled and no release downloads were published. The owner subsequently supplied Pass Shop Coin spending evidence and explicitly requested uploading its live update together with the approved alignment fix. Publish as v3.0.12-beta.18 after checks; preserve the cancelled beta.17 tag, Stable and Light.
 
 On 2026-10-20 the owner explicitly requested all Dungeon entry layout options and Beta publication. Actual Horizontal, Grid and Settings images were shown; publish v3.0.12-beta.19 after full checks, preserving Stable and Light.
+
+On 2026-10-20 the owner explicitly requested uploading the verified multi-byte Odyle/Dungeon snapshot decoder correction as a fix. Publish v3.0.12-beta.20 after full checks and a corrected-value preview; preserve Stable and Light.

@@ -45,4 +45,28 @@ public class OdyleEnergyTests
         parser.Handle(0x0B61,Before);parser.TimeMs=2;parser.Handle(0x0C61,Update);parser.TimeMs=3;parser.Handle(0x0B61,After);
         Assert.Equal(new GameEvent[]{new OdyleEnergyEvent(1,0,485),new OdyleEnergyEvent(2,15,485),new OdyleEnergyEvent(3,15,485)},events);
     }
+    [Fact] public void MultiByteAvailableEnergyDecodesWithoutLosingFollowingProperties()
+    {
+        // Second-character snapshot: available160 (+270); another multi-byte property follows.
+        var body=Convert.FromHexString("020C01879303A0018E020407879303AC02");
+        Assert.Equal(new OdyleEnergyEvent(1,160,270),OdyleEnergyPackets.Snapshot(1,body));
+        var update=Convert.FromHexString("000C01879303A0018E0202");
+        Assert.Equal(new OdyleEnergyEvent(2,160,270),OdyleEnergyPackets.Update(2,update));
+        for(var n=0;n<body.Length;n++)Assert.Null(OdyleEnergyPackets.Snapshot(1,body.AsSpan(0,n)));
+        for(var n=0;n<update.Length;n++)Assert.Null(OdyleEnergyPackets.Update(1,update.AsSpan(0,n)));
+    }
+    [Theory]
+    [InlineData("7F",127u)]
+    [InlineData("8001",128u)]
+    [InlineData("A001",160u)]
+    [InlineData("FF01",255u)]
+    [InlineData("8002",256u)]
+    [InlineData("C806",840u)]
+    [InlineData("FFFFFFFF0F",uint.MaxValue)]
+    public void AvailableEnergySupportsAllUnsignedVarintWidths(string encoded,uint amount)
+    {
+        var entry="0C01879303"+encoded+"8E02";
+        Assert.Equal(new OdyleEnergyEvent(1,amount,270),OdyleEnergyPackets.Snapshot(1,Convert.FromHexString("01"+entry)));
+        Assert.Equal(new OdyleEnergyEvent(2,amount,270),OdyleEnergyPackets.Update(2,Convert.FromHexString("00"+entry+"02")));
+    }
 }

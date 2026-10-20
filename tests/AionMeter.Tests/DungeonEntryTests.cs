@@ -39,4 +39,12 @@ public class DungeonEntryTests
         store.Observe(new SelfIdentifiedEvent(4,2,"Two",2305,GameClass.Cleric));Assert.Empty(store.ReadEntries());
         Assert.Null(DungeonEntryPackets.Update(5,Convert.FromHexString("000C018793030FE50302")));
     }
+    [Fact] public void MultiByteOdyleInSharedSnapshotDoesNotInvalidateDungeonCounts()
+    {
+        var body=Convert.FromHexString("050C01000000100304040000000E0865000000120C01879303A0018E02040687930315");
+        var result=DungeonEntryPackets.Snapshot(1,body)!;
+        Assert.Equal(new DungeonEntryValue(16,3,21),result.Values[1]);
+        Assert.Equal(new DungeonEntryValue(14,0,null),result.Values[4]);
+        Assert.Equal(new DungeonEntryValue(0,18,null),result.Values[101]);
+    }
 }

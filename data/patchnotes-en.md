@@ -1,3 +1,9 @@
+## CatScratch v3.0.12-beta.20
+
+- Fixed available Odyle Energy values of 128 or higher being rejected: the shared property table uses unsigned variable-length numbers, not a single byte. Verified the supplied second-character login recording as 160 (+270).
+- Applied the same property-format correction to Dungeon entries so a multi-byte Odyle value no longer invalidates the accompanying dungeon snapshot. The fix is independent of character/account and preserves existing settings.
+- Added boundary coverage for single- and multi-byte balances. Stable and Light are unchanged.
+
 ## CatScratch v3.0.12-beta.19
 
 - Dungeon entries now offers List (vertical), Horizontal (compact) and Grid (two columns) under Settings > Dungeon entries. Choose the visible dungeons independently and adjust window width for List/Grid; Horizontal fits automatically and keeps full names in tooltips.

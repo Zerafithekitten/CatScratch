@@ -43,7 +43,7 @@ public static class OdyleEnergyPackets
         if(at+wide>body.Length)return false;
         at+=wide;
         uint available=0,supplementary=0;
-        if((flags&4)!=0){if(at>=body.Length)return false;available=body[at++];}
+        if((flags&4)!=0 && !Wire.TryVarint(body,ref at,out available))return false;
         if((flags&8)!=0 && !Wire.TryVarint(body,ref at,out supplementary))return false;
         if(id==PropertyId && (flags&3)==0)value=new(time,available,supplementary);
         return true;

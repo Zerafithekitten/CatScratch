@@ -16,7 +16,7 @@ public static class DungeonEntryPackets
         var wide=((flags&1)!=0?8:0)+((flags&2)!=0?8:0);
         if(at+wide>body.Length)return false;at+=wide;
         uint regular=0,extra=0;
-        if((flags&4)!=0){if(at>=body.Length)return false;regular=body[at++];}
+        if((flags&4)!=0 && !Wire.TryVarint(body,ref at,out regular))return false;
         if((flags&8)!=0 && !Wire.TryVarint(body,ref at,out extra))return false;
         if((Supported.Contains(id)||Supported.Contains(id>=60000000?id-60000000:0)) && (flags&3)!=0)return false;
         value=new(regular,extra,null);return true;
