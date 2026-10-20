@@ -385,6 +385,8 @@ public partial class SettingsWindow : Window
         s.PetOnHitOnly=_moduleDraft.PetOnHitOnly;
         _checklistPreferences.ApplyTo(s);
         s.ShowDungeonEntriesModule=_moduleDraft.ShowDungeonEntriesModule;
+        s.DungeonEntriesLayout=_moduleDraft.DungeonEntriesLayout;
+        s.DungeonEntriesWidth=_moduleDraft.DungeonEntriesWidth;
         s.VisibleDungeonEntries=new(_moduleDraft.VisibleDungeonEntries??[]);
         s.ShowResourcesModule=_moduleDraft.ShowResourcesModule;
         s.VisibleResources=new(_moduleDraft.VisibleResources??[]);

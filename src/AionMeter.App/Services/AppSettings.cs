@@ -89,6 +89,8 @@ public sealed class AppSettings
     public bool PetOnHitOnly {get;set;}
     public string? PreferredDisplay {get;set;}
     public bool ShowDungeonEntriesModule {get;set;}
+    public string DungeonEntriesLayout {get;set;}="List";
+    public double DungeonEntriesWidth {get;set;}=300;
     public List<string> VisibleDungeonEntries {get;set;}=["daily","nightmare","shugo"];
     public double DungeonEntriesLeft {get;set;}=510;
     public double DungeonEntriesTop {get;set;}=400;

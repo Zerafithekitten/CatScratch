@@ -1,3 +1,8 @@
+## CatScratch v3.0.12-beta.19
+
+- Dungeon entries now offers List (vertical), Horizontal (compact) and Grid (two columns) under Settings > Dungeon entries. Choose the visible dungeons independently and adjust window width for List/Grid; Horizontal fits automatically and keeps full names in tooltips.
+- Layout and width persist across restart and participate in overlay profiles without replacing dungeon selections. Preserves pinning, live updates, compact alignment and click-through geometry in every layout. Stable and Light are unchanged.
+
 ## CatScratch v3.0.12-beta.18
 
 - Added confirmed live balance updates for Deava Pass Shop Coin, including spending. Removed its snapshot-only * marker; all supported currencies now apply confirmed change messages immediately.

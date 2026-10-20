@@ -94,14 +94,38 @@ internal static class ResourceModuleChecks
                 var before=new Size(dungeon.ActualWidth,dungeon.ActualHeight);var topBefore=dungeon.Top;
                 WindowClickThrough.ApplyAll(true);dungeon.UpdateLayout();
                 Check(before==new Size(dungeon.ActualWidth,dungeon.ActualHeight) && topBefore==dungeon.Top,"Dungeon click-through preserves position and dimensions");WindowClickThrough.ApplyAll(false);
+                foreach(var dungeonLayout in new[]{"List","Strip","Grid"})
+                {
+                    meter.Settings.DungeonEntriesLayout=dungeonLayout;dungeon.Refresh();dungeon.UpdateLayout();
+                    Check(Find<TextBlock>(dungeon).Count(t=>t.Text.Contains("(+"))==3,"All selected dungeon counts appear in "+dungeonLayout);
+                    var size=new Size(dungeon.ActualWidth,dungeon.ActualHeight);var y=dungeon.Top;
+                    WindowClickThrough.ApplyAll(true);dungeon.UpdateLayout();
+                    Check(size==new Size(dungeon.ActualWidth,dungeon.ActualHeight) && y==dungeon.Top,"Dungeon click-through preserves geometry in "+dungeonLayout);WindowClickThrough.ApplyAll(false);
+                    if(dungeonLayout=="Strip")foreach(var tile in Find<Border>(dungeon).Where(b=>b.CornerRadius.TopLeft==4))
+                    {
+                        var group=Find<StackPanel>(tile).Single(g=>g.Orientation==Orientation.Horizontal);
+                        var box=group.TransformToAncestor(tile).TransformBounds(new Rect(group.RenderSize));
+                        Check(Math.Abs(box.Left+box.Width/2-tile.ActualWidth/2)<.6,"Horizontal dungeon groups are centered");
+                    }
+                }
+                meter.Settings.DungeonEntriesLayout="List";dungeon.Refresh();dungeon.UpdateLayout();
                 var retainedDungeon=Find<TextBlock>(dungeon).First(t=>t.Text=="Daily Dungeon");dungeon.Refresh();
                 Check(ReferenceEquals(retainedDungeon,Find<TextBlock>(dungeon).First(t=>t.Text=="Daily Dungeon")),"Unchanged dungeon refresh retains existing controls");
                 meter.Settings.VisibleDungeonEntries=["nightmare"];dungeon.Refresh();dungeon.UpdateLayout();
                 Check(!Find<TextBlock>(dungeon).Any(t=>t.Text=="Daily Dungeon") && Find<TextBlock>(dungeon).Any(t=>t.Text=="Nightmare"),"Dungeon selection hides unselected rows");
                 var draftDungeon=meter.Settings.CreateDraft();var panelDungeon=new DungeonEntriesSettingsPanel(draftDungeon);var hostDungeon=new Window{Content=panelDungeon,Width=500,Height=400,Left=-30000,Top=-30000};
-                try{hostDungeon.Show();hostDungeon.UpdateLayout();var boxes=Find<CheckBox>(hostDungeon).ToArray();Check(boxes.Length==4,"Dungeon settings contain module toggle and three choices");boxes[1].IsChecked=true;boxes[1].RaiseEvent(new RoutedEventArgs(Button.ClickEvent));Check(draftDungeon.VisibleDungeonEntries.Contains("daily") && !meter.Settings.VisibleDungeonEntries.Contains("daily"),"Dungeon settings remain in draft until Save");}finally{hostDungeon.Close();}
+                try{hostDungeon.Show();hostDungeon.UpdateLayout();var boxes=Find<CheckBox>(hostDungeon).ToArray();Check(boxes.Length==4,"Dungeon settings contain module toggle and three choices");var dungeonLayoutBox=Find<ComboBox>(hostDungeon).Single();dungeonLayoutBox.SelectedIndex=2;Check(draftDungeon.DungeonEntriesLayout=="Grid" && meter.Settings.DungeonEntriesLayout=="List","Dungeon layout remains in Settings draft until Save");boxes[1].IsChecked=true;boxes[1].RaiseEvent(new RoutedEventArgs(Button.ClickEvent));Check(draftDungeon.VisibleDungeonEntries.Contains("daily") && !meter.Settings.VisibleDungeonEntries.Contains("daily"),"Dungeon settings remain in draft until Save");}finally{hostDungeon.Close();}
             }
             finally{dungeon.Close();}
+            meter.Settings.DungeonEntriesLayout="Grid";meter.Settings.DungeonEntriesWidth=360;
+            var layoutProfile=OverlayProfiles.Capture("Dungeon layout",meter.Settings,new TimerCards.State());
+            var restoredLayout=new AppSettings{Transient=true,VisibleDungeonEntries=["shugo"]};
+            OverlayProfiles.Apply(layoutProfile,restoredLayout,new TimerCards.State());
+            Check(restoredLayout.DungeonEntriesLayout=="Grid" && restoredLayout.DungeonEntriesWidth==360 && restoredLayout.VisibleDungeonEntries.SequenceEqual(new[]{"shugo"}),"Dungeon profiles restore layout and width without replacing the user's selection");
+            var dungeonSettingsPath=output+".dungeons.settings";
+            try{JsonSettingsFile.Write(dungeonSettingsPath,meter.Settings);var restored=JsonSettingsFile.Read<AppSettings>(dungeonSettingsPath)!;Check(restored.DungeonEntriesLayout=="Grid" && restored.DungeonEntriesWidth==360,"Dungeon layout and width survive serialization");}
+            finally{foreach(var dungeonFile in new[]{dungeonSettingsPath,dungeonSettingsPath+".bak"})if(File.Exists(dungeonFile))File.Delete(dungeonFile);}
+
             File.WriteAllText(output,JsonSerializer.Serialize(passed));
         }
         finally{window.Close();}

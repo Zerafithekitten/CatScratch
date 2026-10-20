@@ -329,7 +329,12 @@ public static class SampleRenderer
                 if(o.Window=="checklist-locked")taskWindow.SetDisplayOnly(true);
                 host=taskWindow;refresh=taskWindow.RefreshResetClock;break;
             case "dungeons":
+            case "dungeons-strip":
+            case "dungeons-grid":
+            case "dungeons-strip-missing":
+                meter.Settings.DungeonEntriesLayout=o.Window=="dungeons-grid"?"Grid":o.Window.StartsWith("dungeons-strip")?"Strip":"List";
                 meter.Resources.Observe(new Core.Game.DungeonEntriesEvent(1,new Dictionary<uint,Core.Game.DungeonEntryValue>{{101,new(0,18,14)},{4,new(0,3,14)},{1,new(17,3,21)}}));
+                if(o.Window=="dungeons-strip-missing")meter.Resources.Reset();
                 host=new DungeonEntriesWindow(meter);refresh=()=>{};break;
             case "resources":
             case "resources-strip":
