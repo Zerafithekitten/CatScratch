@@ -11,6 +11,7 @@ namespace AionMeter.App.Windows;
 
 public partial class SettingsWindow : Window
 {
+    private PatreonSettingsPanel _patreonPanel=null!;
     private void DeleteSavedFights_Click(object sender, RoutedEventArgs e)
     {
         var count = _meter.History.List().Count;
@@ -122,7 +123,7 @@ public partial class SettingsWindow : Window
         SettingsTabs.Items.Add(new TabItem {Header=ControlPanelSettingsPanel.L("Help & symbols","Hilfe & Symbole"),Tag="help",Padding=new Thickness(12,10,12,10),Content=new ScrollViewer {VerticalScrollBarVisibility=ScrollBarVisibility.Auto,HorizontalScrollBarVisibility=ScrollBarVisibility.Disabled,Padding=new Thickness(14,0,0,0),Content=new SymbolHelpPanel(meter.Settings)}});
         SettingsTabs.Items.Add(new TabItem{Header=ControlPanelSettingsPanel.L("Resources","Ressourcen"),Tag="resources",Content=new ScrollViewer{VerticalScrollBarVisibility=ScrollBarVisibility.Auto,Padding=new Thickness(14,0,0,0),Content=new Border{Child=new ResourcesSettingsPanel(_moduleDraft,meter),Style=(Style)FindResource("Section")}}});
         SettingsTabs.Items.Add(new TabItem{Header=ControlPanelSettingsPanel.L("Dungeon entries","Dungeon-Eintritte"),Tag="dungeons",Content=new ScrollViewer{VerticalScrollBarVisibility=ScrollBarVisibility.Auto,Padding=new Thickness(14,0,0,0),Content=new Border{Child=new DungeonEntriesSettingsPanel(_moduleDraft),Style=(Style)FindResource("Section")}}});
-        SettingsTabs.Items.Add(new TabItem{Header="Patreon",Tag="patreon",Content=new ScrollViewer{VerticalScrollBarVisibility=ScrollBarVisibility.Auto,HorizontalScrollBarVisibility=ScrollBarVisibility.Disabled,Padding=new(14,0,0,0),Content=new PatreonSettingsPanel(_moduleDraft,theme=>_themePanel.Set(theme))}});
+        SettingsTabs.Items.Add(new TabItem{Header="Patreon",Tag="patreon",Content=new ScrollViewer{VerticalScrollBarVisibility=ScrollBarVisibility.Auto,HorizontalScrollBarVisibility=ScrollBarVisibility.Disabled,Padding=new(14,0,0,0),Content=_patreonPanel=new PatreonSettingsPanel(_moduleDraft,theme=>_themePanel.Set(theme))}});
         var orderedTabs=new[]{"general","appearance","profiles","combat","events","pets","checklist","cubes","resources","dungeons","hotkeys","history","capture","updates","patreon","feedback","help"}.Select(Tab).ToArray();
         SettingsTabs.Items.Clear();
         foreach(var tab in orderedTabs)SettingsTabs.Items.Add(tab);
@@ -418,6 +419,12 @@ public partial class SettingsWindow : Window
         s.ShowPetTrackerModule=_moduleDraft.ShowPetTrackerModule;
 
         CommitLivePreview();
+        _patreonPanel.ApplyRemovals(removed=>
+        {
+            SupporterPacks.RepairRemovedReferences(removed,s,_cards.Saved.Sounds.Values);
+            SupporterPacks.RepairRemovedReferences(removed,_moduleDraft,_eventDraft.Saved.Sounds.Values);
+            _cards.Save();
+        });
         _meter.ApplySettings();
         if (captureChanged) _meter.RestartCapture();
         _controlPanelPreferences.MarkSaved();

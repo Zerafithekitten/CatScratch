@@ -8,7 +8,7 @@ namespace AionMeter.App.Services;
 internal static class SupporterChecks
 {
     private static IEnumerable<T> Find<T>(DependencyObject root)where T:DependencyObject{if(root is T value)yield return value;for(var i=0;i<VisualTreeHelper.GetChildrenCount(root);i++)foreach(var found in Find<T>(VisualTreeHelper.GetChild(root,i)))yield return found;}
-    internal static void Run(string output,string? packagePath)
+    internal static void Run(string output,string? packagePath,string? previousPackage=null)
     {
         var passed=new List<string>();void Check(bool ok,string text){if(!ok)throw new InvalidOperationException(text);passed.Add(text);}
         var directory=Path.Combine(Path.GetTempPath(),"catscratch-supporter-check-"+Guid.NewGuid().ToString("N"));
@@ -50,6 +50,51 @@ internal static class SupporterChecks
             using var meter=new MeterService(settings,null);var window=new SettingsWindow(meter){Left=-30000,Top=-30000};
             try{window.Show();window.SelectTab("patreon");window.UpdateLayout();var tabs=((TabControl)window.FindName("SettingsTabs")).Items.OfType<TabItem>().Select(t=>t.Tag?.ToString()).ToArray();Check(Array.IndexOf(tabs,"patreon")>Array.IndexOf(tabs,"updates") && Array.IndexOf(tabs,"patreon")<Array.IndexOf(tabs,"feedback"),"Patreon is neatly grouped between Updates and Feedback");}finally{window.Close();}
             var profile=OverlayProfiles.Capture("Test",draft,new TimerCards.State());Check(!profile.Layout.ContainsKey(nameof(AppSettings.ShowSupporterPaw)),"Layout profiles do not overwrite supporter preferences");
+            if(packagePath is not null)
+            {
+                var pack=SupporterPacks.All().Single();
+                Button RemoveButton()=>Find<Button>(host).Single(b=>Equals(b.Tag,"remove-supporter:"+pack.Pack.Fingerprint));
+                RemoveButton().RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                Check(SupporterPacks.All().Count==1&&File.Exists(pack.ArchivePath),"Removing a package is only staged until Save");
+                Check(Equals(RemoveButton().Content,"Undo removal"),"Pending package removal has an explicit undo button");
+                RemoveButton().RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                panel.ApplyRemovals(_=>throw new InvalidOperationException("Undo did not cancel removal"));
+                Check(SupporterPacks.All().Count==1,"Undo preserves the installed package when saving");
+                var id=SupporterPacks.SoundId(pack,pack.Pack.Manifest.Sounds[0]);
+                settings.PetSound=id;settings.ResourceAlertSound=id;settings.HiddenCubeSoundPath=SupporterPacks.ResolveSound(id);settings.ShowSupporterPaw=true;settings.ShowSupporterCat=pack.Pack.Manifest.Mascot is not null;
+                using var cards=new TimerCards(meter,persistent:false);
+                cards.Saved.Sounds["test"]=new(){Enabled=true,Sound=id};
+                var removalWindow=new SettingsWindow(meter,cards){Left=-30000,Top=-30000};
+                try
+                {
+                    removalWindow.Show();removalWindow.SelectTab("patreon");removalWindow.UpdateLayout();
+                    Find<Button>(removalWindow).Single(b=>Equals(b.Tag,"remove-supporter:"+pack.Pack.Fingerprint)).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                    Find<Button>(removalWindow).Single(b=>Equals(b.Tag,"remove-supporter:"+pack.Pack.Fingerprint)).BringIntoView();
+                    removalWindow.Dispatcher.Invoke(()=>{},System.Windows.Threading.DispatcherPriority.Background);removalWindow.UpdateLayout();
+                    var capture=new System.Windows.Media.Imaging.RenderTargetBitmap((int)removalWindow.ActualWidth,(int)removalWindow.ActualHeight,96,96,PixelFormats.Pbgra32);capture.Render(removalWindow);
+                    var encoder=new System.Windows.Media.Imaging.PngBitmapEncoder();encoder.Frames.Add(System.Windows.Media.Imaging.BitmapFrame.Create(capture));
+                    using(var image=File.Create(Path.Combine(Path.GetDirectoryName(output)!,"package-removal-preview.png")))encoder.Save(image);
+                    ((Button)removalWindow.FindName("SaveSettingsButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                    Check(SupporterPacks.All().Count==0&&!File.Exists(pack.ArchivePath),"Settings Save removes the chosen installed archive");
+                    Check(settings.PetSound=="Chime"&&settings.ResourceAlertSound=="Chime"&&settings.HiddenCubeSoundPath==CustomEventAudio.DefaultCubeSound&&cards.Saved.Sounds["test"].Sound=="Chime","Save replaces removed sounds in modules and event preferences with built-in defaults");
+                    Check(!settings.ShowSupporterPaw&&!settings.ShowSupporterCat,"Removing the last entitled package turns off unavailable extras");
+                    Check(settings.Theme==themeBefore&&File.Exists(packagePath),"Removal preserves the current colors and original download");
+                }
+                finally{removalWindow.Close();}
+                Check(settings.PetSound=="Chime"&&SupporterPacks.All().Count==0,"Closing after Save cannot resurrect removed sound references");
+                using(var reload=SupporterPacks.Isolate(directory))Check(SupporterPacks.All().Count==0,"A removed package stays removed after catalog reload");
+                Check(SupporterPacks.Import(packagePath).Pack.Fingerprint==pack.Pack.Fingerprint,"The original download can be imported again after removal");
+                if(previousPackage is not null)
+                {
+                    var older=SupporterPacks.Import(previousPackage);var oldSound=older.Pack.Manifest.Sounds.First();
+                    var oldId=SupporterPacks.SoundId(older,oldSound);
+                    var migrated=new AppSettings {Transient=true,PetSound=oldId,ResourceAlertSound=oldId,HiddenCubeSoundPath=SupporterPacks.ResolveSound(oldId),ShowSupporterPaw=true,ShowSupporterCat=true};
+                    var eventSound=new EventSoundPreference {Enabled=true,Sound=oldId};
+                    SupporterPacks.Remove(older);SupporterPacks.RepairRemovedReferences(older,migrated,[eventSound]);
+                    Check(migrated.PetSound!=oldId&&migrated.PetSound.StartsWith("supporter:")&&SupporterPacks.ResolveSound(migrated.PetSound) is not null&&migrated.ResourceAlertSound==migrated.PetSound&&eventSound.Sound==migrated.PetSound,"Removing an old pack keeps the identical sound from the surviving combined package");
+                    Check(migrated.ShowSupporterPaw&&migrated.ShowSupporterCat&&SupporterPacks.CatPack?.Pack.Fingerprint==pack.Pack.Fingerprint,"Removing an old package preserves the remaining supporter paw and companion");
+                }
+            }
         }
         finally{host.Close();var full=Path.GetFullPath(directory);var expected=Path.GetFullPath(Path.GetTempPath())+"catscratch-supporter-check-";if(full.StartsWith(expected,StringComparison.OrdinalIgnoreCase)&&Directory.Exists(full))Directory.Delete(full,true);}
         File.WriteAllText(output,JsonSerializer.Serialize(passed));

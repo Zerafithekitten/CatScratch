@@ -1,3 +1,7 @@
+## CatScratch v4.0.9-beta.3
+
+- Alte Supporter-Pakete unter Einstellungen > Patreon entfernen. Speichern übernimmt die Entfernung; Zurücknehmen oder Schließen verwirft sie. Verwendete Sounds wechseln zu einem passenden verbleibenden Paket oder einem Standardton.
+
 ## CatScratch v4.0.9-beta.2
 
 - Optionale Update-Hinweise und die Größe kleiner Overlay-Fenster verbessert.

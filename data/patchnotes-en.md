@@ -1,3 +1,7 @@
+## CatScratch v4.0.9-beta.3
+
+- Remove old supporter packages in Settings > Patreon. Save applies removals; Undo or closing cancels them. Existing sounds use a matching remaining package or a built-in fallback.
+
 ## CatScratch v4.0.9-beta.2
 
 - Improved optional update reminders and compact overlay sizing.

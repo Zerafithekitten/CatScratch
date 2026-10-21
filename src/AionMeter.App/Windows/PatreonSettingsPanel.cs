@@ -15,6 +15,7 @@ internal sealed class PatreonSettingsPanel:StackPanel
     private readonly CheckBox _cat;
     private readonly Slider _catScale;
     private EventSoundPlayer? _preview;
+    private readonly HashSet<string> _pendingRemoval=[];
     private static string L(string en,string de)=>ControlPanelSettingsPanel.L(en,de);
     internal PatreonSettingsPanel(AppSettings draft,Action<ThemePreferences> setTheme)
     {
@@ -56,7 +57,12 @@ internal sealed class PatreonSettingsPanel:StackPanel
         if(packs.Count==0){_catalog.Children.Add(new TextBlock{Text=L("No supporter package installed yet.","Noch kein Supporter-Paket installiert."),Foreground=ThemeColors.Brush("#A9B8C7"),Margin=new(0,6,0,14)});return;}
         foreach(var p in packs)
         {
-            var content=new StackPanel();content.Children.Add(new TextBlock{Text=p.Label,FontWeight=FontWeights.SemiBold,Foreground=ThemeColors.Brush("#C49AF5"),Margin=new(0,0,0,10)});
+            var pending=_pendingRemoval.Contains(p.Pack.Fingerprint);
+            var content=new StackPanel();var heading=new DockPanel {Margin=new(0,0,0,10)};
+            var remove=new Button {Content=pending?L("Undo removal","Entfernen zurücknehmen"):L("Remove","Entfernen"),Tag="remove-supporter:"+p.Pack.Fingerprint,Style=(Style)FindResource("GhostButton"),Padding=new(8,4,8,4),Margin=new(8,0,0,0),ToolTip=L("Removes this installed copy when you Save. Your original download is kept.","Entfernt die installierte Kopie beim Speichern. Dein ursprünglicher Download bleibt erhalten.")};
+            remove.Click+=(_,_)=>{if(!_pendingRemoval.Add(p.Pack.Fingerprint))_pendingRemoval.Remove(p.Pack.Fingerprint);Refresh();Status(L("Package removal takes effect with Save. Closing discards pending removals.","Pakete werden mit Speichern entfernt. Schließen verwirft vorgemerkte Entfernungen."));};
+            DockPanel.SetDock(remove,Dock.Right);heading.Children.Add(remove);
+            heading.Children.Add(new TextBlock{Text=p.Label+(pending?L(" · removal pending"," · wird entfernt"):""),TextWrapping=TextWrapping.Wrap,FontWeight=FontWeights.SemiBold,Foreground=ThemeColors.Brush("#C49AF5"),VerticalAlignment=VerticalAlignment.Center});content.Children.Add(heading);
             if(p.Pack.Manifest.Mascot is not null)content.Children.Add(new TextBlock{Text=L("Animated CatScratch cat · blink, tail sway and a little paw wave. Enable it above, then Save.","Animierte CatScratch-Katze · Blinzeln, Schwanzbewegung und ein kleines Winken. Oben einschalten und speichern."),TextWrapping=TextWrapping.Wrap,Margin=new(0,0,0,10)});
             foreach(var theme in p.Pack.Manifest.Themes)
             {
@@ -83,5 +89,16 @@ internal sealed class PatreonSettingsPanel:StackPanel
             }
             _catalog.Children.Add(new Border{Child=content,Background=ThemeColors.Brush("#191D23"),BorderBrush=ThemeColors.Brush("#414A56"),BorderThickness=new(1),CornerRadius=new(6),Padding=new(10),Margin=new(0,3,0,12)});
         }
+    }
+    internal void ApplyRemovals(Action<InstalledSupporterPack> repair)
+    {
+        _preview?.Dispose();_preview=null;
+        foreach(var pack in SupporterPacks.All().Where(p=>_pendingRemoval.Contains(p.Pack.Fingerprint)))
+        {
+            try{SupporterPacks.Remove(pack);repair(pack);_pendingRemoval.Remove(pack.Pack.Fingerprint);}
+            catch(Exception error)when(error is IOException or UnauthorizedAccessException)
+            {Status(L("Could not remove package: ","Paket konnte nicht entfernt werden: ")+error.Message,true);}
+        }
+        Refresh();
     }
 }

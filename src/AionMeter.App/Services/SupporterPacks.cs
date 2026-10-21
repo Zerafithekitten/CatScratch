@@ -4,6 +4,7 @@ using AionMeter.Core.Supporter;
 namespace AionMeter.App.Services;
 internal sealed record InstalledSupporterPack(VerifiedSupporterPack Pack,string Directory)
 {
+    internal string? ArchivePath {get;init;}
     public string Label=>Pack.Manifest.Name+" · "+Pack.Manifest.Version;
     public override string ToString()=>Label;
 }
@@ -34,7 +35,7 @@ Yvy+hUuPqenS85/WpGTIfu67Gtt9A8+RQo5Za3GneMEq+p/eRDTpWKEiWA==
             _installed=[];
             if(!Directory.Exists(Root))return [];
             foreach(var path in Directory.EnumerateFiles(Root,"*.cspack").Take(32))
-                try{var verified=SupporterPackage.Read(ReadArchive(path),PublicKey);_installed.Add(Materialize(verified));}
+                try{var verified=SupporterPackage.Read(ReadArchive(path),PublicKey);_installed.Add(Materialize(verified) with {ArchivePath=path});}
                 catch(Exception e)when(e is IOException or UnauthorizedAccessException or System.Text.Json.JsonException or CryptographicException or ArgumentException or NotSupportedException or FormatException){Log.Error("Supporter package was ignored",e);}
             return _installed.ToArray();
         }
@@ -50,8 +51,52 @@ Yvy+hUuPqenS85/WpGTIfu67Gtt9A8+RQo5Za3GneMEq+p/eRDTpWKEiWA==
             Directory.CreateDirectory(Root);var target=Path.Combine(Root,verified.Fingerprint+".cspack");
             var temp=target+"."+Guid.NewGuid().ToString("N")+".tmp";
             try{File.WriteAllBytes(temp,verified.Archive);File.Move(temp,target,true);}finally{if(File.Exists(temp))File.Delete(temp);}
-            var installed=Materialize(verified);_installed.Add(installed);return installed;
+            var installed=Materialize(verified) with {ArchivePath=target};_installed.Add(installed);return installed;
         }
+    }
+    internal static void Remove(InstalledSupporterPack pack)
+    {
+        lock(Gate)
+        {
+            var installed=All().SingleOrDefault(p=>p.Pack.Fingerprint==pack.Pack.Fingerprint);
+            if(installed is null)return;
+            var root=Path.GetFullPath(Root);
+            var archive=Path.GetFullPath(installed.ArchivePath??throw new InvalidDataException("Missing installed archive."));
+            var audio=Path.GetFullPath(Path.Combine(root,"audio"));
+            var directory=Path.GetFullPath(installed.Directory);
+            if(!string.Equals(Path.GetDirectoryName(archive),root,StringComparison.OrdinalIgnoreCase)||
+                !string.Equals(directory,Path.Combine(audio,installed.Pack.Fingerprint),StringComparison.OrdinalIgnoreCase))
+                throw new InvalidDataException("Package removal must stay inside the installed package folder.");
+            foreach(var path in new[]{root,audio,directory})
+                if(Directory.Exists(path)&&(File.GetAttributes(path)&FileAttributes.ReparsePoint)!=0)
+                    throw new InvalidDataException("Package removal cannot follow a directory link.");
+            File.Delete(archive);_installed!.Remove(installed);
+            // Remove only files declared by the verified manifest; never recurse.
+            foreach(var name in installed.Pack.Audio.Keys.Select(Path.GetFileName).Concat(installed.Pack.Manifest.Mascot is {} mascot?[Path.GetFileName(mascot.Path)]:Array.Empty<string>()))
+                try{File.Delete(Path.Combine(directory,name!));}
+                catch(Exception error)when(error is IOException or UnauthorizedAccessException){Log.Error("Removed package cache could not be cleared",error);}
+            try{if(Directory.Exists(directory)&&!Directory.EnumerateFileSystemEntries(directory).Any())Directory.Delete(directory);}
+            catch(Exception error)when(error is IOException or UnauthorizedAccessException){Log.Error("Removed package cache could not be cleared",error);}
+        }
+    }
+    internal static void RepairRemovedReferences(InstalledSupporterPack removed,AppSettings settings,IEnumerable<EventSoundPreference>? events=null)
+    {
+        var replacements=removed.Pack.Manifest.Sounds.Select(sound=>
+        {
+            var replacement=All().SelectMany(p=>p.Pack.Manifest.Sounds.Select(s=>(Pack:p,Sound:s))).FirstOrDefault(x=>x.Sound.Sha256==sound.Sha256);
+            return (Id:SoundId(removed,sound),Path:Path.Combine(removed.Directory,Path.GetFileName(sound.Path)),
+                Replacement:replacement.Pack is null?"Chime":SoundId(replacement.Pack,replacement.Sound));
+        }).ToArray();
+        foreach(var sound in replacements)
+        {
+            if(settings.PetSound==sound.Id)settings.PetSound=sound.Replacement;
+            if(settings.ResourceAlertSound==sound.Id)settings.ResourceAlertSound=sound.Replacement;
+            if(string.Equals(settings.HiddenCubeSoundPath,sound.Path,StringComparison.OrdinalIgnoreCase))
+                settings.HiddenCubeSoundPath=sound.Replacement=="Chime"?CustomEventAudio.DefaultCubeSound:ResolveSound(sound.Replacement);
+            foreach(var entry in events??[])if(entry.Sound==sound.Id){entry.Sound=sound.Replacement;entry.FilePath=null;}
+        }
+        if(!HasPaw)settings.ShowSupporterPaw=false;
+        if(CatPack is null)settings.ShowSupporterCat=false;
     }
     private static InstalledSupporterPack Materialize(VerifiedSupporterPack pack)
     {

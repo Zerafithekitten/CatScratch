@@ -287,7 +287,7 @@ public partial class App : Application
         if(ArgValue(e.Args,"--check-supporter") is {} supporterPath)
         {
             Log.Enabled=false;
-            try{SupporterChecks.Run(supporterPath,ArgValue(e.Args,"--supporter-package"));Shutdown();}
+            try{SupporterChecks.Run(supporterPath,ArgValue(e.Args,"--supporter-package"),ArgValue(e.Args,"--previous-supporter-package"));Shutdown();}
             catch(Exception error){File.WriteAllText(supporterPath,error.ToString());Shutdown(1);}
             return;
         }
