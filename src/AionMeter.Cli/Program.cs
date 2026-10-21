@@ -14,6 +14,7 @@ var data = GameData.Load(dataDir, langAt >= 0 && langAt + 1 < args.Length ? args
 
 return args.FirstOrDefault() switch
 {
+    "odyle" when args.Length>1=>Odyle(args[1]),
     "cubes" when args.Length>1=>Cubes(args[1]),
     "cube-keys" when args.Length>1=>CubeKeys(args[1]),
     "petpositions" when args.Length>1=>PetPositions(args[1]),
@@ -38,6 +39,19 @@ return args.FirstOrDefault() switch
     "update-check" => UpdateCheck(args.Skip(1).ToArray()),
     _ => Usage(),
 };
+
+int Odyle(string path)
+{
+    using var replay=new PcapReplaySource(data,path,false);
+    replay.Pipeline.Parser.Tap=(time,op,body)=>
+    {
+        var at=body.IndexOf(Convert.FromHexString("01879303"));
+        if(at>=0){var start=Math.Max(0,at-8);Console.WriteLine($"{time} {op:X4} len={body.Length} at={at} {Convert.ToHexString(body.Slice(start,Math.Min(60,body.Length-start)))}");}
+    };
+    replay.EventDecoded+=e=>{if(e is OdyleEnergyEvent energy)Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(energy));};
+    var packets=replay.RunToEnd();var pipeline=replay.Pipeline;
+    Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(new{packets,pipeline.Gaps,pipeline.GameFlows,pipeline.GameBytes,energySnapshots=pipeline.Parser.OpcodeCounts.GetValueOrDefault((ushort)0x0B61),propertyUpdates=pipeline.Parser.OpcodeCounts.GetValueOrDefault((ushort)0x0C61)}));return 0;
+}
 
 int CubeKeys(string path)
 {

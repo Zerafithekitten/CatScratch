@@ -1,3 +1,37 @@
+## CatScratch v4.0.8
+
+[English patch notes](https://github.com/Zerafithekitten/CatScratch/blob/v4.0.8/data/patchnotes-en.md)
+
+Ein bisschen mehr Katze ist in CatScratch eingezogen. Ich habe Maskottchen, Schriftzug und Katzenprofil in der Oberfläche zusammengebracht, damit die verschiedenen Fenster sich mehr wie ein gemeinsames Zuhause anfühlen. 🐾
+
+<!-- contents -->
+### Auf einen Blick
+- [Ein vertrautes Gesicht in CatScratch](#shared-identity)
+- [Gestaltung, die Platz zum Spielen lässt](#clear-controls)
+- [Ein frischer Anstrich für GitHub](#github-look)
+<!-- /contents -->
+
+<a id="shared-identity"></a>
+### 🐱 Ein vertrautes Gesicht in CatScratch
+
+Im Kopf der Einstellungen stehen jetzt unser Maskottchen und der CatScratch-Schriftzug zusammen. Das dezente Katzenprofil begleitet euch als Wasserzeichen durch die Einstellungsseiten. Auch die größeren Fenster teilen sich die Gestaltung, darunter Charakterübersicht, zuletzt zusammengespielte Spieler und Updates.
+
+Das kompakte Bedienfeld nutzt den neuen Schriftzug im bisherigen Titelplatz. Die schmale vertikale Ansicht behält ihren lesbaren, untereinander geschriebenen Namen. **Update!** erscheint weiterhin an derselben Stelle, sobald ein Update bereitsteht.
+
+![CatScratch-Einstellungen](https://raw.githubusercontent.com/Zerafithekitten/CatScratch/v4.0.8/docs/images/branding-settings-v4.0.8.png)
+
+<a id="clear-controls"></a>
+### ✨ Gestaltung, die Platz zum Spielen lässt
+
+Die kleinen Spielmodule bekommen eine deutlich kleinere und zurückhaltendere Signatur. Die Dekoration beansprucht keinen zusätzlichen Platz, fängt keine Klicks ab und verschiebt keine gespeicherten Fenster.
+
+Texte und Bedienelemente bleiben vom Motiv frei. Im Update-Fenster sitzen Wasserzeichen und Schriftzug vollständig im Patchnotes-Bereich, oberhalb der Knöpfe. Beim Scrollen oder Wechseln der Einstellungsseite wird die Darstellung ebenfalls angepasst.
+
+<a id="github-look"></a>
+### 💜 Ein frischer Anstrich für GitHub
+
+Die Projektseite bekommt den passenden neuen Banner, aktualisierte Screenshots und eine Beschreibung der gemeinsamen Gestaltung. Danke, dass ihr mir helft, diesem kleinen Projekt ein eigenes Gesicht zu geben.
+
 ## CatScratch v4.0.7
 
 [English patch notes](https://github.com/Zerafithekitten/CatScratch/blob/v4.0.7/data/patchnotes-en.md)

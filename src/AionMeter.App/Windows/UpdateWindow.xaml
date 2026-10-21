@@ -23,8 +23,7 @@
 
             <Grid Margin="18,0,8,0">
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                    <TextBlock Text="&#xE896;" FontFamily="{StaticResource IconFont}" FontSize="17" Foreground="{StaticResource Green}"
-                               VerticalAlignment="Center" Margin="0,2,10,0" />
+                    <Image Source="{x:Static s:CatBranding.Mascot}" Width="26" Height="26" VerticalAlignment="Center" Margin="0,0,10,0" />
                     <TextBlock Text="{Binding UpdateTitle, Source={x:Static s:UiText.Current}}" FontFamily="{StaticResource TitleFont}"
                                FontSize="19" FontWeight="SemiBold" VerticalAlignment="Center" />
                 </StackPanel>
@@ -38,7 +37,7 @@
             </StackPanel>
 
             <!-- Release notes, as plain text -->
-            <Border Grid.Row="2" Margin="20,0,20,12" Background="{DynamicResource CustomBrush_0DFFFFFF}" BorderBrush="{DynamicResource CustomBrush_1AFFFFFF}" BorderThickness="1"
+            <Border x:Name="BrandNotesSurface" Grid.Row="2" Margin="20,0,20,12" Background="{DynamicResource CustomBrush_0DFFFFFF}" BorderBrush="{DynamicResource CustomBrush_1AFFFFFF}" BorderThickness="1"
                     CornerRadius="10" Padding="16,12,8,12">
                 <DockPanel>
                     <TextBlock DockPanel.Dock="Top" Text="{Binding UpdateWhatsNew, Source={x:Static s:UiText.Current}}"

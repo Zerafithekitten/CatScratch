@@ -46,12 +46,7 @@ internal sealed class HiddenCubeWindow : Window,IDisplayAppearance
         keyRow.Children.Add(new System.Windows.Shapes.Path{Data=Geometry.Parse("M 7,1 A 4,4 0 1 0 7,9 A 4,4 0 1 0 7,1 M 4,9 L 0,13 L 2,15 L 4,13 L 6,15 L 8,13 L 6,11"),Width=14,Height=14,Stretch=Stretch.Uniform,Stroke=ThemeColors.Brush("#E4C17C"),StrokeThickness=1.6,Margin=new(0,0,6,0)});
         _keys=new TextBlock{FontSize=11,VerticalAlignment=VerticalAlignment.Center};keyRow.Children.Add(_keys);copy.Children.Add(keyRow);
         var backdrop=new Grid();
-        var signature=new Canvas{Width=98,Height=90,HorizontalAlignment=HorizontalAlignment.Right,VerticalAlignment=VerticalAlignment.Center,IsHitTestVisible=false,Clip=new RectangleGeometry(new Rect(0,0,98,90),10,10)};
-        // Cropped profile: one tall ear, angular cheek fur and a single watchful eye.
-        signature.Children.Add(new System.Windows.Shapes.Path{Data=Geometry.Parse("M 98,23 Q 85,19 72,25 L 43,3 L 37,43 L 43,53 L 31,61 L 42,63 L 35,68 L 47,70 L 41,75 L 55,77 L 50,81 Q 69,91 98,95 Z"),Fill=ThemeColors.Brush("#241535"),Stroke=ThemeColors.Brush("#8543C9"),StrokeThickness=2,StrokeLineJoin=PenLineJoin.Round,Opacity=.56});
-        signature.Children.Add(new System.Windows.Shapes.Path{Data=Geometry.Parse("M 44,14 L 62,32 L 55,32 L 58,37 L 51,36 L 54,42 L 43,48 Z"),Fill=ThemeColors.Brush("#7136A8"),Opacity=.34});
-        signature.Children.Add(new System.Windows.Shapes.Path{Data=Geometry.Parse("M 59,62 Q 70,65 80,74 L 74,73 Q 65,76 62,69 Z"),Fill=ThemeColors.Brush("#963DF0"),Opacity=.72});
-        signature.Children.Add(new System.Windows.Shapes.Path{Data=Geometry.Parse("M 74,67 L 72,73 L 77,72 Z"),Fill=ThemeColors.Brush("#241535"),Opacity=.9});
+        var signature=new Controls.CatSignature{Width=98,Height=90,HorizontalAlignment=HorizontalAlignment.Right,VerticalAlignment=VerticalAlignment.Center};
         backdrop.Children.Add(signature);backdrop.Children.Add(content);
         layers.Children.Add(new Border{Background=ThemeColors.Brush("#F5191D23"),BorderBrush=ThemeColors.Brush("#414A56"),BorderThickness=new(1),CornerRadius=new(12),Child=backdrop});
         _glow=new Border{BorderBrush=ThemeColors.Brush("#C49AF5"),BorderThickness=new(1.3),CornerRadius=new(12),Opacity=.6,IsHitTestVisible=false,Effect=new DropShadowEffect{Color=Color.FromRgb(161,113,232),BlurRadius=10,ShadowDepth=0,Opacity=.4}};layers.Children.Add(_glow);body.Children.Add(layers);Content=body;

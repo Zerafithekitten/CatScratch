@@ -556,6 +556,8 @@ public static class SampleRenderer
         refresh();
         root.UpdateLayout();
 
+        CatBranding.Apply(host);root.UpdateLayout();
+        host.Dispatcher.Invoke(()=>{},System.Windows.Threading.DispatcherPriority.Render);
         MarioPartyBackdrop.Attach(host);MarioPartyBackdrop.Refresh(host);
         var bmp = new RenderTargetBitmap((int)(host.Width * o.Scale), (int)(host.Height * o.Scale), 96 * o.Scale, 96 * o.Scale, PixelFormats.Pbgra32);
         if (Backdrop(host, o.Backdrop) is { } backdrop)
@@ -566,6 +568,8 @@ public static class SampleRenderer
             bmp.Render(bg);
         }
         bmp.Render(root);
+        // Mirror the static native-window adorner when rendering the content offscreen.
+        var identity=new DrawingVisual();using(var drawing=identity.RenderOpen())CatBranding.DrawPreview(host,drawing,new Size(host.Width,host.Height));bmp.Render(identity);
 
         var encoder = new PngBitmapEncoder();
         encoder.Frames.Add(BitmapFrame.Create(bmp));

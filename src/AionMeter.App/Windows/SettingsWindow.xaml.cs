@@ -58,7 +58,7 @@ public partial class SettingsWindow : Window
     {
         _meter = meter;
         InitializeComponent();
-        BrandIcon.Source=AppIcon.Image;
+        BrandIcon.Source=CatBranding.Mascot;
         _themePanel=new ThemeSettingsPanel(meter.Settings.Theme);
         if(Tab("appearance").Content is ScrollViewer {Content:Panel appearance})
             appearance.Children.Insert(1,new Border{Child=_themePanel,Style=(Style)FindResource("Section")});

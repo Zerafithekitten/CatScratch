@@ -1,18 +1,28 @@
 # CatScratch
 
+![CatScratch — Your companion in AION 2](docs/images/catscratch-banner.png)
+
 A separate, always-on-top Windows DPS meter for **AION 2**, by Zerafithekitten. Track your own fights and confirmed party members in a compact dark gray interface with restrained purple accents and cat-paw branding.
 
 [Download Stable](https://github.com/Zerafithekitten/CatScratch/releases/latest) · [Download CatScratch light](https://github.com/Zerafithekitten/CatScratch/releases/tag/light-v1.0.0) · [Release history](https://github.com/Zerafithekitten/CatScratch/releases) · [Report a bug / request a feature](https://github.com/Zerafithekitten/CatScratch/issues/new/choose)
 
 | Channel | Current version | What it includes |
 | --- | --- | --- |
-| **Stable** | **[v4.0.7](https://github.com/Zerafithekitten/CatScratch/releases/tag/v4.0.7)** | Redesigned Hidden Cube alerts with bound-key inventory counts, plus all previous Stable features. |
+| **Stable** | **[v4.0.8](https://github.com/Zerafithekitten/CatScratch/releases/tag/v4.0.8)** | Shared mascot, lettering and cat-profile watermarks across the app, plus Hidden Cube key counts and all previous Stable features. |
 | **Beta** | **[v3.0.12-beta.22](https://github.com/Zerafithekitten/CatScratch/releases/tag/v3.0.12-beta.22)** | Previous test build; its features are included in Stable 4.0.0, with final fixes. Beta subscribers move to Stable when 4.0.0 starts. |
 | **Light** | [v1.0.0](https://github.com/Zerafithekitten/CatScratch/releases/tag/light-v1.0.0) | Separate **DPS meter only** edition with essential settings. Independent ZIP download and settings; no additional CatScratch modules or automatic updater. |
 
 **CatScratch light** is installed separately from the full version. [Download its ZIP](https://github.com/Zerafithekitten/CatScratch/releases/download/light-v1.0.0/CatScratch-light-win-x64.zip) and extract it into its own folder. Light is maintained and updated **only on the owner's explicit request**; normal development continues on full CatScratch.
 
-English is the default. German, Russian and French are also available. Screenshots use synthetic sample data; names and numbers are examples. All features described below are included in **Stable v4.0.7** unless a limitation is stated.
+English is the default. German, Russian and French are also available. Screenshots use synthetic sample data; names and numbers are examples. All features described below are included in **Stable v4.0.8** unless a limitation is stated.
+
+## A little more CatScratch
+
+The full app now shares a charcoal-and-lavender mascot, the CatScratch wordmark and a quiet cat-profile signature. Settings and larger windows use the full identity; game overlays keep it small and subtle. Decoration preserves saved placement, does not intercept clicks and stays clear of text and controls. The update-window artwork is confined to the notes area, away from the action buttons.
+
+![Settings with the shared CatScratch identity](docs/images/branding-settings-v4.0.8.png)
+
+[English release notes](data/patchnotes-en.md) · [Deutsche Patchnotes](data/patchnotes-de.md)
 
 ## Contents
 
@@ -305,7 +315,7 @@ The green **Update!** button appears **only after the update is fully prepared**
 
 After a successful new startup, the old backup, staged payload and downloaded ZIP are removed. Failed updates retain recovery files. Settings, saved fights, personal bests, recent players and captures are preserved. Update staging stays under `userdata/temp/updates`; a writable program folder is required.
 
-When a Beta is promoted and its Stable build starts, Beta subscribers automatically return to the Stable update channel. A later deliberate switch back to Beta is respected until the next Stable transition. The installed version then shows the Stable number, currently **4.0.7** without a beta suffix.
+When a Beta is promoted and its Stable build starts, Beta subscribers automatically return to the Stable update channel. A later deliberate switch back to Beta is respected until the next Stable transition. The installed version then shows the Stable number, currently **4.0.8** without a beta suffix.
 
 Use **Check now** in Settings or **Check for updates** in the tray menu for a manual check. Automatic checking and preparation can be disabled in Settings. CatScratch also reduces data-loading allocations and moves optional startup work behind the first meter display.
 
@@ -432,7 +442,7 @@ Choose Horizontal, Vertical rail or Grid in Settings. Buttons are grouped by fun
 
 ![Horizontal panel](docs/screenshots/control-panel-horizontal.png)
 
-![Vertical rail](docs/screenshots/control-panel-vertical.png) ![Grid panel](docs/images/panel-grid-stable304.png)
+![Vertical rail](docs/screenshots/control-panel-vertical.png) ![Grid panel](docs/screenshots/control-panel-grid.png)
 
 ### Reset countdowns, module previews and strict boss measurement (Stable 3.0.4)
 

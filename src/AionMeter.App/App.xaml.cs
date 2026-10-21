@@ -93,6 +93,7 @@ public partial class App : Application
     protected override void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);
+        CatBranding.Register();
         if(e.Args.Any(a=>a.StartsWith("--check-",StringComparison.Ordinal) || a=="--render-sample"))
         {
             WindowPresentation.Enabled=false;
@@ -251,6 +252,13 @@ public partial class App : Application
             Log.Enabled=false;
             try{OverlayPlacementChecks.Run(placementPath);Shutdown();}
             catch(Exception error){File.WriteAllText(placementPath,error.ToString());Shutdown(1);}
+            return;
+        }
+        if(ArgValue(e.Args,"--check-branding") is {} brandingOutput)
+        {
+            Log.Enabled=false;
+            try{BrandingChecks.Run(brandingOutput);Shutdown();}
+            catch(Exception error){File.WriteAllText(brandingOutput,error.ToString());Shutdown(1);}
             return;
         }
         if(ArgValue(e.Args,"--check-cube-banner") is {} cubeBannerOutput)

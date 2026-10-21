@@ -1,3 +1,37 @@
+## CatScratch v4.0.8
+
+[Deutsche Patchnotes](https://github.com/Zerafithekitten/CatScratch/blob/v4.0.8/data/patchnotes-de.md)
+
+A little more cat has found its way into CatScratch. I've brought the mascot, lettering and cat profile together across the app, so the different windows feel like they belong to the same home. 🐾
+
+<!-- contents -->
+### At a glance
+- [One familiar face across CatScratch](#shared-identity)
+- [Decoration that leaves room to play](#clear-controls)
+- [A fresh coat for GitHub](#github-look)
+<!-- /contents -->
+
+<a id="shared-identity"></a>
+### 🐱 One familiar face across CatScratch
+
+The Settings header now pairs our mascot with the CatScratch lettering. A quiet cat-profile watermark follows you through the Settings pages, and the larger windows share the same identity, including character resources, recent players and updates.
+
+The compact control panel uses the new lettering in its existing title slot. The narrow vertical layout keeps its readable stacked name, and **Update!** still takes that same place when an update is ready.
+
+![CatScratch Settings](https://raw.githubusercontent.com/Zerafithekitten/CatScratch/v4.0.8/docs/images/branding-settings-v4.0.8.png)
+
+<a id="clear-controls"></a>
+### ✨ Decoration that leaves room to play
+
+The small game modules get a much smaller, softer signature. The decoration adds no space to their layout and does not catch clicks or move your saved windows.
+
+Text and controls are kept clear of the artwork. In the update window, the watermark and lettering stay entirely inside the patch-notes area, above the action buttons. The watermark also refreshes when you scroll or change Settings pages.
+
+<a id="github-look"></a>
+### 💜 A fresh coat for GitHub
+
+The project page has a matching new banner, updated screenshots and documentation for the shared design. Thanks for helping me give this little project a face of its own.
+
 ## CatScratch v4.0.7
 
 [Deutsche Patchnotes](https://github.com/Zerafithekitten/CatScratch/blob/v4.0.7/data/patchnotes-de.md)

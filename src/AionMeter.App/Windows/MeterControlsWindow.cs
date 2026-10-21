@@ -57,7 +57,7 @@ internal sealed class MeterControlsWindow : Window
         var paw=_brandPaw=new Image {Source=AppIcon.Image,Width=22,Height=22,Margin=new(0,0,8,0),VerticalAlignment=VerticalAlignment.Center};
         DockPanel.SetDock(paw,Dock.Left);header.Children.Add(paw);
         var label=new StackPanel {VerticalAlignment=VerticalAlignment.Center};
-        label.Children.Add(new TextBlock {Text="CatScratch",Foreground=ThemeColors.Brush("#C49AF5"),FontSize=13,FontWeight=FontWeights.SemiBold});
+        label.Children.Add(new CatWordmark {Text="CatScratch",Foreground=ThemeColors.Brush("#C49AF5"),FontSize=13,FontWeight=FontWeights.SemiBold});
         _status.Foreground=ThemeColors.Brush("#A9B8C7");_status.FontSize=10;label.Children.Add(_status);
         header.Children.Add(label);
         SetFrame(header);
