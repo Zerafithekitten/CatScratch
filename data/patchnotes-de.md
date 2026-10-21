@@ -1,3 +1,8 @@
+## CatScratch v4.0.9-beta.4
+
+- Alpha ist jetzt unter Einstellungen > Updates verfügbar. Vor dem Speichern oder der Update-Suche muss der experimentelle Kanal ausdrücklich per Häkchen bestätigt werden. Zurück zu Beta oder Stable geht es im selben Menü.
+- Diese Beta behält das bisherige Design. Die neuen Persönlichkeitsdetails gibt es ausschließlich in Alpha.
+
 ## CatScratch v4.0.9-beta.3
 
 - Alte Supporter-Pakete unter Einstellungen > Patreon entfernen. Speichern übernimmt die Entfernung; Zurücknehmen oder Schließen verwirft sie. Verwendete Sounds wechseln zu einem passenden verbleibenden Paket oder einem Standardton.

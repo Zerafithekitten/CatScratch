@@ -1,3 +1,8 @@
+## CatScratch v4.0.9-beta.4
+
+- Alpha is now available in Settings > Updates. Its experimental features require an explicit acknowledgement before Save or update checks. You can return to Beta or Stable from the same menu.
+- This Beta keeps the existing design; the personality playground is exclusive to Alpha.
+
 ## CatScratch v4.0.9-beta.3
 
 - Remove old supporter packages in Settings > Patreon. Save applies removals; Undo or closing cancels them. Existing sounds use a matching remaining package or a built-in fallback.
