@@ -233,6 +233,9 @@ public sealed class AppSettings
         {
             if (JsonSettingsFile.Read<AppSettings>(path, Json) is { } s)
             {
+                // The temporary Alpha channel was retired; preserve all other preferences.
+                if(string.Equals(s.UpdateChannel,"Alpha",StringComparison.OrdinalIgnoreCase))
+                {s.UpdateChannel="Beta";s.SkippedUpdate=null;}
                 if (s.LayoutVersion < 3)
                 {
                     // v3 = card layout (portrait header, two-line rows): the old compact size is too small for it.

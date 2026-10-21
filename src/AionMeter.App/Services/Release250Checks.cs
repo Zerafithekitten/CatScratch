@@ -59,6 +59,14 @@ internal static class Release250Checks
         var window=new Window { Left=-30000,Top=-30000,Width=400,Height=200,ShowActivated=false,ShowInTaskbar=false,Content=new Border {Child=new TextBlock {Text="Scale check",FontSize=12}} };
         try
         {
+            var migration=Path.GetTempFileName();
+            try
+            {
+                File.WriteAllText(migration,"{\"LayoutVersion\":99,\"UpdateChannel\":\"Alpha\",\"Language\":\"de\"}");
+                var migratedPreferences=AppSettings.LoadFrom(migration);
+                Check(migratedPreferences.UpdateChannel=="Beta"&&migratedPreferences.Language=="de","Retired Alpha preferences return to Beta while preserving unrelated settings");
+            }
+            finally{File.Delete(migration);}
             Check(meter.Updates.Channel==meter.Updates.CurrentIdentity.Channel,"An installation without a saved preference follows its build channel");
             Check(new ViewModels.OverlayViewModel().Version=="v"+meter.Updates.CurrentDisplay,"Meter footer shows the exact beta revision or stable version");
             var settingsWindow=new Windows.SettingsWindow(meter);

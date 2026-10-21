@@ -1,3 +1,8 @@
+## CatScratch v4.0.9-beta.5
+
+- A confirmed nearby cube disappearance now shows a short “Cube disappeared” banner with the puzzled mascot, without the key count.
+- The temporary Alpha experiment has ended. Updates offer Stable and Beta again; existing Alpha preferences return to Beta.
+
 ## CatScratch v4.0.9-beta.4
 
 - Alpha is now available in Settings > Updates. Its experimental features require an explicit acknowledgement before Save or update checks. You can return to Beta or Stable from the same menu.

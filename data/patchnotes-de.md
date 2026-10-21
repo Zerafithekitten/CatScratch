@@ -1,3 +1,8 @@
+## CatScratch v4.0.9-beta.5
+
+- Wenn das Verschwinden eines zuvor erkannten Würfels bestätigt wird, erscheint kurz „Cube disappeared“ mit der ratlosen Katze – ohne Schlüsselanzeige.
+- Das vorübergehende Alpha-Experiment ist beendet. Zur Auswahl stehen wieder Stable und Beta; gespeicherte Alpha-Einstellungen wechseln zurück zu Beta.
+
 ## CatScratch v4.0.9-beta.4
 
 - Alpha ist jetzt unter Einstellungen > Updates verfügbar. Vor dem Speichern oder der Update-Suche muss der experimentelle Kanal ausdrücklich per Häkchen bestätigt werden. Zurück zu Beta oder Stable geht es im selben Menü.
