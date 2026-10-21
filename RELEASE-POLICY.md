@@ -111,3 +111,5 @@ On 2026-10-20 the owner explicitly approved publishing the reviewed live cat-res
 On 2026-10-21 the owner reviewed the final Hidden Cube banner with cropped cat profile and explicitly approved Stable publication. Release v4.0.7 with bound-key inventory tracking and the reviewed supporter paw glow after complete checks. Keep paid companion details out of patch notes and preserve Light.
 
 On 2026-10-21 the owner reviewed the shared mascot, lettering and watermarks including the corrected update-window notes-only decoration, and explicitly approved Stable publication plus the matching GitHub banner, README and screenshots. Publish v4.0.8 after complete release checks. Preserve Light and do not claim an Odyle consumption fix from the pending recording investigation.
+
+On 2026-10-21 the owner explicitly requested implementing reversible live Settings previews and uploading them to Beta. Publish v4.0.9-beta.1 after the actual preview and full release checks. Keep notes brief; do not refresh the GitHub README, banner, screenshots or repository description for Beta. Preserve Stable and Light.

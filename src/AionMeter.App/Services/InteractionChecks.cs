@@ -686,6 +686,7 @@ internal static class InteractionChecks
                 using var sound=File.OpenRead(Path.Combine(AppContext.BaseDirectory,"sounds",soundName+".wav"));
                 Check(Core.Audio.WaveSound.Validate(sound)<=TimeSpan.FromSeconds(10),"Bundled sound fits the WAV duration limit: "+soundName);
             }
+            foreach(var preferences in windows.OfType<AionMeter.App.Windows.SettingsWindow>().ToArray())preferences.Close();
             meter.SetLanguage("de");
             Check(UiText.Current.Code=="de" && UiText.Current.WaitingTitle=="Warte auf Kampf" && UiText.Current.Localize("Event settings")=="Event-Einstellungen",
                 "German is selectable and interface literals translate without changing stored identifiers");
@@ -701,6 +702,7 @@ internal static class InteractionChecks
             var germanSettings=new AionMeter.App.Windows.SettingsWindow(meter); windows.Add(germanSettings);
             var languages=(System.Windows.Controls.ComboBox)germanSettings.FindName("LanguageBox");
             Check(languages.Items.Count==4 && languages.SelectedIndex==1 && new AppSettings().Language=="en" && meter.Data.Language=="de","All four languages are selectable; fresh installs default to English");
+            germanSettings.Close();
             static IEnumerable<System.Windows.DependencyObject> Descendants(System.Windows.DependencyObject node)
             {
                 foreach(var child in System.Windows.LogicalTreeHelper.GetChildren(node).OfType<System.Windows.DependencyObject>())
@@ -730,6 +732,7 @@ internal static class InteractionChecks
                 Check(((System.Windows.Controls.ComboBox)localizedSettings.FindName("LanguageBox")).SelectedIndex==Array.IndexOf(UiText.Languages,code),"Settings retain language selection: "+code);
                 var report=(System.Windows.Controls.Button)localizedSettings.FindName("ReportButton");
                 Check((string)report.Content==text.ReportButton && text.ReportButton!=new UiText().ReportButton,"Feedback button is translated: "+code);
+                localizedSettings.Close();
             }
             Check(new Uri(Feedback.IssueUrl).Host=="github.com" && new Uri(Feedback.IssueUrl).Query.Length==0,"Feedback opens the official issue chooser without sending user data");
             AssetDownloadChecks.Run(output,Check);

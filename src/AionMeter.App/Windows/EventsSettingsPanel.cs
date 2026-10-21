@@ -12,7 +12,7 @@ internal sealed class EventsSettingsPanel : StackPanel
         Resources.MergedDictionaries.Add(new ResourceDictionary {Source=new Uri("/CatScratch;component/Theme/MeterPreferences.xaml",UriKind.Relative)});
         string T(string text)=>UiText.Current.Localize(text);
         void Save(){cards.Save();reload();}
-        Children.Add(new TextBlock {Text=T("Changes take effect after saving."),FontSize=11,TextWrapping=TextWrapping.Wrap,Foreground=ThemeColors.Brush("#A9B8C7"),Margin=new(0,0,0,10)});
+        Children.Add(new TextBlock {Text=T("Live preview · Save keeps changes; closing discards unsaved changes."),FontSize=11,TextWrapping=TextWrapping.Wrap,Foreground=ThemeColors.Brush("#A9B8C7"),Margin=new(0,0,0,10)});
         var display=new StackPanel();
         Children.Add(new Border {Child=display,Padding=new(12),Margin=new(0,0,0,10),CornerRadius=new(7),Background=ThemeColors.Brush("#191D23"),BorderBrush=ThemeColors.Brush("#414A56"),BorderThickness=new(1)});
         display.Children.Add(new TextBlock {Text=T("Event modules"),Foreground=ThemeColors.Brush("#C49AF5"),Margin=new(0,0,0,8)});

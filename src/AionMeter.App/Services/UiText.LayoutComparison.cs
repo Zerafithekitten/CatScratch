@@ -1,4 +1,4 @@
-﻿namespace AionMeter.App.Services;
+namespace AionMeter.App.Services;
 
 public sealed partial class UiText
 {
@@ -111,7 +111,9 @@ public sealed partial class UiText
         ["Community schedule · Shugo.GG · not officially confirmed"]=("Community-Zeitplan · Shugo.GG · nicht offiziell bestätigt","Расписание сообщества · Shugo.GG · официально не подтверждено","Calendrier communautaire · Shugo.GG · non confirmé officiellement"),
         ["Updates"]=("Updates","Обновления","Mises à jour"),
         ["Feedback"]=("Feedback","Обратная связь","Avis"),
-        ["Changes take effect after saving."]=("Änderungen werden erst mit Speichern übernommen.","Изменения применяются после сохранения.","Les modifications prennent effet après enregistrement."),
+        ["Live preview · Save keeps changes; closing discards unsaved changes."]=("Live-Vorschau · Speichern übernimmt Änderungen; Schließen verwirft ungespeicherte Änderungen.","Предпросмотр · Сохраните изменения или закройте окно для отмены.","Aperçu en direct · Enregistrez pour conserver les modifications, fermez pour les annuler."),
+        ["Capture, startup integration and hotkeys apply with Save. Explicit file and profile actions remain immediate."]=("Erfassung, Autostart und Tastenkürzel werden mit Speichern angewendet. Datei- und Profilaktionen bleiben unmittelbar.","Захват, автозапуск и горячие клавиши применяются после сохранения. Действия с файлами и профилями выполняются сразу.","La capture, le démarrage automatique et les raccourcis s’appliquent après enregistrement. Les actions sur les fichiers et profils restent immédiates."),
+        ["Changes take effect after saving."]=("Live-Vorschau: Änderungen werden erst mit Speichern dauerhaft übernommen.","Предпросмотр: изменения сохраняются только кнопкой сохранения.","Aperçu en direct : enregistrez pour conserver les modifications."),
         ["Differences describe these runs; healing, incoming damage and duration depend on the fight."]=("Die Differenzen beschreiben diese Läufe; Heilung, erlittener Schaden und Dauer hängen vom Kampf ab.","Различия описывают эти бои; лечение, входящий урон и длительность зависят от боя.","Les écarts décrivent ces combats ; soins, dégâts reçus et durée dépendent du combat."),
         ["Overlay profiles"]=("Overlay-Profile","Профили оверлеев","Profils des overlays"),
         ["Profile name"]=("Profilname","Название профиля","Nom du profil"),

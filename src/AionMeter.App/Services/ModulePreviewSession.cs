@@ -1,4 +1,4 @@
-﻿using System.IO;
+using System.IO;
 using System.Windows;
 using System.Windows.Threading;
 using AionMeter.App.Windows;
@@ -70,6 +70,28 @@ internal sealed class ModulePreviewSession:IDisposable
             _timer.Tick+=(_,_)=>{foreach(var refresh in _refresh)refresh();};
         }
         catch{Dispose();throw;}
+    }
+    internal void RefreshPreferences(TimerCards? sourceCards=null)
+    {
+        var draft=_source.CreateDraft();
+        if(sourceCards is not null){using var events=sourceCards.CreatePreferencesDraft();_cards.PreviewPreferences(events);}
+        foreach(var name in SettingsWindow.PreviewProperties)
+        {
+            var property=typeof(AppSettings).GetProperty(name)!;property.SetValue(_meter.Settings,property.GetValue(draft));
+        }
+        foreach(var (id,window) in _windows)
+        {
+            window.Opacity=Math.Clamp(_source.WindowOpacity,.4,1);
+            if(window is TimerHubWindow)
+            {
+                window.Opacity=_cards.Saved.EventOpacity;
+                if(_cards.Saved.Positions.TryGetValue(id=="started"?"started-events":"auto-events",out var placement))window.Width=Math.Clamp(placement.Width,240,1000);
+            }
+            if(window is OverlayWindow overlay)overlay.ApplyAppearance();
+            if(window is ChecklistWindow checklist)checklist.ApplyPreferences();
+            if(window is PetTrackerWindow pets){pets.Width=Math.Clamp(_source.PetModuleWidth,150,1600);pets.Refresh();}
+        }
+        foreach(var refresh in _refresh)refresh();
     }
     private void Add(string id,Window window,Action? refresh=null)
     {

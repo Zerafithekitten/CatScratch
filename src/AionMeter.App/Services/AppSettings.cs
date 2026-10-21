@@ -292,12 +292,24 @@ public sealed class AppSettings
         return draft;
     }
 
+    internal readonly object PreviewGate=new();
+    internal Dictionary<string,object?>? PreviewCommitted;
+    internal bool PreviewActive=>PreviewCommitted is not null;
     public void Save() => SaveTo(FilePath);
 
     internal void SaveTo(string path)
     {
         if (Transient) return;
-        JsonSettingsFile.Write(path, this, Json);
+        AppSettings persisted=this;
+        lock(PreviewGate)
+        {
+            if(PreviewCommitted is {} baseline)
+            {
+                persisted=CreateDraft();
+                foreach(var pair in baseline)typeof(AppSettings).GetProperty(pair.Key)!.SetValue(persisted,pair.Value);
+            }
+            JsonSettingsFile.Write(path, persisted, Json);
+        }
     }
 
     public void ApplyTo(MeterOptions options)

@@ -48,7 +48,7 @@ public sealed partial class TimerCards : IDisposable
     }
     private readonly MeterService _meter;
     private readonly bool _persistent;
-    private readonly string _path = Path.Combine(AppSettings.AppDataDir, "timer-cards.json");
+    private readonly string _path;
     private readonly Dictionary<string, TimerCardWindow> _windows = [];
     public State Saved { get; private set; } = new();
     private AppSettings? _settingsOverride;
@@ -62,6 +62,62 @@ public sealed partial class TimerCards : IDisposable
         _settingsOverride = Settings.CreateDraft()
     };
 
+    private TimerCards? _previewBaseline;
+    private readonly HashSet<string> _previewFields=[],_previewFavorites=[],_previewPlacements=[];
+    private static readonly string[] PreviewFields=["EventRegion","SelectedEvents","EventOpacity","ShowAllWorldBosses","SelectedWorldBosses","EventWindowOpen","StartedEventWindowOpen","SoundLeadMinutes","SoundVolume","Sounds"];
+    internal void BeginPreferencesPreview()=>_previewBaseline??=CreatePreferencesDraft();
+    private static object? CloneValue(System.Reflection.PropertyInfo property,State value)=>JsonSerializer.Deserialize(JsonSerializer.Serialize(property.GetValue(value),property.PropertyType),property.PropertyType);
+    internal void PreviewPreferences(TimerCards draft)
+    {
+        BeginPreferencesPreview();var baseline=_previewBaseline!.Saved;
+        foreach(var name in PreviewFields)
+        {
+            var property=typeof(State).GetProperty(name)!;
+            var desired=JsonSerializer.Serialize(property.GetValue(draft.Saved),property.PropertyType);
+            var original=JsonSerializer.Serialize(property.GetValue(baseline),property.PropertyType);
+            if(desired!=original){_previewFields.Add(name);property.SetValue(Saved,CloneValue(property,draft.Saved));}
+            else if(_previewFields.Remove(name))property.SetValue(Saved,CloneValue(property,baseline));
+        }
+        foreach(var id in baseline.FavoriteEvents.Union(draft.Saved.FavoriteEvents).Union(_previewFavorites).ToArray())
+        {
+            var desired=draft.Saved.FavoriteEvents.Contains(id);var original=baseline.FavoriteEvents.Contains(id);
+            if(desired!=original){_previewFavorites.Add(id);if(desired)Saved.FavoriteEvents.Add(id);else Saved.FavoriteEvents.Remove(id);}
+            else if(_previewFavorites.Remove(id)){if(original)Saved.FavoriteEvents.Add(id);else Saved.FavoriteEvents.Remove(id);}
+        }
+        foreach(var key in new[]{"auto-events","started-events"})
+        {
+            var original=baseline.Positions.GetValueOrDefault(key)?.Width??480;
+            var desired=draft.Saved.Positions.GetValueOrDefault(key)?.Width??480;
+            if(desired!=original)
+            {
+                _previewPlacements.Add(key);if(!Saved.Positions.TryGetValue(key,out var position))Saved.Positions[key]=position=new();position.Width=desired;
+            }
+            else if(_previewPlacements.Remove(key))RestorePreviewPlacement(Saved,key);
+        }
+        Settings.BossAlertMinutes=draft.Settings.BossAlertMinutes;
+        _scheduleKey=null;FavoritesChanged?.Invoke();
+    }
+    private void RestorePreviewPlacement(State target,string key)
+    {
+        if(_previewBaseline!.Saved.Positions.TryGetValue(key,out var original))target.Positions[key]=JsonSerializer.Deserialize<CardPlacement>(JsonSerializer.Serialize(original))!;
+        else target.Positions.Remove(key);
+    }
+    private void RestorePreviewPreferences(State target)
+    {
+        foreach(var name in _previewFields)
+        {
+            var property=typeof(State).GetProperty(name)!;property.SetValue(target,CloneValue(property,_previewBaseline!.Saved));
+        }
+        foreach(var id in _previewFavorites)
+            if(_previewBaseline!.Saved.FavoriteEvents.Contains(id))target.FavoriteEvents.Add(id);else target.FavoriteEvents.Remove(id);
+        foreach(var key in _previewPlacements)RestorePreviewPlacement(target,key);
+    }
+    internal void EndPreferencesPreview(bool commit)
+    {
+        if(_previewBaseline is not {} baseline)return;
+        if(!commit){RestorePreviewPreferences(Saved);_scheduleKey=null;FavoritesChanged?.Invoke();}
+        _previewFields.Clear();_previewFavorites.Clear();_previewPlacements.Clear();_previewBaseline=null;baseline.Dispose();if(commit)Save();
+    }
     internal void ApplyPreferences(TimerCards draft)
     {
         var source = draft.Saved;
@@ -154,10 +210,11 @@ public sealed partial class TimerCards : IDisposable
         var seconds = EventActivity.RemainingSeconds(item,now);
         return $"{UiText.Current.Localize("Open!")} · {seconds / 60:00}:{seconds % 60:00}";
     }
-    public TimerCards(MeterService meter, bool persistent = true)
+    public TimerCards(MeterService meter, bool persistent = true,string? directory=null)
     {
         _meter = meter;
-        _persistent = persistent && !meter.Settings.Transient;
+        _path=Path.Combine(directory??AppSettings.AppDataDir,"timer-cards.json");
+        _persistent = persistent && (!meter.Settings.Transient||directory is not null);
         if (_persistent) Saved = JsonSettingsFile.Read<State>(_path) ?? new();
         Saved.SelectedWorldBosses ??=[]; Saved.SelectedEvents ??= []; Saved.FavoriteEvents ??= []; Saved.Positions ??= []; Saved.Sounds ??= []; Saved.Events ??= [];
         if (Saved.EventRegion == "Europa") Saved.EventRegion = "Europe";
@@ -223,12 +280,20 @@ public sealed partial class TimerCards : IDisposable
         Saved.Positions.Remove(id);
         Save();
     }
+    internal event Action? PreferencesEdited;
     public void Save()
     {
+        PreferencesEdited?.Invoke();
         if (!_persistent) return;
         try
         {
-            JsonSettingsFile.Write(_path, Saved, new JsonSerializerOptions { WriteIndented = true });
+            var persisted=Saved;
+            if(_previewBaseline is {} baseline)
+            {
+                persisted=JsonSerializer.Deserialize<State>(JsonSerializer.Serialize(Saved))!;
+                RestorePreviewPreferences(persisted);
+            }
+            JsonSettingsFile.Write(_path, persisted, new JsonSerializerOptions { WriteIndented = true });
         }
         catch (Exception ex) when(ex is IOException or UnauthorizedAccessException) { Log.Error("Could not save timer cards", ex); }
     }

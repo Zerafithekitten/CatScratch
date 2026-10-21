@@ -77,7 +77,7 @@ public partial class SettingsWindow : Window
         SettingsTabs.Items.Add(new TabItem {Header=T.Localize("Events"),Tag="events",Padding=new Thickness(12,10,12,10),Content=new ScrollViewer {VerticalScrollBarVisibility=ScrollBarVisibility.Auto,HorizontalScrollBarVisibility=ScrollBarVisibility.Disabled,Padding=new Thickness(14,0,0,0),Content=new EventsSettingsPanel(_eventDraft,()=>{},(sound,volume)=>{if(!meter.Settings.Transient)AppHost.Current.PreviewEventSound(sound,volume);})}});
         var modules=new StackPanel();
         modules.Children.Add(new TextBlock {Text=T.Localize("Pet tracker"),FontSize=16,Margin=new Thickness(0,0,0,8)});
-        modules.Children.Add(new TextBlock {Text=T.Localize("Changes take effect after saving."),Margin=new Thickness(0,0,0,12),TextWrapping=TextWrapping.Wrap});
+        modules.Children.Add(new TextBlock {Text=T.Localize("Live preview · Save keeps changes; closing discards unsaved changes."),Margin=new Thickness(0,0,0,12),TextWrapping=TextWrapping.Wrap});
         void Module(string label,bool value,Action<bool> change){var field=new CheckBox {Content=T.Localize(label),IsChecked=value,Style=(Style)FindResource("DarkCheck"),Margin=new Thickness(0,0,0,10)};field.Click+=(_,_)=>change(field.IsChecked==true);modules.Children.Add(field);}
 
         Module("Show pet tracker",meter.Settings.ShowPetTrackerModule,v=>_moduleDraft.ShowPetTrackerModule=v);
@@ -111,9 +111,10 @@ public partial class SettingsWindow : Window
             preview.Closed+=(_,_)=>cubePreview=null;preview.Show();
         };
         cubes.Children.Add(previewCube);
-        cubes.Children.Add(new HiddenCubeSoundPanel(_moduleDraft,(sound,volume)=>{if(!meter.Settings.Transient)AppHost.Current.PreviewEventSound(sound,volume);}));
+        var cubeSound=new HiddenCubeSoundPanel(_moduleDraft,(sound,volume)=>{if(!meter.Settings.Transient)AppHost.Current.PreviewEventSound(sound,volume);});
+        cubeSound.Changed+=QueueLivePreview;cubes.Children.Add(cubeSound);
         Closed+=(_,_)=>cubePreview?.Close();
-        cubes.Children.Add(new TextBlock {Text=T.Localize("Changes take effect after saving."),TextWrapping=TextWrapping.Wrap,Margin=new(0,8,0,8)});
+        cubes.Children.Add(new TextBlock {Text=T.Localize("Live preview · Save keeps changes; closing discards unsaved changes."),TextWrapping=TextWrapping.Wrap,Margin=new(0,8,0,8)});
         cubes.Children.Add(new TextBlock {Text=T.Localize("Shows a movable alert for the cube type confirmed in recordings. Hides after opening, changing maps or 60 seconds without a fresh announcement. Other cube variants are not yet verified. No reliable player position is available for direction, distance or map placement."),TextWrapping=TextWrapping.Wrap,Foreground=ThemeColors.Brush("#A9B8C7"),FontSize=11});
         SettingsTabs.Items.Add(new TabItem {Header=T.Localize("Hidden cubes"),Tag="cubes",Padding=new(12,10,12,10),Content=new ScrollViewer {VerticalScrollBarVisibility=ScrollBarVisibility.Auto,HorizontalScrollBarVisibility=ScrollBarVisibility.Disabled,Padding=new(14,0,0,0),Content=new Border {Child=cubes,Style=(Style)FindResource("Section")}}});
         SettingsTabs.Items.Add(new TabItem {Header=T.Localize("Overlay profiles"),Tag="profiles",Padding=new Thickness(12,10,12,10),Content=new ScrollViewer {VerticalScrollBarVisibility=ScrollBarVisibility.Auto,HorizontalScrollBarVisibility=ScrollBarVisibility.Auto,Padding=new Thickness(14,0,0,0),Content=new OverlayProfilesPanel()}});
@@ -153,6 +154,7 @@ public partial class SettingsWindow : Window
         // The row size slider previews on the overlay; closing without saving puts the saved size back.
         Closed += (_, _) => AppHost.Current.PreviewRowSize(_meter.Settings.RowSize);
         Closed += (_, _) => _eventDraft.Dispose();
+        InitializeLivePreview();
     }
 
     private void Load()
@@ -289,6 +291,10 @@ public partial class SettingsWindow : Window
 
     private async void Save_Click(object sender, RoutedEventArgs e)
     {
+        if(_previewSaving)return;
+        _previewSaving=true;_previewTimer.Stop();
+        try
+        {
         var s = _meter.Settings;
         var hotkeyFields=new[] {HkToggle,HkAll,HkReset,HkClick,HkTimers,HkPersonal,HkEvents,HkPets,HkDeathRecap,HkChecklist};
         var invalidHotkey=HotkeyManager.InvalidGestureIndex(hotkeyFields.Select(field=>field.Text));
@@ -384,6 +390,7 @@ public partial class SettingsWindow : Window
         var petVisibilityChanged=s.ShowPetTrackerModule!=_moduleDraft.ShowPetTrackerModule;
         s.PetNotify=_moduleDraft.PetNotify;
         s.PetOnHitOnly=_moduleDraft.PetOnHitOnly;
+        _livePreview?.RestoreForCommit("ChecklistAutoReset","ChecklistResetHourUtc","ChecklistWeeklyResetDay");
         _checklistPreferences.ApplyTo(s);
         s.ShowDungeonEntriesModule=_moduleDraft.ShowDungeonEntriesModule;
         s.DungeonEntriesLayout=_moduleDraft.DungeonEntriesLayout;
@@ -410,6 +417,7 @@ public partial class SettingsWindow : Window
         if(petVisibilityChanged && !s.Transient)AppHost.Current.TogglePetModule();
         s.ShowPetTrackerModule=_moduleDraft.ShowPetTrackerModule;
 
+        CommitLivePreview();
         _meter.ApplySettings();
         if (captureChanged) _meter.RestartCapture();
         _controlPanelPreferences.MarkSaved();
@@ -423,6 +431,10 @@ public partial class SettingsWindow : Window
             WindowPresentation.ConfigureDisplay(s.PreferredDisplay);
             if(displayChanged){WindowPresentation.MoveOverlaysToPreferredScreen();WindowPresentation.PlaceOnPreferredScreen(this);}
         }
+        AppHost.Current.RefreshSettingsPreview(_meter);
+        BeginLivePreview();
+        }
+        finally{_previewSaving=false;}
     }
 
     private void UiScale_Changed(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -449,7 +461,7 @@ public partial class SettingsWindow : Window
         if (RowSizeText is null) return; // the slider sets its first value before the rest of the window exists
         var percent = (int)Math.Round(e.NewValue);
         RowSizeText.Text = $"{percent}%";
-        AppHost.Current.PreviewRowSize(percent);
+        // The shared transaction applies row size and restores it on close.
     }
 
     /// <summary>Asks GitHub right away; a newer version also opens the update window.</summary>

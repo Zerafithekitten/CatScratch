@@ -254,6 +254,13 @@ public partial class App : Application
             catch(Exception error){File.WriteAllText(placementPath,error.ToString());Shutdown(1);}
             return;
         }
+        if(ArgValue(e.Args,"--check-live-settings") is {} liveSettingsOutput)
+        {
+            Log.Enabled=false;
+            try{LiveSettingsChecks.Run(liveSettingsOutput);Shutdown();}
+            catch(Exception error){File.WriteAllText(liveSettingsOutput,error.ToString());Shutdown(1);}
+            return;
+        }
         if(ArgValue(e.Args,"--check-branding") is {} brandingOutput)
         {
             Log.Enabled=false;
@@ -973,7 +980,7 @@ public partial class App : Application
         foreach(var w in _breakdowns.Values.ToList())w.Close();
         _personalBests?.Reload();
         _lastPlayedWith?.Reload();
-        _history?.Reload();_overlay.OnLanguageChanged();
+        _history?.Reload();_overlay?.OnLanguageChanged();
     }
     public void ToggleLanguage() => SetLanguage(UiText.Languages[(Array.IndexOf(UiText.Languages, UiText.Current.Code) + 1) % UiText.Languages.Length]);
 
@@ -1148,8 +1155,9 @@ public partial class App : Application
     {BossTimers=_timersWindow is {IsLoaded:true} w?new CardPlacement {Left=w.Left,Top=w.Top,Width=w.Width,Height=w.Height,Open=w.IsVisible}:null};
     internal void ApplyOverlayProfile(OverlayProfile profile)
     {
-        // Validate first, then close displays before restoring saved placement (close handlers write positions).
+        // Validate first. Discard the settings transaction before applying an explicit saved profile.
         OverlayProfiles.Apply(profile,new AppSettings(),new TimerCards.State());
+        _settingsWindow?.Close();
         _timerHub?.Close();_startedEvents?.Close();_petWindow?.Close();_hiddenCubeWindow?.Close();_supporterCatWindow?.Close();_resourcesWindow?.Close();_dungeonEntriesWindow?.Close();_bossTimingWindow?.Close();_timersWindow?.Close();_timerCards!.Dispose();
         OverlayProfiles.Apply(profile,_meter.Settings,_timerCards.Saved);
         ModuleSnapping.Configure(_meter.Settings);
@@ -1168,7 +1176,7 @@ public partial class App : Application
         _meterControls?.RestorePosition();
         WindowClickThrough.ApplyAll(_meter.Settings.ClickThrough);
         WindowPinning.RefreshAll();
-        _overlay.Refresh();_settingsWindow?.Close();
+        _overlay.Refresh();
     }
 
     internal void ShowBossComparison(Core.Combat.EncounterSnapshot current)
@@ -1251,8 +1259,43 @@ public partial class App : Application
         }
     }
 
+    internal void RefreshSettingsPreview(MeterService owner)
+    {
+        if(_shutdownStarted)return;
+        var settings=owner.Settings;
+        if(UiText.Current.Code!=UiText.Normalize(settings.Language))
+        {
+            if(ReferenceEquals(_meter,owner))SetLanguage(settings.Language);else owner.SetLanguage(settings.Language);
+        }
+        ThemeColors.Apply(settings.Theme);WindowPresentation.SetScale(settings.UiScale);StreamNames.Enabled=settings.StreamMode;
+        owner.Icons.Enabled=settings.DownloadIcons;owner.Portraits.Enabled=settings.DownloadIcons;
+        foreach(var window in Windows.Cast<Window>().ToArray())
+        {
+            if(window is OverlayWindow overlay&&ReferenceEquals(overlay.Meter,owner)){overlay.ApplyAppearance();overlay.Refresh();}
+            else if(window is IDisplayAppearance)window.Opacity=Math.Clamp(settings.WindowOpacity,.4,1);
+            if(window is ResourcesWindow resources)resources.Refresh();
+            if(window is DungeonEntriesWindow entries)entries.Refresh();
+            if(window is ChecklistWindow checklist)checklist.ApplyPreferences();
+            if(window is PetTrackerWindow pets){pets.Width=Math.Clamp(settings.PetModuleWidth,150,1600);pets.Refresh();}
+            else if(window is MeterControlsWindow controls)controls.ApplyAppearance();
+        }
+        if(!ReferenceEquals(_meter,owner)||_overlay is null||_shutdownStarted)return;
+        var visible=settings.ShowDpsMeterModule&&settings.OverlayVisible&&!_windowVisibility.Hidden;
+        if(_modulePreview is null){if(visible)_overlay.Show();else _overlay.Hide();}
+        if(settings.ShowPetTrackerModule&&_petWindow is null&&!_windowVisibility.Hidden)TogglePetModule();
+        else if(!settings.ShowPetTrackerModule)_petWindow?.Close();
+        ModuleSnapping.Configure(settings);
+        WindowPresentation.ConfigureDisplay(settings.PreferredDisplay);
+        WindowPresentation.MoveOverlaysToPreferredScreen();
+        _modulePreview?.RefreshPreferences(_timerCards);
+        SyncBossTiming();SyncSupporterCat();SyncResources();SyncDungeonEntries();SyncChecklist();SyncHiddenCubes();SyncDeathRecap();
+        RefreshPetSettings();RefreshEventSettings();
+        _personalBests?.Reload();_lastPlayedWith?.Reload();_history?.Reload();
+    }
+
     public void OnSettingsChanged(bool dpsVisibilityChanged=false)
     {
+        if(_overlay is null||_meter is null)return;
         ModuleSnapping.Configure(_meter.Settings);
         _meterControls?.RefreshText();
         if(dpsVisibilityChanged)SetOverlayVisible(_meter.Settings.ShowDpsMeterModule);

@@ -1,4 +1,4 @@
-﻿namespace AionMeter.App.Services;
+namespace AionMeter.App.Services;
 
 internal static class ChecklistSchedule
 {
@@ -24,6 +24,7 @@ internal static class ChecklistSchedule
     }
     internal static bool Update(AppSettings settings,DateTimeOffset now)
     {
+        if(settings.PreviewActive)return false; // Trying reset preferences must never clear task checkmarks.
         var daily=PeriodStart(now,settings.ChecklistResetHourUtc).ToUnixTimeSeconds();
         var weekly=PeriodStart(now,settings.ChecklistResetHourUtc,settings.ChecklistWeeklyResetDay).ToUnixTimeSeconds();
         if(settings.ChecklistDailyPeriod>=daily && settings.ChecklistWeeklyPeriod>=weekly)return false;

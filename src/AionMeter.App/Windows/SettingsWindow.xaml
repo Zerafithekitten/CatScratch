@@ -383,9 +383,11 @@
         </TabItem>
       </TabControl>
       <Border Grid.Row="2" BorderBrush="{StaticResource Line}" BorderThickness="0,1,0,0" Padding="20,12">
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-          <Button Style="{StaticResource PrimaryButton}" Content="{Binding Save, Source={x:Static s:UiText.Current}}" Click="Save_Click" />
-        </StackPanel>
+        <Grid>
+          <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+          <TextBlock x:Name="LivePreviewHint" TextWrapping="Wrap" VerticalAlignment="Center" Margin="0,0,12,0" FontSize="11" Foreground="{DynamicResource CustomBrush_A9B8C7}" />
+          <Button x:Name="SaveSettingsButton" Grid.Column="1" Style="{StaticResource PrimaryButton}" Content="{Binding Save, Source={x:Static s:UiText.Current}}" Click="Save_Click" />
+        </Grid>
       </Border>
     </Grid>
   </Border>

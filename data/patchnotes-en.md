@@ -1,3 +1,9 @@
+## CatScratch v4.0.9-beta.1
+
+- Settings now preview module layouts, visibility, selection, sizes, opacity, colors, language and sound preferences live.
+- Save keeps the current preview and starts a new checkpoint. Closing discards later edits; autosaves, checklist content and live progress stay separate.
+- Capture changes, startup integration and hotkeys still apply with Save. Combat-option previews do not reset the current fight.
+
 ## CatScratch v4.0.8
 
 [Deutsche Patchnotes](https://github.com/Zerafithekitten/CatScratch/blob/v4.0.8/data/patchnotes-de.md)

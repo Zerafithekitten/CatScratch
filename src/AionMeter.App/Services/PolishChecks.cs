@@ -255,7 +255,8 @@ internal static class PolishChecks
             window.Show();
             var dpsCheck=(CheckBox)window.FindName("ShowDpsMeterCheck");
             dpsCheck.IsChecked=false;
-            check(meter.Settings.ShowDpsMeterModule,"DPS display changes remain drafts until Settings is saved");
+            window.ApplyLivePreview();
+            check(!meter.Settings.ShowDpsMeterModule,"DPS visibility previews immediately before Save");
             var tabs=(TabControl)window.FindName("SettingsTabs");
             window.UpdateLayout();
             check(Visuals(window).OfType<Button>().Any(b=>b.IsVisible && Equals(b.Content,UiText.Current.Save)),"Appearance settings retain a visible Save action with the new panel controls");
@@ -263,7 +264,8 @@ internal static class PolishChecks
             window.UpdateLayout();
             var panelPreferences=Visuals(window).OfType<ControlPanelSettingsPanel>().Single();
             panelPreferences.Children.OfType<ComboBox>().First().SelectedIndex=1;
-            check(panelPreferences.Changed && meter.Settings.ControlsLayout==ControlsLayout.Horizontal,"Panel orientation stays a draft until Save and is discarded by Cancel");
+            window.ApplyLivePreview();
+            check(panelPreferences.Changed && meter.Settings.ControlsLayout==ControlsLayout.Vertical,"Panel orientation previews immediately and remains reversible");
             var formLabels=Visuals(window).OfType<TextBlock>().Where(t=>t.IsVisible && !string.IsNullOrWhiteSpace(t.Text) && !InButton(t)).ToArray();
             check(formLabels.Length>10 && formLabels.All(t=>t.Foreground is System.Windows.Media.SolidColorBrush brush && brush.Color.R+brush.Color.G+brush.Color.B>210),"Settings labels and values remain light on dark expandable sections");
             void Change(string tab,string label)
@@ -274,14 +276,15 @@ internal static class PolishChecks
                 box.RaiseEvent(new RoutedEventArgs(CheckBox.ClickEvent));
             }
             Change("events","Show upcoming events");Change("pets","Sound on collection / level up");Change("cubes","Enable hidden cube alerts (experimental)");
-            check(!meter.Settings.ShowHiddenCubeModule,"Cube notification preference stays a draft until Save");
+            window.ApplyLivePreview();
+            check(meter.Settings.ShowHiddenCubeModule,"Cube notification preference participates in live preview");
             var testCube=Visuals(window).OfType<Button>().Single(b=>Equals(b.Tag,"hidden-cube-preview"));
             testCube.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             var preview=Application.Current.Windows.OfType<HiddenCubeWindow>().Single(w=>w.IsPreview);
-            check(preview.IsVisible && !meter.Settings.ShowHiddenCubeModule,"Settings can preview and position a cube alert without enabling detection or fabricating cube events");
+            check(preview.IsVisible && meter.Settings.ShowHiddenCubeModule,"Settings can position a test cube alert without fabricating cube events");
             testCube.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             check(Application.Current.Windows.OfType<HiddenCubeWindow>().Count(w=>w.IsPreview)==1,"Repeated test alerts reuse the same preview window");
-            check(cards.Saved.EventWindowOpen==oldEvents && meter.Settings.PetNotify==oldPet,"Event and pet controls remain drafts until Save");
+            check(cards.Saved.EventWindowOpen!=oldEvents && meter.Settings.PetNotify!=oldPet,"Event and pet controls preview without committing preferences");
             window.Close();
             check(!Application.Current.Windows.OfType<HiddenCubeWindow>().Any(w=>w.IsPreview),"Closing Settings also closes its temporary cube preview");
             check(!meter.Settings.ShowHiddenCubeModule,"Closing Settings discards unsaved cube notification changes");

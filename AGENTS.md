@@ -77,3 +77,5 @@ On 2026-10-20 the owner made the personal 4.0.0 patch-note style permanent: writ
 Future patch notes should include useful example images for visible features and short GIF demonstrations when supported and helpful. Use synthetic/sample data; do not add decorative screenshots to nonvisual fixes.
 
 Supporter packages are optional signed data archives, never executable plugins. Preserve existing free customization and gameplay features. Keep creator private signing keys and paid pack contents outside the public repository; retain the pinned public key so previously issued packages continue working. Patreon posts, prices and uploads require separate user authorization.
+
+On 2026-10-21 the owner requested that Beta updates no longer refresh the GitHub project presentation. For Beta, publish the code and prerelease downloads with brief matching notes, but leave README, banners, screenshots and repository description unchanged. Continue updating that presentation for owner-approved Stable releases.

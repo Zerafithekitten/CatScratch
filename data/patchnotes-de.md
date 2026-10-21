@@ -1,3 +1,9 @@
+## CatScratch v4.0.9-beta.1
+
+- Einstellungen zeigen Anordnung, Sichtbarkeit, Auswahl, Größe, Transparenz, Farben, Sprache und Tonoptionen sofort als Live-Vorschau.
+- Speichern übernimmt den aktuellen Stand. Schließen verwirft spätere Änderungen; Autosaves, Checklisten-Inhalte und Spielfortschritt bleiben getrennt.
+- Erfassung, Autostart und Tastenkürzel werden weiterhin mit Speichern angewendet. Die Vorschau von Kampfoptionen setzt keinen laufenden Kampf zurück.
+
 ## CatScratch v4.0.8
 
 [English patch notes](https://github.com/Zerafithekitten/CatScratch/blob/v4.0.8/data/patchnotes-en.md)

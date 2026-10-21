@@ -7,6 +7,7 @@ namespace AionMeter.App.Windows;
 
 internal sealed class HiddenCubeSoundPanel : StackPanel
 {
+    internal event Action? Changed;
     private readonly AppSettings _draft;
     private readonly Func<string?>? _chooseFile;
     private readonly Action<EventSoundPreference,double> _preview;
@@ -55,7 +56,7 @@ internal sealed class HiddenCubeSoundPanel : StackPanel
             await CustomEventAudio.ValidateAsync(path);
             if(owner is not null && !owner.IsVisible)return false;
             _draft.HiddenCubeSoundPath=path;_draft.HiddenCubeSoundEnabled=true;_enabled.IsChecked=true;
-            _file.Text=FileLabel();_file.ToolTip=path;return true;
+            _file.Text=FileLabel();_file.ToolTip=path;Changed?.Invoke();return true;
         }
         catch(Exception e) when(e is InvalidDataException or IOException or UnauthorizedAccessException or InvalidOperationException or ArgumentException){ErrorMessage(e);return false;}
         finally{Busy(false);}

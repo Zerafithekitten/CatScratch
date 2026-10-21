@@ -6,9 +6,10 @@ using AionMeter.App.Services;
 
 namespace AionMeter.App.Windows;
 
-/// <summary>A local draft and preview: the running interface changes only after Save.</summary>
+/// <summary>Editable palette draft with change notifications for the reversible live preview.</summary>
 internal sealed class ThemeSettingsPanel : StackPanel
 {
+    internal event Action? Changed;
     private readonly TextBox[] _fields = new TextBox[3];
     private readonly Border[] _swatches = new Border[3];
     private readonly Border _preview = new(){CornerRadius=new(6),Padding=new(12),Margin=new(0,8,0,8)};
@@ -45,7 +46,7 @@ internal sealed class ThemeSettingsPanel : StackPanel
             System.Windows.Automation.AutomationProperties.SetName(field,T(labels[i]));
             field.TextChanged+=(_,_)=>RefreshPreview();Grid.SetColumn(field,2);row.Children.Add(field);Children.Add(row);
         }
-        _previewText.Text=T("Preview · changes take effect after saving.");
+        _previewText.Text=T("Live preview · Save keeps changes; closing discards unsaved changes.");
         var sample=new StackPanel();sample.Children.Add(_previewTitle);sample.Children.Add(_previewText);_preview.Child=sample;Children.Add(_preview);
         Children.Add(_error);
         _reset=new Button{Content=T("Restore default colors"),HorizontalAlignment=HorizontalAlignment.Left,Margin=new(0,4,0,0)};
@@ -88,7 +89,7 @@ internal sealed class ThemeSettingsPanel : StackPanel
         { _preview.Background=new SolidColorBrush((Color)ColorConverter.ConvertFromString(b));_previewTitle.Foreground=new SolidColorBrush((Color)ColorConverter.ConvertFromString(a));_previewText.Foreground=new SolidColorBrush((Color)ColorConverter.ConvertFromString(t)); }
         if(_party)_preview.Background=MarioPartyBackdrop.CreateBrush(preview:true);
         if(_partyButton is not null)_partyButton.ToolTip=_party?"Mario Party! ★":"Mario Party!";
-        TryGet(out _);
+        TryGet(out _);Changed?.Invoke();
     }
 
     private void OpenPicker(int index,Button anchor)
