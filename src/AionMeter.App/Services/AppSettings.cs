@@ -162,6 +162,7 @@ public sealed class AppSettings
     public bool BackgroundUpdateDefaultsApplied { get; set; }
     // Older copies have no preference: follow the installed build until explicitly selected.
     public string? UpdateChannel { get; set; }
+    public bool AlphaUpdatesAcknowledged {get;set;}
     public string? LastStartedRelease { get; set; }
     public string? PendingStablePatchNotes {get;set;}
     public string? LastShownStablePatchNotes {get;set;}
@@ -174,8 +175,8 @@ public sealed class AppSettings
         if(current.Channel==Core.Updates.UpdateChannel.Stable && previous is not null && previous!=current && LastShownStablePatchNotes!=current.Display)
             PendingStablePatchNotes=current.Display;
         var promoted = current.Channel == Core.Updates.UpdateChannel.Stable && previous != current
-            && Enum.TryParse<UpdateChannel>(UpdateChannel, true, out var selected) && selected == Core.Updates.UpdateChannel.Beta;
-        if (promoted) { UpdateChannel = Core.Updates.UpdateChannel.Stable.ToString(); SkippedUpdate = null; }
+            && Enum.TryParse<UpdateChannel>(UpdateChannel, true, out var selected) && selected != Core.Updates.UpdateChannel.Stable;
+        if (promoted) { AlphaUpdatesAcknowledged=false; UpdateChannel = Core.Updates.UpdateChannel.Stable.ToString(); SkippedUpdate = null; }
         LastStartedRelease = current.Display;
         return promoted;
     }

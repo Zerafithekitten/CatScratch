@@ -354,6 +354,9 @@
                   <TextBlock x:Name="UpdateChannelLabel" Style="{StaticResource Hint}" Margin="0,0,0,4" />
                   <ComboBox x:Name="UpdateChannelBox" HorizontalAlignment="Left" MinWidth="180" Margin="0,0,0,6" />
                   <TextBlock x:Name="UpdateChannelHint" Style="{StaticResource Hint}" />
+                  <CheckBox x:Name="AlphaConsentBox" Style="{StaticResource DarkCheck}" Visibility="Collapsed" Margin="0,8,0,12">
+                    <TextBlock x:Name="AlphaConsentText" TextWrapping="Wrap" MaxWidth="570" />
+                  </CheckBox>
                   <CheckBox x:Name="CheckUpdates" Style="{StaticResource DarkCheck}" Content="{Binding BackgroundUpdatesLabel, Source={x:Static s:UiText.Current}}" />
                   <TextBlock Style="{StaticResource Hint}" Text="{Binding BackgroundUpdatesHint, Source={x:Static s:UiText.Current}}" />
                   <TextBlock Style="{StaticResource Hint}" Text="{Binding Literal40, Source={x:Static s:UiText.Current}}" />

@@ -55,7 +55,7 @@ public sealed class Updater : IDisposable
         _channelRevision++; CancelPreparation(); Latest = null; LastError = null; _settings.SkippedUpdate = null;
         Changed?.Invoke();
     }
-    private bool IsUpdate(ReleaseInfo release) => (Channel == UpdateChannel.Beta || release.Identity.Channel == UpdateChannel.Stable)
+    private bool IsUpdate(ReleaseInfo release) => ReleaseVersion.Accepts(Channel,release.Identity.Channel)
         && ReleaseVersion.IsUpdate(release.Identity, CurrentIdentity, Channel);
 
     /// <summary>The newest release GitHub reported, newer or not; null before the first successful check.</summary>
