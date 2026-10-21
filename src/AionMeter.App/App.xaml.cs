@@ -709,13 +709,15 @@ public partial class App : Application
         var version=_meter.HiddenCubes.DetectionVersion;
         var newDetection=version!=_hiddenCubeSoundVersion;
         _hiddenCubeSoundVersion=version;
-        if(_shutdownStarted || !_meter.Settings.ShowHiddenCubeModule || _meter.DemoRunning || _meter.HiddenCubes.Count(DateTimeOffset.UtcNow.ToUnixTimeMilliseconds())==0)
+        var status=_meter.HiddenCubes.Status(DateTimeOffset.UtcNow.ToUnixTimeMilliseconds());
+        if(_shutdownStarted || !_meter.Settings.ShowHiddenCubeModule || _meter.DemoRunning || status.ActiveCount==0&&!status.RecentlyGone)
         {_hiddenCubeWindow?.Close();_hiddenCubeWindow=null;return;}
-        if(newDetection && _meter.Settings.HiddenCubeSoundEnabled && !string.IsNullOrWhiteSpace(_meter.Settings.HiddenCubeSoundPath))
+        if(newDetection && !status.RecentlyGone && status.ActiveCount>0 && _meter.Settings.HiddenCubeSoundEnabled && !string.IsNullOrWhiteSpace(_meter.Settings.HiddenCubeSoundPath))
             (_hiddenCubeSoundPlayer??=new()).Play(new EventSoundPreference {Enabled=true,Sound="Custom audio",FilePath=_meter.Settings.HiddenCubeSoundPath},_meter.Settings.HiddenCubeSoundVolume);
-        if(_hiddenCubeWindow is not null){_hiddenCubeWindow.RefreshKeyStock();return;}
+        if(_hiddenCubeWindow is not null){_hiddenCubeWindow.SetGone(status.RecentlyGone);_hiddenCubeWindow.RefreshKeyStock();return;}
         if(_windowVisibility.Hidden)return;
         var window=_hiddenCubeWindow=new HiddenCubeWindow(_meter.Settings,keyStock:_meter.Resources.ReadCubeKeys);
+        window.SetGone(status.RecentlyGone);
         window.Closed+=(_,_)=>{if(ReferenceEquals(_hiddenCubeWindow,window))_hiddenCubeWindow=null;};
         WindowClickThrough.Attach(window,()=>_meter.Settings.ClickThrough,()=>_meter.Settings.WindowOpacity);
         window.Show();_windowVisibility.Track(window);

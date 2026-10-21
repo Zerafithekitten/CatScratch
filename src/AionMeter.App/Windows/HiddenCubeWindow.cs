@@ -12,6 +12,14 @@ internal sealed class HiddenCubeWindow : Window,IDisplayAppearance
     private readonly DockPanel _header;
     private readonly Border _glow;
     private readonly TextBlock _keys;
+    private readonly StackPanel _keyRow;
+    internal bool KeyStockVisible=>_keyRow.Visibility==Visibility.Visible;
+    private readonly TextBlock _message;
+    private readonly Image _mascot;
+    private readonly BitmapSource _detectedMascot;
+    private BitmapSource? _goneMascot;
+    private bool _gone;
+    internal string MessageText=>_message.Text;
     private readonly Func<(ulong? Count,bool Cached,long ConfirmedAt)> _keyStock;
     internal bool IsPreview {get;}
     internal bool AlertAnimationRunning=>_glow.HasAnimatedProperties;
@@ -38,11 +46,12 @@ internal sealed class HiddenCubeWindow : Window,IDisplayAppearance
         var content=new Grid{Margin=new(10,9,12,9)};
         content.ColumnDefinitions.Add(new(){Width=new GridLength(78)});content.ColumnDefinitions.Add(new());
         var bitmap=new BitmapImage();bitmap.BeginInit();bitmap.UriSource=new Uri("pack://application:,,,/CatScratch;component/Assets/HiddenCube/cube-alert-mascot.png");bitmap.DecodePixelWidth=192;bitmap.CacheOption=BitmapCacheOption.OnLoad;bitmap.EndInit();bitmap.Freeze();
-        content.Children.Add(new Image{Source=bitmap,Width=72,Height=72,Margin=new(0,0,6,0),Stretch=Stretch.Uniform});
+        _detectedMascot=bitmap;
+        _mascot=new Image{Source=bitmap,Width=72,Height=72,Margin=new(0,0,6,0),Stretch=Stretch.Uniform};content.Children.Add(_mascot);
         var copy=new StackPanel{VerticalAlignment=VerticalAlignment.Center};Grid.SetColumn(copy,1);content.Children.Add(copy);
         copy.Children.Add(new TextBlock{Text=L("HIDDEN CUBE","VERSTECKTER WÜRFEL"),FontSize=11,FontWeight=FontWeights.Bold,Foreground=ThemeColors.Brush("#C49AF5"),Margin=new(0,0,0,3)});
-        copy.Children.Add(new TextBlock{Text=L("Cube detected!","Würfel entdeckt!"),FontSize=18,FontWeight=FontWeights.SemiBold,Foreground=ThemeColors.Brush("#EDF2F7"),Margin=new(0,0,0,7)});
-        var keyRow=new StackPanel{Orientation=Orientation.Horizontal};
+        _message=new TextBlock{Text=L("Cube detected!","Würfel entdeckt!"),FontSize=18,FontWeight=FontWeights.SemiBold,Foreground=ThemeColors.Brush("#EDF2F7"),Margin=new(0,0,0,7)};copy.Children.Add(_message);
+        var keyRow=_keyRow=new StackPanel{Orientation=Orientation.Horizontal};
         keyRow.Children.Add(new System.Windows.Shapes.Path{Data=Geometry.Parse("M 7,1 A 4,4 0 1 0 7,9 A 4,4 0 1 0 7,1 M 4,9 L 0,13 L 2,15 L 4,13 L 6,15 L 8,13 L 6,11"),Width=14,Height=14,Stretch=Stretch.Uniform,Stroke=ThemeColors.Brush("#E4C17C"),StrokeThickness=1.6,Margin=new(0,0,6,0)});
         _keys=new TextBlock{FontSize=11,VerticalAlignment=VerticalAlignment.Center};keyRow.Children.Add(_keys);copy.Children.Add(keyRow);
         var backdrop=new Grid();
@@ -50,16 +59,28 @@ internal sealed class HiddenCubeWindow : Window,IDisplayAppearance
         backdrop.Children.Add(signature);backdrop.Children.Add(content);
         layers.Children.Add(new Border{Background=ThemeColors.Brush("#F5191D23"),BorderBrush=ThemeColors.Brush("#414A56"),BorderThickness=new(1),CornerRadius=new(12),Child=backdrop});
         _glow=new Border{BorderBrush=ThemeColors.Brush("#C49AF5"),BorderThickness=new(1.3),CornerRadius=new(12),Opacity=.6,IsHitTestVisible=false,Effect=new DropShadowEffect{Color=Color.FromRgb(161,113,232),BlurRadius=10,ShadowDepth=0,Opacity=.4}};layers.Children.Add(_glow);body.Children.Add(layers);Content=body;
-        void Animate(bool active)
-        {
-            var pulse=new DoubleAnimation(.4,.85,TimeSpan.FromSeconds(1.2)){AutoReverse=true,RepeatBehavior=RepeatBehavior.Forever};Timeline.SetDesiredFrameRate(pulse,15);
-            _glow.BeginAnimation(OpacityProperty,active?pulse:null);
-        }
-        IsVisibleChanged+=(_,_)=>Animate(IsVisible);Closed+=(_,_)=>Animate(false);RefreshKeyStock();
+        IsVisibleChanged+=(_,_)=>Animate(IsVisible&&!_gone);Closed+=(_,_)=>Animate(false);RefreshKeyStock();
         if(settings.HiddenCubePositionSaved&&double.IsFinite(settings.HiddenCubeLeft)&&double.IsFinite(settings.HiddenCubeTop)){Left=settings.HiddenCubeLeft;Top=settings.HiddenCubeTop;}
         else{Left=SystemParameters.WorkArea.Left+Math.Max(0,(SystemParameters.WorkArea.Width-Width)/2);Top=SystemParameters.WorkArea.Top+SystemParameters.WorkArea.Height*.2;}
         Controls.DragAnywhere.Attach(this);
         Closed+=(_,_)=>{settings.HiddenCubeLeft=Left;settings.HiddenCubeTop=Top;settings.HiddenCubePositionSaved=true;settings.Save();};
+    }
+    private void Animate(bool active)
+    {
+        var pulse=new DoubleAnimation(.4,.85,TimeSpan.FromSeconds(1.2)){AutoReverse=true,RepeatBehavior=RepeatBehavior.Forever};Timeline.SetDesiredFrameRate(pulse,15);
+        _glow.BeginAnimation(OpacityProperty,active?pulse:null);
+    }
+    internal void SetGone(bool gone)
+    {
+        _keyRow.Visibility=gone?Visibility.Collapsed:Visibility.Visible;
+        _message.Text=gone?"Cube disappeared":L("Cube detected!","Würfel entdeckt!");
+        _message.FontSize=18;
+        if(gone && _goneMascot is null)
+        {
+            var bitmap=new BitmapImage();bitmap.BeginInit();bitmap.UriSource=new Uri("pack://application:,,,/CatScratch;component/Assets/HiddenCube/cube-gone-mascot.png");bitmap.DecodePixelWidth=192;bitmap.CacheOption=BitmapCacheOption.OnLoad;bitmap.EndInit();bitmap.Freeze();_goneMascot=bitmap;
+        }
+        _mascot.Source=gone?_goneMascot:_detectedMascot;
+        if(_gone!=gone){_gone=gone;Animate(IsVisible&&!gone);}
     }
     internal void RefreshKeyStock()
     {

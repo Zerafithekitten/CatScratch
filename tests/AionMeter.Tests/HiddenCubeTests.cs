@@ -6,6 +6,43 @@ namespace AionMeter.Tests;
 
 public class HiddenCubeTests
 {
+    [Fact] public void ConfirmedRemovalShowsAFiveSecondNoticeWithoutRepeatingOnDuplicatePackets()
+    {
+        var cubes=new HiddenCubes();cubes.Observe(new HiddenCubeSeenEvent(100,7,HiddenCubePackets.ConfirmedTemplate));
+        cubes.Observe(new HiddenCubeGoneEvent(200,7));
+        Assert.Equal(new HiddenCubeStatus(0,true),cubes.Status(200));
+        cubes.Observe(new HiddenCubeGoneEvent(300,7));
+        Assert.True(cubes.Status(200+HiddenCubes.GoneNoticeMs-1).RecentlyGone);
+        Assert.False(cubes.Status(200+HiddenCubes.GoneNoticeMs).RecentlyGone);
+    }
+    [Fact] public void UnknownExpiredAndOutOfOrderRemovalsNeverProduceACompletionNotice()
+    {
+        var cubes=new HiddenCubes();cubes.Observe(new HiddenCubeGoneEvent(50,7));Assert.False(cubes.Status(50).RecentlyGone);
+        cubes.Observe(new HiddenCubeSeenEvent(100,7,HiddenCubePackets.ConfirmedTemplate));
+        cubes.Observe(new HiddenCubeGoneEvent(99,7));Assert.Equal(new HiddenCubeStatus(1,false),cubes.Status(100));
+        cubes.Observe(new HiddenCubeGoneEvent(100+HiddenCubes.LifetimeMs,7));
+        Assert.Equal(new HiddenCubeStatus(0,false),cubes.Status(100+HiddenCubes.LifetimeMs));
+        cubes.Observe(new HiddenCubeSeenEvent(70_000,8,HiddenCubePackets.VerteronTemplate));
+        Assert.Equal(new HiddenCubeStatus(0,false),cubes.Status(70_000+HiddenCubes.LifetimeMs));
+    }
+    [Fact] public void OtherNearbyCubesSurviveTheNoticeAndNewFindsTakePriority()
+    {
+        var cubes=new HiddenCubes();cubes.Observe(new HiddenCubeSeenEvent(100,7,HiddenCubePackets.ConfirmedTemplate));
+        cubes.Observe(new HiddenCubeSeenEvent(110,8,HiddenCubePackets.VerteronTemplate));
+        cubes.Observe(new HiddenCubeGoneEvent(200,7));Assert.Equal(new HiddenCubeStatus(1,true),cubes.Status(200));
+        Assert.Equal(new HiddenCubeStatus(1,false),cubes.Status(200+HiddenCubes.GoneNoticeMs));
+        cubes.Observe(new HiddenCubeSeenEvent(6000,9,HiddenCubePackets.ConfirmedTemplate));Assert.Equal(new HiddenCubeStatus(2,false),cubes.Status(6000));
+    }
+    [Theory][InlineData("zone")][InlineData("character")][InlineData("capture")]
+    public void ContextChangesDiscardCompletionNotices(string change)
+    {
+        var cubes=new HiddenCubes();cubes.Observe(new SelfIdentifiedEvent(1,1,"One",1,GameClass.Cleric));
+        cubes.Observe(new HiddenCubeSeenEvent(100,7,HiddenCubePackets.ConfirmedTemplate));cubes.Observe(new HiddenCubeGoneEvent(200,7));
+        if(change=="zone")cubes.Observe(new ZoneChangedEvent(201,1110,"Map",false));
+        else if(change=="character")cubes.Observe(new SelfIdentifiedEvent(201,2,"Two",1,GameClass.Cleric));
+        else cubes.Reset();
+        Assert.Equal(new HiddenCubeStatus(0,false),cubes.Status(201));
+    }
     private static byte[] ObjectBody(int template=HiddenCubePackets.ConfirmedTemplate)
     {
         // Synthetic object with no character, location or connection information from a capture.
