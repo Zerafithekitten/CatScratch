@@ -673,14 +673,24 @@ public partial class App : Application
         if(!_meter.Settings.ShowSupporterCat || pack is null){_supporterCatWindow?.Close();return;}
         if(_supporterCatWindow is not null)
         {
-            if(_supporterCatWindow.PackFingerprint==pack.Pack.Fingerprint){_supporterCatWindow.ApplyPreferences();return;}
+            if(_supporterCatWindow.PackFingerprint==pack.Pack.Fingerprint){_supporterCatWindow.ApplyPreferences();RefreshCompanionUpdate();return;}
             _supporterCatWindow.Close();
         }
         if(_windowVisibility.Hidden)return;
         var window=_supporterCatWindow=new SupporterCatWindow(_meter.Settings,pack);
+        window.UpdateNoticeChanged+=()=>_overlay?.RefreshUpdateNotice();
+        window.IsVisibleChanged+=(_,_)=>RefreshCompanionUpdate();
         WindowClickThrough.Attach(window,()=>_meter.Settings.ClickThrough,()=>_meter.Settings.WindowOpacity);
-        window.Closed+=(_,_)=>{if(ReferenceEquals(_supporterCatWindow,window))_supporterCatWindow=null;};
-        window.Show();_windowVisibility.Track(window);
+        window.Closed+=(_,_)=>{if(ReferenceEquals(_supporterCatWindow,window))_supporterCatWindow=null;_overlay?.RefreshUpdateNotice();};
+        window.Show();_windowVisibility.Track(window);RefreshCompanionUpdate();
+    }
+
+    internal bool CompanionHandlesUpdate=>_supporterCatWindow?.UpdateNoticeVisible==true;
+    private void RefreshCompanionUpdate()
+    {
+        if(_shutdownStarted)return;
+        _supporterCatWindow?.SetUpdateNotice(_meter.Updates.Ready?.Tag,()=>_overlay.OpenReadyUpdate());
+        _overlay?.RefreshUpdateNotice();
     }
 
     private void SyncChecklist()
@@ -1200,6 +1210,7 @@ public partial class App : Application
         if (_shutdownStarted || Dispatcher.HasShutdownStarted) return;
         var updates = _meter.Updates;
         var available = updates.Ready;
+        RefreshCompanionUpdate();
         _tray?.SetUpdate(available?.DisplayVersion);
         if (available is null || available.Tag == _announcedUpdate) return;
         var t = UiText.Current;

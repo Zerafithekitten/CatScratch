@@ -390,11 +390,12 @@ public partial class OverlayWindow : Window, IDisplayAppearance
 
     /// <summary>The green "Version 0.2.0 is out" banner above the footer, while an update is available (not skipped or closed).</summary>
     private void ShowUpdateBanner() => ShowUpdateBanner(_meter.Updates);
+    internal void RefreshUpdateNotice()=>ShowUpdateBanner();
 
-    internal void ShowUpdateBanner(Updater updates)
+    internal void ShowUpdateBanner(Updater updates,bool? companionVisible=null)
     {
         var available = updates.Ready;
-        var show = available is not null && available.Tag != _bannerClosedFor;
+        var show = available is not null && available.Tag != _bannerClosedFor && !(companionVisible??AppHost.Current.CompanionHandlesUpdate);
         UpdateBanner.Visibility = show ? Visibility.Visible : Visibility.Collapsed;
         _controlsPanel?.SetUpdateAvailable(show);
         if (show)

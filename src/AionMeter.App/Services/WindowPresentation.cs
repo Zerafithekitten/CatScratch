@@ -171,6 +171,10 @@ internal static class WindowPresentation
             window.MinWidth=Math.Min(window.MinWidth,size.X);window.MinHeight=Math.Min(window.MinHeight,size.Y);
             if(!Limits.TryGetValue(window,out var limit))return;
             window.MaxWidth=Math.Min(limit.Width,size.X);window.MaxHeight=Math.Min(limit.Height,size.Y);
+            // The companion has fixed artwork bounds, including below the
+            // normal native minimum window width at 50% scale.
+            if(window is AionMeter.App.Windows.SupporterCatWindow cat)
+                window.MaxWidth=Math.Min(window.MaxWidth,cat.CatSize*Scale);
             if(window.ActualWidth>size.X && window.SizeToContent==SizeToContent.Manual)window.Width=Math.Max(window.MinWidth,size.X);
             if(window.ActualHeight>size.Y && window.SizeToContent==SizeToContent.Manual)window.Height=Math.Max(window.MinHeight,size.Y);
             if(Math.Abs(delta.X)>.5)window.Left+=delta.X;

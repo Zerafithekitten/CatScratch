@@ -1,3 +1,7 @@
+## CatScratch v4.0.9-beta.2
+
+- Optionale Update-Hinweise und die Größe kleiner Overlay-Fenster verbessert.
+
 ## CatScratch v4.0.9-beta.1
 
 - Einstellungen zeigen Anordnung, Sichtbarkeit, Auswahl, Größe, Transparenz, Farben, Sprache und Tonoptionen sofort als Live-Vorschau.

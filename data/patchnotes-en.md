@@ -1,3 +1,7 @@
+## CatScratch v4.0.9-beta.2
+
+- Improved optional update reminders and compact overlay sizing.
+
 ## CatScratch v4.0.9-beta.1
 
 - Settings now preview module layouts, visibility, selection, sizes, opacity, colors, language and sound preferences live.

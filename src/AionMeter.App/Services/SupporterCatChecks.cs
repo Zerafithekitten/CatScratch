@@ -12,6 +12,7 @@ internal static class SupporterCatChecks
         var results=new List<string>();void Check(bool ok,string text){if(!ok)throw new InvalidOperationException(text);results.Add(text);}
         var root=Path.Combine(Path.GetTempPath(),"catscratch-cat-check-"+Guid.NewGuid().ToString("N"));
         using var isolated=SupporterPacks.Isolate(root);
+        var constrain=WindowPresentation.Enabled;WindowPresentation.Enabled=true;
         try
         {
             Check(SupporterPacks.CatPack is null,"No cat is enabled without its separate signed package");
@@ -20,7 +21,10 @@ internal static class SupporterCatChecks
             if(previousPackage is not null)SupporterPacks.Import(previousPackage);
             var pack=SupporterPacks.Import(package);
             Check(SupporterPacks.CatPack?.Pack.Fingerprint==pack.Pack.Fingerprint,"The latest installed cat package is selected over older artwork");
-            Check(pack.Pack.Manifest.Mascot is not null&&pack.Pack.Manifest.Sounds.Length==0&&pack.Pack.Manifest.Themes.Length==0&&!SupporterPacks.HasPaw,"The cat package is independent of designs, sounds and the supporter paw");
+            if(pack.Pack.Manifest.Themes.Length==0)
+                Check(pack.Pack.Manifest.Mascot is not null&&pack.Pack.Manifest.Sounds.Length==0&&!SupporterPacks.HasPaw,"The cat package is independent of designs, sounds and the supporter paw");
+            else
+                Check(pack.Pack.Manifest.Mascot is not null&&pack.Pack.Manifest.Sounds.Length==3&&pack.Pack.Manifest.Themes.Length==3&&SupporterPacks.HasPaw,"The combined package supplies the cat, three designs, three sounds and the supporter paw");
             Check(SupporterPacks.Import(package).Pack.Fingerprint==pack.Pack.Fingerprint&&SupporterPacks.All().Count==(previousPackage is null?1:2),"Repeated cat imports are idempotent");
             var settings=new AppSettings{Transient=true,SupporterCatPositionSaved=true,SupporterCatLeft=80,SupporterCatTop=80};
             var draft=settings.CreateDraft();draft.ShowSupporterCat=true;
@@ -34,6 +38,47 @@ internal static class SupporterCatChecks
             try
             {
                 cat.Show();cat.UpdateLayout();var left=cat.Left;var top=cat.Top;var width=cat.ActualWidth;var height=cat.ActualHeight;
+                var updateClicks=0;
+                cat.SetUpdateNotice("v99.0.0",()=>updateClicks++);
+                Check(cat.UpdateNoticeVisible&&cat.UpdateBubble!.UpdateButton.IsEnabled,"A ready update appears as a button inside the cat speech bubble");
+                Check(cat.AttentionRunning,"A newly ready update starts the short companion attention animation");
+                await Task.Delay(1600);
+                Check(!cat.AttentionRunning,"The attention animation ends instead of looping continuously");
+                cat.SetUpdateNotice("v99.0.0",()=>updateClicks++);
+                Check(!cat.AttentionRunning,"Refreshing the same ready update does not repeat the animation");
+                var bubble=cat.UpdateBubble!;bubble.UpdateLayout();
+                Check(!bubble.ShowInTaskbar&&bubble.Owner==cat&&!bubble.ShowActivated,"The speech bubble is an owned display tool and does not activate itself");
+                using(var updateMeter=new MeterService(new AppSettings {Transient=true,DownloadIcons=false},null))
+                {
+                    var overlay=new OverlayWindow(updateMeter,false){Left=-30000,Top=-30000};
+                    using var updater=new Updater(new AppSettings {Transient=true});
+                    updater.Preview(new AionMeter.Core.Updates.ReleaseInfo(new Version(99,0,0),"v99.0.0","https://example.invalid/release","Test",null,null,new AionMeter.Core.Updates.ReleaseAsset("CatScratch-win-x64.zip",1,"https://example.invalid/package",new string('a',64))));
+                    var fields=System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic;
+                    typeof(Updater).GetField("_preparedTag",fields)!.SetValue(updater,"v99.0.0");
+                    typeof(Updater).GetField("_preparedStage",fields)!.SetValue(updater,Path.Combine(root,"unused-preview-stage"));
+                    try
+                    {
+                        overlay.Show();overlay.ShowUpdateBanner(updater,true);
+                        Check(((FrameworkElement)overlay.FindName("UpdateBanner")).Visibility==Visibility.Collapsed,"The panel update button disappears while the companion handles the update");
+                        overlay.ShowUpdateBanner(updater,false);
+                        Check(((FrameworkElement)overlay.FindName("UpdateBanner")).Visibility==Visibility.Visible,"The original update button returns when the companion is unavailable");
+                    }
+                    finally{typeof(Updater).GetField("_preparedStage",fields)!.SetValue(updater,null);overlay.Close();}
+                }
+                var bubbleLeft=bubble.Left;cat.Left+=15;
+                Check(Math.Abs(bubble.Left-bubbleLeft-15)<1,"The speech bubble follows the freely placed cat");cat.Left=left;
+                WindowClickThrough.ApplyAll(true);
+                var bubbleHandle=new System.Windows.Interop.WindowInteropHelper(bubble).Handle;
+                var bubbleStyle=(long)NativeMethods.GetWindowLongPtr(bubbleHandle,NativeMethods.GWL_EXSTYLE);
+                Check((bubbleStyle&NativeMethods.WS_EX_TRANSPARENT)==0&&(bubbleStyle&NativeMethods.WS_EX_NOACTIVATE)!=0,"The speech bubble remains an input surface without taking game focus in click-through mode");
+                bubble.UpdateButton.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Button.ClickEvent));
+                Check(updateClicks==1,"The speech bubble invokes the existing update action exactly once");
+                WindowClickThrough.ApplyAll(false);
+                SaveUpdatePreview(cat,bubble,Path.Combine(Path.GetDirectoryName(output)!,"companion-update-preview.png"));
+                cat.Hide();Check(!cat.UpdateNoticeVisible&&!bubble.IsVisible,"Hiding the cat hides its update bubble");cat.Show();
+                cat.SetUpdateNotice(null,()=>updateClicks++);
+                Check(!cat.UpdateNoticeVisible&&!cat.AttentionRunning,"Skipping or clearing the update removes the speech bubble and attention animation");
+                Check(cat.Left==left&&cat.Top==top&&cat.ActualWidth==width&&cat.ActualHeight==height,"Update notices preserve the companion position and dimensions");
                 Check(cat.AnimationRunning&&cat.FrameCount==96,"Visible cat starts the installed 96-frame animation");
                 await Task.Delay(220);Check(cat.FrameIndex>0,"The live dispatcher advances the cat frames");
                 WindowClickThrough.ApplyAll(true);cat.UpdateLayout();
@@ -69,8 +114,8 @@ internal static class SupporterCatChecks
                 var resized=new SupporterCatWindow(scaled,pack);WindowClickThrough.Attach(resized,()=>false);
                 try
                 {
-                    resized.Show();resized.UpdateLayout();var width=resized.ActualWidth;var height=resized.ActualHeight;var x=resized.Left;var y=resized.Top;
-                    Check(resized.CatSize==160*scale&&width==160*scale,"The cat renders at "+scale*100+" percent without scaling its header controls");
+                    resized.Show();await Task.Delay(50);resized.UpdateLayout();var width=resized.ActualWidth;var height=resized.ActualHeight;var x=resized.Left;var y=resized.Top;
+                    Check(resized.CatSize==160*scale&&width==160*scale,"The cat renders at "+scale*100+" percent without scaling its header controls (art="+resized.CatSize+", window="+width+", min="+resized.MinWidth+", scale="+WindowPresentation.Scale+", desired="+((FrameworkElement)resized.Content).DesiredSize+", width="+resized.Width+")");
                     WindowClickThrough.ApplyAll(true);resized.UpdateLayout();
                     Check(resized.ActualWidth==width&&resized.ActualHeight==height&&resized.Left==x&&resized.Top==y,"Scaled cat keeps its position and size in click-through at "+scale*100+" percent");
                     WindowClickThrough.ApplyAll(false);
@@ -80,7 +125,24 @@ internal static class SupporterCatChecks
             var profile=OverlayProfiles.Capture("Cat test",draft,new TimerCards.State());
             Check(profile.Layout.ContainsKey(nameof(AppSettings.SupporterCatLeft))&&!profile.Layout.ContainsKey(nameof(AppSettings.ShowSupporterCat))&&!profile.Layout.ContainsKey(nameof(AppSettings.SupporterCatScale)),"Profiles contain cat placement but do not enable supporter preferences");
         }
-        finally{var full=Path.GetFullPath(root);if(full.StartsWith(Path.GetFullPath(Path.GetTempPath())+"catscratch-cat-check-",StringComparison.OrdinalIgnoreCase)&&Directory.Exists(full))Directory.Delete(full,true);}
+        finally{WindowPresentation.Enabled=constrain;var full=Path.GetFullPath(root);if(full.StartsWith(Path.GetFullPath(Path.GetTempPath())+"catscratch-cat-check-",StringComparison.OrdinalIgnoreCase)&&Directory.Exists(full))Directory.Delete(full,true);}
         File.WriteAllText(output,JsonSerializer.Serialize(results));
+    }
+    private static void SaveUpdatePreview(SupporterCatWindow cat,CompanionUpdateBubble bubble,string output)
+    {
+        cat.UpdateLayout();bubble.UpdateLayout();
+        var left=Math.Min(cat.Left,bubble.Left)-12;var top=Math.Min(cat.Top,bubble.Top)-12;
+        var width=(int)Math.Ceiling(Math.Max(cat.Left+cat.ActualWidth,bubble.Left+bubble.ActualWidth)-left+12);
+        var height=(int)Math.Ceiling(Math.Max(cat.Top+cat.ActualHeight,bubble.Top+bubble.ActualHeight)-top+12);
+        var drawing=new System.Windows.Media.DrawingVisual();
+        using(var dc=drawing.RenderOpen())
+        {
+            dc.DrawRectangle(ThemeColors.Brush("#191D23"),null,new Rect(0,0,width,height));
+            foreach(var window in new Window[]{cat,bubble})
+                dc.DrawRectangle(new System.Windows.Media.VisualBrush((System.Windows.Media.Visual)window.Content),null,new Rect(window.Left-left,window.Top-top,window.ActualWidth,window.ActualHeight));
+        }
+        var image=new System.Windows.Media.Imaging.RenderTargetBitmap(width,height,96,96,System.Windows.Media.PixelFormats.Pbgra32);image.Render(drawing);
+        var encoder=new System.Windows.Media.Imaging.PngBitmapEncoder();encoder.Frames.Add(System.Windows.Media.Imaging.BitmapFrame.Create(image));
+        using var file=File.Create(output);encoder.Save(file);
     }
 }

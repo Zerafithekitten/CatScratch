@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Media.Animation;
 using System.Windows.Threading;
 using AionMeter.App.Services;
 
@@ -18,6 +19,14 @@ internal sealed class SupporterCatWindow : Window,IDisplayAppearance
     private readonly BitmapSource[] _frames;
     private readonly DispatcherTimer _timer;
     private int _frame;
+    private CompanionUpdateBubble? _updateBubble;
+    private string? _updateTag,_announcedTag;
+    private Action? _openUpdate;
+    private readonly TranslateTransform _attention=new();
+    internal CompanionUpdateBubble? UpdateBubble=>_updateBubble;
+    internal bool UpdateNoticeVisible=>IsVisible && _updateBubble?.IsVisible==true;
+    internal bool AttentionRunning=>_attention.HasAnimatedProperties;
+    internal event Action? UpdateNoticeChanged;
     internal static double NormalizeScale(double value)=>double.IsFinite(value)?Math.Clamp(value,.5,2):1;
     internal double CatSize=>_image.Width;
     internal bool AnimationRunning=>_timer.IsEnabled;
@@ -52,15 +61,17 @@ internal sealed class SupporterCatWindow : Window,IDisplayAppearance
         _header.Children.Add(new Image{Source=AppIcon.Image,Width=14,Height=14,Margin=new(5,0,5,0)});
         _header.Children.Add(new TextBlock{Text=ControlPanelSettingsPanel.L("Cat companion","Katzenbegleiter"),FontSize=10,TextTrimming=TextTrimming.CharacterEllipsis,Foreground=ThemeColors.Brush("#C49AF5"),VerticalAlignment=VerticalAlignment.Center});
         root.Children.Add(_header);
-        _image=new Image{Width=size,Height=size,Source=_frames[0],Stretch=Stretch.Uniform};root.Children.Add(_image);Content=root;
+        _image=new Image{Width=size,Height=size,Source=_frames[0],Stretch=Stretch.Uniform,RenderTransform=_attention};root.Children.Add(_image);Content=root;
         _timer=new DispatcherTimer(DispatcherPriority.Background){Interval=TimeSpan.FromMilliseconds(mascot.FrameMilliseconds)};
         _timer.Tick+=(_,_)=>SetFrame((_frame+1)%_frames.Length);
-        IsVisibleChanged+=(_,_)=>{if(IsVisible)_timer.Start();else _timer.Stop();};
+        IsVisibleChanged+=(_,_)=>{if(IsVisible)_timer.Start();else{_timer.Stop();_attention.BeginAnimation(TranslateTransform.YProperty,null);}RefreshUpdateNotice();};
+        LocationChanged+=(_,_)=>_updateBubble?.Follow(this);
+        SizeChanged+=(_,_)=>_updateBubble?.Follow(this);
         if(settings.SupporterCatPositionSaved&&double.IsFinite(settings.SupporterCatLeft)&&double.IsFinite(settings.SupporterCatTop))
         {Left=settings.SupporterCatLeft;Top=settings.SupporterCatTop;}
         else{Left=SystemParameters.WorkArea.Right-size-20;Top=SystemParameters.WorkArea.Bottom-size-50;}
         Controls.DragAnywhere.Attach(this);
-        Closed+=(_,_)=>{_timer.Stop();settings.SupporterCatLeft=Left;settings.SupporterCatTop=Top;settings.SupporterCatPositionSaved=true;settings.Save();};
+        Closed+=(_,_)=>{_timer.Stop();_attention.BeginAnimation(TranslateTransform.YProperty,null);_updateBubble?.Close();_updateBubble=null;UpdateNoticeChanged?.Invoke();settings.SupporterCatLeft=Left;settings.SupporterCatTop=Top;settings.SupporterCatPositionSaved=true;settings.Save();};
     }
     internal void ApplyPreferences()
     {
@@ -68,6 +79,31 @@ internal sealed class SupporterCatWindow : Window,IDisplayAppearance
         if(_image.Width==size)return;
         _root.Width=size;_image.Width=size;_image.Height=size;
         SizeToContent=SizeToContent.WidthAndHeight;
+        WindowPresentation.Constrain(this);
+    }
+    internal void SetUpdateNotice(string? tag,Action openUpdate)
+    {
+        _updateTag=tag;_openUpdate=openUpdate;RefreshUpdateNotice();
+    }
+    private void RefreshUpdateNotice()
+    {
+        if(!IsVisible || _updateTag is null)
+        {
+            _updateBubble?.Hide();_attention.BeginAnimation(TranslateTransform.YProperty,null);
+            UpdateNoticeChanged?.Invoke();return;
+        }
+        _updateBubble??=new CompanionUpdateBubble(this,()=>_openUpdate?.Invoke());
+        _updateBubble.Follow(this);
+        if(!_updateBubble.IsVisible)_updateBubble.Show();
+        _updateBubble.Follow(this);
+        if(_announcedTag!=_updateTag)
+        {
+            _announcedTag=_updateTag;
+            var bounce=new DoubleAnimation(0,-4,TimeSpan.FromMilliseconds(350)){AutoReverse=true,RepeatBehavior=new RepeatBehavior(2),FillBehavior=FillBehavior.Stop,EasingFunction=new SineEase {EasingMode=EasingMode.EaseInOut}};
+            bounce.Completed+=(_,_)=>_attention.BeginAnimation(TranslateTransform.YProperty,null);
+            _attention.BeginAnimation(TranslateTransform.YProperty,bounce);
+        }
+        UpdateNoticeChanged?.Invoke();
     }
     internal void SetFrame(int frame){_frame=Math.Clamp(frame,0,_frames.Length-1);_image.Source=_frames[_frame];}
     public void SetDisplayOnly(bool enabled)=>_header.Visibility=enabled?Visibility.Hidden:Visibility.Visible;

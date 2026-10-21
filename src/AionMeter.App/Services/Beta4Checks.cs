@@ -64,7 +64,7 @@ internal static class Beta4Checks
         Check(promotion400.UpdateChannel=="Stable" && promotion400.HasPendingStablePatchNotes(stable400),"4.0.0 promotes Beta subscribers and queues the Stable notes once");
         Check(PatchNotesWindow.NotesLanguage("de")=="de" && new[]{"en","ru","fr"}.All(l=>PatchNotesWindow.NotesLanguage(l)=="en"),"German notes follow German UI; all other languages use English");
         var oldLanguage=UiText.Current.Code;
-        using(var notesMeter=new MeterService(new AppSettings{Transient=true,DownloadIcons=false},null))
+        using(var notesMeter=new MeterService(new AppSettings{Transient=true,DownloadIcons=false,UpdateChannel="Stable"},null))
         {
             foreach(var code in new[]{"de","en","ru","fr"})
             {
