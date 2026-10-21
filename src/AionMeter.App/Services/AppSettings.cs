@@ -199,6 +199,7 @@ public sealed class AppSettings
     public string HotkeyToggleAll { get; set; } = "Shift+F10";
     public string HotkeyToggleOverlay { get; set; } = "Shift+F5";
     public string HotkeyReset { get; set; } = "Shift+F12";
+    public string HotkeyClearDps { get; set; } = "Shift+F2";
     public string HotkeyClickThrough { get; set; } = "Shift+F11";
     public string HotkeyPersonal { get; set; } = "Shift+F6";
     public string HotkeyChecklist { get; set; } = "Shift+F3";

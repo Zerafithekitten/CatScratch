@@ -1,3 +1,9 @@
+## CatScratch v4.0.9-beta.6
+
+- Clear the DPS display without restarting capture, using the eraser button or configurable Shift+F2 shortcut. Existing fights and confirmed group identities stay available. Right-click the button for a full capture restart.
+- Fixed the own-character marker in the party preview when two players share a name on different servers.
+- Expanded group checks cover six members, a healing-only member, pet attribution, row limits, repeated rosters and measurement resets.
+
 ## CatScratch v4.0.9-beta.5
 
 - A confirmed nearby cube disappearance now shows a short “Cube disappeared” banner with the puzzled mascot, without the key count.

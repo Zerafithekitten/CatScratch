@@ -142,7 +142,7 @@ public partial class SettingsWindow : Window
         Loaded+=(_,_)=>WindowPresentation.PlaceOnPreferredScreen(this);
         Controls.DragAnywhere.Attach(this);
         Load();
-        foreach (var field in new[] { HkToggle, HkAll, HkReset, HkClick, HkTimers, HkPersonal, HkEvents, HkPets, HkDeathRecap, HkChecklist })
+        foreach (var field in new[] { HkToggle, HkAll, HkReset, HkClick, HkTimers, HkPersonal, HkEvents, HkPets, HkDeathRecap, HkChecklist, HkClearDps })
         {
             field.IsReadOnly = true;
             field.ToolTip = UiText.Current.Localize("Click here and press your shortcut. Applied after saving.");
@@ -220,6 +220,7 @@ public partial class SettingsWindow : Window
         HkToggle.Text = s.HotkeyToggleOverlay;
         HkAll.Text = s.HotkeyToggleAll;
         HkReset.Text = s.HotkeyReset;
+        HkClearDps.Text=s.HotkeyClearDps;HkClearDpsLabel.Text=ControlPanelSettingsPanel.L("Clear DPS display","DPS-Anzeige leeren");
         HkClick.Text = s.HotkeyClickThrough;
         HkTimers.Text = s.HotkeyTimers;
         HkPersonal.Text=s.HotkeyPersonal;
@@ -297,7 +298,7 @@ public partial class SettingsWindow : Window
         try
         {
         var s = _meter.Settings;
-        var hotkeyFields=new[] {HkToggle,HkAll,HkReset,HkClick,HkTimers,HkPersonal,HkEvents,HkPets,HkDeathRecap,HkChecklist};
+        var hotkeyFields=new[] {HkToggle,HkAll,HkReset,HkClick,HkTimers,HkPersonal,HkEvents,HkPets,HkDeathRecap,HkChecklist,HkClearDps};
         var invalidHotkey=HotkeyManager.InvalidGestureIndex(hotkeyFields.Select(field=>field.Text));
         if(invalidHotkey>=0)
         {
@@ -379,6 +380,7 @@ public partial class SettingsWindow : Window
         s.HotkeyToggleOverlay = HkToggle.Text.Trim();
         s.HotkeyToggleAll = HkAll.Text.Trim();
         s.HotkeyReset = HkReset.Text.Trim();
+        s.HotkeyClearDps=HkClearDps.Text.Trim();
         s.HotkeyClickThrough = HkClick.Text.Trim();
         s.HotkeyTimers = HkTimers.Text.Trim();
         s.HotkeyPersonal=HkPersonal.Text.Trim();

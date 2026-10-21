@@ -1,4 +1,4 @@
-﻿using System.IO;
+using System.IO;
 using AionMeter.Core;
 using AionMeter.Core.Capture;
 using AionMeter.Core.Combat;
@@ -264,11 +264,15 @@ public sealed class MeterService : IDisposable
         }
     }
 
-    /// <summary>
-    /// The "restart meter" button: the fight so far is closed and saved, capture starts over (adapter lookup, stream
-    /// sync) and the live view stays empty until the next hit. Names and bosses the meter already knows stay known —
-    /// unlike closing and starting the app in the middle of a fight.
-    /// </summary>
+    /// <summary>Clears displayed combat values without restarting capture or forgetting the party.</summary>
+    internal bool DpsDisplayCleared {get;private set;}
+    internal void ClearDpsDisplay()
+    {
+        Tracker.Reset();
+        DpsDisplayCleared=true;
+    }
+    internal void ResumeDpsDisplay()=>DpsDisplayCleared=false;
+    /// <summary>Explicitly restarts measurement and capture while retaining confirmed session identities.</summary>
     public void Restart()
     {
         if(DemoRunning){ _testTracker!.Reset(); StartDemoFight(); return; }

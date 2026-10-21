@@ -221,6 +221,10 @@
                     <TextBlock Text="{Binding HkReset, Source={x:Static s:UiText.Current}}" Style="{StaticResource Label}" />
                     <TextBox x:Name="HkReset" />
                   </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,6,0,0">
+                      <TextBlock x:Name="HkClearDpsLabel" Text="Clear DPS display" Style="{StaticResource Label}" />
+                      <TextBox x:Name="HkClearDps" />
+                    </StackPanel>
                   <StackPanel Orientation="Horizontal" Margin="0,6,0,0">
                     <TextBlock Text="{Binding HkClick, Source={x:Static s:UiText.Current}}" Style="{StaticResource Label}" />
                     <TextBox x:Name="HkClick" />

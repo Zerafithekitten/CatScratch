@@ -6,6 +6,7 @@ using System.Windows.Media;
 using System.Windows.Interop;
 using System.Runtime.InteropServices;
 using AionMeter.Core.Capture;
+using AionMeter.Core.Combat;
 using AionMeter.Core.Events;
 using AionMeter.Core.Game;
 using AionMeter.Core.Updates;
@@ -40,10 +41,70 @@ internal static class Release250Checks
         public void Stop(){} public void Dispose(){}
         public void Send(GameEvent e)=>EventDecoded?.Invoke(e);
     }
+    private static void VerifyFullGroup(Action<bool,string> check,string output)
+    {
+        var source=new Source();var captureCount=0;
+        using var group=new MeterService(new AppSettings {Transient=true,DownloadIcons=false},_=>{captureCount++;return source=new Source();});
+        group.Options.PartyOnly=true;group.Options.TargetMode=TargetMode.All;group.StartCapture();
+        var now=DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+        source.Send(new SelfIdentifiedEvent(now,1,"GroupSelf",2305,GameClass.Gladiator));
+        var members=Enumerable.Range(1,6).Select(i=>new PartyMemberInfo(i==1?"GroupSelf":"GroupMate"+i,2304+i,45,2000,90000,i==6?GameClass.Cleric:GameClass.Gladiator)).ToArray();
+        var roster=new PartyRosterEvent(now+1,members);
+        source.Send(roster);
+        for(uint i=2;i<=6;i++)source.Send(new PlayerSeenEvent(now+2,i,"GroupMate"+i,2304+(int)i,i==6?GameClass.Cleric:GameClass.Gladiator));
+        source.Send(new PlayerSeenEvent(now+2,50,"GroupMate2",9999,GameClass.Gladiator));
+        source.Send(new NpcSeenEvent(now+2,500,2701250,90000000));
+        for(uint i=1;i<=5;i++)source.Send(new DamageEvent(now+10+i,i,500,11010000,100*i,HitFlags.None));
+        source.Send(new HealEvent(now+20,6,1,17010000,90,HitFlags.None));
+        source.Send(new SummonSeenEvent(now+21,80,5,null,0));
+        source.Send(new DamageEvent(now+22,80,500,11010000,75,HitFlags.None));
+        source.Send(new DamageEvent(now+23,50,500,11010000,999,HitFlags.None));
+        var snapshot=group.Tracker.Snapshot(null,now+30)!;
+        check(snapshot.PlayerCount==6&&snapshot.TotalDamage==1575,"Six confirmed group members are counted through the live pipeline, including a healing-only member and an owned pet");
+        check(snapshot.Combatants.Single(c=>c.ActorId==6) is {Damage:0,Healing:90},"A healer remains in the encounter even without outgoing damage");
+        check(snapshot.Combatants.Single(c=>c.ActorId==5).Damage==575&&!snapshot.Combatants.Any(c=>c.ActorId is 50 or 80),"Pet damage belongs to its owner and a same-name outsider from another server is excluded");
+        var model=new ViewModels.OverlayViewModel();
+        var twins=new[]{members[0],members[0] with {ServerId=9999}};
+        model.ApplyParty(twins,"GroupSelf",selfServer:2305);
+        check(model.Rows.Count(r=>r.IsSelf)==1&&model.Rows[0].IsSelf,"Same-name party members from different servers cannot both be marked as self");
+        model.ApplyParty(twins,"GroupSelf");
+        check(model.Rows.All(r=>!r.IsSelf),"An unknown self server does not guess between identical group names");
+        model.Apply(snapshot,10,true);
+        check(model.Rows.Count==6&&snapshot.Combatants.All(c=>model.Rows.Any(r=>r.ActorId==c.ActorId)),"The DPS view renders every measured group member when enough rows are enabled");
+        model.Apply(snapshot,3,true);
+        check(model.Rows.Count==4&&model.Rows.Any(r=>r.IsSelf)&&snapshot.PlayerCount==6,"A smaller display limit preserves captured members and keeps self visible outside the top three");
+        source.Send(roster with {TimeMs=now+40,Members=members.Reverse().ToArray()});
+        var repeated=group.Tracker.Snapshot(null,now+41)!;
+        check(repeated.Id==snapshot.Id&&repeated.TotalDamage==snapshot.TotalDamage,"Repeated or reordered rosters do not reset the current group fight");
+        group.Tracker.Reset();group.RestartCapture(preserveSession:true);source.Send(new DamageEvent(now+50,5,500,11010000,100,HitFlags.None));
+        check(group.Tracker.Snapshot(null,now+51)?.Combatants.Any(c=>c.ActorId==5)==true,"Manual measurement reset continues to accept the confirmed group");
+        group.Tracker.Reset();source.Send(roster with {TimeMs=now+60,Members=twins});
+        var window=new Windows.OverlayWindow(group,exitOnClose:false){Left=-30000,Top=-30000};
+        try
+        {
+            window.Show();window.Refresh();window.UpdateLayout();
+            check(window.DataContext is ViewModels.OverlayViewModel view&&view.Rows.Count==2&&view.Rows.Count(r=>r.IsSelf)==1,"The actual DPS window marks exactly one self row in a same-name cross-server group");
+            var bitmap=new System.Windows.Media.Imaging.RenderTargetBitmap((int)Math.Ceiling(window.ActualWidth),(int)Math.Ceiling(window.ActualHeight),96,96,System.Windows.Media.PixelFormats.Pbgra32);bitmap.Render(window);
+            var encoder=new System.Windows.Media.Imaging.PngBitmapEncoder();encoder.Frames.Add(System.Windows.Media.Imaging.BitmapFrame.Create(bitmap));
+            using var file=File.Create(Path.Combine(Path.GetDirectoryName(output)!,"group-self-server-preview.png"));encoder.Save(file);
+            var capturesBeforeClear=captureCount;var savedBefore=group.History.List().Count;
+            source.Send(new OdyleEnergyEvent(now+61,45,25));
+            var clear=(Button)window.FindName("RestartButton");clear.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));window.UpdateLayout();
+            check(group.DpsDisplayCleared&&group.Tracker.Snapshot(null,now+62) is null&&((ViewModels.OverlayViewModel)window.DataContext).Rows.Count==0,"Clear display removes stale fight and waiting-party rows immediately");
+            check(captureCount==capturesBeforeClear&&group.Tracker.PartyConfirmed&&group.PartyPreview.Snapshot().Members.Count==2&&group.Resources.Read().Energy?.Available==45,"Clear display keeps capture, confirmed group and resources intact");
+            check(group.History.List().Count==savedBefore&&group.Tracker.Snapshot(snapshot.Id,now+62)?.TotalDamage==1575,"Clear display preserves saved history and earlier session fight data");
+            clear.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            source.Send(new DamageEvent(now+70,1,500,11010000,50,HitFlags.None));window.Refresh();
+            check(!group.DpsDisplayCleared&&((ViewModels.OverlayViewModel)window.DataContext).Rows.Count==1&&group.Tracker.Snapshot(null,now+71)?.TotalDamage==50,"Repeated clears are safe and the next group hit starts a fresh visible measurement");
+            check(HotkeyManager.TryParse(group.Settings.HotkeyClearDps,out _,out _)&&group.Settings.HotkeyClearDps=="Shift+F2","Clear display has a valid independent default hotkey");
+        }
+        finally{window.Close();}
+    }
     public static async Task RunAsync(string output)
     {
         var checks=new List<string>();
         void Check(bool ok,string name){if(!ok)throw new InvalidOperationException(name);checks.Add(name);}
+        VerifyFullGroup(Check,output);
         var oldStream=StreamNames.Enabled;var oldScale=WindowPresentation.Scale;
         var oldBounds=WindowPresentation.Enabled;
         var source=new Source();

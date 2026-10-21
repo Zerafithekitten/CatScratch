@@ -1,4 +1,4 @@
-﻿using System.IO;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -321,13 +321,14 @@ public partial class OverlayWindow : Window, IDisplayAppearance
         {
             var now = ClockOverride?.Invoke() ?? DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
             var snap = _meter.Tracker.Snapshot(null, now);
+            if(snap is not null)_meter.ResumeDpsDisplay();
             defeatSeconds=_defeatEstimate.Update(snap,now);
             var party = _meter.PartyPreview.Snapshot();
-            if (!_meter.PartyPreview.InDungeon && party.Members.Count > 0 &&
+            if (!_meter.DpsDisplayCleared && !_meter.PartyPreview.InDungeon && party.Members.Count > 0 &&
                 (snap is null || (party.InRoom && !snap.IsActive)))
             {
                 if (!_showingPartyPreview || _partyPreviewRevision != party.Revision || _partyGearVisibility != (_vm.ShowGear, _vm.ShowCombatPower))
-                    _vm.ApplyParty(party.Members, _meter.LiveIdentity.Current?.Name ?? "", party.InRoom);
+                    _vm.ApplyParty(party.Members, _meter.LiveIdentity.Current?.Name ?? "", party.InRoom, _meter.LiveIdentity.Current?.ServerId ?? 0);
                 _partyPreviewRevision = party.Revision;
                 _partyGearVisibility = (_vm.ShowGear, _vm.ShowCombatPower);
                 _showingPartyPreview = true;
@@ -848,7 +849,11 @@ public partial class OverlayWindow : Window, IDisplayAppearance
         _vm.TimersLabel = $"{shortName} {(left.TotalHours >= 1 ? left.ToString(@"h\:mm\:ss") : left.ToString(@"mm\:ss"))}";
     }
 
-    private void Restart_Click(object sender, RoutedEventArgs e) => AppHost.Current.RestartMeter();
+    internal void ClearDpsDisplay()
+    {
+        _meter.ClearDpsDisplay();Refresh();
+    }
+    private void Restart_Click(object sender, RoutedEventArgs e) => ClearDpsDisplay();
 
     /// <summary>Back to the live view (after a restart of the meter: empty until the next hit).</summary>
     public void ShowLive()
@@ -857,8 +862,16 @@ public partial class OverlayWindow : Window, IDisplayAppearance
     }
 
     /// <summary>Tooltips that name a hotkey the user can change.</summary>
-    public void ApplyHotkeyTips() =>
-        RestartButton.ToolTip = string.Format(UiText.Current.TipRestart, _settings.HotkeyReset);
+    private string? _resetTooltipKey;
+    public void ApplyHotkeyTips()
+    {
+        var key=UiText.Current.Code+":"+_settings.HotkeyClearDps+":"+_settings.HotkeyReset;
+        if(_resetTooltipKey==key)return;_resetTooltipKey=key;
+        RestartButton.ToolTip=ControlPanelSettingsPanel.L("Clear DPS display","DPS-Anzeige leeren")+" ("+_settings.HotkeyClearDps+")\n"+ControlPanelSettingsPanel.L("Keeps recorded fights and the game connection. Right-click to restart capture.","Gespeicherte Kämpfe und Spielverbindung bleiben erhalten. Rechtsklick zum Neustart der Erfassung.");
+        var restart=new MenuItem {Header=ControlPanelSettingsPanel.L("Restart measurement and capture","Messung und Erfassung neu starten"),InputGestureText=_settings.HotkeyReset};
+        restart.Click+=(_,_)=>AppHost.Current.RestartMeter();
+        var menu=new ContextMenu();menu.Items.Add(restart);RestartButton.ContextMenu=menu;
+    }
 
     private void Lock_Click(object sender, RoutedEventArgs e)
     {

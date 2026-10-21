@@ -1,3 +1,9 @@
+## CatScratch v4.0.9-beta.6
+
+- DPS-Anzeige leeren, ohne die Erfassung neu zu starten: über den Radierer-Button oder den einstellbaren Hotkey Shift+F2. Bisherige Kämpfe und bestätigte Gruppenmitglieder bleiben erhalten. Rechtsklick auf den Button bietet den vollständigen Erfassungs-Neustart.
+- Die Gruppenübersicht markiert den eigenen Charakter auch bei gleichen Namen auf verschiedenen Servern eindeutig.
+- Erweiterte Gruppentests prüfen sechs Mitglieder, einen reinen Heiler, Pet-Zuordnung, Anzeigegrenzen, wiederholte Gruppenmeldungen und das Zurücksetzen der Messung.
+
 ## CatScratch v4.0.9-beta.5
 
 - Wenn das Verschwinden eines zuvor erkannten Würfels bestätigt wird, erscheint kurz „Cube disappeared“ mit der ratlosen Katze – ohne Schlüsselanzeige.

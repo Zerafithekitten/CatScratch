@@ -847,6 +847,7 @@ public partial class App : Application
         _hotkeys.Register(s.HotkeyPets,TogglePetModule);
         _hotkeys.Register(s.HotkeyDeathRecap,_overlay.ToggleDeathRecap);
         _hotkeys.Register(s.HotkeyChecklist,_overlay.ToggleChecklist);
+        _hotkeys.Register(s.HotkeyClearDps,()=>_overlay.ClearDpsDisplay());
     }
 
     /// <summary>

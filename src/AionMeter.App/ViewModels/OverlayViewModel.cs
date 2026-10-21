@@ -384,17 +384,18 @@ public sealed class OverlayViewModel : ObservableObject
     public bool HasGear { get => _hasGear; private set => Set(ref _hasGear, value); }
     private bool _hasGear;
 
-    public void ApplyParty(IReadOnlyList<PartyMemberInfo> members, string selfName, bool room = false)
+    public void ApplyParty(IReadOnlyList<PartyMemberInfo> members, string selfName, bool room = false, int selfServer = 0)
     {
         Apply(null, 0, false);
         HasData = true;
         Title = UiText.Current.Localize(room ? "Room stats" : "Party stats");
         Detail = UiText.Current.Localize("Damage starts with the next hit.");
         Footer = UiText.Current.Players(members.Count);
+        var uniqueSelfName=members.Count(m=>m.Name==selfName)==1;
         foreach (var m in members)
             Rows.Add(new RowViewModel
             {
-                Name = StreamNames.Name(m.Name), Class = m.Class, IsSelf = m.Name == selfName,
+                Name = StreamNames.Name(m.Name), Class = m.Class, IsSelf = m.Name == selfName && (selfServer>0?m.ServerId==selfServer:uniqueSelfName),
                 ShowGearScore = ShowGear, ShowCombatPower = ShowCombatPower,
                 GearScore = ShowGear && m.GearScore > 0 ? m.GearScore.ToString() : "",
                 CombatPower = ShowCombatPower && m.CombatPower > 0 ? Format.Grouped(m.CombatPower) : "",
