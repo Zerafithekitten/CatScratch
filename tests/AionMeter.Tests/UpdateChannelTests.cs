@@ -6,33 +6,6 @@ namespace AionMeter.Tests;
 
 public class UpdateChannelTests
 {
-    [Fact] public void AlphaIsExplicitAndNeverLeaksIntoStableOrBetaFeeds()
-    {
-        var json="["+Release("v9.0.0-alpha.2",true)+","+Release("v9.0.0-alpha.10",true)+","+Release("v2.5.0-beta.3",true)+","+Release("v2.4.8")+"]";
-        Assert.Equal("v2.4.8",UpdateFeed.ParseList(json,UpdateChannel.Stable)!.Tag);
-        Assert.Equal("v2.5.0-beta.3",UpdateFeed.ParseList(json,UpdateChannel.Beta)!.Tag);
-        Assert.Equal("v9.0.0-alpha.10",UpdateFeed.ParseList(json,UpdateChannel.Alpha)!.Tag);
-        Assert.Null(UpdateFeed.Parse(Release("v9.0.0-alpha.1",true),true));
-        Assert.Null(UpdateFeed.Parse(Release("v9.0.0-alpha.1"),includeAlpha:true));
-    }
-    [Fact] public void AlphaSortsBeforeBetaAndStableAndSupportsLeavingTheTestChannel()
-    {
-        var alpha=ReleaseVersion.Parse("v4.1.0-alpha.10")!;var beta=ReleaseVersion.Parse("v4.1.0-beta.1")!;var stable=ReleaseVersion.Parse("v4.1.0")!;
-        Assert.True(alpha.CompareTo(beta)<0&&beta.CompareTo(stable)<0);
-        Assert.Equal("4.1.0-alpha.10",alpha.Display);Assert.Equal(UpdateChannel.Alpha,alpha.Channel);
-        Assert.True(ReleaseVersion.IsUpdate(ReleaseVersion.Parse("4.0.9-beta.4")!,alpha,UpdateChannel.Beta));
-        Assert.True(ReleaseVersion.IsUpdate(ReleaseVersion.Parse("4.0.8")!,alpha,UpdateChannel.Stable));
-        Assert.False(ReleaseVersion.IsUpdate(alpha,ReleaseVersion.Parse("4.0.8")!,UpdateChannel.Beta));
-        Assert.True(ReleaseVersion.IsUpdate(alpha,ReleaseVersion.Parse("4.0.9-beta.4")!,UpdateChannel.Alpha));
-        Assert.Null(ReleaseVersion.Parse("4.1.0-alpha.0"));
-    }
-    [Fact] public void AlphaNotesAreIsolatedFromOrdinaryChannels()
-    {
-        var pages=ReleaseNotePage.Bundled("## CatScratch v4.1.0-alpha.1\nAlpha\n## CatScratch v4.0.9-beta.4\nBeta\n## CatScratch v4.0.8\nStable");
-        Assert.Equal(3,pages.Count);
-        Assert.DoesNotContain(ReleaseNotePage.Latest(pages,UpdateChannel.Beta),p=>p.Tag.Contains("alpha"));
-        Assert.Equal("v4.1.0-alpha.1",ReleaseNotePage.Latest(pages,UpdateChannel.Alpha)[0].Tag);
-    }
     private static string Release(string tag, bool beta = false, bool draft = false) =>
         $$"""{"tag_name":"{{tag}}","prerelease":{{beta.ToString().ToLowerInvariant()}},"draft":{{draft.ToString().ToLowerInvariant()}},"assets":[]}""";
 

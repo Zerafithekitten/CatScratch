@@ -65,14 +65,7 @@ internal static class Release250Checks
             try
             {
                 var selector=(ComboBox)settingsWindow.FindName("UpdateChannelBox");
-                Check(selector.Items.Count==3 && selector.SelectedIndex==(int)meter.Updates.Channel,"Settings offers Stable, Beta and Alpha with the actual selected channel");
-                selector.SelectedIndex=2;
-                var consent=(CheckBox)settingsWindow.FindName("AlphaConsentBox");
-                var save=(Button)settingsWindow.FindName("SaveSettingsButton");var checkNow=(Button)settingsWindow.FindName("CheckNowButton");
-                Check(consent.Visibility==Visibility.Visible&&!save.IsEnabled&&!checkNow.IsEnabled,"Selecting Alpha requires acknowledgement before Save or update checks");
-                consent.IsChecked=true;Check(save.IsEnabled&&checkNow.IsEnabled,"Acknowledgement unlocks Alpha Save and update checks");
-                selector.SelectedIndex=1;Check(save.IsEnabled&&consent.Visibility==Visibility.Collapsed,"Beta remains available without Alpha acknowledgement");
-                selector.SelectedIndex=2;Check(consent.IsChecked!=true&&!save.IsEnabled,"Returning to Alpha requires a new acknowledgement");
+                Check(selector.Items.Count==2 && selector.SelectedIndex==(meter.Updates.Channel==UpdateChannel.Beta?1:0),"Settings offers Stable and Beta with the actual selected channel");
             }
             finally {settingsWindow.Close();}
             var channelSettings=new AppSettings {Transient=true,UpdateChannel="Stable"};

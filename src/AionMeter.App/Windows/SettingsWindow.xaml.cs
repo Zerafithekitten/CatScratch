@@ -247,11 +247,8 @@ public partial class SettingsWindow : Window
         UpdateChannelLabel.Text = T.Localize("Update channel");
         UpdateChannelBox.Items.Add(T.Localize("Stable · tested releases"));
         UpdateChannelBox.Items.Add(T.Localize("Beta · early access"));
-        UpdateChannelBox.Items.Add(ControlPanelSettingsPanel.L("Alpha · experimental playground","Alpha · experimentelle Testversion"));
-        UpdateChannelBox.SelectedIndex = (int)_meter.Updates.Channel;
-
+        UpdateChannelBox.SelectedIndex = _meter.Updates.Channel == AionMeter.Core.Updates.UpdateChannel.Beta ? 1 : 0;
         UpdateChannelHint.Text = T.Localize("Beta releases may contain unfinished features. Changing the channel never installs an update. Returning to Stable can install an older version; your settings and saved fights are kept.");
-        InitializeAlphaConsent();
 
 
         VersionText.Text = string.Format(Updater.IsInstalled ? T.VersionInstalled : T.VersionPortable, _meter.Updates.CurrentDisplay);
@@ -295,7 +292,6 @@ public partial class SettingsWindow : Window
 
     private async void Save_Click(object sender, RoutedEventArgs e)
     {
-        if(!UpdateChannelConfirmed)return;
         if(_previewSaving)return;
         _previewSaving=true;_previewTimer.Stop();
         try
@@ -478,7 +474,6 @@ public partial class SettingsWindow : Window
     /// <summary>Asks GitHub right away; a newer version also opens the update window.</summary>
     private async void CheckNow_Click(object sender, RoutedEventArgs e)
     {
-        if(!UpdateChannelConfirmed)return;
         SaveUpdateChannel();
         _meter.Settings.Save();
         CheckNowButton.IsEnabled = false;
@@ -491,16 +486,11 @@ public partial class SettingsWindow : Window
             UpdateCheckResult.UpToDate => T.UpToDate,
             _ => string.Format(T.UpdateCheckFailed, _meter.Updates.LastError),
         };
-        UpdateAlphaConsent();
+        CheckNowButton.IsEnabled = true;
     }
 
-    private void SaveUpdateChannel()
-    {
-        if(!UpdateChannelConfirmed)return;
-        var channel=(AionMeter.Core.Updates.UpdateChannel)Math.Clamp(UpdateChannelBox.SelectedIndex,0,2);
-        _meter.Settings.AlphaUpdatesAcknowledged=channel==AionMeter.Core.Updates.UpdateChannel.Alpha;
-        _meter.Updates.SetChannel(channel);
-    }
+    private void SaveUpdateChannel() => _meter.Updates.SetChannel(UpdateChannelBox.SelectedIndex == 1
+        ? AionMeter.Core.Updates.UpdateChannel.Beta : AionMeter.Core.Updates.UpdateChannel.Stable);
 
     private static void Open(string path)
     {

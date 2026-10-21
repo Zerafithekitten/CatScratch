@@ -284,12 +284,6 @@ public partial class App : Application
                 catch(Exception error){File.WriteAllText(catResult,error.ToString());Shutdown(1);}
             });return;
         }
-        if(ArgValue(e.Args,"--check-alpha-channel") is {} alphaOutput)
-        {
-            try{AlphaChannelChecks.Run(alphaOutput);Shutdown();}
-            catch(Exception error){File.WriteAllText(alphaOutput,error.ToString());Shutdown(1);}
-            return;
-        }
         if(ArgValue(e.Args,"--check-supporter") is {} supporterPath)
         {
             Log.Enabled=false;

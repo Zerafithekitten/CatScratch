@@ -60,25 +60,25 @@ public sealed class UpdateFeed : IDisposable
         if (string.IsNullOrEmpty(_api)) throw new InvalidOperationException("No update repository configured for this build.");
         using var timeout = CancellationTokenSource.CreateLinkedTokenSource(ct);
         timeout.CancelAfter(ApiTimeout);
-        using var request = new HttpRequestMessage(HttpMethod.Get, channel != UpdateChannel.Stable ? _api.Replace("/releases/latest", "/releases?per_page=100") : _api);
+        using var request = new HttpRequestMessage(HttpMethod.Get, channel == UpdateChannel.Beta ? _api.Replace("/releases/latest", "/releases?per_page=100") : _api);
         request.Headers.Accept.ParseAdd("application/vnd.github+json");
         using var response = await _http.SendAsync(request, timeout.Token).ConfigureAwait(false);
         if (response.StatusCode == HttpStatusCode.NotFound) return null;
         response.EnsureSuccessStatusCode();
         var json = await response.Content.ReadAsStringAsync(timeout.Token).ConfigureAwait(false);
-        return channel != UpdateChannel.Stable ? ParseList(json,channel) : Parse(json);
+        return channel == UpdateChannel.Beta ? ParseList(json) : Parse(json);
     }
 
     /// <summary>A GitHub "release" object; null for drafts, pre-releases and tags that are not a version.</summary>
-    public static ReleaseInfo? Parse(string json, bool includeBeta = false,bool includeAlpha=false)
+    public static ReleaseInfo? Parse(string json, bool includeBeta = false)
     {
         using var doc = JsonDocument.Parse(json);
         var r = doc.RootElement;
         if (r.ValueKind != JsonValueKind.Object) return null;
-        if (Bool(r, "draft") || (!includeBeta && !includeAlpha && Bool(r, "prerelease"))) return null;
+        if (Bool(r, "draft") || (!includeBeta && Bool(r, "prerelease"))) return null;
         var tag = Str(r, "tag_name");
         if (ReleaseVersion.Parse(tag) is not { } identity) return null;
-        if ((identity.Channel==UpdateChannel.Beta&&!includeBeta)||(identity.Channel==UpdateChannel.Alpha&&!includeAlpha)||Bool(r,"prerelease")!=(identity.Channel!=UpdateChannel.Stable)) return null;
+        if ((!includeBeta && identity.Beta.HasValue) || Bool(r, "prerelease") != identity.Beta.HasValue) return null;
         var version = identity.Version;
 
         ReleaseAsset? installer = null, portable = null;
@@ -105,11 +105,11 @@ public sealed class UpdateFeed : IDisposable
             DateTimeOffset.TryParse(Str(r, "published_at"), out var at) ? at : null, installer, portable);
     }
 
-    public static ReleaseInfo? ParseList(string json,UpdateChannel channel=UpdateChannel.Beta)
+    public static ReleaseInfo? ParseList(string json)
     {
         using var document = JsonDocument.Parse(json);
         if (document.RootElement.ValueKind != JsonValueKind.Array) throw new JsonException("Expected a release list.");
-        return document.RootElement.EnumerateArray().Select(r => Parse(r.GetRawText(), includeBeta: channel==UpdateChannel.Beta,includeAlpha:channel==UpdateChannel.Alpha))
+        return document.RootElement.EnumerateArray().Select(r => Parse(r.GetRawText(), includeBeta: true))
             .OfType<ReleaseInfo>().OrderByDescending(r => r.Identity).FirstOrDefault();
     }
 
@@ -127,7 +127,7 @@ public sealed class UpdateFeed : IDisposable
         using var document = JsonDocument.Parse(await response.Content.ReadAsStringAsync(timeout.Token).ConfigureAwait(false));
         if (document.RootElement.ValueKind != JsonValueKind.Array) throw new JsonException("Expected a release list.");
         return ReleaseNotePage.Latest(document.RootElement.EnumerateArray()
-            .Select(r => Parse(r.GetRawText(), channel == UpdateChannel.Beta,channel==UpdateChannel.Alpha)).OfType<ReleaseInfo>()
+            .Select(r => Parse(r.GetRawText(), channel == UpdateChannel.Beta)).OfType<ReleaseInfo>()
             .Select(r => new ReleaseNotePage(r.Tag, r.Notes)), channel);
     }
 
