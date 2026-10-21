@@ -24,8 +24,31 @@ internal static class ResourceModuleChecks
         try
         {
             window.Show();window.UpdateLayout();
+            var originalSelection=meter.Settings.VisibleResources.ToList();
+            meter.Settings.VisibleResources=["cube-keys"];window.Refresh();window.UpdateLayout();
+            Check(Find<TextBlock>(window).Any(t=>t.Text=="⚠ Relog!"),"Unknown cube key inventory is not invented as zero");
+            feed(new Core.Game.CubeKeyInventoryEvent(6,true,new Dictionary<ulong,uint>{{10,20}}));window.Refresh();window.UpdateLayout();
+            Check(Find<TextBlock>(window).Any(t=>t.Text=="20"),"Confirmed cube key baseline appears in Resources");
+            feed(new Core.Game.CubeKeyInventoryEvent(7,false,new Dictionary<ulong,uint>{{10,19}}));window.Refresh();window.UpdateLayout();
+            Check(Find<TextBlock>(window).Any(t=>t.Text=="19"),"Cube key spending updates Resources live");
+            meter.Resources.MarkCached();window.Refresh();window.UpdateLayout();
+            Check(Find<TextBlock>(window).Any(t=>t.Text=="≈ 19"),"Cached cube keys retain an approximate marker");
+            feed(new Core.Game.CubeKeyInventoryEvent(8,true,new Dictionary<ulong,uint>()));window.Refresh();window.UpdateLayout();
+            Check(Find<TextBlock>(window).Any(t=>t.Text=="0"),"A confirmed empty cube key inventory is displayed as zero");
+            feed(new Core.Game.CubeKeyInventoryEvent(9,true,new Dictionary<ulong,uint>{{10,20}}));
+            meter.Settings.VisibleResources=["odyle","abyss","cube-keys"];
+            foreach(var example in new[]{"List","Strip","Grid"})
+            {
+                meter.Settings.ResourcesLayout=example;window.Refresh();window.UpdateLayout();
+                Check(Find<TextBlock>(window).Any(t=>t.Text=="20"),"Cube key count survives layout: "+example);
+                var bitmap=new System.Windows.Media.Imaging.RenderTargetBitmap((int)Math.Ceiling(window.ActualWidth),(int)Math.Ceiling(window.ActualHeight),96,96,PixelFormats.Pbgra32);bitmap.Render(window);
+                var encoder=new System.Windows.Media.Imaging.PngBitmapEncoder();encoder.Frames.Add(System.Windows.Media.Imaging.BitmapFrame.Create(bitmap));
+                using var image=File.Create(Path.Combine(Path.GetDirectoryName(output)!,"cube-key-resources-"+example+".png"));encoder.Save(image);
+            }
+            feed(new Core.Game.OdyleEnergyEvent(10,15,495));feed(new Core.Game.ResourceBalanceSnapshot(10,new Dictionary<int,ulong>{{930100003,3188}}));
+            meter.Settings.VisibleResources=originalSelection;meter.Settings.ResourcesLayout="List";window.Refresh();window.UpdateLayout();
             Check(ResourcesWindow.Entries.All(e=>ResourceIcons.For(e.Key) is {IsFrozen:true}),"Every resource has a bundled frozen game icon");
-            Check(Find<Image>(window).Count(i=>i.Width==18)==6,"Each selected resource row displays its matching icon");
+            Check(Find<Image>(window).Count(i=>i.Width==18)==7,"Each selected resource row displays its matching icon");
             Check(Find<TextBlock>(window).Any(t=>t.Text.Contains("(+495)")),"Odyle keeps available and supplementary values separate");
             Check(Find<TextBlock>(window).Any(t=>t.Text.Contains("3") && t.Text.Contains("188") && !t.Text.EndsWith(" *")),"Live Abyss balance has no snapshot marker");
             feed(new Core.Game.ResourceBalanceSnapshot(3,new Dictionary<int,ulong>{{930100024,1000},{930100011,1670},{930100017,160}}));window.Refresh();window.UpdateLayout();
@@ -36,7 +59,7 @@ internal static class ResourceModuleChecks
             foreach(var layoutName in new[]{"List","Strip","Grid"})
             {
                 meter.Settings.ResourcesLayout=layoutName;window.Refresh();window.UpdateLayout();
-                Check(Find<Image>(window).Count(i=>i.Width==18)==6,"All selected resource icons survive layout switch: "+layoutName);
+                Check(Find<Image>(window).Count(i=>i.Width==18)==7,"All selected resource icons survive layout switch: "+layoutName);
                 var before=new Size(window.ActualWidth,window.ActualHeight);WindowClickThrough.ApplyAll(true);window.UpdateLayout();
                 Check(Math.Abs(window.ActualWidth-before.Width)<.5 && Math.Abs(window.ActualHeight-before.Height)<.5,"Click-through preserves layout geometry: "+layoutName);WindowClickThrough.ApplyAll(false);
             }
@@ -73,7 +96,7 @@ internal static class ResourceModuleChecks
             Check(!Find<TextBlock>(window).Any(t=>t.Text=="Abyss Points") && Find<TextBlock>(window).Any(t=>t.Text=="Odyle Energy"),"Only selected resources appear");
             meter.Settings.ResourcesLayout="List";var draft=meter.Settings.CreateDraft();var panel=new ResourcesSettingsPanel(draft);
             var host=new Window{Content=panel,Width=500,Height=500,Left=-30000,Top=-30000};
-            try{host.Show();host.UpdateLayout();var choices=panel.Children.OfType<CheckBox>().ToArray();Check(choices.Length==7,"Settings offer module visibility and six independent resource choices");var layout=panel.Children.OfType<ComboBox>().Single();layout.SelectedIndex=2;Check(draft.ResourcesLayout=="Grid" && meter.Settings.ResourcesLayout!="Grid","Layout changes stay in the Settings draft");choices[2].IsChecked=true;choices[2].RaiseEvent(new RoutedEventArgs(Button.ClickEvent));Check(draft.VisibleResources.Contains("abyss") && !meter.Settings.VisibleResources.Contains("abyss"),"Resource selection stays in the settings draft until Save");}
+            try{host.Show();host.UpdateLayout();var choices=panel.Children.OfType<CheckBox>().ToArray();Check(choices.Length==8,"Settings offer module visibility and seven independent resource choices");var layout=panel.Children.OfType<ComboBox>().Single();layout.SelectedIndex=2;Check(draft.ResourcesLayout=="Grid" && meter.Settings.ResourcesLayout!="Grid","Layout changes stay in the Settings draft");choices[2].IsChecked=true;choices[2].RaiseEvent(new RoutedEventArgs(Button.ClickEvent));Check(draft.VisibleResources.Contains("abyss") && !meter.Settings.VisibleResources.Contains("abyss"),"Resource selection stays in the settings draft until Save");}
             finally{host.Close();}
             meter.Resources.Reset();
             foreach(var layoutName in new[]{"List","Strip","Grid"})

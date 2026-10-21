@@ -1,3 +1,7 @@
+## CatScratch v4.0.9-beta.7
+
+- Bound Hidden Cube Keys can now be selected in the Resources module, with live inventory updates and an optional low-stock warning. They also appear in the character overview.
+
 ## CatScratch v4.0.9-beta.6
 
 - Clear the DPS display without restarting capture, using the eraser button or configurable Shift+F2 shortcut. Existing fights and confirmed group identities stay available. Right-click the button for a full capture restart.

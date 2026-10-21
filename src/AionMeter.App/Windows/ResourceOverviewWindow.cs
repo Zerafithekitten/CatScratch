@@ -41,8 +41,9 @@ internal sealed class ResourceOverviewWindow:Window
         var records=_previewRecords??_meter.ResourceHistory;
         var key=UiText.Current.Code+":"+StreamNames.Enabled+":"+string.Join("|",records.Select(p=>p.ServerId+":"+p.Name+":"+p.TimeMs));
         if(key==_key)return;_key=key;_rows.Children.Clear();
-        Grid Row(){var grid=new Grid{MinHeight=48,Background=ThemeColors.Brush("#191D23")};grid.ColumnDefinitions.Add(new(){Width=new GridLength(170)});for(var i=0;i<9;i++)grid.ColumnDefinitions.Add(new(){Width=new GridLength(100)});for(var col=0;col<10;col++){var line=new Border{BorderBrush=ThemeColors.Brush("#414A56"),BorderThickness=new Thickness(col==0?1:0,0,1,1),IsHitTestVisible=false};Grid.SetColumn(line,col);grid.Children.Add(line);}return grid;}
-        var heading=Row();heading.Background=ThemeColors.Brush("#242A32");heading.Children.Add(new Border{BorderBrush=ThemeColors.Brush("#414A56"),BorderThickness=new Thickness(0,1,0,0),IsHitTestVisible=false});Grid.SetColumnSpan(heading.Children[^1],10);var columns=new[]{ControlPanelSettingsPanel.L("Character / server","Charakter / Server")}.Concat(ResourcesWindow.Entries.Select(e=>e.Name)).Concat(DungeonEntriesWindow.Entries.Select(e=>e.Name)).ToArray();
+        var columnCount=1+ResourcesWindow.Entries.Length+DungeonEntriesWindow.Entries.Length;
+        Grid Row(){var grid=new Grid{MinHeight=48,Background=ThemeColors.Brush("#191D23")};grid.ColumnDefinitions.Add(new(){Width=new GridLength(170)});for(var i=0;i<columnCount-1;i++)grid.ColumnDefinitions.Add(new(){Width=new GridLength(100)});for(var col=0;col<columnCount;col++){var line=new Border{BorderBrush=ThemeColors.Brush("#414A56"),BorderThickness=new Thickness(col==0?1:0,0,1,1),IsHitTestVisible=false};Grid.SetColumn(line,col);grid.Children.Add(line);}return grid;}
+        var heading=Row();heading.Background=ThemeColors.Brush("#242A32");heading.Children.Add(new Border{BorderBrush=ThemeColors.Brush("#414A56"),BorderThickness=new Thickness(0,1,0,0),IsHitTestVisible=false});Grid.SetColumnSpan(heading.Children[^1],columnCount);var columns=new[]{ControlPanelSettingsPanel.L("Character / server","Charakter / Server")}.Concat(ResourcesWindow.Entries.Select(e=>e.Name)).Concat(DungeonEntriesWindow.Entries.Select(e=>e.Name)).ToArray();
         for(var i=0;i<columns.Length;i++){var label=new TextBlock{Text=columns[i],TextWrapping=TextWrapping.Wrap,Margin=new Thickness(8),FontWeight=FontWeights.SemiBold,Foreground=ThemeColors.Brush("#C49AF5"),VerticalAlignment=VerticalAlignment.Center};Grid.SetColumn(label,i);heading.Children.Add(label);}_rows.Children.Add(heading);
         foreach(var record in records)
         {
@@ -51,8 +52,8 @@ internal sealed class ResourceOverviewWindow:Window
             var col=1;
             foreach(var entry in ResourcesWindow.Entries)
             {
-                var text=entry.Item==0?(record.Energy is {} energy?$"≈ {energy.Available:N0} (+{energy.Supplementary:N0})":"—"):record.Balances.TryGetValue(entry.Item,out var n)?$"≈ {n:N0}":"—";
-                Cell(col++,text,entry.Item==0?"odyle":"currency:"+entry.Item);
+                var text=entry.Item<0?(record.CubeKeys is {} keys?$"≈ {keys.Stacks.Values.Aggregate(0UL,(sum,n)=>sum+n):N0}":"—"):entry.Item==0?(record.Energy is {} energy?$"≈ {energy.Available:N0} (+{energy.Supplementary:N0})":"—"):record.Balances.TryGetValue(entry.Item,out var n)?$"≈ {n:N0}":"—";
+                Cell(col++,text,entry.Item<0?"cube-keys":entry.Item==0?"odyle":"currency:"+entry.Item);
             }
             foreach(var entry in DungeonEntriesWindow.Entries){var text=record.Entries.TryGetValue(entry.Id,out var n)?$"≈ {n.Available} (+{n.Supplementary})/{n.Capacity?.ToString()??"?"}":"—";Cell(col++,text,"dungeon:"+entry.Id);}
             _rows.Children.Add(row);

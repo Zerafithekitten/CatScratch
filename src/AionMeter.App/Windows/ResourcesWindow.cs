@@ -6,7 +6,7 @@ namespace AionMeter.App.Windows;
 
 internal sealed class ResourcesWindow:Window,IDisplayAppearance
 {
-    internal static readonly (string Key,string Name,int Item)[] Entries=[("odyle","Odyle Energy",0),("abyss","Abyss Points",930100003),("centuryroot","Centuryroot Token",930100011),("passcoin","Deava Pass Shop Coin",930100024),("fragment","Phantasmal Fragment",930100017),("oath","Oath Coins",930100019)];
+    internal static readonly (string Key,string Name,int Item)[] Entries=[("odyle","Odyle Energy",0),("abyss","Abyss Points",930100003),("centuryroot","Centuryroot Token",930100011),("passcoin","Deava Pass Shop Coin",930100024),("fragment","Phantasmal Fragment",930100017),("oath","Oath Coins",930100019),("cube-keys","Hidden Cube Keys (bound)",-1)];
     private readonly MeterService _meter;
     private string? _renderKey;
     private readonly WrapPanel _rows=new();
@@ -36,9 +36,10 @@ internal sealed class ResourcesWindow:Window,IDisplayAppearance
         var configuredWidth=double.IsFinite(_meter.Settings.ResourcesWidth)?Math.Clamp(_meter.Settings.ResourcesWidth,220,600):300;
         var values=_meter.Resources.Read();
         var cached=_meter.Resources.CacheMarkers();
+        var cubeKeys=_meter.Resources.ReadCubeKeys();
         var selected=Entries.Where(e=>(_meter.Settings.VisibleResources??[]).Contains(e.Key)).ToArray();
         var alertKey=string.Join(";",(_meter.Settings.ResourceAlerts??[]).OrderBy(p=>p.Key).Select(p=>$"{p.Key}:{p.Value.Enabled}:{p.Value.Threshold}"));
-        var key=$"{alertKey}:{cached.Energy}:{string.Join(",",cached.Currencies.Order())}:{layout}:{configuredWidth:R}:{UiText.Current.Code}:{System.Globalization.CultureInfo.CurrentCulture.Name}:"+string.Join("|",selected.Select(e=>$"{e.Key}:{(e.Item==0?values.Energy?.ToString():values.Balances.TryGetValue(e.Item,out var balance)?balance.ToString():"missing")}"));
+        var key=$"{cubeKeys.Count}:{cubeKeys.Cached}:{cubeKeys.ConfirmedAt}:{alertKey}:{cached.Energy}:{string.Join(",",cached.Currencies.Order())}:{layout}:{configuredWidth:R}:{UiText.Current.Code}:{System.Globalization.CultureInfo.CurrentCulture.Name}:"+string.Join("|",selected.Select(e=>$"{e.Key}:{(e.Item==0?values.Energy?.ToString():values.Balances.TryGetValue(e.Item,out var balance)?balance.ToString():"missing")}"));
         if(_renderKey==key)return;
         _renderKey=key;
         MinWidth=layout=="Strip"?160:220;
@@ -48,11 +49,11 @@ internal sealed class ResourcesWindow:Window,IDisplayAppearance
         foreach(var entry in selected)
         {
             var row=new DockPanel{Margin=new Thickness(7,3,7,3)};
-            var missing=entry.Item==0?values.Energy is null:!values.Balances.ContainsKey(entry.Item);
-            var text=entry.Item==0?(values.Energy is {} energy?$"{energy.Available:N0} (+{energy.Supplementary:N0})":"–"):
+            var missing=entry.Item<0?cubeKeys.Count is null:entry.Item==0?values.Energy is null:!values.Balances.ContainsKey(entry.Item);
+            var text=entry.Item<0?(cubeKeys.Count is {} keys?$"{keys:N0}":"–"):entry.Item==0?(values.Energy is {} energy?$"{energy.Available:N0} (+{energy.Supplementary:N0})":"–"):
                 values.Balances.TryGetValue(entry.Item,out var count)?$"{count:N0}":"–";
-            var fromCache=entry.Item==0?cached.Energy:cached.Currencies.Contains(entry.Item);
-            var numeric=entry.Item==0?values.Energy?.Available??0:values.Balances.GetValueOrDefault(entry.Item);
+            var fromCache=entry.Item<0?cubeKeys.Cached:entry.Item==0?cached.Energy:cached.Currencies.Contains(entry.Item);
+            var numeric=entry.Item<0?cubeKeys.Count??0:entry.Item==0?values.Energy?.Available??0:values.Balances.GetValueOrDefault(entry.Item);
             var low=!missing && ResourceAlertMonitor.IsLow(_meter.Settings,entry.Key,numeric,fromCache);
             var value=new TextBlock{Text=missing?"⚠ Relog!":(fromCache?"≈ ":"")+text,FontWeight=FontWeights.SemiBold,Foreground=ThemeColors.Brush(missing||low?"#FFB454":"#EDF2F7"),Margin=new Thickness(8,0,0,0)};DockPanel.SetDock(value,Dock.Right);row.Children.Add(value);
             var icon=new Image{Source=ResourceIcons.For(entry.Key),Width=18,Height=18,Margin=new Thickness(0,0,5,0),VerticalAlignment=VerticalAlignment.Center,ToolTip=entry.Name};DockPanel.SetDock(icon,Dock.Left);row.Children.Add(icon);
@@ -73,7 +74,7 @@ internal sealed class ResourcesWindow:Window,IDisplayAppearance
             }
             value.VerticalAlignment=VerticalAlignment.Center;
             var tile=new Border{Width=layout=="List"?configuredWidth-4:layout=="Grid"?(configuredWidth-8)/2:double.NaN,Child=row,Background=ThemeColors.Brush("#D020242A"),CornerRadius=new CornerRadius(4),Margin=new Thickness(layout=="List"?0:1,1,layout=="List"?0:1,1),ToolTip=entry.Name+"\n"+(fromCache?ControlPanelSettingsPanel.L("≈ Last known value for this character; not yet confirmed again. Fresh server messages replace it.","≈ Letzter bekannter Stand dieses Charakters; noch nicht erneut bestätigt. Neue Servermeldungen ersetzen ihn."):missing?ControlPanelSettingsPanel.L("No data received. Return to character selection and log in again.","Noch keine Daten empfangen. Kurz in die Charakterauswahl wechseln und wieder einloggen."):entry.Item!=0?ControlPanelSettingsPanel.L("Confirmed inventory change messages are applied immediately.","Bestätigte Inventar-Änderungsmeldungen werden sofort übernommen."):ControlPanelSettingsPanel.L("Odyle: available (+supplementary). Updated from received server data.","Odyle: verfügbar (+Zusatzbestand). Aktualisiert durch empfangene Spieldaten."))};
-            ResourceDataStatus.Attach(tile,(string)tile.ToolTip+(low?"\n"+ControlPanelSettingsPanel.L("Low-balance warning threshold reached.","Eingestellte Warnschwelle erreicht."):""),()=>_meter.Resources.ConfirmedAt(entry.Item==0?"odyle":"currency:"+entry.Item));_rows.Children.Add(tile);
+            ResourceDataStatus.Attach(tile,(string)tile.ToolTip+(low?"\n"+ControlPanelSettingsPanel.L("Low-balance warning threshold reached.","Eingestellte Warnschwelle erreicht."):""),()=>_meter.Resources.ConfirmedAt(entry.Item<0?"cube-keys":entry.Item==0?"odyle":"currency:"+entry.Item));_rows.Children.Add(tile);
         }
         if(_rows.Children.Count==0)_rows.Children.Add(new TextBlock{Text=ControlPanelSettingsPanel.L("Select resources in Settings.","Ressourcen in den Einstellungen auswählen."),Margin=new Thickness(6),Foreground=ThemeColors.Brush("#A9B8C7")});
     }

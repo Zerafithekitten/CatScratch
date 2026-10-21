@@ -70,7 +70,7 @@ internal static class ResourceToolsChecks
         try
         {
             host.Show();host.UpdateLayout();var section=preferences.Children.OfType<Expander>().Single();section.IsExpanded=true;host.UpdateLayout();
-            Check(Find<ResourceAlertsSettingsPanel>(host).Single().Children.OfType<DockPanel>().Count()==6,"Resources expose six independent opt-in warning thresholds");
+            Check(Find<ResourceAlertsSettingsPanel>(host).Single().Children.OfType<DockPanel>().Count()==7,"Resources expose seven independent opt-in warning thresholds");
             Check(Find<ComboBox>(section).Single().Items.Count==3,"Warning audio offers three bundled sounds");
         }
         finally{host.Close();}

@@ -108,7 +108,7 @@ public sealed class AppSettings
     public string ResourceAlertSound {get;set;}="Chime";
     public double ResourceAlertVolume {get;set;}=.5;
     public bool ShowResourcesModule {get;set;}
-    public List<string> VisibleResources {get;set;}=["odyle","abyss","centuryroot","passcoin","fragment","oath"];
+    public List<string> VisibleResources {get;set;}=["odyle","abyss","centuryroot","passcoin","fragment","oath","cube-keys"];
     public string ResourcesLayout {get;set;}="List";
     public double ResourcesWidth {get;set;}=300;
     public double ResourcesLeft {get;set;}=500;

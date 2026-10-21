@@ -21,7 +21,9 @@ internal sealed class ResourceAlertMonitor:IDisposable
         var markers=resources.CacheMarkers();var hits=new List<string>();
         var values=new List<(string Key,ulong Value,bool Cached)>();
         if(progress.Energy is {} energy)values.Add(("odyle",energy.Available,markers.Energy));
-        foreach(var entry in Windows.ResourcesWindow.Entries.Where(e=>e.Item!=0))if(progress.Balances.TryGetValue(entry.Item,out var n))values.Add((entry.Key,n,markers.Currencies.Contains(entry.Item)));
+        foreach(var entry in Windows.ResourcesWindow.Entries.Where(e=>e.Item>0))if(progress.Balances.TryGetValue(entry.Item,out var n))values.Add((entry.Key,n,markers.Currencies.Contains(entry.Item)));
+        var keys=resources.ReadCubeKeys();
+        if(keys.Count is {} keyCount)values.Add(("cube-keys",keyCount,keys.Cached));
         foreach(var entry in Windows.DungeonEntriesWindow.Entries)if(progress.Entries.TryGetValue(entry.Id,out var n))values.Add((entry.Key,(ulong)n.Available+n.Supplementary,markers.Entries.Contains(entry.Id)));
         foreach(var value in values)
         {
