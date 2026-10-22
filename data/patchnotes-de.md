@@ -1,3 +1,11 @@
+## CatScratch v4.0.9-beta.14
+
+Zwei Korrekturen für das Altgard-Kartenexperiment. 🐾
+
+- Das Kartenmodul erkennt jetzt beide bekannten AION-2-Clientnamen, einschließlich AION2-Win64-Shipping.exe. Ein ausgewählter Launcher verhindert die Erkennung dieser Clients nicht mehr.
+- Kartenmarker und Filter schließen sich nicht mehr von Bildschirmaufnahmen und Bildschirmübertragungen aus. Bitte mit eurer Streamingsoftware testen; eine reine Spielaufnahme kann separate Overlayfenster weiterhin auslassen.
+- Prüfungen für beide Clientnamen und die Aufnahmefreigabe ergänzt. Die Kartenfunktion bleibt stark experimentell und auf Altgard beschränkt.
+
 ## CatScratch v4.0.9-beta.13
 
 Heute habe ich die Timer etwas aufgeräumt. 🐾

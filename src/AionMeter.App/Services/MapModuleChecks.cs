@@ -81,8 +81,16 @@ internal static class MapModuleChecks
             filters.UpdateLayout();Render(filters,Path.Combine(directory,"map-filters.png"));
             var style=(long)NativeMethods.GetWindowLongPtr(new WindowInteropHelper(filters).Handle,NativeMethods.GWL_EXSTYLE);
             Check((style&NativeMethods.WS_EX_NOACTIVATE)!=0&&!filters.ShowInTaskbar,"Map filters are clickable without activating a separate app window");
+            Check(MapNative.GetWindowDisplayAffinity(new WindowInteropHelper(filters).Handle,out var filterAffinity)&&filterAffinity==0,"Map filter window permits desktop recording instead of excluding streams");
         }
         finally{filters.Close();}
+        var streamOverlay=new MapOverlayWindow();
+        try
+        {
+            var handle=new WindowInteropHelper(streamOverlay).EnsureHandle();
+            Check(MapNative.GetWindowDisplayAffinity(handle,out var affinity)&&affinity==0,"Marker overlay permits desktop recording instead of excluding streams");
+        }
+        finally{streamOverlay.Close();}
         var shown=new Window{Width=100,Height=80,Left=-30000,Top=-30000,ShowActivated=false,ShowInTaskbar=false};
         var hidden=new Window{Width=100,Height=80,Left=-30000,Top=-30000,ShowActivated=false,ShowInTaskbar=false};
         try

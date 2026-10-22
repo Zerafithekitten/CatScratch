@@ -13,7 +13,7 @@ internal static class MapNative
     [DllImport("user32.dll")] private static extern short GetAsyncKeyState(int key);
     [DllImport("user32.dll")] internal static extern nint GetForegroundWindow();
     [DllImport("user32.dll")] internal static extern uint GetWindowThreadProcessId(nint window,out uint process);
-    [DllImport("user32.dll")] internal static extern bool SetWindowDisplayAffinity(nint window,uint affinity);
+    [DllImport("user32.dll")] internal static extern bool GetWindowDisplayAffinity(nint window,out uint affinity);
     [DllImport("dwmapi.dll")] internal static extern int DwmSetWindowAttribute(nint window,int attribute,ref int value,int size);
     [DllImport("dwmapi.dll")] internal static extern int DwmGetWindowAttribute(nint window,int attribute,out int value,int size);
     internal static double Now=>Stopwatch.GetTimestamp()/(double)Stopwatch.Frequency;

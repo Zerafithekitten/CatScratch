@@ -8,6 +8,8 @@ if ($LASTEXITCODE) { throw 'Map engine build dependencies failed' }
 if ($LASTEXITCODE) { throw 'Map heading regression checks failed' }
 & $Python (Join-Path $PSScriptRoot 'map-engine/check_capture.py')
 if ($LASTEXITCODE) { throw 'Map capture scheduling checks failed' }
+& $Python (Join-Path $PSScriptRoot 'map-engine/check_game_window.py')
+if ($LASTEXITCODE) { throw 'Map game-window selection checks failed' }
 & $Python -m PyInstaller --noconfirm --clean --onedir --console --name CatScratch.MapEngine --exclude-module tkinter --exclude-module matplotlib --exclude-module pandas --exclude-module scipy --exclude-module pytest --distpath "$output/dist" --workpath "$output/build" --specpath "$output" (Join-Path $PSScriptRoot 'map-engine/worker.py')
 if ($LASTEXITCODE) { throw 'Map engine build failed' }
 Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'map-engine/licenses') -Destination "$output/dist/CatScratch.MapEngine/licenses" -Recurse -Force

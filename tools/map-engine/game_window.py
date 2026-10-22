@@ -34,6 +34,9 @@ def process_basename(pid):
 class GameWindow:
     def __init__(self,executable='AION2.exe'):
         self.executable=Path(executable or 'AION2.exe').name.lower()
+        # Match the same two clients as CatScratch's packet-capture locator.
+        # The configured executable may be a launcher; it must not disable the known clients.
+        self.executables={'aion2.exe','aion2-win64-shipping.exe',self.executable}
         self.cached_pid=None;self.cached_at=0;self.cached_name=None
         self.reason='waiting-game'
 
@@ -48,7 +51,7 @@ class GameWindow:
         now=time.perf_counter()
         if pid.value!=self.cached_pid or now-self.cached_at>1:
             self.cached_pid=pid.value;self.cached_at=now;self.cached_name=process_basename(pid.value)
-        if self.cached_name!=self.executable:
+        if self.cached_name not in self.executables:
             self.reason='waiting-game';return None
         rect=w.RECT();point=w.POINT()
         if not api.GetClientRect(hwnd,c.byref(rect)) or not api.ClientToScreen(hwnd,c.byref(point)):

@@ -1,5 +1,7 @@
 # Release policy
 
+On 2026-10-23 the owner explicitly approved "update" after reviewing the local map compatibility fixes. Publish v4.0.9-beta.14 after full checks: accept both known AION 2 client executable names and remove desktop-recording exclusion from map markers and filters. Local checks verify selection and window affinity; affected-user and actual streaming validation remain pending. Preserve passive capture, the experimental warning, Stable, Light and GitHub project presentation.
+
 On 2026-10-22 the owner explicitly approved "ab in die beta damit" after the boss-time and Pet Tracker audit. Publish v4.0.9-beta.13 after full checks: persistent selected schedule times, exact Watcher Kaira NPC schedule fallback with explicit source, and immediate boss-window refresh on data changes. Pet live-update checks passed without requiring a gameplay change. Preserve unknown boss timings, Stable, Light and GitHub project presentation.
 
 On 2026-10-22 the owner reviewed the six collapsible map-filter groups and icon-only material display, reported no cursor flicker during the revised passive capture comparison, and explicitly approved "okay go upload". Publish v4.0.9-beta.12 after complete checks. Include shared grouping with selected counts, removal of material text, title-only standby capture and removal of CAPTUREBLT. Describe the short live observation accurately rather than promising universal flicker resolution. Preserve Stable, Light and GitHub project presentation.

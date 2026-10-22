@@ -1,3 +1,11 @@
+## CatScratch v4.0.9-beta.14
+
+Two fixes for the Altgard map experiment. 🐾
+
+- The map module now recognizes both known AION 2 client names, including AION2-Win64-Shipping.exe. A selected launcher no longer prevents those clients from being recognized.
+- Map markers and filters no longer exclude themselves from desktop recordings and screen sharing. Please test with your streaming software; game-only capture may still omit separate overlay windows.
+- Added checks for both client names and recording permissions. The map feature remains highly experimental and Altgard-only.
+
 ## CatScratch v4.0.9-beta.13
 
 A small timer tidy-up today. 🐾
