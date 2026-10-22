@@ -1,0 +1,166 @@
+{
+  "citizen": {
+    "en": "NPCs",
+    "de": "NPCs"
+  },
+  "event": {
+    "en": "Events",
+    "de": "Events"
+  },
+  "teleport": {
+    "en": "Teleport",
+    "de": "Teleport"
+  },
+  "named": {
+    "en": "Named monsters",
+    "de": "Benannte Gegner"
+  },
+  "feral": {
+    "en": "Fera",
+    "de": "Fera"
+  },
+  "trans": {
+    "en": "Trans",
+    "de": "Trans"
+  },
+  "storage": {
+    "en": "Storage",
+    "de": "Lager"
+  },
+  "vegetable": {
+    "en": "Vegetables",
+    "de": "Gemüse"
+  },
+  "shellfish": {
+    "en": "Shellfish",
+    "de": "Muscheln"
+  },
+  "berry": {
+    "en": "Berries",
+    "de": "Beeren"
+  },
+  "jewelry": {
+    "en": "Gemstones",
+    "de": "Edelsteine"
+  },
+  "herb": {
+    "en": "Herbs",
+    "de": "Kräuter"
+  },
+  "od": {
+    "en": "Odyle",
+    "de": "Odyle"
+  },
+  "metal": {
+    "en": "Ore",
+    "de": "Erze"
+  },
+  "tree": {
+    "en": "Wood",
+    "de": "Holz"
+  },
+  "intellect": {
+    "en": "Cogni",
+    "de": "Cogni"
+  },
+  "instance": {
+    "en": "Instances",
+    "de": "Instanzen"
+  },
+  "monolith": {
+    "en": "Empyrean Traces",
+    "de": "Empyrean Traces"
+  },
+  "shop": {
+    "en": "Merchants",
+    "de": "Händler"
+  },
+  "hidden-cube": {
+    "en": "Hidden Cubes",
+    "de": "Hidden Cubes"
+  },
+  "shop-craft": {
+    "en": "Craft merchants",
+    "de": "Handwerkshändler"
+  },
+  "shop-conversion": {
+    "en": "Conversion merchants",
+    "de": "Umtauschhändler"
+  },
+  "alchemy": {
+    "en": "Alchemy",
+    "de": "Alchemie"
+  },
+  "blacksmith": {
+    "en": "Blacksmiths",
+    "de": "Schmied"
+  },
+  "cook": {
+    "en": "Cooks",
+    "de": "Koch"
+  },
+  "jewelcraft": {
+    "en": "Jewelcraft",
+    "de": "Schmuckhandwerk"
+  },
+  "tailor": {
+    "en": "Tailors",
+    "de": "Schneider"
+  },
+  "portal": {
+    "en": "Map portals",
+    "de": "Gebietsübergänge"
+  },
+  "sealed-dungeon": {
+    "en": "Sealed dungeons",
+    "de": "Versiegelte Dungeons"
+  },
+  "nature": {
+    "en": "Natura",
+    "de": "Natura"
+  },
+  "elite": {
+    "en": "Elite monsters",
+    "de": "Elitegegner"
+  },
+  "companion": {
+    "en": "Companions",
+    "de": "Begleiter"
+  },
+  "special": {
+    "en": "Special monsters",
+    "de": "Besondere Gegner"
+  },
+  "flight-circle": {
+    "en": "Flight rings",
+    "de": "Flugringe"
+  },
+  "stronghold": {
+    "en": "Exploration points",
+    "de": "Erkundungspunkte"
+  },
+  "lord-monolith": {
+    "en": "Lord monoliths",
+    "de": "Gebieter-Monolithen"
+  },
+  "dungeon-entrance": {
+    "en": "Dungeon entrances",
+    "de": "Dungeoneingänge"
+  },
+  "rift": {
+    "en": "Rifts",
+    "de": "Risse"
+  },
+  "teleport-artifact": {
+    "en": "Kibelisks",
+    "de": "Kibelisken"
+  },
+  "district-quest": {
+    "en": "Regional quests",
+    "de": "Gebietsquests"
+  },
+  "hero-quest": {
+    "en": "Hero quests",
+    "de": "Heldenquests"
+  }
+}

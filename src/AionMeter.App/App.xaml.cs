@@ -43,6 +43,15 @@ public partial class App : Application
     private TrayIcon? _tray;
     private HotkeyManager? _hotkeys;
     private readonly WindowVisibilityGroup _windowVisibility=new();
+    private MapOverlayService? _mapModule;
+    internal string MapModuleStatus=>_mapModule?.Status??MapWords.L("Disabled","Ausgeschaltet");
+    private IEnumerable<Window> MapHudWindows()=>Windows.Cast<Window>().Where(w=>w is OverlayWindow or MeterControlsWindow or BossTimingWindow or DeathRecapWindow or HiddenCubeWindow or SupporterCatWindow or ChecklistWindow or ResourcesWindow or DungeonEntriesWindow or TimerHubWindow or BossTimersWindow or PetTrackerWindow or ResourceOverviewWindow or EventScheduleWindow or TimerCardWindow or CompanionUpdateBubble);
+    private void SyncMapModule()
+    {
+        if(_shutdownStarted||_meter is null)return;
+        _mapModule??=new MapOverlayService(_meter.Settings,MapHudWindows,()=>_windowVisibility.Hidden);
+        _mapModule.ApplyPreferences();
+    }
     private DispatcherTimer? _timer;
     private DispatcherTimer? _topmostTimer;
     private DispatcherTimer? _gameTimer;
@@ -93,6 +102,7 @@ public partial class App : Application
     protected override void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);
+        EventManager.RegisterClassHandler(typeof(Window),FrameworkElement.LoadedEvent,new RoutedEventHandler((_,_)=>_mapModule?.RefreshHudSuppression()));
         CatBranding.Register();
         if(e.Args.Any(a=>a.StartsWith("--check-",StringComparison.Ordinal) || a=="--render-sample"))
         {
@@ -109,6 +119,12 @@ public partial class App : Application
                 Shutdown();
             }
             catch (Exception error) { Log.Error("Update cleanup deferred",error); Shutdown(1); }
+            return;
+        }
+        if(ArgValue(e.Args,"--check-map") is {} mapResult)
+        {
+            try{MapModuleChecks.Run(mapResult);Shutdown();}
+            catch(Exception error){File.WriteAllText(mapResult,error.ToString());Shutdown(1);}
             return;
         }
         if (ArgValue(e.Args, "--check-update-start") is { } packagePath)
@@ -519,6 +535,7 @@ public partial class App : Application
         _topmostTimer=new DispatcherTimer(DispatcherPriority.Normal){Interval=TimeSpan.FromMilliseconds(250)};
         _topmostTimer.Tick+=(_,_)=>{if(!_shutdownStarted)WindowPresentation.MaintainTopmost();};
         _topmostTimer.Start();
+        SyncMapModule();
         _watchedGame=settings.GameExecutable;
         if(e.Args.Contains("--game-session")) _gameExit.ShouldClose(settings.FollowGame,true,DateTimeOffset.UtcNow);
         _gameTimer=new DispatcherTimer(DispatcherPriority.Background) { Interval=TimeSpan.FromSeconds(2) };
@@ -1303,6 +1320,7 @@ public partial class App : Application
         WindowPresentation.MoveOverlaysToPreferredScreen();
         _modulePreview?.RefreshPreferences(_timerCards);
         SyncBossTiming();SyncSupporterCat();SyncResources();SyncDungeonEntries();SyncChecklist();SyncHiddenCubes();SyncDeathRecap();
+        SyncMapModule();
         RefreshPetSettings();RefreshEventSettings();
         _personalBests?.Reload();_lastPlayedWith?.Reload();_history?.Reload();
     }
@@ -1318,6 +1336,7 @@ public partial class App : Application
         _overlay.Refresh();
         SyncBossTiming();
         SyncSupporterCat();
+        SyncMapModule();
     }
 
     /// <summary>The Settings window's row size slider, shown on the overlay before it is saved.</summary>
@@ -1349,6 +1368,7 @@ public partial class App : Application
             TimeSpan.FromSeconds(10), Timeout.InfiniteTimeSpan);
         if (_meter is not null) Log.Info("Exiting");
         _modulePreview?.Dispose();_modulePreview=null;
+        _mapModule?.Dispose();_mapModule=null;
         _timer?.Stop();
         _topmostTimer?.Stop();
         _gameTimer?.Stop();

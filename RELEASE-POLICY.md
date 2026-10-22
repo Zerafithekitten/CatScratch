@@ -1,5 +1,7 @@
 # Release policy
 
+On 2026-10-22 the owner reviewed the integrated Altgard Settings preview and local Beta candidate, then explicitly approved "okay ab in die beta ... lass es uns ordentlich testen". Publish v4.0.9-beta.9 after full release verification. Include the optional bundled image engine, 41 static Questlog location categories, measured drag compensation and temporary suppression/restoration of other HUD modules. Keep large-zoom reacquisition limits explicit, Altgard only, map recognition off by default, and preserve Stable, Light and GitHub project presentation.
+
 SUPERSEDING OWNER INSTRUCTION, 2026-10-19: Before every upload, show the owner images of the actual changes and wait for explicit update approval. While developing, check only the added or changed module. Run the full release checks only after that approval. Earlier blanket Beta-upload authorization below no longer permits publishing without this review. The pending Beta 11 workflow was cancelled when this instruction arrived.
 
 On 2026-10-19 the owner explicitly approved promoting the complete 3.0.4 Beta feature set and the reviewed final preview-layout, centered mode-lettering and DPS placement corrections to Stable 3.0.4, with comprehensive patch notes covering all changes since 3.0.3. Update main/GitHub documentation and preserve the separate frozen Light edition.

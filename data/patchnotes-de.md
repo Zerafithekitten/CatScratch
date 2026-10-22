@@ -1,3 +1,12 @@
+## CatScratch v4.0.9-beta.9
+
+Das Altgard-Kartenexperiment ist bereit für seinen ersten Test direkt in CatScratch. 🐾 Einschalten könnt ihr es unter Einstellungen > Kartenoverlay. Die Bilderkennung ist bereits enthalten und braucht keine separate Einrichtung.
+
+- Wählt aus 41 Questlog-Kategorien. Die Marker zeigen mögliche Fundstellen, keine bestätigten aktuellen Spawns. Dicht beieinanderliegende Symbole werden gruppiert.
+- Bei geöffneter Altgard-Karte machen die anderen Anzeigemodule Platz und kehren beim Schließen zurück. Die Erfassung läuft dabei weiter.
+- Die Nachführung hilft den Symbolen beim Ziehen zwischen den Bildprüfungen mitzugehen. Große Zoomwechsel können noch einen kurzen Neuabgleich brauchen. Diese erste Beta unterstützt ausschließlich Altgard.
+- Die Karteneinstellungen haben eine Live-Vorschau. Speichern übernimmt sie; Schließen verwirft ungespeicherte Änderungen. Die Funktion ist zunächst ausgeschaltet.
+
 ## CatScratch v4.0.9-beta.8
 
 - Hidden-Cube-Schlüssel verwenden in Ressourcen und Einstellungen jetzt ihr originales Spielsymbol.

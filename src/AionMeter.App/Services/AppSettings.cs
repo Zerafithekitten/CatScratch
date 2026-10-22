@@ -95,6 +95,9 @@ public sealed class AppSettings
     public bool PetOnHitOnly {get;set;}
     public string? PreferredDisplay {get;set;}
     public bool ShowDungeonEntriesModule {get;set;}
+    public bool ShowMapOverlay {get;set;}
+    public bool MapDirectDrag {get;set;}=true;
+    public List<string> MapCategories {get;set;}=["hidden-cube"];
     public string DungeonEntriesLayout {get;set;}="List";
     public double DungeonEntriesWidth {get;set;}=300;
     public List<string> VisibleDungeonEntries {get;set;}=["daily","nightmare","shugo"];

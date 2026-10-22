@@ -1,3 +1,12 @@
+## CatScratch v4.0.9-beta.9
+
+The Altgard map experiment is ready for its first test inside CatScratch. 🐾 Enable it in Settings > Map overlay; the image engine is included, so there's no separate setup.
+
+- Choose from 41 Questlog location categories. These are possible locations, not confirmed live spawns; nearby symbols are grouped to keep the map readable.
+- While the Altgard map is open, the other display modules step aside. They return when you close it, and capture keeps running throughout.
+- Drag tracking helps the symbols follow the map between image checks. Large zoom changes can still take a moment to settle. This first Beta supports Altgard only.
+- Map settings preview live. Save keeps them; closing Settings discards unsaved changes. The feature starts switched off.
+
 ## CatScratch v4.0.9-beta.8
 
 - Hidden Cube Keys now use their original in-game icon in Resources and Settings.

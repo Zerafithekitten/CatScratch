@@ -17,7 +17,7 @@
     <Product>CatScratch</Product>
     <AssemblyTitle>CatScratch</AssemblyTitle>
     <ApplicationIcon>Assets\app.ico</ApplicationIcon>
-    <Version>4.0.9-beta.8</Version>
+    <Version>4.0.9-beta.9</Version>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <NoWarn>$(NoWarn);WFO0003</NoWarn>
@@ -38,6 +38,7 @@
     <None Include="..\..\data\**\*" Link="data\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <Compile Remove="Launcher\**\*.cs" />
     <Content Include="$(BaseIntermediateOutputPath)game-launcher\CatScratch.GameWatcher.exe" Link="CatScratch.GameWatcher.exe" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    <Content Include="$(BaseIntermediateOutputPath)map-engine\dist\CatScratch.MapEngine\**\*" Link="map-engine\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
   </ItemGroup>
 
   <Target Name="BuildGameWatcherLauncher" BeforeTargets="PrepareForBuild" Inputs="$(MSBuildProjectDirectory)\Launcher\GameWatcherLauncher.cs" Outputs="$(BaseIntermediateOutputPath)game-launcher\CatScratch.GameWatcher.exe">

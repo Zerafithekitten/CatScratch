@@ -124,7 +124,8 @@ public partial class SettingsWindow : Window
         SettingsTabs.Items.Add(new TabItem{Header=ControlPanelSettingsPanel.L("Resources","Ressourcen"),Tag="resources",Content=new ScrollViewer{VerticalScrollBarVisibility=ScrollBarVisibility.Auto,Padding=new Thickness(14,0,0,0),Content=new Border{Child=new ResourcesSettingsPanel(_moduleDraft,meter),Style=(Style)FindResource("Section")}}});
         SettingsTabs.Items.Add(new TabItem{Header=ControlPanelSettingsPanel.L("Dungeon entries","Dungeon-Eintritte"),Tag="dungeons",Content=new ScrollViewer{VerticalScrollBarVisibility=ScrollBarVisibility.Auto,Padding=new Thickness(14,0,0,0),Content=new Border{Child=new DungeonEntriesSettingsPanel(_moduleDraft),Style=(Style)FindResource("Section")}}});
         SettingsTabs.Items.Add(new TabItem{Header="Patreon",Tag="patreon",Content=new ScrollViewer{VerticalScrollBarVisibility=ScrollBarVisibility.Auto,HorizontalScrollBarVisibility=ScrollBarVisibility.Disabled,Padding=new(14,0,0,0),Content=_patreonPanel=new PatreonSettingsPanel(_moduleDraft,theme=>_themePanel.Set(theme))}});
-        var orderedTabs=new[]{"general","appearance","profiles","combat","events","pets","checklist","cubes","resources","dungeons","hotkeys","history","capture","updates","patreon","feedback","help"}.Select(Tab).ToArray();
+        SettingsTabs.Items.Add(new TabItem{Header=MapWords.L("Map overlay","Kartenoverlay"),Tag="map",Content=new ScrollViewer{VerticalScrollBarVisibility=ScrollBarVisibility.Auto,HorizontalScrollBarVisibility=ScrollBarVisibility.Disabled,Padding=new(14,0,0,0),Content=new Border{Child=new MapSettingsPanel(_moduleDraft,()=>AppHost.Current.MapModuleStatus),Style=(Style)FindResource("Section")}}});
+        var orderedTabs=new[]{"general","appearance","profiles","combat","events","pets","checklist","cubes","resources","dungeons","map","hotkeys","history","capture","updates","patreon","feedback","help"}.Select(Tab).ToArray();
         SettingsTabs.Items.Clear();
         foreach(var tab in orderedTabs)SettingsTabs.Items.Add(tab);
         var groupStarts=new[]{"general","combat","hotkeys","updates"};
@@ -396,6 +397,7 @@ public partial class SettingsWindow : Window
         _livePreview?.RestoreForCommit("ChecklistAutoReset","ChecklistResetHourUtc","ChecklistWeeklyResetDay");
         _checklistPreferences.ApplyTo(s);
         s.ShowDungeonEntriesModule=_moduleDraft.ShowDungeonEntriesModule;
+        s.ShowMapOverlay=_moduleDraft.ShowMapOverlay;s.MapDirectDrag=_moduleDraft.MapDirectDrag;s.MapCategories=new(_moduleDraft.MapCategories??["hidden-cube"]);
         s.DungeonEntriesLayout=_moduleDraft.DungeonEntriesLayout;
         s.DungeonEntriesWidth=_moduleDraft.DungeonEntriesWidth;
         s.VisibleDungeonEntries=new(_moduleDraft.VisibleDungeonEntries??[]);
