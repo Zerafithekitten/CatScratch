@@ -78,15 +78,7 @@ internal sealed class MapCanvas:FrameworkElement
             }
             if(icon is not null)dc.DrawImage(icon,new Rect(p.X-12,p.Y-12,24,24));
             else dc.DrawEllipse(Brushes.DimGray,new Pen(Brushes.LightGreen,2),p,6,6);
-            if(marker.HasMaterialName)
-            {
-                var text=new FormattedText(marker.MaterialLabel,CultureInfo.InvariantCulture,FlowDirection.LeftToRight,new Typeface("Segoe UI"),12,Brushes.White,dpi.PixelsPerDip);
-                var x=Math.Min(p.X+15,_physical.Width*1820/1919-text.Width-8);
-                var y=Math.Clamp(p.Y-text.Height/2,_physical.Height*110/1079,_physical.Height*1040/1079-text.Height-4);
-                dc.DrawRoundedRectangle(new SolidColorBrush(Color.FromArgb(235,25,29,35)),new Pen(new SolidColorBrush(Color.FromArgb(150,104,114,129)),1),new Rect(x-3,y-2,text.Width+6,text.Height+4),3,3);
-                dc.DrawText(text,new Point(x,y));
-            }
-            else if(marker.Count>1)
+            if(marker.Count>1)
             {
                 var text=new FormattedText("×"+marker.Count,CultureInfo.InvariantCulture,FlowDirection.LeftToRight,new Typeface("Segoe UI"),11,Brushes.White,dpi.PixelsPerDip);
                 dc.DrawRoundedRectangle(new SolidColorBrush(Color.FromArgb(220,25,29,35)),null,new Rect(p.X+7,p.Y-19,text.Width+4,text.Height),3,3);

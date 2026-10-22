@@ -1,3 +1,9 @@
+## CatScratch v4.0.9-beta.12
+
+- Kartenfilter in sechs aufklappbare Gruppen sortiert, jeweils mit Anzeige der aktiven Auswahl. Die Einstellungen verwenden dieselbe Reihenfolge; Zuklappen ändert keine Häkchen.
+- Materialnamen auf der Karte entfernt. Die unterschiedlichen Originalsymbole und die Anzahl gruppierter Fundstellen bleiben erhalten.
+- Die passive Bildschirmaufnahme nach dem erneuten Mausflackern-Bericht überarbeitet. Bei geschlossener Karte wird nur noch ein kleiner Titelbereich seltener geprüft; vollständige Bilder werden für die offene Karte aufgenommen. Der kurze lokale Vergleich war flackerfrei – bitte dieses stark experimentelle Feature weiter testen.
+
 ## CatScratch v4.0.9-beta.11
 
 - Erz- und Edelsteinmarker zeigen jetzt den genauen Materialnamen und ihr jeweiliges originales Spielsymbol, darunter Sapphire, Diamond, Ruby und Orichalcum. Unterschiedliche Materialien bleiben auch beim Gruppieren benachbarter Marker getrennt.

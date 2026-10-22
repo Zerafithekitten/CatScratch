@@ -10,8 +10,14 @@ internal sealed class MapSettingsPanel:StackPanel
 {
     internal void RefreshCategories(IReadOnlyList<string> selected)
     {
-        foreach(var box in Children.OfType<CheckBox>())
+        foreach(var box in FilterBoxes(this))
             if(box.Tag is string id&&id!="map-enabled")box.IsChecked=selected.Contains(id);
+    }
+    private static IEnumerable<CheckBox> FilterBoxes(DependencyObject root)
+    {
+        if(root is CheckBox box)yield return box;
+        foreach(var child in LogicalTreeHelper.GetChildren(root).OfType<DependencyObject>())
+            foreach(var nested in FilterBoxes(child))yield return nested;
     }
     internal MapSettingsPanel(AppSettings draft,Func<string>? status=null)
     {
@@ -49,12 +55,12 @@ internal sealed class MapSettingsPanel:StackPanel
             button.Click+=(_,_)=>Select(select);actions.Children.Add(button);
         }
         draft.MapCategories??=["hidden-cube"];
-        foreach(var category in MapOverlayData.Shared.Value.Categories)
+        Children.Add(MapFilterGroups.Create(category=>
         {
             var id=category.Id;
             var box=Check($"{MapWords.Category(category)}  ({category.Count:N0})",draft.MapCategories.Contains(id),v=>{draft.MapCategories.RemoveAll(c=>c==id);if(v)draft.MapCategories.Add(id);});
-            box.Tag=id;choices.Add((id,box));Children.Add(box);
-        }
+            box.Tag=id;choices.Add((id,box));return box;
+        }));
         Text(L("Dense locations are grouped by category. Up to 350 symbols are shared fairly across the selected visible categories; zoom in to see more detail.","Dichte Fundstellen werden je Kategorie zusammengefasst. Bis zu 350 Symbole werden gleichmäßig auf die ausgewählten sichtbaren Kategorien verteilt; für mehr Details hineinzoomen."));
         var source=new Button{Content=L("Open source: Questlog","Quelle öffnen: Questlog"),Style=(Style)FindResource("GhostButton"),HorizontalAlignment=HorizontalAlignment.Left,Margin=new(0,8,0,8)};
         source.Click+=(_,_)=>{try{Process.Start(new ProcessStartInfo("https://questlog.gg/aion-2/en/map"){UseShellExecute=true});}catch(System.ComponentModel.Win32Exception){}};Children.Add(source);

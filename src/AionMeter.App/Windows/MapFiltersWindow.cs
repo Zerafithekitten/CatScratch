@@ -33,12 +33,11 @@ internal sealed class MapFiltersWindow:Window
             var button=new Button{Content=label,Style=(Style)FindResource("GhostButton"),Focusable=false,Margin=new(0,0,5,0)};
             button.Click+=(_,_)=>{foreach(var pair in _checks)pair.Value.IsChecked=choose(pair.Key);Notify();};actions.Children.Add(button);
         }
-        var choices=new StackPanel();
-        foreach(var category in MapOverlayData.Shared.Value.Categories)
+        var choices=MapFilterGroups.Create(category=>
         {
             var box=new CheckBox{Content=MapWords.Category(category),Style=(Style)FindResource("DarkCheck"),Focusable=false,Margin=new(0,4,0,4),Tag=category.Id};
-            box.Click+=(_,_)=>Notify();_checks.Add(category.Id,box);choices.Children.Add(box);
-        }
+            box.Click+=(_,_)=>Notify();_checks.Add(category.Id,box);return box;
+        });
         _body.Children.Add(new ScrollViewer{Content=choices,Height=310,VerticalScrollBarVisibility=ScrollBarVisibility.Auto,HorizontalScrollBarVisibility=ScrollBarVisibility.Disabled,Focusable=false});
         _body.Children.Add(new TextBlock{Text=MapWords.L("Possible locations · not live spawns","Mögliche Fundstellen · keine Live-Spawns"),TextWrapping=TextWrapping.Wrap,FontSize=10,Margin=new(0,8,0,0)});
         Content=new Border{Background=ThemeColors.Brush("#20242A"),BorderBrush=ThemeColors.Brush("#414A56"),BorderThickness=new(1),CornerRadius=new(9),Child=root};

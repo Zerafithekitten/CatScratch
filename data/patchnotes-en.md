@@ -1,3 +1,9 @@
+## CatScratch v4.0.9-beta.12
+
+- Map filters now have six collapsible groups, each showing how many filters are selected. The same order is used in Settings, and collapsing a group keeps its selection.
+- Removed material-name labels from the map. The different original material icons remain, along with grouped counts.
+- Reworked passive screen capture after the remaining cursor-flicker report. With the map closed, CatScratch checks only a small heading area at a slower rate; full frames are captured for an open map. The short local comparison was flicker-free, but please keep testing this highly experimental feature.
+
 ## CatScratch v4.0.9-beta.11
 
 - Ore and gemstone markers now show their exact material names and their own original game icons, including Sapphire, Diamond, Ruby and Orichalcum. Different materials stay separate when nearby markers are grouped.

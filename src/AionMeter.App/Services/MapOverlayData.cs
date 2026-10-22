@@ -15,8 +15,6 @@ internal readonly record struct MapTransform(double A,double B,double X,double C
 internal sealed record MapLocation(string Id,string Category,string Label,double X,double Y);
 internal sealed record MapMarker(MapLocation Location,int Count)
 {
-    internal bool HasMaterialName=>Location.Category is "metal" or "jewelry";
-    internal string MaterialLabel=>Location.Label+(Count>1?" ×"+Count:"");
     internal string IconKey=>Location.Label switch
     {
         "Sapphire Gemstone"=>"Materials/sapphire",

@@ -42,10 +42,12 @@ internal static class MapModuleChecks
         var data=MapOverlayData.Shared.Value;
         Check(data.Points.Count==20614&&data.Categories.Count==39,"Altgard contains 20,614 locations in 39 categories");
         var all=data.Categories.Select(c=>c.Id).ToHashSet();
+        var grouped=MapFilterGroups.Groups.SelectMany(g=>g.Categories).ToArray();
+        Check(MapFilterGroups.Groups.Length==6&&grouped.Length==39&&grouped.Distinct().Count()==39&&grouped.ToHashSet().SetEquals(all),"All map filters belong to exactly one of six ordered groups");
         Check(!data.Points.Any(p=>p.Category is "monolith" or "teleport-artifact")&&!data.Categories.Any(c=>c.Id is "monolith" or "teleport-artifact"),"Feathers and Kibelisks are absent from both map locations and filters");
         var gemstones=data.Project(new MapTransform(.001,0,700,0,.001,300),1919,1079,new HashSet<string>{"jewelry"});
         Check(gemstones.Markers.Count==3&&gemstones.Markers.Sum(m=>m.Count)==590&&gemstones.Markers.Select(m=>m.Location.Label).Distinct().Count()==3,"Overlapping Diamond, Ruby and Sapphire locations remain separate material groups");
-        Check(gemstones.Markers.All(m=>m.HasMaterialName&&m.MaterialLabel.Contains(m.Location.Label)),"Material labels retain the exact source names and grouped counts");
+        Check(gemstones.Markers.Select(m=>m.IconKey).Distinct().Count()==3,"Grouped gemstones retain their distinct original material icons");
         var transform=new MapTransform(.3,0,700,0,.3,300);
         var projected=data.Project(transform,1919,1079,all);
         var visible=data.Points.Where(p=>{var q=transform.Apply(p.X,p.Y);return q.X>=330&&q.X<1820&&q.Y>=110&&q.Y<1040;}).Select(p=>p.Category).ToHashSet();
@@ -72,6 +74,10 @@ internal static class MapModuleChecks
             Check(selectedFromMap?.Count==0,"In-map None button clears markers");
             Nodes(filters).OfType<Button>().Single(b=>Equals(b.Content,"Cubes")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             Check(selectedFromMap?.SequenceEqual(["hidden-cube"])==true,"In-map cube preset restores the cube filter");
+            var groupPanels=Nodes(filters).OfType<Expander>().Where(e=>e.Tag is string tag&&tag.StartsWith("map-group-")).ToArray();
+            Check(groupPanels.Length==6&&groupPanels.All(e=>!e.IsExpanded),"In-map groups initially show a compact six-category overview");
+            foreach(var group in groupPanels){group.IsExpanded=true;group.IsExpanded=false;}
+            Check(selectedFromMap?.SequenceEqual(["hidden-cube"])==true&&Nodes(filters).OfType<CheckBox>().Single(c=>Equals(c.Tag,"hidden-cube")).IsChecked==true,"Expanding and collapsing groups preserves selected markers");
             filters.UpdateLayout();Render(filters,Path.Combine(directory,"map-filters.png"));
             var style=(long)NativeMethods.GetWindowLongPtr(new WindowInteropHelper(filters).Handle,NativeMethods.GWL_EXSTYLE);
             Check((style&NativeMethods.WS_EX_NOACTIVATE)!=0&&!filters.ShowInTaskbar,"Map filters are clickable without activating a separate app window");

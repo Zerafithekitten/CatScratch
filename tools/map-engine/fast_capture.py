@@ -48,7 +48,8 @@ class FastCapture:
             self.original=self.gdi.SelectObject(self.memory,self.bitmap)
             self.pixels=np.ctypeslib.as_array((c.c_ubyte*(width*height*4)).from_address(pointer.value)).reshape(height,width,4)
             self.shape=(height,width)
-        if not self.gdi.BitBlt(self.memory,0,0,width,height,self.dc,left,top,0x40CC0020):
+        # Do not request CAPTUREBLT's extra layered-window capture/composition.
+        if not self.gdi.BitBlt(self.memory,0,0,width,height,self.dc,left,top,0x00CC0020):
             raise OSError('Windows konnte das Spielfenster nicht aufnehmen.')
         self.gdi.GdiFlush()
         # The only copied image is the requested rectangle, already in BGR.

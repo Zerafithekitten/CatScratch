@@ -39,15 +39,14 @@ def capture(engine,title,game):
     from fast_capture import FastCapture
     from drag_assist import read_pointer
     source=GameWindow(game)
-    camera=FastCapture();last_emit=0;previous=None;last_seen=0
+    camera=FastCapture();header_camera=FastCapture();last_emit=0;previous=None;last_seen=0
     try:
-        while not stop.wait(.015):
+        while not stop.wait(.015 if current_open else .12):
             bounds=source.bounds();visible=False;frame=None;score=None
             pointer=read_pointer();stamp=time.perf_counter()
             if bounds:
-                frame=camera.grab(bounds)
-                h,w=frame.shape[:2]
-                header=engine.cv2.resize(frame[:round(h*85/1079),:round(w*300/1919)],(300,85))
+                left,top,right,bottom=bounds;h=bottom-top;w=right-left
+                header=engine.cv2.resize(header_camera.grab((left,top,left+round(w*300/1919),top+round(h*85/1079))),(300,85))
                 gray=engine.cv2.cvtColor(header,engine.cv2.COLOR_BGR2GRAY)
                 score=title_score(gray,title)
                 visible=score>=.70
@@ -55,6 +54,8 @@ def capture(engine,title,game):
             if visible:last_seen=now
             # A brief header miss during a map animation must not flash the HUD.
             visible=visible or (bounds is not None and now-last_seen<.20)
+            if visible:
+                pointer=read_pointer();stamp=time.perf_counter();frame=camera.grab(bounds)
             with state_lock:
                 current_bounds=bounds;current_open=visible
                 latest=(stamp,frame,bounds,pointer) if visible else None
@@ -66,7 +67,7 @@ def capture(engine,title,game):
     except Exception as error:
         emit(dict(kind='error',message=type(error).__name__));stop.set()
     finally:
-        camera.close()
+        camera.close();header_camera.close()
         emit(dict(kind='presence',open=False,stamp=time.perf_counter()))
 
 
