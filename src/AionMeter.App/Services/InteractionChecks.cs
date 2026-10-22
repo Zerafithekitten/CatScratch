@@ -386,7 +386,7 @@ internal static class InteractionChecks
                 Check(box.IsReadOnly && box.Text==gesture && HotkeyManager.TryParse(gesture,out _,out _),"Module shortcut can be recorded by pressing keys: "+field);
             }
             var categories=((System.Windows.Controls.TabControl)settings.FindName("SettingsTabs")).Items.OfType<System.Windows.Controls.TabItem>().ToArray();
-            Check(categories.Length==17 && categories.Count(t=>Equals(t.Tag,"patreon"))==1 && categories.Count(t=>Equals(t.Tag,"resources"))==1 && categories.Count(t=>Equals(t.Tag,"checklist"))==1 && categories.Count(t=>Equals(t.Tag,"cubes"))==1 && categories.Count(t=>Equals(t.Tag,"help"))==1 && categories.Count(t=>Equals(t.Tag,"updates"))==1 && categories.Count(t=>Equals(t.Tag,"feedback"))==1 && ((System.Windows.Controls.TextBox)settings.FindName("HkClick")).IsReadOnly,
+            Check(categories.Length==18 && categories.Count(t=>Equals(t.Tag,"map"))==1 && categories.Count(t=>Equals(t.Tag,"patreon"))==1 && categories.Count(t=>Equals(t.Tag,"resources"))==1 && categories.Count(t=>Equals(t.Tag,"checklist"))==1 && categories.Count(t=>Equals(t.Tag,"cubes"))==1 && categories.Count(t=>Equals(t.Tag,"help"))==1 && categories.Count(t=>Equals(t.Tag,"updates"))==1 && categories.Count(t=>Equals(t.Tag,"feedback"))==1 && ((System.Windows.Controls.TextBox)settings.FindName("HkClick")).IsReadOnly,
                 "Central settings include separate Updates, Patreon and Feedback tabs, Events, Pets and profiles while retaining recorded hotkeys");
             var headerPin=(System.Windows.Controls.Button)((System.Windows.Controls.ContentControl)activeOverlay.FindName("ShellPin")).Content;
             var beforePin=activeOverlay.Left;var clickBefore=meter.Settings.ClickThrough;
