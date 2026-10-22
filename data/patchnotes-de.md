@@ -1,3 +1,10 @@
+## CatScratch v4.0.9-beta.11
+
+- Erz- und Edelsteinmarker zeigen jetzt den genauen Materialnamen und ihr jeweiliges originales Spielsymbol, darunter Sapphire, Diamond, Ruby und Orichalcum. Unterschiedliche Materialien bleiben auch beim Gruppieren benachbarter Marker getrennt.
+- Federn und Kibelisken aus der Kartenanzeige und den Filtern entfernt.
+- Deutliche Warnung **STARK EXPERIMENTELL** in den Einstellungen und direkt auf der Karte ergänzt. Erkennung und Positionen können weiterhin falsch oder verzögert sein.
+- Unnötiges Nach-vorne-Setzen der Fenster reduziert; das reine Marker-Overlay ersetzt den Spielcursor nicht mehr. Damit gehe ich das gemeldete Mausflackern an – bitte beim Testen weiter beobachten.
+
 ## CatScratch v4.0.9-beta.10
 
 - Einen kleinen CatScratch-Stau aufgelöst: Die Ressourcenanzeige konnte den Altgard-Titel verdecken und damit die Kartenerkennung blockieren. Die Erkennung nutzt jetzt auch die unverdeckten Teile des Titels, damit die anderen Module wie vorgesehen Platz machen.

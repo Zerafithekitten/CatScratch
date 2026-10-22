@@ -1,3 +1,10 @@
+## CatScratch v4.0.9-beta.11
+
+- Ore and gemstone markers now show their exact material names and their own original game icons, including Sapphire, Diamond, Ruby and Orichalcum. Different materials stay separate when nearby markers are grouped.
+- Removed feather and Kibelisk markers from the map and its filters.
+- Added a prominent **HIGHLY EXPERIMENTAL** warning in Settings and on the map. Recognition and positions can still be wrong or delayed.
+- Reduced unnecessary window reordering and prevented the visual marker overlay from replacing the game's cursor, addressing the reported mouse flicker. Please keep an eye on this during testing.
+
 ## CatScratch v4.0.9-beta.10
 
 - Fixed a little CatScratch traffic jam: resource bars could cover the Altgard heading and stop map recognition from starting. The detector now recognizes the uncovered title fragments, so the other modules can step aside as intended.

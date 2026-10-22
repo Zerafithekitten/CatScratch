@@ -13,6 +13,8 @@ internal sealed class MapFiltersWindow:Window
     private readonly StackPanel _body=new(){Visibility=Visibility.Collapsed};
     private readonly Action<IReadOnlyList<string>> _changed;
     private bool _syncing;
+    private Rect _placed=Rect.Empty;
+    internal int NativePlacementCount {get;private set;}
     internal MapFiltersWindow(Action<IReadOnlyList<string>> changed)
     {
         _changed=changed;Title="CatScratch · Map filters";Width=264;SizeToContent=SizeToContent.Height;
@@ -21,6 +23,7 @@ internal sealed class MapFiltersWindow:Window
         Foreground=ThemeColors.Brush("#EDF2F7");FontFamily=new FontFamily("Segoe UI");
         Resources.MergedDictionaries.Add(new(){Source=new Uri("/CatScratch;component/Theme/MeterPreferences.xaml",UriKind.Relative)});
         var root=new StackPanel{Margin=new(10)};
+        root.Children.Add(MapExperimentalNotice.Create(compact:true));
         var toggle=new Button{Content=MapWords.L("🐾  Map filters  ▾","🐾  Kartenfilter  ▾"),Style=(Style)FindResource("GhostButton"),Focusable=false};
         toggle.Click+=(_,_)=>_body.Visibility=_body.Visibility==Visibility.Visible?Visibility.Collapsed:Visibility.Visible;
         root.Children.Add(toggle);root.Children.Add(_body);_body.Children.Add(_status);
@@ -55,8 +58,12 @@ internal sealed class MapFiltersWindow:Window
         finally{_syncing=false;}
         _status.Text=status;
         var handle=new WindowInteropHelper(this).EnsureHandle();var dpi=VisualTreeHelper.GetDpi(this);
-        Left=(game.Right-Width*dpi.DpiScaleX-26)/dpi.DpiScaleX;Top=(game.Top+110*game.Height/1079)/dpi.DpiScaleY;
-        if(!IsVisible)Show();
-        NativeMethods.SetWindowPos(handle,(nint)(-1),(int)(game.Right-Width*dpi.DpiScaleX-26),(int)(game.Top+110*game.Height/1079),0,0,0x11);
+        var target=new Rect(game.Right-Width*dpi.DpiScaleX-26,game.Top+110*game.Height/1079,dpi.DpiScaleX,dpi.DpiScaleY);
+        if(_placed!=target||!IsVisible)
+        {
+            _placed=target;Left=target.Left/dpi.DpiScaleX;Top=target.Top/dpi.DpiScaleY;
+            if(!IsVisible)Show();
+            NativeMethods.SetWindowPos(handle,(nint)(-1),(int)target.Left,(int)target.Top,0,0,0x11);NativePlacementCount++;
+        }
     }
 }

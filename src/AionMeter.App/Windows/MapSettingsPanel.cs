@@ -18,6 +18,7 @@ internal sealed class MapSettingsPanel:StackPanel
         Resources.MergedDictionaries.Add(new ResourceDictionary{Source=new Uri("/CatScratch;component/Theme/MeterPreferences.xaml",UriKind.Relative)});
         string L(string en,string de)=>MapWords.L(en,de);
         Children.Add(new TextBlock{Text=L("Altgard map overlay · Beta","Altgard-Kartenoverlay · Beta"),FontSize=18,Margin=new(0,0,0,12)});
+        Children.Add(MapExperimentalNotice.Create());
         void Text(string value)=>Children.Add(new TextBlock{Text=value,TextWrapping=TextWrapping.Wrap,Foreground=ThemeColors.Brush("#A9B8C7"),Margin=new(0,6,0,10)});
         CheckBox Check(string label,bool on,Action<bool> change)
         {

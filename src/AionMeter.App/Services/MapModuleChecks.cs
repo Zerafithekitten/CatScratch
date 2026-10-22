@@ -40,8 +40,12 @@ internal static class MapModuleChecks
         }
         Check(!settings.ShowMapOverlay&&settings.MapDirectDrag&&settings.MapCategories.SequenceEqual(["hidden-cube"]),"Discard restores map activation, filters and tracking");
         var data=MapOverlayData.Shared.Value;
-        Check(data.Points.Count==21234&&data.Categories.Count==41,"Altgard contains 21,234 locations in 41 categories");
+        Check(data.Points.Count==20614&&data.Categories.Count==39,"Altgard contains 20,614 locations in 39 categories");
         var all=data.Categories.Select(c=>c.Id).ToHashSet();
+        Check(!data.Points.Any(p=>p.Category is "monolith" or "teleport-artifact")&&!data.Categories.Any(c=>c.Id is "monolith" or "teleport-artifact"),"Feathers and Kibelisks are absent from both map locations and filters");
+        var gemstones=data.Project(new MapTransform(.001,0,700,0,.001,300),1919,1079,new HashSet<string>{"jewelry"});
+        Check(gemstones.Markers.Count==3&&gemstones.Markers.Sum(m=>m.Count)==590&&gemstones.Markers.Select(m=>m.Location.Label).Distinct().Count()==3,"Overlapping Diamond, Ruby and Sapphire locations remain separate material groups");
+        Check(gemstones.Markers.All(m=>m.HasMaterialName&&m.MaterialLabel.Contains(m.Location.Label)),"Material labels retain the exact source names and grouped counts");
         var transform=new MapTransform(.3,0,700,0,.3,300);
         var projected=data.Project(transform,1919,1079,all);
         var visible=data.Points.Where(p=>{var q=transform.Apply(p.X,p.Y);return q.X>=330&&q.X<1820&&q.Y>=110&&q.Y<1040;}).Select(p=>p.Category).ToHashSet();
@@ -49,7 +53,7 @@ internal static class MapModuleChecks
         Check(data.Project(transform,1919,1079,new HashSet<string>()).Markers.Count==0,"No selected categories produces no symbols");
         var panelDraft=settings.CreateDraft();var panel=new MapSettingsPanel(panelDraft);
         var allButton=Nodes(panel).OfType<Button>().Single(b=>Equals(b.Content,"Alle"));allButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
-        Check(panelDraft.MapCategories.Count==41&&settings.MapCategories.Count==1,"Filter buttons edit the settings draft only");
+        Check(panelDraft.MapCategories.Count==39&&settings.MapCategories.Count==1,"Filter buttons edit the settings draft only");
         Nodes(panel).OfType<Button>().Single(b=>Equals(b.Content,"Nur Cubes")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
         Check(panelDraft.MapCategories.SequenceEqual(["hidden-cube"]),"Only cubes restores the single cube filter");
         IReadOnlyList<string>? selectedFromMap=null;
@@ -57,9 +61,13 @@ internal static class MapModuleChecks
         try
         {
             filters.Present(new Rect(-30000,-30000,1919,1079),new HashSet<string>{"hidden-cube"},"Altgard · Marker werden abgeglichen …");
+            var placementCount=filters.NativePlacementCount;
+            for(var i=0;i<20;i++)filters.Present(new Rect(-30000,-30000,1919,1079),new HashSet<string>{"hidden-cube"},"Altgard");
+            Check(filters.NativePlacementCount==placementCount,"Stationary map refreshes do not repeatedly reposition or reorder the filter window");
+            Check(Nodes(filters).OfType<TextBlock>().Any(t=>t.Text.Contains("STARK EXPERIMENTELL")),"The in-map panel displays a prominent experimental warning even while collapsed");
             Nodes(filters).OfType<Button>().Single(b=>b.Content is string text&&text.Contains("Kartenfilter")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             Nodes(filters).OfType<Button>().Single(b=>Equals(b.Content,"Alle")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
-            Check(selectedFromMap?.Count==41,"In-map All button changes all 41 filters without opening Settings");
+            Check(selectedFromMap?.Count==39,"In-map All button changes all 39 filters without opening Settings");
             Nodes(filters).OfType<Button>().Single(b=>Equals(b.Content,"Keine")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             Check(selectedFromMap?.Count==0,"In-map None button clears markers");
             Nodes(filters).OfType<Button>().Single(b=>Equals(b.Content,"Cubes")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
@@ -116,6 +124,7 @@ internal static class MapModuleChecks
         {
             window.Show();window.SelectTab("map");window.UpdateLayout();
             Check(Nodes(window).OfType<MapSettingsPanel>().Any(),"The map module is integrated into the real Settings window");
+            Check(Nodes(window).OfType<TextBlock>().Any(t=>t.Text.Contains("STARK EXPERIMENTELL")&&t.FontSize>=17),"Settings prominently warn that map recognition and marker positions are experimental");
             Render(window,Path.Combine(directory,"map-settings.png"));
         }
         finally{window.Close();}
@@ -126,6 +135,14 @@ internal static class MapModuleChecks
         layers.Children.Add(canvas);
         var frame=new Border{Width=1919,Height=1079,Background=ThemeColors.Brush("#191D23"),Child=layers};
         frame.Measure(new Size(1919,1079));frame.Arrange(new Rect(0,0,1919,1079));Render(frame,Path.Combine(directory,"map-symbols.png"));
+        var materialSamples=new[]{"Sapphire Gemstone","Diamond Gemstone","Ruby Gemstone","Orichalcum Ore"}.Select((label,i)=>new MapMarker(data.Points.First(p=>p.Label==label) with {X=500+i%2*340,Y=250+i/2*100},i==1?3:1)).ToArray();
+        Check(materialSamples.Select(m=>m.IconKey).Distinct().Count()==4,"Sapphire, Diamond, Ruby and Orichalcum each use their own original game icon");
+        foreach(var marker in materialSamples)
+        {
+            using var resource=Application.GetResourceStream(new Uri($"pack://application:,,,/Assets/Map/{marker.IconKey}.png")).Stream;
+            Check(resource.Length>0,"Bundled material icon is available: "+marker.Location.Label);
+        }
+        canvas.Set(new(1,0,0,0,1,0),materialSamples,new Size(1919,1079));Render(frame,Path.Combine(directory,"map-materials.png"));
         Check(File.Exists(Path.Combine(AppContext.BaseDirectory,"map-engine","CatScratch.MapEngine.exe")),"The hidden image engine is bundled with CatScratch");
         File.WriteAllText(output,JsonSerializer.Serialize(new{success=true,checks},new JsonSerializerOptions{WriteIndented=true}));
     }

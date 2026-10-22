@@ -13,7 +13,19 @@ internal readonly record struct MapTransform(double A,double B,double X,double C
     internal static MapTransform Read(JsonElement value)=>new(value[0][0].GetDouble(),value[0][1].GetDouble(),value[0][2].GetDouble(),value[1][0].GetDouble(),value[1][1].GetDouble(),value[1][2].GetDouble());
 }
 internal sealed record MapLocation(string Id,string Category,string Label,double X,double Y);
-internal sealed record MapMarker(MapLocation Location,int Count);
+internal sealed record MapMarker(MapLocation Location,int Count)
+{
+    internal bool HasMaterialName=>Location.Category is "metal" or "jewelry";
+    internal string MaterialLabel=>Location.Label+(Count>1?" ×"+Count:"");
+    internal string IconKey=>Location.Label switch
+    {
+        "Sapphire Gemstone"=>"Materials/sapphire",
+        "Diamond Gemstone"=>"Materials/diamond",
+        "Ruby Gemstone"=>"Materials/ruby",
+        "Orichalcum Ore"=>"Materials/orichalcum",
+        _=>Location.Category
+    };
+}
 internal sealed record MapCategory(string Id,string English,string German,int Count);
 internal static class MapWords
 {
@@ -30,7 +42,7 @@ internal sealed class MapOverlayData
     internal MapOverlayData(string directory)
     {
         using var document=JsonDocument.Parse(File.ReadAllBytes(Path.Combine(directory,"points.json")));
-        Points=document.RootElement.GetProperty("points").EnumerateArray().Select(p=>new MapLocation(p.GetProperty("id").GetString()!,p.GetProperty("category").GetString()!,p.GetProperty("label").GetString()!,p.GetProperty("point")[0].GetDouble(),p.GetProperty("point")[1].GetDouble())).ToArray();
+        Points=document.RootElement.GetProperty("points").EnumerateArray().Select(p=>new MapLocation(p.GetProperty("id").GetString()!,p.GetProperty("category").GetString()!,p.GetProperty("label").GetString()!,p.GetProperty("point")[0].GetDouble(),p.GetProperty("point")[1].GetDouble())).Where(p=>p.Category is not ("monolith" or "teleport-artifact")).ToArray();
         if(Points.Count>100000||Points.Any(p=>!double.IsFinite(p.X)||!double.IsFinite(p.Y)))throw new InvalidDataException("Invalid map locations.");
         using var labels=JsonDocument.Parse(File.ReadAllBytes(Path.Combine(directory,"categories.json")));
         Categories=Points.GroupBy(p=>p.Category).Select(g=>
@@ -41,7 +53,7 @@ internal sealed class MapOverlayData
     }
     internal (IReadOnlyList<MapMarker> Markers,int Visible,bool Limited) Project(MapTransform transform,double width,double height,IReadOnlySet<string> enabled)
     {
-        var groups=new Dictionary<(string Category,int X,int Y),(MapLocation First,int Count)>();
+        var groups=new Dictionary<(string Category,string Material,int X,int Y),(MapLocation First,int Count)>();
         var visible=0;
         foreach(var point in Points)
         {
@@ -49,7 +61,7 @@ internal sealed class MapOverlayData
             var pixel=transform.Apply(point.X,point.Y);
             if(pixel.X<width*330/1919||pixel.X>=width*1820/1919||pixel.Y<height*110/1079||pixel.Y>=height*1040/1079)continue;
             visible++;
-            var key=(point.Category,(int)(pixel.X/30),(int)(pixel.Y/30));
+            var key=(point.Category,point.Category is "metal" or "jewelry"?point.Label:"",(int)(pixel.X/30),(int)(pixel.Y/30));
             if(groups.TryGetValue(key,out var existing))groups[key]=(existing.First,existing.Count+1);else groups.Add(key,(point,1));
         }
         var lanes=groups.Values.GroupBy(g=>g.First.Category).Select(g=>g.ToArray()).ToArray();
