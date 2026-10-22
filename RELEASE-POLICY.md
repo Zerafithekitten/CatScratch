@@ -129,3 +129,5 @@ While the upload hold remains active, the owner requested a DPS-display clear fu
 UPLOAD RESUMED, 2026-10-21: The owner explicitly approved "okay update" after the local group audit, clear-display button, configurable Shift+F2 and preserved restart context action were explained and tested. Publish the prepared v4.0.9-beta.6 after full checks. This lifts the immediately preceding upload hold for this Beta only. Preserve Stable, Light and GitHub project presentation.
 
 On 2026-10-22 the owner reviewed the actual Hidden Cube Key resource previews and explicitly approved "ab in die beta". Publish v4.0.9-beta.7 after full checks: selectable bound-key inventory in all resource layouts, live/cache/unknown/zero states, optional warnings and the matching character-overview column. Preserve Stable, Light and GitHub project presentation.
+
+On 2026-10-22 the owner reviewed the original Hidden Cube key game-icon preview and approved "upload". Publish v4.0.9-beta.8 after full checks, replacing only the generic resource key symbol with the bundled original item icon. Preserve Stable, Light and GitHub project presentation.

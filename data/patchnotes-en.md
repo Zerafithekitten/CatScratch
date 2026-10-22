@@ -1,3 +1,7 @@
+## CatScratch v4.0.9-beta.8
+
+- Hidden Cube Keys now use their original in-game icon in Resources and Settings.
+
 ## CatScratch v4.0.9-beta.7
 
 - Bound Hidden Cube Keys can now be selected in the Resources module, with live inventory updates and an optional low-stock warning. They also appear in the character overview.

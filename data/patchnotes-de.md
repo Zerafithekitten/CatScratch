@@ -1,3 +1,7 @@
+## CatScratch v4.0.9-beta.8
+
+- Hidden-Cube-Schlüssel verwenden in Ressourcen und Einstellungen jetzt ihr originales Spielsymbol.
+
 ## CatScratch v4.0.9-beta.7
 
 - Gebundene Hidden-Cube-Schlüssel sind jetzt im Ressourcen-Modul auswählbar, mit Live-Bestand und optionaler Bestandswarnung. Sie erscheinen auch in der Charakterübersicht.
