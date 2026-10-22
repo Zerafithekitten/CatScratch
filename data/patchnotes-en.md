@@ -1,3 +1,12 @@
+## CatScratch v4.0.9-beta.13
+
+A small timer tidy-up today. 🐾
+
+- Selected schedule bosses now keep their next time visible even when it is more than an hour away, including separate timer windows.
+- Watcher Kaira's NPC entry can use the existing community schedule when live timing is missing. The source stays labelled, and received boss data takes priority.
+- Boss time changes, sightings and kills now refresh Upcoming, Started and separate boss windows directly instead of waiting for the next timer tick.
+- Checked all 24 selectable field bosses and the Pet Tracker's live soul counts, level-ups, cached progress and character switching. Bosses without timing data or a matched schedule still show an unknown time.
+
 ## CatScratch v4.0.9-beta.12
 
 - Map filters now have six collapsible groups, each showing how many filters are selected. The same order is used in Settings, and collapsing a group keeps its selection.

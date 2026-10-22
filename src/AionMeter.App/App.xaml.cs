@@ -339,6 +339,13 @@ public partial class App : Application
             catch(Exception error){File.WriteAllText(worldBossPath,error.ToString());Shutdown(1);}
             return;
         }
+        if(ArgValue(e.Args,"--check-pet-live") is { } petLivePath)
+        {
+            Log.Enabled=false;
+            try{PetLiveChecks.Run(petLivePath);Shutdown();}
+            catch(Exception error){File.WriteAllText(petLivePath,error.ToString());Shutdown(1);}
+            return;
+        }
         if(ArgValue(e.Args,"--check-clickthrough-startup") is { } startupPath)
         {
             Log.Enabled=false;

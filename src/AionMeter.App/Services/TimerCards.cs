@@ -190,7 +190,7 @@ public sealed partial class TimerCards : IDisposable
             : Enumerable.Empty<EventStart>();
         var retainedBosses = _nextEvents.Where(e =>
             e.Id.StartsWith($"boss:{_meter.Timers.CurrentServer}:") && TryBossCode(e.Id,out var code) && IncludeWorldBoss(code) && EventActivity.IsActive(e,now));
-        var candidates = scheduled.Concat(liveBosses).Concat(retainedBosses).Concat(FavoriteScheduledBosses(now)).ToArray();
+        var candidates = scheduled.Concat(liveBosses).Concat(retainedBosses).Concat(PersistentScheduledBosses(now)).ToArray();
         _nextEvents = candidates.OrderBy(e => e.StartsAt).ThenBy(e => e.Id)
             .DistinctBy(e => (e.Id,e.StartsAt)).ToArray();
         _scheduleKey = key;
@@ -231,28 +231,35 @@ public sealed partial class TimerCards : IDisposable
             .Select(b => BossCard(b.ServerId, b.NpcCode));
         return events.Concat(bosses).OrderBy(e => e.Next is { } next && next >= now && !e.Alive ? next : DateTimeOffset.MaxValue).ToList();
     }
-    private TimerCardData BossCard(int server, int code)
+    private TimerCardData BossCard(int server, int code, DateTimeOffset? clock=null)
     {
         var boss = _meter.Timers.ForServer(server).FirstOrDefault(b => b.NpcCode == code);
+        // Only this exact NPC is the scheduled Watcher; other Kaira variants have different identities.
+        if(code==2600089 && boss?.NextSpawn is null && boss?.AliveNow!=true)
+        {
+            var scheduled=NextScheduledOccurrence("kaira",clock??DateTimeOffset.UtcNow);
+            if(scheduled is not null)return new($"boss:{server}:{code}",_meter.Data.NpcName(code),"BOSS",scheduled.StartsAt,"Community schedule · Shugo.GG");
+        }
         return new($"boss:{server}:{code}", _meter.Data.NpcName(code), "BOSS", boss?.NextSpawn,
             $"Server {server} · " + UiText.Current.Localize(boss?.FromGame == true ? "Time from in-game boss list" : "Observation/interval · estimate"), boss?.AliveNow == true);
     }
-    public TimerCardData? Get(string id)
+    public TimerCardData? Get(string id)=>GetAt(id,DateTimeOffset.UtcNow);
+    internal TimerCardData? GetAt(string id,DateTimeOffset now)
     {
         if (id.StartsWith("auto:"))
         {
             var key = id[5..];
-            var next = NextEvents(DateTimeOffset.UtcNow).FirstOrDefault(e => e.Id == key);
+            var next = TestMode?NextEvents(now).FirstOrDefault(e=>e.Id==key):NextScheduledOccurrence(key,now);
             return next is null ? null : new(id, next.Name, EventKinds.For(key), next.StartsAt, "Community schedule · Shugo.GG");
         }
         if (id.StartsWith("boss:"))
         {
             var parts = id.Split(':');
-            if (parts.Length == 3 && int.TryParse(parts[1], out var server) && int.TryParse(parts[2], out var code)) return BossCard(server, code);
+            if (parts.Length == 3 && int.TryParse(parts[1], out var server) && int.TryParse(parts[2], out var code)) return BossCard(server, code,now);
             return null;
         }
         var item = Saved.Events.FirstOrDefault(e => e.Id == id);
-        return item is null ? null : new(item.Id, item.Name, item.Kind, item.NextAt(DateTimeOffset.UtcNow), "Manual schedule · Europe/Berlin");
+        return item is null ? null : new(item.Id, item.Name, item.Kind, item.NextAt(now), "Manual schedule · Europe/Berlin");
     }
     public void Pin(string id)
     {

@@ -14,6 +14,13 @@ public sealed partial class TimerHubWindow : Window, IDisplayAppearance
     private string Caption => _startedOnly ? "Started events" : "Upcoming events";
     private readonly WrapPanel _list = new();
     private readonly DispatcherTimer _clock = new() { Interval = TimeSpan.FromSeconds(1) };
+    private int _queuedBossRefresh;
+    private bool _closed;
+    private void BossChanged()
+    {
+        if(Interlocked.Exchange(ref _queuedBossRefresh,1)!=0)return;
+        Dispatcher.BeginInvoke(()=>{Interlocked.Exchange(ref _queuedBossRefresh,0);if(!_closed)Reload();});
+    }
 
     private DockPanel? _header;
     private bool _displayOnly;
@@ -78,7 +85,8 @@ public sealed partial class TimerHubWindow : Window, IDisplayAppearance
             if(_startedOnly) cards.Saved.StartedEventWindowOpen=true; else cards.Saved.EventWindowOpen=true;
             cards.Save(); Reload();_clock.Start();
         };
-        Closed+=(_,_)=> { _clock.Stop(); foreach (var tile in _list.Children.OfType<Border>()) EventPulse.Apply(tile,EventPanelBrushes.Border,false); SavePlacement(); };
+        cards.BossDataChanged+=BossChanged;
+        Closed+=(_,_)=> { _closed=true;cards.BossDataChanged-=BossChanged;_clock.Stop(); foreach (var tile in _list.Children.OfType<Border>()) EventPulse.Apply(tile,EventPanelBrushes.Border,false); SavePlacement(); };
         SizeChanged+=(_,_)=>{ApplyEdge();Reload();};
         Reload();
     }
@@ -94,7 +102,7 @@ public sealed partial class TimerHubWindow : Window, IDisplayAppearance
         var chosenIds=chosen.Select(b=>b.Id).ToHashSet();
         events=events.Where(e=>!chosenIds.Contains(e.Id)).ToArray();
         var bosses=chosen.Where(b=>BossStarted(b,now)==_startedOnly).ToArray();
-        var key=string.Join('|',events.Select(e=>$"{e.Id}:{e.StartsAt:O}"))+";"+string.Join('|',bosses.Select(b=>$"{b.Id}:{b.Name}:{b.Next:O}:{b.Alive}"));
+        var key=string.Join('|',events.Select(e=>$"{e.Id}:{e.StartsAt:O}"))+";"+string.Join('|',bosses.Select(b=>$"{b.Id}:{b.Name}:{b.Next:O}:{b.Alive}:{b.Source}"));
         if(_list.Tag as string != key)
         {
             foreach (var tile in _list.Children.OfType<Border>()) EventPulse.Apply(tile,EventPanelBrushes.Border,false);

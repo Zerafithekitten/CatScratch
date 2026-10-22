@@ -17,6 +17,7 @@ internal static class WorldBossEventChecks
     internal static void Run(string output)
     {
         var passed=new List<string>();void Check(bool ok,string message){if(!ok)throw new InvalidOperationException(message);passed.Add(message);}
+        ScheduledBossEventChecks.Run(Check,output);
         using var meter=new MeterService(new AppSettings{Transient=true,DownloadIcons=false},null);
         using var cards=new TimerCards(meter,false);
         using(var watchMeter=new MeterService(new AppSettings{Transient=true,DownloadIcons=false},null))

@@ -3,6 +3,7 @@ namespace AionMeter.App.Services;
 
 public sealed partial class TimerCards
 {
+    internal event Action BossDataChanged { add=>_meter.Timers.Changed+=value; remove=>_meter.Timers.Changed-=value; }
     internal static string WorldBossKey(int code)=>"world-boss:"+code;
     private static bool TryBossCode(string id,out int code)
     {
@@ -18,12 +19,21 @@ public sealed partial class TimerCards
     internal IEnumerable<string> EffectiveScheduledIds()=>Saved.SelectedEvents
         .Concat(Saved.ShowAllWorldBosses?AutomaticEventSchedule.Catalog.Where(e=>EventKinds.For(e.Id)=="BOSS").Select(e=>e.Id):[])
         .Concat(AutomaticEventSchedule.Catalog.Where(e=>EventKinds.For(e.Id)=="BOSS" && IsFavorite(e.Id)).Select(e=>e.Id)).Distinct().Order();
-    private IEnumerable<EventStart> FavoriteScheduledBosses(DateTimeOffset now)
+    private EventStart? NextScheduledOccurrence(string id,DateTimeOffset now)
     {
-        foreach(var item in AutomaticEventSchedule.Catalog.Where(e=>EventKinds.For(e.Id)=="BOSS" && IsFavorite(e.Id)))
+        if(!AutomaticEventSchedule.Catalog.Any(e=>e.Id==id))return null;
+        for(var day=0;day<=7;day++)
         {
-            EventStart? next=null;
-            for(var day=0;day<=7 && next is null;day++)next=AutomaticEventSchedule.Next(now.AddDays(day),Saved.EventRegion,[item.Id],TimeSpan.FromMinutes(2),TimeSpan.FromHours(24)).FirstOrDefault();
+            var next=AutomaticEventSchedule.Next(now.AddDays(day),Saved.EventRegion,[id],EventActivity.Duration(id),TimeSpan.FromHours(24)).FirstOrDefault();
+            if(next is not null)return next;
+        }
+        return null;
+    }
+    private IEnumerable<EventStart> PersistentScheduledBosses(DateTimeOffset now)
+    {
+        foreach(var item in AutomaticEventSchedule.Catalog.Where(e=>EventKinds.For(e.Id)=="BOSS" && (Saved.SelectedEvents.Contains(e.Id)||IsFavorite(e.Id))))
+        {
+            var next=NextScheduledOccurrence(item.Id,now);
             if(next is not null)yield return next;
         }
     }

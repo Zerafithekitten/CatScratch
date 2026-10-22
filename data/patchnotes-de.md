@@ -1,3 +1,12 @@
+## CatScratch v4.0.9-beta.13
+
+Heute habe ich die Timer etwas aufgeräumt. 🐾
+
+- Ausgewählte Zeitplan-Bosse behalten ihren nächsten Termin auch dann, wenn er mehr als eine Stunde entfernt ist – ebenfalls in separaten Timerfenstern.
+- Der NPC-Eintrag von Watcher Kaira nutzt bei fehlender Live-Zeit den vorhandenen Community-Zeitplan. Die Quelle bleibt gekennzeichnet; empfangene Bossdaten haben Vorrang.
+- Neue Bosszeiten, Sichtungen und Kills aktualisieren Upcoming, Started und separate Bossfenster direkt, ohne auf den nächsten Timertakt zu warten.
+- Alle 24 auswählbaren Feldbosse sowie Live-Seelenstände, Levelaufstiege, gespeicherter Fortschritt und Charakterwechsel im Pet Tracker geprüft. Ohne Zeitdaten oder passenden Zeitplan bleibt die Bosszeit ausdrücklich unbekannt.
+
 ## CatScratch v4.0.9-beta.12
 
 - Kartenfilter in sechs aufklappbare Gruppen sortiert, jeweils mit Anzeige der aktiven Auswahl. Die Einstellungen verwenden dieselbe Reihenfolge; Zuklappen ändert keine Häkchen.

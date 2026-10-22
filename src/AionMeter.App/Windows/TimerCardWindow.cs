@@ -85,6 +85,13 @@ public sealed class TimerCardWindow : Window, IDisplayAppearance
             _source.Visibility = compact || Height < 170 ? Visibility.Collapsed : Visibility.Visible;
         }
         var clock = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
+        var queued=0;var closed=false;
+        void BossChanged()
+        {
+            if(Interlocked.Exchange(ref queued,1)!=0)return;
+            Dispatcher.BeginInvoke(()=>{Interlocked.Exchange(ref queued,0);if(!closed)Refresh();});
+        }
+        cards.BossDataChanged+=BossChanged;
         Refresh();
         clock.Tick += (_, _) => Refresh();
         Loaded += (_, _) => { Refresh(); clock.Start(); };
@@ -95,6 +102,6 @@ public sealed class TimerCardWindow : Window, IDisplayAppearance
             cards.Save();
         }
         LocationChanged += (_, _) => SavePosition(); SizeChanged += (_, _) => SavePosition();
-        Closed += (_, _) => { clock.Stop(); if (_card is not null) EventPulse.Apply(_card,EventPanelBrushes.Border,false); };
+        Closed += (_, _) => { closed=true;cards.BossDataChanged-=BossChanged;clock.Stop(); if (_card is not null) EventPulse.Apply(_card,EventPanelBrushes.Border,false); };
     }
 }
