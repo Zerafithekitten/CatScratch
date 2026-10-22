@@ -1,3 +1,9 @@
+## CatScratch v4.0.9-beta.10
+
+- Einen kleinen CatScratch-Stau aufgelöst: Die Ressourcenanzeige konnte den Altgard-Titel verdecken und damit die Kartenerkennung blockieren. Die Erkennung nutzt jetzt auch die unverdeckten Teile des Titels, damit die anderen Module wie vorgesehen Platz machen.
+- Markierungen direkt auf der Karte ändern: Die kompakte Kartenfilter-Leiste bietet einzelne Kategorien sowie Cubes, Alle und Keine. Dafür müsst ihr nicht mehr in die Einstellungen wechseln.
+- Zuordnung des Spielfensters und Statusmeldungen der Erkennung verbessert. Alles bleibt passiv; weiterhin nur Altgard.
+
 ## CatScratch v4.0.9-beta.9
 
 Das Altgard-Kartenexperiment ist bereit für seinen ersten Test direkt in CatScratch. 🐾 Einschalten könnt ihr es unter Einstellungen > Kartenoverlay. Die Bilderkennung ist bereits enthalten und braucht keine separate Einrichtung.

@@ -1,3 +1,9 @@
+## CatScratch v4.0.9-beta.10
+
+- Fixed a little CatScratch traffic jam: resource bars could cover the Altgard heading and stop map recognition from starting. The detector now recognizes the uncovered title fragments, so the other modules can step aside as intended.
+- Change marker categories directly on the map with the compact Map filters panel. Choose individual categories or use Cubes, All and None; no trip to Settings needed.
+- Improved game-window identification and added clearer recognition status. Everything remains passive; Altgard only.
+
 ## CatScratch v4.0.9-beta.9
 
 The Altgard map experiment is ready for its first test inside CatScratch. 🐾 Enable it in Settings > Map overlay; the image engine is included, so there's no separate setup.

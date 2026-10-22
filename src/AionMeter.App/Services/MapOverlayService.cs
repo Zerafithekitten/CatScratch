@@ -13,12 +13,18 @@ internal sealed class MapOverlayService:IDisposable
     private readonly AppSettings _settings;
     private readonly Func<IEnumerable<Window>> _hud;
     private readonly Func<bool> _globallyHidden;
+    private readonly Action<IReadOnlyList<string>>? _filtersChanged;
     private readonly MapHudSuppression _suppression=new();
     private readonly MapDragAssist _drag=new();
     private readonly DispatcherTimer _timer;
     private Process? _worker;
     private CancellationTokenSource? _cancel;
     private MapOverlayWindow? _window;
+    private MapFiltersWindow? _filters;
+    private Rect? _gameBounds;
+    private string? _lastSource;
+    private double _lastHeaderLog;
+    private bool? _lastPresence;
     private MapOverlayData? _data;
     private Pose? _pose;
     private IReadOnlyList<MapMarker> _markers=[];
@@ -29,9 +35,9 @@ internal sealed class MapOverlayService:IDisposable
     internal string Status {get;private set;}=MapWords.L("Disabled","Ausgeschaltet");
     internal bool MapOpen=>_mapOpen;
     internal void RefreshHudSuppression()=>_suppression.Apply(_mapOpen,_hud());
-    internal MapOverlayService(AppSettings settings,Func<IEnumerable<Window>> hud,Func<bool> globallyHidden)
+    internal MapOverlayService(AppSettings settings,Func<IEnumerable<Window>> hud,Func<bool> globallyHidden,Action<IReadOnlyList<string>>? filtersChanged=null)
     {
-        _settings=settings;_hud=hud;_globallyHidden=globallyHidden;
+        _settings=settings;_hud=hud;_globallyHidden=globallyHidden;_filtersChanged=filtersChanged;
         _timer=new DispatcherTimer(DispatcherPriority.Render){Interval=TimeSpan.FromMilliseconds(16)};
         _timer.Tick+=(_,_)=>Tick();
     }
@@ -54,6 +60,7 @@ internal sealed class MapOverlayService:IDisposable
             _data=MapOverlayData.Shared.Value;
             var start=new ProcessStartInfo(executable){UseShellExecute=false,CreateNoWindow=true,RedirectStandardInput=true,RedirectStandardOutput=true,RedirectStandardError=true,WorkingDirectory=AppContext.BaseDirectory};
             start.ArgumentList.Add("--data");start.ArgumentList.Add(MapOverlayData.DirectoryPath);
+            start.ArgumentList.Add("--game");start.ArgumentList.Add(string.IsNullOrWhiteSpace(_settings.GameExecutable)?"AION2.exe":Path.GetFileName(_settings.GameExecutable));
             _worker=new Process{StartInfo=start};
             _worker.Start();
             _cancel=new();var generation=++_generation;
@@ -100,7 +107,14 @@ internal sealed class MapOverlayService:IDisposable
             case "ready":Status=MapWords.L("Ready · open the Altgard map in AION 2.","Bereit · Altgard-Karte in AION 2 öffnen.");break;
             case "presence":
                 _heartbeat=MapNative.Now;_mapOpen=root.GetProperty("open").GetBoolean();
-                if(!_mapOpen){_pose=null;_drag.Reset();Status=MapWords.L("Ready · waiting for the Altgard map.","Bereit · warte auf die Altgard-Karte.");}
+                var source=root.TryGetProperty("reason",out var reason)?reason.GetString():null;
+                if(source!=_lastSource){_lastSource=source;Log.Info("Map image source: "+source);}
+                if(_lastPresence!=_mapOpen){_lastPresence=_mapOpen;Log.Info("Map image presence: "+_mapOpen);}
+                if(source=="waiting-map"&&MapNative.Now-_lastHeaderLog>10&&root.TryGetProperty("score",out var score)&&score.ValueKind==JsonValueKind.Number)
+                {_lastHeaderLog=MapNative.Now;Log.Info("Map header score: "+score.GetDouble().ToString("F3",System.Globalization.CultureInfo.InvariantCulture));}
+                if(root.TryGetProperty("rect",out var gameRect)&&gameRect.ValueKind==JsonValueKind.Array)
+                    _gameBounds=new Rect(gameRect[0].GetDouble(),gameRect[1].GetDouble(),gameRect[2].GetDouble()-gameRect[0].GetDouble(),gameRect[3].GetDouble()-gameRect[1].GetDouble());
+                if(!_mapOpen){_pose=null;_drag.Reset();Status=source=="waiting-game"?MapWords.L("Ready · switch to AION 2.","Bereit · zu AION 2 wechseln."):MapWords.L("Game detected · waiting for the Altgard map.","Spiel erkannt · warte auf die Altgard-Karte.");}
                 else if(_pose is null)Status=MapWords.L("Map detected · locating the current view…","Karte erkannt · aktueller Ausschnitt wird abgeglichen …");
                 break;
             case "pose":
@@ -127,6 +141,20 @@ internal sealed class MapOverlayService:IDisposable
         if(_mapOpen&&MapNative.Now-_heartbeat>.8){_mapOpen=false;_pose=null;}
         // Preserve user global visibility and module settings; cloak only our HUD windows.
         _suppression.Apply(_mapOpen,_hud());
+        if(_mapOpen&&!_globallyHidden()&&_gameBounds is {} gameBounds)
+        {
+            try
+            {
+                (_filters??=new MapFiltersWindow(ids=>
+                {
+                    if(_filtersChanged is not null)_filtersChanged(ids);
+                    else{_settings.MapCategories=ids.ToList();_settings.Save();}
+                    ApplyPreferences();
+                })).Present(gameBounds,_selected,Status);
+            }
+            catch(InvalidOperationException error){Log.Error("Map filters unavailable",error);Stop();return;}
+        }
+        else _filters?.Hide();
         if(!_mapOpen||_globallyHidden()||_pose is not {} pose||MapNative.Now-pose.Stamp>.4)
         {_window?.Hide();return;}
         try
@@ -143,6 +171,7 @@ internal sealed class MapOverlayService:IDisposable
         ++_generation;_timer.Stop();_cancel?.Cancel();_cancel?.Dispose();_cancel=null;
         _mapOpen=false;_pose=null;_drag.Reset();_suppression.Dispose();
         _window?.Close();_window=null;
+        _filters?.Close();_filters=null;_gameBounds=null;
         if(_worker is {} process)
         {
             _worker=null;

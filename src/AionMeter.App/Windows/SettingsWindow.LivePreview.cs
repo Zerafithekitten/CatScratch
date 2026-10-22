@@ -8,6 +8,12 @@ namespace AionMeter.App.Windows;
 
 public partial class SettingsWindow
 {
+    internal void SetMapFilters(IReadOnlyList<string> selected)
+    {
+        _moduleDraft.MapCategories=selected.ToList();
+        if(Tab("map").Content is ScrollViewer scroll&&scroll.Content is Border border&&border.Child is MapSettingsPanel panel)panel.RefreshCategories(selected);
+        ApplyLivePreview();
+    }
     private SettingsPreviewSession? _livePreview;
     private readonly DispatcherTimer _previewTimer=new(){Interval=TimeSpan.FromMilliseconds(100)};
     private bool _previewReady,_previewSaving,_previewApplying,_previewClosed;

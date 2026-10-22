@@ -8,6 +8,11 @@ namespace AionMeter.App.Windows;
 
 internal sealed class MapSettingsPanel:StackPanel
 {
+    internal void RefreshCategories(IReadOnlyList<string> selected)
+    {
+        foreach(var box in Children.OfType<CheckBox>())
+            if(box.Tag is string id&&id!="map-enabled")box.IsChecked=selected.Contains(id);
+    }
     internal MapSettingsPanel(AppSettings draft,Func<string>? status=null)
     {
         Resources.MergedDictionaries.Add(new ResourceDictionary{Source=new Uri("/CatScratch;component/Theme/MeterPreferences.xaml",UriKind.Relative)});

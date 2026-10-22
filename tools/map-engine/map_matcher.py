@@ -2,6 +2,7 @@ from pathlib import Path
 import sys,json,time,base64,os
 
 import cv2,numpy as np
+from map_presence import title_score
 from concurrent.futures import ThreadPoolExecutor
 cv2.setRNGSeed(117)
 cv2.setNumThreads(2)
@@ -200,10 +201,10 @@ class Tracker:
   normalized=cv2.resize(frame,(1919,1079))
   gray=cv2.cvtColor(normalized,cv2.COLOR_BGR2GRAY)
   # A terrain match alone must not keep markers over normal gameplay.
-  title_score=float(cv2.matchTemplate(gray[8:85,8:300],self.title,cv2.TM_CCOEFF_NORMED).max())
-  self.map_open=title_score>=.70
+  header_score=title_score(gray,self.title)
+  self.map_open=header_score>=.70
   if not self.map_open:
-   self.last_reason=f'Altgard-Titel nicht erkannt ({title_score:.2f})'
+   self.last_reason=f'Altgard-Titel nicht erkannt ({header_score:.2f})'
    self.reset();return None
   # Follow intermediate frames while the first reference search is running.
   # Otherwise a moving map gets compared against a seconds-old screenshot

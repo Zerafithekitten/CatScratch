@@ -1,4 +1,4 @@
-﻿# CatScratch project instructions
+# CatScratch project instructions
 
 ## Separate Light edition: explicit opt-in only
 
@@ -81,3 +81,5 @@ Future patch notes should include useful example images for visible features and
 Supporter packages are optional signed data archives, never executable plugins. Preserve existing free customization and gameplay features. Keep creator private signing keys and paid pack contents outside the public repository; retain the pinned public key so previously issued packages continue working. Patreon posts, prices and uploads require separate user authorization.
 
 On 2026-10-21 the owner requested that Beta updates no longer refresh the GitHub project presentation. For Beta, publish the code and prerelease downloads with brief matching notes, but leave README, banners, screenshots and repository description unchanged. Continue updating that presentation for owner-approved Stable releases.
+
+On 2026-10-22 the owner requested marker filters directly on the open map, without opening Settings. Keep this small map-only control surface clickable without activating the game or taking keyboard focus; preserve Settings live-preview rollback when a draft is open. A confirmed local live test found that CatScratch's own resource bars cover the Altgard heading (full-title score 0.514); the detector must bootstrap through partial own-HUD occlusion without globally excluding the HUD from screen recordings or reducing the generic title threshold. Keep passive capture, Altgard-only scope and review-before-upload requirements.

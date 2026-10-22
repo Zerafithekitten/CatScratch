@@ -25,30 +25,6 @@ def emit(value):
         stop.set()
 
 
-def foreground_bounds():
-    api=ctypes.windll.user32;kernel=ctypes.windll.kernel32
-    api.GetForegroundWindow.restype=wintypes.HWND
-    api.GetWindowThreadProcessId.argtypes=[wintypes.HWND,ctypes.POINTER(wintypes.DWORD)]
-    hwnd=api.GetForegroundWindow();pid=wintypes.DWORD()
-    api.GetWindowThreadProcessId(hwnd,ctypes.byref(pid))
-    kernel.OpenProcess.argtypes=[wintypes.DWORD,wintypes.BOOL,wintypes.DWORD];kernel.OpenProcess.restype=wintypes.HANDLE
-    handle=kernel.OpenProcess(0x1000,False,pid.value)
-    if not handle:return None
-    try:
-        size=wintypes.DWORD(32768);name=ctypes.create_unicode_buffer(size.value)
-        kernel.QueryFullProcessImageNameW.argtypes=[wintypes.HANDLE,wintypes.DWORD,wintypes.LPWSTR,ctypes.POINTER(wintypes.DWORD)]
-        if not kernel.QueryFullProcessImageNameW(handle,0,name,ctypes.byref(size)):return None
-        if 'aion' not in Path(name.value).name.lower():return None
-    finally:
-        kernel.CloseHandle.argtypes=[wintypes.HANDLE];kernel.CloseHandle(handle)
-    rect=wintypes.RECT();point=wintypes.POINT()
-    api.GetClientRect.argtypes=[wintypes.HWND,ctypes.POINTER(wintypes.RECT)]
-    api.ClientToScreen.argtypes=[wintypes.HWND,ctypes.POINTER(wintypes.POINT)]
-    if not api.GetClientRect(hwnd,ctypes.byref(rect)) or not api.ClientToScreen(hwnd,ctypes.byref(point)):return None
-    if rect.right<600 or rect.bottom<400:return None
-    return (point.x,point.y,point.x+rect.right,point.y+rect.bottom)
-
-
 def read_control():
     try:
         for line in sys.stdin:
@@ -56,21 +32,25 @@ def read_control():
     finally:stop.set()
 
 
-def capture(engine,title):
+def capture(engine,title,game):
     global latest,current_bounds,current_open
+    from game_window import GameWindow
+    from map_presence import title_score
     from fast_capture import FastCapture
     from drag_assist import read_pointer
+    source=GameWindow(game)
     camera=FastCapture();last_emit=0;previous=None;last_seen=0
     try:
         while not stop.wait(.015):
-            bounds=foreground_bounds();visible=False;frame=None
+            bounds=source.bounds();visible=False;frame=None;score=None
             pointer=read_pointer();stamp=time.perf_counter()
             if bounds:
                 frame=camera.grab(bounds)
                 h,w=frame.shape[:2]
                 header=engine.cv2.resize(frame[:round(h*85/1079),:round(w*300/1919)],(300,85))
                 gray=engine.cv2.cvtColor(header,engine.cv2.COLOR_BGR2GRAY)
-                visible=float(engine.cv2.matchTemplate(gray[8:85,8:300],title,engine.cv2.TM_CCOEFF_NORMED).max())>=.70
+                score=title_score(gray,title)
+                visible=score>=.70
             now=time.perf_counter()
             if visible:last_seen=now
             # A brief header miss during a map animation must not flash the HUD.
@@ -80,7 +60,7 @@ def capture(engine,title):
                 latest=(stamp,frame,bounds,pointer) if visible else None
             state=(bounds,visible)
             if state!=previous or now-last_emit>.18:
-                emit(dict(kind='presence',open=visible,rect=bounds,stamp=now))
+                emit(dict(kind='presence',open=visible,rect=bounds,stamp=now,reason=source.reason,score=score))
                 previous=state;last_emit=now
             if not bounds:stop.wait(.12)
     except Exception as error:
@@ -95,6 +75,7 @@ def main():
     parser=argparse.ArgumentParser()
     parser.add_argument('--data',required=True)
     parser.add_argument('--verify',action='store_true')
+    parser.add_argument('--game',default='AION2.exe')
     parser.add_argument('--check-frame')
     args=parser.parse_args()
     os.environ['CATSCRATCH_MAP_DATA']=str(Path(args.data).resolve())
@@ -109,7 +90,7 @@ def main():
         emit(dict(kind='check',accepted=result is not None,result=result));return
     tracker=engine.Tracker()
     threading.Thread(target=read_control,daemon=True).start()
-    threading.Thread(target=capture,args=(engine,tracker.title),daemon=True).start()
+    threading.Thread(target=capture,args=(engine,tracker.title,args.game),daemon=True).start()
     emit(dict(kind='ready'))
     previous_stamp=0
     try:

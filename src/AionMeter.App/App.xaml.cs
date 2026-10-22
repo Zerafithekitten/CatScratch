@@ -49,7 +49,11 @@ public partial class App : Application
     private void SyncMapModule()
     {
         if(_shutdownStarted||_meter is null)return;
-        _mapModule??=new MapOverlayService(_meter.Settings,MapHudWindows,()=>_windowVisibility.Hidden);
+        _mapModule??=new MapOverlayService(_meter.Settings,MapHudWindows,()=>_windowVisibility.Hidden,ids=>
+        {
+            if(_settingsWindow is {} settings)settings.SetMapFilters(ids);
+            else{_meter.Settings.MapCategories=ids.ToList();_meter.Settings.Save();}
+        });
         _mapModule.ApplyPreferences();
     }
     private DispatcherTimer? _timer;

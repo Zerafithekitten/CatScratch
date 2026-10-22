@@ -52,6 +52,23 @@ internal static class MapModuleChecks
         Check(panelDraft.MapCategories.Count==41&&settings.MapCategories.Count==1,"Filter buttons edit the settings draft only");
         Nodes(panel).OfType<Button>().Single(b=>Equals(b.Content,"Nur Cubes")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
         Check(panelDraft.MapCategories.SequenceEqual(["hidden-cube"]),"Only cubes restores the single cube filter");
+        IReadOnlyList<string>? selectedFromMap=null;
+        var filters=new MapFiltersWindow(ids=>selectedFromMap=ids);
+        try
+        {
+            filters.Present(new Rect(-30000,-30000,1919,1079),new HashSet<string>{"hidden-cube"},"Altgard · Marker werden abgeglichen …");
+            Nodes(filters).OfType<Button>().Single(b=>b.Content is string text&&text.Contains("Kartenfilter")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            Nodes(filters).OfType<Button>().Single(b=>Equals(b.Content,"Alle")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            Check(selectedFromMap?.Count==41,"In-map All button changes all 41 filters without opening Settings");
+            Nodes(filters).OfType<Button>().Single(b=>Equals(b.Content,"Keine")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            Check(selectedFromMap?.Count==0,"In-map None button clears markers");
+            Nodes(filters).OfType<Button>().Single(b=>Equals(b.Content,"Cubes")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            Check(selectedFromMap?.SequenceEqual(["hidden-cube"])==true,"In-map cube preset restores the cube filter");
+            filters.UpdateLayout();Render(filters,Path.Combine(directory,"map-filters.png"));
+            var style=(long)NativeMethods.GetWindowLongPtr(new WindowInteropHelper(filters).Handle,NativeMethods.GWL_EXSTYLE);
+            Check((style&NativeMethods.WS_EX_NOACTIVATE)!=0&&!filters.ShowInTaskbar,"Map filters are clickable without activating a separate app window");
+        }
+        finally{filters.Close();}
         var shown=new Window{Width=100,Height=80,Left=-30000,Top=-30000,ShowActivated=false,ShowInTaskbar=false};
         var hidden=new Window{Width=100,Height=80,Left=-30000,Top=-30000,ShowActivated=false,ShowInTaskbar=false};
         try
@@ -66,6 +83,27 @@ internal static class MapModuleChecks
             Check(!shown.IsVisible&&!hidden.IsVisible,"Manual hiding during map suppression is preserved");
         }
         finally{shown.Close();hidden.Close();}
+        var hud=new Window{Width=100,Height=80,Left=-30000,Top=-30000,ShowActivated=false,ShowInTaskbar=false};
+        using(var service=new MapOverlayService(settings,()=>[hud],()=>false))
+        {
+            try
+            {
+                hud.Show();service.ApplyPreferences();
+                var receive=typeof(MapOverlayService).GetMethod("Receive",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic)!;
+                var tick=typeof(MapOverlayService).GetMethod("Tick",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic)!;
+                receive.Invoke(service,["{\"kind\":\"presence\",\"open\":true,\"rect\":[-30000,-30000,-28081,-28921],\"reason\":\"waiting-map\",\"score\":0.95}"]);
+                tick.Invoke(service,null);
+                MapNative.DwmGetWindowAttribute(new WindowInteropHelper(hud).Handle,14,out var state,4);
+                Check(service.MapOpen&&(state&1)!=0,"The integrated service suppresses HUD immediately on confirmed map presence, before a marker pose exists");
+                Check(Application.Current.Windows.OfType<MapFiltersWindow>().Any(w=>w.IsVisible),"In-map filters remain available before marker localization");
+                receive.Invoke(service,["{\"kind\":\"pose\",\"matrix\":null}"]);tick.Invoke(service,null);
+                Check(service.MapOpen&&Application.Current.Windows.OfType<MapFiltersWindow>().Any(w=>w.IsVisible),"A failed marker match does not restore HUD or remove map filters");
+                receive.Invoke(service,["{\"kind\":\"presence\",\"open\":false}"]);tick.Invoke(service,null);
+                MapNative.DwmGetWindowAttribute(new WindowInteropHelper(hud).Handle,14,out state,4);
+                Check(!service.MapOpen&&state==0,"The integrated service releases HUD suppression when the map closes");
+            }
+            finally{hud.Close();}
+        }
         var drag=new MapDragAssist();var bounds=new Rect(0,0,1919,1079);
         for(var i=0;i<4;i++){var p=new MapPointer(700+20*i,500,1,1+i*.1);drag.Observe(p);drag.Confirm(new MapTransform(1,0,20*i,0,1,0),p,bounds);}
         var source=new MapPointer(760,500,1,1.3);var moved=new MapPointer(800,500,1,1.38);drag.Observe(moved);
