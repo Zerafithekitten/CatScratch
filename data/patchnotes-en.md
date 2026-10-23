@@ -1,3 +1,12 @@
+## CatScratch v4.0.9-beta.15
+
+Another small step for the map experiment. 🐾
+
+- Map recognition now ignores CatScratch's own marker and filter areas when matching terrain, addressing symbols briefly appearing and disappearing. They remain visible in desktop recordings.
+- Added recognition of the shared Altgard name independently of the English Map prefix. The localized-heading checks pass; confirmation on the reported German client is still pending.
+- The map status now shows the foreground executable and remembers its last in-game status when you switch to Settings, making remote troubleshooting less confusing.
+- Added synthetic tracking checks with changing overlay pixels. Please keep testing: the Altgard map overlay remains highly experimental.
+
 ## CatScratch v4.0.9-beta.14
 
 Two fixes for the Altgard map experiment. 🐾

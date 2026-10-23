@@ -1,3 +1,12 @@
+## CatScratch v4.0.9-beta.15
+
+Ein weiterer kleiner Schritt für das Kartenexperiment. 🐾
+
+- Die Kartenerkennung spart eigene Marker und die Filterleiste beim Geländeabgleich aus. Das soll dem kurzen Aufblitzen und Verschwinden der Symbole entgegenwirken. In Bildschirmaufnahmen bleiben sie sichtbar.
+- Der gemeinsame Gebietsname Altgard wird nun unabhängig vom englischen Map-Präfix erkannt. Die Prüfungen für den übersetzten Titel sind bestanden; die Bestätigung beim gemeldeten deutschen Client steht noch aus.
+- Der Kartenstatus zeigt den Vordergrundprozess und behält beim Wechsel zu den Einstellungen den letzten Spielstatus bei. Das macht die Fehlersuche aus der Ferne verständlicher.
+- Synthetische Nachführungsprüfungen mit wechselnden Overlay-Pixeln ergänzt. Bitte weiter testen: Das Altgard-Kartenoverlay bleibt stark experimentell.
+
 ## CatScratch v4.0.9-beta.14
 
 Zwei Korrekturen für das Altgard-Kartenexperiment. 🐾

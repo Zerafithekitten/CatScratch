@@ -23,6 +23,8 @@ internal sealed class MapOverlayService:IDisposable
     private MapFiltersWindow? _filters;
     private Rect? _gameBounds;
     private string? _lastSource;
+    private string? _lastForeground;
+    private string? _lastGameStatus;
     private double _lastHeaderLog;
     private bool? _lastPresence;
     private MapOverlayData? _data;
@@ -32,6 +34,30 @@ internal sealed class MapOverlayService:IDisposable
     private bool _enabled,_mapOpen,_disposed;
     private double _heartbeat;
     private int _generation;
+    private int _maskWriting;
+    private double _lastMaskSent;
+    private async void SendOverlayRegions(Rect bounds,MapTransform? transform)
+    {
+        if(_worker is not {} worker||MapNative.Now-_lastMaskSent<.04||Interlocked.CompareExchange(ref _maskWriting,1,0)!=0)return;
+        _lastMaskSent=MapNative.Now;
+        try
+        {
+            var regions=new List<double[]>();
+            void Add(double left,double top,double right,double bottom)=>regions.Add([left*1919/bounds.Width,top*1079/bounds.Height,right*1919/bounds.Width,bottom*1079/bounds.Height]);
+            if(transform is {} pose)foreach(var marker in _markers)
+            {
+                var p=pose.Apply(marker.Location.X,marker.Location.Y);
+                // Include the icon, count badge, antialiasing and optical-flow patch margin.
+                Add(p.X-34,p.Y-40,p.X+80,p.Y+34);
+            }
+            if(_filters is {IsVisible:true} filter&&MapNative.Bounds(filter) is {} f)
+                Add(f.Left-bounds.Left-16,f.Top-bounds.Top-16,f.Right-bounds.Left+16,f.Bottom-bounds.Top+16);
+            var message=JsonSerializer.Serialize(new{kind="overlay",bounds=new[]{bounds.Left,bounds.Top,bounds.Right,bounds.Bottom},regions});
+            await worker.StandardInput.WriteLineAsync(message);
+        }
+        catch(Exception error)when(error is IOException or InvalidOperationException or ObjectDisposedException){Log.Error("Map overlay mask could not be sent",error);}
+        finally{Interlocked.Exchange(ref _maskWriting,0);}
+    }
     internal string Status {get;private set;}=MapWords.L("Disabled","Ausgeschaltet");
     internal bool MapOpen=>_mapOpen;
     internal void RefreshHudSuppression()=>_suppression.Apply(_mapOpen,_hud());
@@ -108,6 +134,8 @@ internal sealed class MapOverlayService:IDisposable
             case "presence":
                 _heartbeat=MapNative.Now;_mapOpen=root.GetProperty("open").GetBoolean();
                 var source=root.TryGetProperty("reason",out var reason)?reason.GetString():null;
+                var foreground=root.TryGetProperty("foreground",out var foregroundValue)&&foregroundValue.ValueKind==JsonValueKind.String?foregroundValue.GetString():null;
+                if(foreground!=_lastForeground){_lastForeground=foreground;Log.Info("Map foreground executable: "+(foreground??"unavailable"));}
                 if(source!=_lastSource){_lastSource=source;Log.Info("Map image source: "+source);}
                 if(_lastPresence!=_mapOpen){_lastPresence=_mapOpen;Log.Info("Map image presence: "+_mapOpen);}
                 if(source=="waiting-map"&&MapNative.Now-_lastHeaderLog>10&&root.TryGetProperty("score",out var score)&&score.ValueKind==JsonValueKind.Number)
@@ -115,7 +143,10 @@ internal sealed class MapOverlayService:IDisposable
                 if(root.TryGetProperty("rect",out var gameRect)&&gameRect.ValueKind==JsonValueKind.Array)
                     _gameBounds=new Rect(gameRect[0].GetDouble(),gameRect[1].GetDouble(),gameRect[2].GetDouble()-gameRect[0].GetDouble(),gameRect[3].GetDouble()-gameRect[1].GetDouble());
                 if(!_mapOpen){_pose=null;_drag.Reset();Status=source=="waiting-game"?MapWords.L("Ready · switch to AION 2.","Bereit · zu AION 2 wechseln."):MapWords.L("Game detected · waiting for the Altgard map.","Spiel erkannt · warte auf die Altgard-Karte.");}
+                if(!_mapOpen&&source=="waiting-game")Status+=MapWords.L(" Foreground: "," Vordergrund: ")+(foreground??MapWords.L("process name unavailable","Prozessname nicht verfügbar"));
                 else if(_pose is null)Status=MapWords.L("Map detected · locating the current view…","Karte erkannt · aktueller Ausschnitt wird abgeglichen …");
+                if(source=="waiting-map")_lastGameStatus=Status;
+                else if(source=="waiting-game"&&_lastGameStatus is {} previous)Status+=MapWords.L(" Last game status: "," Zuletzt im Spiel: ")+previous;
                 break;
             case "pose":
                 if(!_mapOpen||root.GetProperty("matrix").ValueKind==JsonValueKind.Null){_pose=null;_drag.Reset();if(_mapOpen)Status=MapWords.L("Map detected · locating the current view…","Karte erkannt · aktueller Ausschnitt wird abgeglichen …");return;}
@@ -134,6 +165,7 @@ internal sealed class MapOverlayService:IDisposable
         if(_pose is not {} pose||_data is null)return;
         var result=_data.Project(pose.Transform,pose.Bounds.Width,pose.Bounds.Height,_selected);_markers=result.Markers;
         Status=MapWords.L($"Altgard · {result.Visible:N0} locations / {_markers.Count} symbols",$"Altgard · {result.Visible:N0} Fundstellen / {_markers.Count} Symbole")+(result.Limited?MapWords.L(" · zoom in for more"," · für mehr Details hineinzoomen"):"");
+        _lastGameStatus=Status;
     }
     private void Tick()
     {
@@ -156,12 +188,13 @@ internal sealed class MapOverlayService:IDisposable
         }
         else _filters?.Hide();
         if(!_mapOpen||_globallyHidden()||_pose is not {} pose||MapNative.Now-pose.Stamp>.4)
-        {_window?.Hide();return;}
+        {_window?.Hide();if(_gameBounds is {} maskBounds)SendOverlayRegions(maskBounds,null);return;}
         try
         {
             var pointer=MapNative.Pointer();_drag.Observe(pointer);
             var transform=_settings.MapDirectDrag?_drag.Adjust(pose.Transform,pose.Pointer,pointer,pose.Bounds):pose.Transform;
             (_window??=new MapOverlayWindow()).Present(pose.Bounds,transform,_markers);
+            SendOverlayRegions(pose.Bounds,transform);
         }
         catch(Exception error)when(error is InvalidOperationException or System.ComponentModel.Win32Exception)
         {Log.Error("Map overlay presentation failed",error);Stop();Status=MapWords.L("Map overlay unavailable on this display.","Kartenoverlay auf dieser Anzeige nicht verfügbar.");}
@@ -177,7 +210,15 @@ internal sealed class MapOverlayService:IDisposable
             _worker=null;
             _=Task.Run(()=>
             {
-                try{if(!process.HasExited){process.StandardInput.WriteLine("stop");process.StandardInput.Close();if(!process.WaitForExit(1500))process.Kill(entireProcessTree:true);}}
+                try
+                {
+                    if(!process.HasExited)
+                    {
+                        try{process.StandardInput.WriteLine("stop");process.StandardInput.Close();}
+                        catch(Exception error)when(error is IOException or InvalidOperationException or ObjectDisposedException){}
+                        if(!process.WaitForExit(1500))process.Kill(entireProcessTree:true);
+                    }
+                }
                 catch(Exception e)when(e is InvalidOperationException or IOException or System.ComponentModel.Win32Exception){}
                 finally{process.Dispose();}
             });

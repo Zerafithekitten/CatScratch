@@ -15,6 +15,13 @@ def check(condition,label):
 header=np.full((85,300),24,np.uint8)
 header[18:18+title.shape[0],18:18+title.shape[1]]=title
 check(title_score(header,title)>.99,'Uncovered title remains recognized')
+localized=np.full((85,300),24,np.uint8)
+region=title[:,112:]
+localized[18:18+region.shape[0],152:152+region.shape[1]]=region
+check(float(cv2.matchTemplate(localized[8:85,8:300],title,cv2.TM_CCOEFF_NORMED).max())<.90,'Localized-prefix fixture reduces confidence in the English full-title detector')
+check(title_score(localized,title)>.99,'Altgard is recognized independently of the translated Map/Karte prefix')
+localized[30:78,:]=28
+check(title_score(localized,title)>.99,'Localized heading stays recognizable under a resource bar')
 covered=header.copy();covered[30:78,:]=28
 check(float(cv2.matchTemplate(covered[8:85,8:300],title,cv2.TM_CCOEFF_NORMED).max())<.7,'Resource-bar fixture reproduces the original missed title')
 check(title_score(covered,title)>.99,'HUD-covered heading is recognized from matching text fragments')

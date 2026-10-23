@@ -1,5 +1,7 @@
 # Release policy
 
+On 2026-10-23 the owner explicitly approved "okay ab in die beta" after the local overlay-feedback, localized Altgard-heading and remote-status changes were described and tested. Publish v4.0.9-beta.15 after full verification. Keep desktop-recording visibility, passive capture and strict map validation; describe affected-user and German-client confirmation as pending. Preserve Stable, Light and GitHub project presentation.
+
 On 2026-10-23 the owner explicitly approved "update" after reviewing the local map compatibility fixes. Publish v4.0.9-beta.14 after full checks: accept both known AION 2 client executable names and remove desktop-recording exclusion from map markers and filters. Local checks verify selection and window affinity; affected-user and actual streaming validation remain pending. Preserve passive capture, the experimental warning, Stable, Light and GitHub project presentation.
 
 On 2026-10-22 the owner explicitly approved "ab in die beta damit" after the boss-time and Pet Tracker audit. Publish v4.0.9-beta.13 after full checks: persistent selected schedule times, exact Watcher Kaira NPC schedule fallback with explicit source, and immediate boss-window refresh on data changes. Pet live-update checks passed without requiring a gameplay change. Preserve unknown boss timings, Stable, Light and GitHub project presentation.

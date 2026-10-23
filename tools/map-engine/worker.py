@@ -15,6 +15,7 @@ state_lock=threading.Lock()
 latest=None
 current_bounds=None
 current_open=False
+overlay_regions=None
 
 
 def emit(value):
@@ -26,9 +27,16 @@ def emit(value):
 
 
 def read_control():
+    global overlay_regions
     try:
         for line in sys.stdin:
             if line.strip()=='stop':break
+            if len(line)>65536:continue
+            try:
+                value=json.loads(line)
+                if value.get('kind')=='overlay' and len(value.get('regions',[]))<=352:
+                    with state_lock:overlay_regions=value
+            except (ValueError,TypeError):pass
     finally:stop.set()
 
 
@@ -58,10 +66,11 @@ def capture(engine,title,game):
                 pointer=read_pointer();stamp=time.perf_counter();frame=camera.grab(bounds)
             with state_lock:
                 current_bounds=bounds;current_open=visible
-                latest=(stamp,frame,bounds,pointer) if visible else None
+                exclusions=overlay_regions if overlay_regions and overlay_regions.get('bounds')==list(bounds or ()) else None
+                latest=(stamp,frame,bounds,pointer,exclusions) if visible else None
             state=(bounds,visible)
             if state!=previous or now-last_emit>.18:
-                emit(dict(kind='presence',open=visible,rect=bounds,stamp=now,reason=source.reason,score=score))
+                emit(dict(kind='presence',open=visible,rect=bounds,stamp=now,reason=source.reason,score=score,foreground=getattr(source,'cached_name',None)))
                 previous=state;last_emit=now
             if not bounds:stop.wait(.12)
     except Exception as error:
@@ -99,10 +108,10 @@ def main():
             with state_lock:packet=latest
             if packet is None:
                 tracker.reset();continue
-            stamp,frame,bounds,pointer=packet
+            stamp,frame,bounds,pointer,exclusions=packet
             if stamp==previous_stamp:continue
             previous_stamp=stamp
-            result=tracker.update(frame)
+            result=tracker.update(frame,exclusions.get('regions',[]) if exclusions else [])
             with state_lock:valid=current_open and current_bounds==bounds
             if not valid or time.perf_counter()-stamp>.4:continue
             emit(dict(kind='pose',rect=bounds,stamp=stamp,matrix=result['matrix'] if result else None,pointer=[pointer.x,pointer.y,pointer.buttons,pointer.stamp]))

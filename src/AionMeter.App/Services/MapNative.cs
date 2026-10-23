@@ -9,6 +9,9 @@ internal readonly record struct MapPointer(double X,double Y,int Buttons,double 
 internal static class MapNative
 {
     [StructLayout(LayoutKind.Sequential)] private struct NativePoint{public int X,Y;}
+    [StructLayout(LayoutKind.Sequential)] private struct NativeRect{public int Left,Top,Right,Bottom;}
+    [DllImport("user32.dll")] private static extern bool GetWindowRect(nint window,out NativeRect rect);
+    internal static Rect? Bounds(Window window)=>GetWindowRect(new WindowInteropHelper(window).Handle,out var r)?new Rect(r.Left,r.Top,Math.Max(0,r.Right-r.Left),Math.Max(0,r.Bottom-r.Top)):null;
     [DllImport("user32.dll")] private static extern bool GetCursorPos(out NativePoint point);
     [DllImport("user32.dll")] private static extern short GetAsyncKeyState(int key);
     [DllImport("user32.dll")] internal static extern nint GetForegroundWindow();

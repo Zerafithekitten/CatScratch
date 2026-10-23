@@ -113,6 +113,10 @@ internal static class MapModuleChecks
                 hud.Show();service.ApplyPreferences();
                 var receive=typeof(MapOverlayService).GetMethod("Receive",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic)!;
                 var tick=typeof(MapOverlayService).GetMethod("Tick",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic)!;
+                receive.Invoke(service,["{\"kind\":\"presence\",\"open\":false,\"reason\":\"waiting-game\",\"foreground\":\"other-client.exe\"}"]);
+                Check(service.Status.Contains("other-client.exe"),"Waiting-for-game status identifies the actual foreground executable for remote diagnosis");
+                receive.Invoke(service,["{\"kind\":\"presence\",\"open\":false,\"reason\":\"waiting-game\",\"foreground\":null}"]);
+                Check(service.Status.Contains("Prozessname nicht verfügbar"),"Unavailable foreground metadata is explicitly distinguished from a mismatched client");
                 receive.Invoke(service,["{\"kind\":\"presence\",\"open\":true,\"rect\":[-30000,-30000,-28081,-28921],\"reason\":\"waiting-map\",\"score\":0.95}"]);
                 tick.Invoke(service,null);
                 MapNative.DwmGetWindowAttribute(new WindowInteropHelper(hud).Handle,14,out var state,4);
