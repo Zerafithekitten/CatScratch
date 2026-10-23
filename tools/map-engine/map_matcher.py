@@ -8,18 +8,8 @@ cv2.setRNGSeed(117)
 cv2.setNumThreads(2)
 ROOT=Path(os.environ['CATSCRATCH_MAP_DATA']);poses=np.array(json.loads((ROOT/'reference-poses.json').read_text(encoding='utf-8')))
 sift=cv2.SIFT_create(nfeatures=16000,contrastThreshold=.015);matcher=cv2.FlannBasedMatcher(dict(algorithm=1,trees=5),dict(checks=80))
-def terrain_mask(shape,regions=()):
- mask=np.zeros(shape[:2],np.uint8);h,w=shape[:2]
- mask[int(h*110/1079):int(h*1040/1079),int(w*330/1919):int(w*1820/1919)]=255
- for x,y,right,bottom in regions:
-  left=max(0,min(w,int(x*w/1919)));top=max(0,min(h,int(y*h/1079)))
-  right=max(0,min(w,int(np.ceil(right*w/1919))));bottom=max(0,min(h,int(np.ceil(bottom*h/1079))))
-  if right>left and bottom>top:mask[top:bottom,left:right]=0
- return mask
-
-def extract(im,regions=()):
- gray=im if im.ndim==2 else cv2.cvtColor(im,cv2.COLOR_BGR2GRAY)
- return sift.detectAndCompute(gray,terrain_mask(gray.shape,regions))
+def extract(im):
+ gray=im if im.ndim==2 else cv2.cvtColor(im,cv2.COLOR_BGR2GRAY);mask=np.zeros(gray.shape,np.uint8);h,w=gray.shape;mask[int(h*110/1079):int(h*1040/1079),int(w*330/1919):int(w*1820/1919)]=255;return sift.detectAndCompute(gray,mask)
 map_raster=cv2.imread(str(ROOT/'altgard.webp'),cv2.IMREAD_GRAYSCALE)
 atlas_to_map=np.vstack([json.loads((ROOT/'alignment.json').read_text(encoding='utf-8'))['atlas_to_map'],[0,0,1]])
 assert map_raster is not None, 'Missing map reference'
@@ -59,8 +49,8 @@ def verify_full_map(im,estimated,kt,dt):
  return dict(reference=-1,train_inliers=int(inside.sum()),independent_matches=int(valid.sum()),median_validation_error=float(np.median(error[valid])),matrix=result[:2].tolist(),scale=float(np.hypot(result[0,0],result[1,0])))
 
 
-def locate(im, preferred=None, estimated=None,regions=()):
- kt,dt=extract(im,regions)
+def locate(im, preferred=None, estimated=None):
+ kt,dt=extract(im)
  if dt is None or len(kt)<30:return None
  if estimated is not None:
   verified=verify_full_map(im,estimated,kt,dt)
@@ -103,7 +93,6 @@ class Tracker:
   self.reset()
   self.title=cv2.imread(str(ROOT/'altgard-title.png'),cv2.IMREAD_GRAYSCALE)
   self.map_open=False
-  self.regions=[]
 
  def reset(self):
   self.epoch+=1
@@ -120,7 +109,7 @@ class Tracker:
    mask=np.zeros_like(gray);mask[110:1040,330:1820]=255
    points=self.track_points(gray)
    self.verification_at=time.monotonic()
-   self.pending=[self.pool.submit(locate,frame.copy(),self.result['reference'] if self.result else None,self.result['matrix'] if self.result else None,list(self.regions)),self.epoch,gray.copy(),dict(self.result) if self.result else None,np.eye(3),points,True]
+   self.pending=[self.pool.submit(locate,frame.copy(),self.result['reference'] if self.result else None,self.result['matrix'] if self.result else None),self.epoch,gray.copy(),dict(self.result) if self.result else None,np.eye(3),points,True]
 
  def motion(self,previous,points,gray):
   step=self.flow_motion(previous,points,gray)
@@ -131,7 +120,7 @@ class Tracker:
 
  def track_points(self,gray):
   small=cv2.resize(gray,(960,540),interpolation=cv2.INTER_AREA)
-  mask=terrain_mask(small.shape,self.regions)
+  mask=np.zeros_like(small);mask[55:520,165:910]=255
   points=cv2.goodFeaturesToTrack(small,maxCorners=160,qualityLevel=.015,minDistance=10,mask=mask)
   if points is not None:points*=np.float32([1919/960,1079/540])
   return points
@@ -139,7 +128,7 @@ class Tracker:
  def zoom_features(self,gray):
   for cached,features in self.zoom_cache:
    if cached is gray:return features
-  mask=terrain_mask(gray.shape,self.regions)
+  mask=np.zeros_like(gray);mask[110:1040,330:1820]=255
   features=self.zoom_sift.detectAndCompute(gray,mask)
   self.zoom_cache.append((gray,features));self.zoom_cache=self.zoom_cache[-3:]
   return features
@@ -170,7 +159,7 @@ class Tracker:
  def orb_motion(self,previous,gray):
   # Optical flow is limited to small motion. Descriptor matching searches
   # the whole terrain area and can recover a large drag in the next frame.
-  mask=terrain_mask(gray.shape,self.regions)
+  mask=np.zeros_like(gray);mask[110:1040,330:1820]=255
   ka,da=self.orb.detectAndCompute(previous,mask)
   kb,db=self.orb.detectAndCompute(gray,mask)
   if da is None or db is None or len(db)<2:return None
@@ -198,11 +187,6 @@ class Tracker:
   back,back_ok,_=cv2.calcOpticalFlowPyrLK(gray,previous,nxt,None,winSize=(21,21),maxLevel=3)
   if back is None:return None
   good=(ok.ravel()==1)&(back_ok.ravel()==1)&(np.linalg.norm(back-points,axis=2).ravel()<1)
-  mask=terrain_mask(gray.shape,self.regions)
-  xy=np.rint(nxt.reshape(-1,2)).astype(int)
-  inside=(xy[:,0]>=0)&(xy[:,0]<mask.shape[1])&(xy[:,1]>=0)&(xy[:,1]<mask.shape[0])
-  allowed=np.zeros(len(xy),bool);allowed[inside]=mask[xy[inside,1],xy[inside,0]]!=0
-  good&=allowed
   old=points[good]/factors;new=nxt[good]/factors
   if len(old)<30:return None
   step,inliers=cv2.estimateAffinePartial2D(old,new,method=cv2.RANSAC,ransacReprojThreshold=1.8)
@@ -212,14 +196,13 @@ class Tracker:
   if abs(np.degrees(np.arctan2(step[1,0],step[0,0])))>=.4:return None
   return np.vstack([step,[0,0,1]])
 
- def update(self,frame,regions=()):
+ def update(self,frame,map_candidate=False):
   h,w=frame.shape[:2]
-  self.regions=list(regions);self.zoom_cache=[]
   normalized=cv2.resize(frame,(1919,1079))
   gray=cv2.cvtColor(normalized,cv2.COLOR_BGR2GRAY)
   # A terrain match alone must not keep markers over normal gameplay.
   header_score=title_score(gray,self.title)
-  self.map_open=header_score>=.70
+  self.map_open=header_score>=.70 or map_candidate
   if not self.map_open:
    self.last_reason=f'Altgard-Titel nicht erkannt ({header_score:.2f})'
    self.reset();return None

@@ -45,6 +45,7 @@ internal sealed class MapFiltersWindow:Window
         {
             var handle=new WindowInteropHelper(this).Handle;
             NativeMethods.SetExStyle(handle,NativeMethods.WS_EX_TOOLWINDOW|NativeMethods.WS_EX_NOACTIVATE,0x00040000);
+            if(!MapNative.SetWindowDisplayAffinity(handle,0x11))throw new InvalidOperationException("Map filter capture exclusion unavailable.");
             HwndSource.FromHwnd(handle)?.AddHook((nint h,int message,nint w,nint l,ref bool handled)=>{if(message==0x0021){handled=true;return 3;}return 0;});
         };
     }

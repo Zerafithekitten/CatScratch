@@ -1,3 +1,12 @@
+## CatScratch v4.0.9-beta.16
+
+Noch einen kleinen Stau an der Kartenüberschrift gefunden. 🐾
+
+- Verdecken CatScratch-Module den Altgard-Titel, kann die Kartenengine den Geländeabgleich jetzt über zwei sichtbare Karten-Bedienelemente starten. Erst nach bestätigtem Altgard-Abgleich öffnet sich das Overlay. Die eingesandte Aufnahme wird damit erkannt; der Live-Test beim betroffenen Nutzer steht noch aus.
+- Kartenmarker und Filter sind wie gewünscht wieder aus Bildschirmaufnahmen ausgeschlossen. Die zusätzliche Aussparung der Markerflächen wurde entfernt, um zum früheren Nachführungsweg zurückzukehren.
+- Die sprachunabhängigere Altgard-Erkennung und die verbesserten Statusangaben bleiben erhalten. Prüfungen für verdeckte Titel und das Abweisen unbestätigter Karten ergänzt.
+- Die Altgard-Kartenfunktion bleibt stark experimentell.
+
 ## CatScratch v4.0.9-beta.15
 
 Ein weiterer kleiner Schritt für das Kartenexperiment. 🐾

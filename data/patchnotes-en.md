@@ -1,3 +1,12 @@
+## CatScratch v4.0.9-beta.16
+
+Found another little traffic jam at the map heading. 🐾
+
+- When CatScratch modules cover the Altgard title, the map engine can now start a terrain search from two visible map controls. The overlay opens only after Altgard's terrain is verified. This recognizes the supplied screenshot; the affected user's live test is still pending.
+- Map markers and filters are excluded from desktop recordings again, as requested. Removed the additional marker-area masking to restore the earlier tracking path.
+- Kept the localized Altgard-heading recognition and improved status diagnostics. Added checks for covered titles and for rejecting unverified map candidates.
+- The Altgard map feature remains highly experimental.
+
 ## CatScratch v4.0.9-beta.15
 
 Another small step for the map experiment. 🐾

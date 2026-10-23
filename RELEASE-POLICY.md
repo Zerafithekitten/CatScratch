@@ -1,5 +1,7 @@
 # Release policy
 
+On 2026-10-23 the owner explicitly approved "upload beta" after the supplied covered-heading screenshot was reproduced and recognized through the new UI-candidate plus independent terrain verification path. Publish v4.0.9-beta.16 after full checks. Restore recording exclusion for marker and filter windows and remove marker-area masking; keep localized headings and diagnostics. Distinguish the confirmed screenshot result from pending affected-user live validation. Preserve Stable, Light and GitHub project presentation.
+
 On 2026-10-23 the owner explicitly approved "okay ab in die beta" after the local overlay-feedback, localized Altgard-heading and remote-status changes were described and tested. Publish v4.0.9-beta.15 after full verification. Keep desktop-recording visibility, passive capture and strict map validation; describe affected-user and German-client confirmation as pending. Preserve Stable, Light and GitHub project presentation.
 
 On 2026-10-23 the owner explicitly approved "update" after reviewing the local map compatibility fixes. Publish v4.0.9-beta.14 after full checks: accept both known AION 2 client executable names and remove desktop-recording exclusion from map markers and filters. Local checks verify selection and window affinity; affected-user and actual streaming validation remain pending. Preserve passive capture, the experimental warning, Stable, Light and GitHub project presentation.

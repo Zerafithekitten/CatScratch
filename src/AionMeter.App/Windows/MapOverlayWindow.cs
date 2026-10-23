@@ -22,6 +22,7 @@ internal sealed class MapOverlayWindow:Window
             var handle=new WindowInteropHelper(this).Handle;
             var style=(long)NativeMethods.GetWindowLongPtr(handle,NativeMethods.GWL_EXSTYLE);
             NativeMethods.SetWindowLongPtr(handle,NativeMethods.GWL_EXSTYLE,(nint)(style|0x20|0x80|0x08000000));
+            if(!MapNative.SetWindowDisplayAffinity(handle,0x11))throw new InvalidOperationException("Map capture exclusion unavailable.");
             HwndSource.FromHwnd(handle)?.AddHook((nint h,int message,nint w,nint l,ref bool handled)=>
             {
                 // The visual-only overlay must never replace AION's cursor.

@@ -3,6 +3,13 @@ import cv2
 import numpy as np
 
 
+def map_ui_candidate(header,right_header,title,close):
+    """UI cues only authorize a terrain search, never map presence or markers."""
+    emblem=float(cv2.matchTemplate(header[8:85,8:90],title[:,:25],cv2.TM_CCOEFF_NORMED).max())
+    cross=float(cv2.matchTemplate(right_header[8:85],close,cv2.TM_CCOEFF_NORMED).max())
+    return emblem>=.72 and cross>=.92
+
+
 def title_score(gray,title):
     search=gray[8:85,8:300]
     score=float(cv2.matchTemplate(search,title,cv2.TM_CCOEFF_NORMED).max())

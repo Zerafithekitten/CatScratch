@@ -34,30 +34,6 @@ internal sealed class MapOverlayService:IDisposable
     private bool _enabled,_mapOpen,_disposed;
     private double _heartbeat;
     private int _generation;
-    private int _maskWriting;
-    private double _lastMaskSent;
-    private async void SendOverlayRegions(Rect bounds,MapTransform? transform)
-    {
-        if(_worker is not {} worker||MapNative.Now-_lastMaskSent<.04||Interlocked.CompareExchange(ref _maskWriting,1,0)!=0)return;
-        _lastMaskSent=MapNative.Now;
-        try
-        {
-            var regions=new List<double[]>();
-            void Add(double left,double top,double right,double bottom)=>regions.Add([left*1919/bounds.Width,top*1079/bounds.Height,right*1919/bounds.Width,bottom*1079/bounds.Height]);
-            if(transform is {} pose)foreach(var marker in _markers)
-            {
-                var p=pose.Apply(marker.Location.X,marker.Location.Y);
-                // Include the icon, count badge, antialiasing and optical-flow patch margin.
-                Add(p.X-34,p.Y-40,p.X+80,p.Y+34);
-            }
-            if(_filters is {IsVisible:true} filter&&MapNative.Bounds(filter) is {} f)
-                Add(f.Left-bounds.Left-16,f.Top-bounds.Top-16,f.Right-bounds.Left+16,f.Bottom-bounds.Top+16);
-            var message=JsonSerializer.Serialize(new{kind="overlay",bounds=new[]{bounds.Left,bounds.Top,bounds.Right,bounds.Bottom},regions});
-            await worker.StandardInput.WriteLineAsync(message);
-        }
-        catch(Exception error)when(error is IOException or InvalidOperationException or ObjectDisposedException){Log.Error("Map overlay mask could not be sent",error);}
-        finally{Interlocked.Exchange(ref _maskWriting,0);}
-    }
     internal string Status {get;private set;}=MapWords.L("Disabled","Ausgeschaltet");
     internal bool MapOpen=>_mapOpen;
     internal void RefreshHudSuppression()=>_suppression.Apply(_mapOpen,_hud());
@@ -188,13 +164,13 @@ internal sealed class MapOverlayService:IDisposable
         }
         else _filters?.Hide();
         if(!_mapOpen||_globallyHidden()||_pose is not {} pose||MapNative.Now-pose.Stamp>.4)
-        {_window?.Hide();if(_gameBounds is {} maskBounds)SendOverlayRegions(maskBounds,null);return;}
+        {_window?.Hide();return;}
         try
         {
             var pointer=MapNative.Pointer();_drag.Observe(pointer);
             var transform=_settings.MapDirectDrag?_drag.Adjust(pose.Transform,pose.Pointer,pointer,pose.Bounds):pose.Transform;
             (_window??=new MapOverlayWindow()).Present(pose.Bounds,transform,_markers);
-            SendOverlayRegions(pose.Bounds,transform);
+
         }
         catch(Exception error)when(error is InvalidOperationException or System.ComponentModel.Win32Exception)
         {Log.Error("Map overlay presentation failed",error);Stop();Status=MapWords.L("Map overlay unavailable on this display.","Kartenoverlay auf dieser Anzeige nicht verfügbar.");}

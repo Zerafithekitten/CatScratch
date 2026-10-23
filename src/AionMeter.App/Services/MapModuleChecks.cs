@@ -81,14 +81,14 @@ internal static class MapModuleChecks
             filters.UpdateLayout();Render(filters,Path.Combine(directory,"map-filters.png"));
             var style=(long)NativeMethods.GetWindowLongPtr(new WindowInteropHelper(filters).Handle,NativeMethods.GWL_EXSTYLE);
             Check((style&NativeMethods.WS_EX_NOACTIVATE)!=0&&!filters.ShowInTaskbar,"Map filters are clickable without activating a separate app window");
-            Check(MapNative.GetWindowDisplayAffinity(new WindowInteropHelper(filters).Handle,out var filterAffinity)&&filterAffinity==0,"Map filter window permits desktop recording instead of excluding streams");
+            Check(MapNative.GetWindowDisplayAffinity(new WindowInteropHelper(filters).Handle,out var filterAffinity)&&filterAffinity==0x11,"Map filter window is excluded from desktop recording as requested");
         }
         finally{filters.Close();}
         var streamOverlay=new MapOverlayWindow();
         try
         {
             var handle=new WindowInteropHelper(streamOverlay).EnsureHandle();
-            Check(MapNative.GetWindowDisplayAffinity(handle,out var affinity)&&affinity==0,"Marker overlay permits desktop recording instead of excluding streams");
+            Check(MapNative.GetWindowDisplayAffinity(handle,out var affinity)&&affinity==0x11,"Marker overlay is excluded from desktop recording as requested");
         }
         finally{streamOverlay.Close();}
         var shown=new Window{Width=100,Height=80,Left=-30000,Top=-30000,ShowActivated=false,ShowInTaskbar=false};
@@ -162,6 +162,7 @@ internal static class MapModuleChecks
         }
         canvas.Set(new(1,0,0,0,1,0),materialSamples,new Size(1919,1079));Render(frame,Path.Combine(directory,"map-materials.png"));
         Check(File.Exists(Path.Combine(AppContext.BaseDirectory,"map-engine","CatScratch.MapEngine.exe")),"The hidden image engine is bundled with CatScratch");
+        Check(File.Exists(Path.Combine(AppContext.BaseDirectory,"data","map","map-close.png")),"Covered-title bootstrap cue is bundled with the map data");
         File.WriteAllText(output,JsonSerializer.Serialize(new{success=true,checks},new JsonSerializerOptions{WriteIndented=true}));
     }
 }

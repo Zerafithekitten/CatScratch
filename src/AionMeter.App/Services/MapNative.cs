@@ -9,14 +9,12 @@ internal readonly record struct MapPointer(double X,double Y,int Buttons,double 
 internal static class MapNative
 {
     [StructLayout(LayoutKind.Sequential)] private struct NativePoint{public int X,Y;}
-    [StructLayout(LayoutKind.Sequential)] private struct NativeRect{public int Left,Top,Right,Bottom;}
-    [DllImport("user32.dll")] private static extern bool GetWindowRect(nint window,out NativeRect rect);
-    internal static Rect? Bounds(Window window)=>GetWindowRect(new WindowInteropHelper(window).Handle,out var r)?new Rect(r.Left,r.Top,Math.Max(0,r.Right-r.Left),Math.Max(0,r.Bottom-r.Top)):null;
     [DllImport("user32.dll")] private static extern bool GetCursorPos(out NativePoint point);
     [DllImport("user32.dll")] private static extern short GetAsyncKeyState(int key);
     [DllImport("user32.dll")] internal static extern nint GetForegroundWindow();
     [DllImport("user32.dll")] internal static extern uint GetWindowThreadProcessId(nint window,out uint process);
     [DllImport("user32.dll")] internal static extern bool GetWindowDisplayAffinity(nint window,out uint affinity);
+    [DllImport("user32.dll")] internal static extern bool SetWindowDisplayAffinity(nint window,uint affinity);
     [DllImport("dwmapi.dll")] internal static extern int DwmSetWindowAttribute(nint window,int attribute,ref int value,int size);
     [DllImport("dwmapi.dll")] internal static extern int DwmGetWindowAttribute(nint window,int attribute,out int value,int size);
     internal static double Now=>Stopwatch.GetTimestamp()/(double)Stopwatch.Frequency;

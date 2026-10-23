@@ -4,7 +4,7 @@ import json
 from pathlib import Path
 import cv2
 import numpy as np
-from map_presence import title_score
+from map_presence import title_score,map_ui_candidate
 
 parser=argparse.ArgumentParser();parser.add_argument('--data',required=True);args=parser.parse_args()
 title=cv2.imread(str(Path(args.data)/'altgard-title.png'),0)
@@ -30,4 +30,10 @@ check(title_score(altered,title)<.7,'Matching Map prefix with a different region
 check(title_score(np.full((85,300),24,np.uint8),title)<.7,'Empty gameplay header does not look like a map')
 rng=np.random.default_rng(117)
 check(all(title_score(rng.integers(0,256,(85,300),dtype=np.uint8),title)<.7 for _ in range(50)),'Unrelated headers are rejected')
+close=cv2.imread(str(Path(args.data)/'map-close.png'),0)
+left=np.full((85,300),24,np.uint8);left[18:18+title.shape[0],18:43]=title[:,:25]
+right=np.full((85,75),24,np.uint8);right[21:21+close.shape[0],23:23+close.shape[1]]=close
+check(map_ui_candidate(left,right,title,close),'Emblem and close button authorize a terrain search when text is covered')
+check(not map_ui_candidate(np.full_like(left,24),right,title,close),'Close button alone cannot authorize a terrain search')
+check(not map_ui_candidate(left,np.full_like(right,24),title,close),'Emblem alone cannot authorize a terrain search')
 print(json.dumps({'success':True,'checks':checks}))
