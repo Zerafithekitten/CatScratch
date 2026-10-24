@@ -1,0 +1,560 @@
+{
+  "terms": {
+    "combatSpeed": {
+      "de": "Kampftempo",
+      "en": "Combat Speed"
+    },
+    "weaponDamageBoost": {
+      "de": "Verstärkung (Waffenschaden)",
+      "en": "Weapon Damage Boost"
+    },
+    "damageBoost": {
+      "de": "Schadensverstärkung",
+      "en": "Damage Boost"
+    },
+    "critDamageBoost": {
+      "de": "Krit.-Schadensverstärkung",
+      "en": "Critical Damage Boost"
+    },
+    "doubleChance": {
+      "de": "Wucht",
+      "en": "Double Chance"
+    },
+    "multiHit": {
+      "de": "Mehrfachtreffer",
+      "en": "Multi-hit Chance"
+    },
+    "attack": {
+      "de": "Angriffskraft",
+      "en": "Attack"
+    },
+    "attackIncrease": {
+      "de": "Angriffskraft +",
+      "en": "Attack increase"
+    },
+    "accuracy": {
+      "de": "Präzision",
+      "en": "Accuracy"
+    },
+    "critical": {
+      "de": "Kritischer Treffer",
+      "en": "Critical Hit"
+    },
+    "might": {
+      "de": "Macht",
+      "en": "Might"
+    },
+    "precision": {
+      "de": "Präzision (Attribut)",
+      "en": "Precision"
+    },
+    "damageTolerance": {
+      "de": "Schadensresistenz",
+      "en": "Damage Tolerance"
+    },
+    "moveSpeed": {
+      "de": "Bewegungstempo",
+      "en": "Move Speed"
+    },
+    "time": {
+      "de": "Zeit [Siel]",
+      "en": "Time [Siel]"
+    },
+    "wisdom": {
+      "de": "Weisheit [Lumiel]",
+      "en": "Wisdom [Lumiel]"
+    },
+    "destruction": {
+      "de": "Zerstörung [Zikel]",
+      "en": "Destruction [Zikel]"
+    },
+    "illusion": {
+      "de": "Illusion [Kaisinel]",
+      "en": "Illusion [Kaisinel]"
+    }
+  },
+  "slots": [
+    {
+      "name": "Waffe",
+      "group": "weapon",
+      "nameEn": "Weapon",
+      "mustHave": [
+        "combatSpeed"
+      ],
+      "priorities": [
+        {
+          "id": "6ad2082cfc80e89878891694",
+          "options": [
+            "weaponDamageBoost"
+          ]
+        },
+        {
+          "id": "6ad2082cfc80e89878891695",
+          "options": [
+            "damageBoost"
+          ]
+        },
+        {
+          "id": "6ad2082cfc80e89878891696",
+          "options": [
+            "might"
+          ]
+        },
+        {
+          "id": "6ad2082cfc80e89878891697",
+          "options": [
+            "attack"
+          ]
+        },
+        {
+          "id": "6ad2082cfc80e89878891698",
+          "options": [
+            "multiHit",
+            "precision",
+            "accuracy",
+            "critical"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Schützer",
+      "group": "weapon",
+      "nameEn": "Guard",
+      "mustHave": [
+        "combatSpeed"
+      ],
+      "priorities": [
+        {
+          "id": "6ad2082cfc80e8987889169a",
+          "options": [
+            "weaponDamageBoost"
+          ]
+        },
+        {
+          "id": "6ad2082cfc80e8987889169b",
+          "options": [
+            "damageBoost"
+          ]
+        },
+        {
+          "id": "6ad2082cfc80e8987889169c",
+          "options": [
+            "might"
+          ]
+        },
+        {
+          "id": "6ad2082cfc80e8987889169d",
+          "options": [
+            "attack"
+          ]
+        },
+        {
+          "id": "6ad2082cfc80e8987889169e",
+          "options": [
+            "multiHit",
+            "precision",
+            "accuracy",
+            "critical"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Helm",
+      "group": "armor",
+      "nameEn": "Helm",
+      "mustHave": [
+        "doubleChance",
+        "attackIncrease"
+      ],
+      "priorities": [
+        {
+          "id": "6ad2082cfc80e898788916a0",
+          "options": [
+            "accuracy"
+          ]
+        },
+        {
+          "id": "6ad2082cfc80e898788916a1",
+          "options": [
+            "critical"
+          ]
+        },
+        {
+          "id": "6ad2082cfc80e898788916a2",
+          "options": [
+            "attack"
+          ]
+        },
+        {
+          "id": "6ad2082cfc80e898788916a3",
+          "options": [
+            "passive1"
+          ]
+        },
+        {
+          "id": "6ad2082cfc80e898788916a4",
+          "options": [
+            "passive2"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Schulterplatten",
+      "group": "armor",
+      "nameEn": "Shoulder",
+      "mustHave": [
+        "doubleChance",
+        "critDamageBoost"
+      ],
+      "priorities": [
+        {
+          "id": "6ad2082cfc80e898788916a6",
+          "options": [
+            "accuracy"
+          ]
+        },
+        {
+          "id": "6ad2082cfc80e898788916a7",
+          "options": [
+            "critical"
+          ]
+        },
+        {
+          "id": "6ad2082cfc80e898788916a8",
+          "options": [
+            "attack"
+          ]
+        },
+        {
+          "id": "6ad2082cfc80e898788916a9",
+          "options": [
+            "passive1"
+          ]
+        },
+        {
+          "id": "6ad2082cfc80e898788916aa",
+          "options": [
+            "passive2"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Oberteil",
+      "group": "armor",
+      "nameEn": "Chest",
+      "mustHave": [
+        "damageBoost"
+      ],
+      "priorities": [
+        {
+          "id": "6ad2082cfc80e898788916ac",
+          "options": [
+            "accuracy"
+          ]
+        },
+        {
+          "id": "6ad2082cfc80e898788916ad",
+          "options": [
+            "critical"
+          ]
+        },
+        {
+          "id": "6ad2082cfc80e898788916ae",
+          "options": [
+            "attack"
+          ]
+        },
+        {
+          "id": "6ad2082cfc80e898788916af",
+          "options": [
+            "passive1"
+          ]
+        },
+        {
+          "id": "6ad2082cfc80e898788916b0",
+          "options": [
+            "passive2"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Hose",
+      "group": "armor",
+      "nameEn": "Leg",
+      "mustHave": [
+        "attackIncrease",
+        "damageTolerance"
+      ],
+      "priorities": [
+        {
+          "id": "6ad2082cfc80e898788916b2",
+          "options": [
+            "accuracy"
+          ]
+        },
+        {
+          "id": "6ad2082cfc80e898788916b3",
+          "options": [
+            "critical"
+          ]
+        },
+        {
+          "id": "6ad2082cfc80e898788916b4",
+          "options": [
+            "attack"
+          ]
+        },
+        {
+          "id": "6ad2082cfc80e898788916b5",
+          "options": [
+            "passive1"
+          ]
+        },
+        {
+          "id": "6ad2082cfc80e898788916b6",
+          "options": [
+            "passive2"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Handschuhe",
+      "group": "armor",
+      "nameEn": "Glove",
+      "mustHave": [
+        "combatSpeed"
+      ],
+      "priorities": [
+        {
+          "id": "6ad2082cfc80e898788916b8",
+          "options": [
+            "accuracy"
+          ]
+        },
+        {
+          "id": "6ad2082cfc80e898788916b9",
+          "options": [
+            "critical"
+          ]
+        },
+        {
+          "id": "6ad2082cfc80e898788916ba",
+          "options": [
+            "attack"
+          ]
+        },
+        {
+          "id": "6ad2082cfc80e898788916bb",
+          "options": [
+            "passive1"
+          ]
+        },
+        {
+          "id": "6ad2082cfc80e898788916bc",
+          "options": [
+            "passive2"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Umhang",
+      "group": "armor",
+      "nameEn": "Cloak",
+      "mustHave": [
+        "doubleChance",
+        "attackIncrease"
+      ],
+      "priorities": [
+        {
+          "id": "6ad2082cfc80e898788916be",
+          "options": [
+            "accuracy"
+          ]
+        },
+        {
+          "id": "6ad2082cfc80e898788916bf",
+          "options": [
+            "critical"
+          ]
+        },
+        {
+          "id": "6ad2082cfc80e898788916c0",
+          "options": [
+            "attack"
+          ]
+        },
+        {
+          "id": "6ad2082cfc80e898788916c1",
+          "options": [
+            "passive1"
+          ]
+        },
+        {
+          "id": "6ad2082cfc80e898788916c2",
+          "options": [
+            "passive2"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Stiefel",
+      "group": "armor",
+      "nameEn": "Boots",
+      "mustHave": [
+        "moveSpeed"
+      ],
+      "priorities": [
+        {
+          "id": "6ad2082cfc80e898788916c4",
+          "options": [
+            "accuracy"
+          ]
+        },
+        {
+          "id": "6ad2082cfc80e898788916c5",
+          "options": [
+            "critical"
+          ]
+        },
+        {
+          "id": "6ad2082cfc80e898788916c6",
+          "options": [
+            "attack"
+          ]
+        },
+        {
+          "id": "6ad2082cfc80e898788916c7",
+          "options": [
+            "passive1"
+          ]
+        },
+        {
+          "id": "6ad2082cfc80e898788916c8",
+          "options": [
+            "passive2"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Ohrring",
+      "group": "accessory",
+      "nameEn": "Earring",
+      "mustHave": [
+        "moveSpeed",
+        "might"
+      ],
+      "priorities": [
+        {
+          "id": "6ad2082cfc80e898788916ca",
+          "options": [
+            "accuracy",
+            "precision"
+          ]
+        },
+        {
+          "id": "6ad2082cfc80e898788916cb",
+          "options": [
+            "critical",
+            "precision"
+          ]
+        },
+        {
+          "id": "6ad2082cfc80e898788916cc",
+          "options": [
+            "attack"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Halskette",
+      "group": "accessory",
+      "nameEn": "Necklace",
+      "mustHave": [
+        "combatSpeed",
+        "might"
+      ],
+      "priorities": [
+        {
+          "id": "6ad2082cfc80e898788916ce",
+          "options": [
+            "accuracy",
+            "precision"
+          ]
+        },
+        {
+          "id": "6ad2082cfc80e898788916cf",
+          "options": [
+            "critical",
+            "precision"
+          ]
+        },
+        {
+          "id": "6ad2082cfc80e898788916d0",
+          "options": [
+            "attack"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Ring",
+      "group": "accessory",
+      "nameEn": "Ring",
+      "mustHave": [
+        "skillsLevel20"
+      ],
+      "priorities": [
+        {
+          "id": "6ad2082cfc80e898788916d2",
+          "options": [
+            "skillsLevel16"
+          ]
+        },
+        {
+          "id": "6ad2082cfc80e898788916d3",
+          "options": [
+            "might"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Armband",
+      "group": "accessory",
+      "nameEn": "Bracelet",
+      "mustHave": [
+        "time"
+      ],
+      "priorities": [
+        {
+          "id": "6ad2082cfc80e898788916d5",
+          "options": [
+            "wisdom"
+          ]
+        },
+        {
+          "id": "6ad2082cfc80e898788916d6",
+          "options": [
+            "destruction"
+          ]
+        },
+        {
+          "id": "6ad2082cfc80e898788916d7",
+          "options": [
+            "illusion"
+          ]
+        }
+      ]
+    }
+  ]
+}

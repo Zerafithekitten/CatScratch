@@ -31,9 +31,9 @@ internal static class ControlPanelChecks
                 Check(((FrameworkElement)overlay.FindName("ShellClockPanel")).Visibility==
                     (layout==ControlsLayout.Vertical?Visibility.Collapsed:Visibility.Visible),
                     "Clock and fight duration stay hidden only in the vertical rail after refresh: "+layout);
-                var expected=layout==ControlsLayout.Horizontal?334:layout==ControlsLayout.Vertical?52:112;
+                var expected=layout==ControlsLayout.Horizontal?352:layout==ControlsLayout.Vertical?52:112;
                 Check(panel.Width==expected,"Compact panel width matches "+layout);
-                Check(panel.ActualHeight<=(layout==ControlsLayout.Horizontal?56:layout==ControlsLayout.Vertical?338:163),"Panel has no redundant blank height in "+layout);
+                Check(panel.ActualHeight<=(layout==ControlsLayout.Horizontal?56:layout==ControlsLayout.Vertical?356:163),"Panel has no redundant blank height in "+layout);
                 var buttons=Visuals(panel).OfType<ButtonBase>().Where(b=>b.IsVisible && b.IsEnabled).ToArray();
                 Check(buttons.Length>=19 && Window.GetWindow(checklist)==panel && Window.GetWindow(version)==panel,
                     "Module buttons and version remain in the panel in "+layout);

@@ -1,3 +1,126 @@
+## CatScratch v4.1.0
+
+Ein paar neue Tricks unter der Pfote. 🐾
+
+In diesem Update steckt die Arbeit aus den letzten Betas und die neue Klassenhilfe. Neben den größeren Neuerungen habe ich mich auch um die Dinge gekümmert, die man im Alltag ständig benutzt: Einstellungen ausprobieren, die DPS-Anzeige leeren, Schlüssel im Blick behalten und CatScratch etwas unnötige Arbeit abnehmen.
+
+Danke für eure Aufzeichnungen, Screenshots und die Geduld beim Testen. Hinter CatScratch sitzt weiterhin nur eine Katze – und einiges hier ist durch eure Rückmeldungen entstanden. 💜
+
+### Das ist drin
+
+- [Eine Orientierung für jede Klasse](#klassenhilfe)
+- [Genius Pet und Seelenbindungen](#pet-und-seelenbindung)
+- [Einstellungen direkt ausprobieren](#live-vorschau)
+- [Das Altgard-Kartenexperiment](#altgard-karte)
+- [Hidden Cubes und eure Schlüssel](#hidden-cubes)
+- [DPS-Anzeige leeren, Erfassung behalten](#dps-reset)
+- [Bosszeiten und Pet Tracker](#bosszeiten-und-pets)
+- [Ein wenig aufgeräumt](#aufgeraeumt)
+- [Weniger Arbeit im Hintergrund](#performance)
+
+<a id="klassenhilfe"></a>
+### 📖 Eine Orientierung für jede Klasse
+
+Im Bedienfeld gibt es einen neuen Buch-Button. Dahinter findet ihr eine kompakte Klassenhilfe für Gladiator, Templer, Assassine, Jäger, Zauberer, Beschwörer, Kleriker und Kantor.
+
+Aktive Fähigkeiten, Stigmas und passive Fähigkeiten haben ihre originalen Spielsymbole dabei. Dazu kommen empfohlene Ziellevel, Ausbau-Prioritäten und die Reihenfolge der Spezialitäten-Slots. Unter Belegung & Makro findet ihr eine Beispielbelegung und eine kopierbare Reihenfolge.
+
+Nutzt das als Einstieg und passt es an euren Level, eure Gruppe und euren Spielstil an. CatScratch führt keine Tastenanschläge oder Makros aus.
+
+Die Grundlage sind [Wakayashis Klassen-Guides](https://wakayashi.gg/aion2#class-guides). Quelle und Datenstand stehen im Fenster; die Inhalte sind lokal enthalten. Bei deutscher App-Sprache erscheint die Hilfe auf Deutsch, bei allen anderen Sprachen auf Englisch.
+
+![Class reference](https://raw.githubusercontent.com/Zerafithekitten/CatScratch/v4.1.0/docs/images/class-guide-skills-de-v4.1.0.png)
+
+<a id="pet-und-seelenbindung"></a>
+### 🐾 Genius Pet und Seelenbindungen
+
+Zwei weitere Reiter halten die passenden Empfehlungen zusammen:
+
+- **Genius Pet:** die neun Analyse-Slots mit ihren Prioritäten sowie die Bretter Cognia, Fera, Natura, Varia und Specia – einschließlich der besonderen Möglichkeiten für Slot 4.
+- **Seelenbindung:** Prioritäten für alle 13 Ausrüstungsplätze. Empfohlene passive Fähigkeiten und Skilllevel-Effekte wechseln mit der ausgewählten Klasse und zeigen die passenden Fähigkeitensymbole.
+
+Beides gibt es auf Deutsch und Englisch, mit direkten Links zu [Pet-Spezieskenntnis](https://wakayashi.gg/aion2#pet) und [Seelenbindung](https://wakayashi.gg/aion2#soul-binding). Es handelt sich um gespeicherte Guide-Empfehlungen; eure Ausrüstung oder Pet-Bretter werden dafür nicht live geprüft.
+
+![Soul binding](https://raw.githubusercontent.com/Zerafithekitten/CatScratch/v4.1.0/docs/images/class-guide-soul-de-v4.1.0.png)
+
+<a id="live-vorschau"></a>
+### 🎨 Einstellungen direkt ausprobieren
+
+Unterstützte Änderungen seht ihr jetzt sofort, während die Einstellungen noch offen sind: Layout, Sichtbarkeit, Auswahl, Größe, Transparenz, Farben, Sprache und Tonvorlieben.
+
+**Speichern** übernimmt die Vorschau und lässt das Fenster offen. Ändert ihr danach noch etwas, verwirft das Schließen nur diese späteren ungespeicherten Änderungen.
+
+Erfassung, Autostart-Anbindung und Hotkeys werden weiterhin mit Speichern übernommen. Die Vorschau von Kampfoptionen setzt den laufenden Kampf nicht zurück. Live-Fortschritt und Checklisten-Einträge behalten ihre eigene Speicherung.
+
+<a id="altgard-karte"></a>
+### 🗺️ Das Altgard-Kartenexperiment
+
+**STARK EXPERIMENTELL – optional, standardmäßig ausgeschaltet und vorerst nur für Altgard. Erkennung und Markerpositionen können falsch oder verzögert sein.**
+
+CatScratch kann Fundstellen-Symbole über der geöffneten Altgard-Karte im Spiel anzeigen. Die Bilderkennung ist enthalten; ihr braucht kein zusätzliches Programm.
+
+- Filter direkt auf der Karte ändern, ohne die Einstellungen zu öffnen.
+- Sechs aufklappbare Filtergruppen mit Anzeige der aktiven Auswahl.
+- Erze und Edelsteine anhand ihrer originalen Materialsymbole unterscheiden. Unterschiedliche Materialien bleiben beim Gruppieren getrennt.
+- Keine Materialnamen über der Karte; Federn und Kibelisken wurden aus den Markierungen entfernt.
+
+Die Fundstellen stammen aus Questlog-Kartendaten. Sie zeigen mögliche Positionen, **keine bestätigten aktuellen Spawns**.
+
+Bei geöffneter Karte machen die anderen CatScratch-Module Platz. Danach kommen genau die zuvor sichtbaren Module zurück. Erfassung und Fortschrittsverfolgung laufen währenddessen weiter.
+
+Außerdem habe ich an Bewegung und Zoom, verdeckten Kartenüberschriften, übersetzter Erkennung, Spielfenster-Zuordnung und verständlicheren Statusmeldungen gearbeitet. Nach den Berichten zum Mausflackern wurde die Bildschirmaufnahme überarbeitet. Kartenmarker und Filter sind wieder aus Bildschirmaufnahmen ausgeschlossen.
+
+Alles bleibt passiv: Bildschirmbilder, keine Zugriffe auf den Spielspeicher und keine automatisierten Spieleingaben. Bitte testet weiter mit – gerade unterschiedliche PCs und Anzeige-Einstellungen sind für dieses Experiment wichtig.
+
+<a id="hidden-cubes"></a>
+### 🔑 Hidden Cubes und eure Schlüssel
+
+Verschwindet ein bestätigter Würfel in der Nähe, erscheint kurz **„Cube disappeared“** mit unserem ratlosen Maskottchen. Bei dieser Meldung gibt es keine Schlüsselanzeige.
+
+**Key: Hidden Cube (Bound)** lässt sich außerdem im Ressourcenmodul auswählen: mit originalem Spielsymbol, unterstützten Live-Inventarupdates und optionaler Warnung bei niedrigem Bestand. Der gespeicherte Bestand erscheint auch in der Charakterübersicht.
+
+Bestätigte, gespeicherte und unbekannte Werte bleiben unterscheidbar. Ein älterer Stand wird dadurch nicht stillschweigend zu einer bestätigten Null.
+
+<a id="dps-reset"></a>
+### 🧹 DPS-Anzeige leeren, Erfassung behalten
+
+Der neue Radierer-Button entfernt die bisherigen Zeilen aus der DPS-Anzeige. Standardmäßig geht das auch mit **Umschalt+F2**; den Hotkey könnt ihr ändern.
+
+Die Erfassung läuft dabei weiter. Vorhandene Kämpfe und bestätigte Gruppenidentitäten bleiben erhalten. Für einen vollständigen Neustart der Erfassung könnt ihr den Button rechts anklicken.
+
+Die Markierung des eigenen Charakters wurde bei gleichen Namen auf unterschiedlichen Servern korrigiert. Die Gruppenprüfungen decken außerdem sechs Mitglieder, reine Heiler, die Zuordnung von Pet-Schaden, Zeilenlimits und wiederholte Gruppenlisten ab.
+
+<a id="bosszeiten-und-pets"></a>
+### ⏱️ Bosszeiten und Pet Tracker
+
+Ausgewählte Zeitplan-Bosse behalten ihren nächsten Termin auch dann sichtbar, wenn er mehr als eine Stunde entfernt ist – ebenfalls in separaten Timerfenstern.
+
+Watcher Kaira kann bei fehlender Live-Zeit den gekennzeichneten Community-Zeitplan verwenden. Empfangene Bossdaten haben Vorrang. Neue Zeiten, Sichtungen und Kills aktualisieren Upcoming, Started und separate Bossfenster direkt.
+
+Ich habe alle 24 auswählbaren Feldbosse sowie Seelenstände, Levelaufstiege, gespeicherten Pet-Fortschritt und Charakterwechsel geprüft. Gibt es weder Zeitdaten noch einen passenden Zeitplan, bleibt die Bosszeit ausdrücklich unbekannt.
+
+<a id="aufgeraeumt"></a>
+### 🧰 Ein wenig aufgeräumt
+
+- Alte Supporter-Pakete lassen sich unter Einstellungen → Patreon entfernen. Speichern führt die Entfernung aus; vorher könnt ihr sie zurücknehmen oder durch Schließen verwerfen. Die ursprünglich heruntergeladene Datei bleibt erhalten.
+- Für betroffene Sounds wird ein passendes verbleibendes Paket oder ein eingebauter Ersatz verwendet.
+- Optionale Updatehinweise und kompakte Overlay-Größen verbessert.
+- Das Zurückholen einer Position außerhalb des Bildschirms verbessert. Die zurückgeholte Position bleibt beim Schließen erhalten, ohne andere Vorschauänderungen zu speichern.
+- Das vorübergehende Alpha-Experiment ist beendet. Stable und Beta bleiben verfügbar; gespeicherte Alpha-Einstellungen wechseln zurück zu Beta.
+
+<a id="performance"></a>
+### ⚙️ Weniger Arbeit im Hintergrund
+
+Performance ist mir wichtig – schließlich läuft CatScratch oft einen ganzen Spielabend nebenher.
+
+Die Karte braucht weniger wiederholte Bildverarbeitung. Unveränderte Marker und Filter werden seltener neu aufgebaut, und die Markerberechnung erzeugt weniger kurzlebige Objekte. Hinter der Karte ausgeblendete Module sparen Darstellungsarbeit; Ressourcen, Dungeon-Eintritte und Pet-Fortschritt zeigen beim Schließen sofort den aktuellen Stand.
+
+Auch die Einstellungsvorschau erledigt weniger doppelte Arbeit. Beim Speichern von Ressourcen und Pet-Fortschritt werden andere Abläufe kürzer aufgehalten. Datenerfassung und Pet-Levelhinweise laufen bei offener Karte weiter.
+
+Die lokalen Verarbeitungstests sind schneller geworden. Wie viel das auf eurem PC ausmacht, hängt vom jeweiligen System ab – besonders mit eingeschaltetem Kartenexperiment.
+
+Danke, dass ihr dieser kleinen Katze beim Aufräumen helft. 💜
+
 ## CatScratch v4.0.9-beta.17
 
 Ich habe unter der Haube etwas aufgeräumt. Weniger unnötige Arbeit für CatScratch, mehr Luft fürs Spiel. 🐾

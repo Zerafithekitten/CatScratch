@@ -31,6 +31,7 @@ internal sealed class MeterControlsWindow : Window
     private ControlsAnchor? _anchor;
     private bool _aligning;
     private Button? _inlineUpdate;
+    private Button? _classGuideButton;
     private TextBlock? _brandTitle;
     private bool? _updateRail;
     private bool _updateAvailable;
@@ -115,6 +116,10 @@ internal sealed class MeterControlsWindow : Window
         var characterIcon=new System.Windows.Shapes.Path{Data=Geometry.Parse("M1,1 H15 V12 H1 Z M5,3 A1.5,1.5 0 1 0 5,6 A1.5,1.5 0 1 0 5,3 M2.8,10 C2.8,7 7.2,7 7.2,10 M10,4 H13 M10,7 H13 M10,10 H12"),Width=13,Height=12,Stretch=Stretch.Uniform,StrokeThickness=1.1,StrokeLineJoin=PenLineJoin.Round};
         characterIcon.SetBinding(System.Windows.Shapes.Shape.StrokeProperty,new System.Windows.Data.Binding(nameof(Control.Foreground)){Source=overview});overview.Content=characterIcon;
         overview.Click+=(_,_)=>ResourceOverviewWindow.Open(overlay.Meter);_buttons.Children.Add(overview);
+        var guide=_classGuideButton=new Button{Name="ClassGuideButton",ToolTip=ControlPanelSettingsPanel.L("Class reference","Klassenhilfe"),Style=(Style)FindResource("IconButton"),Width=18,Height=18,Padding=new(0)};
+        var guideIcon=new System.Windows.Shapes.Path{Data=Geometry.Parse(ClassGuideWindow.ButtonGeometry),Width=13,Height=13,Stretch=Stretch.Uniform,StrokeThickness=1.1,StrokeLineJoin=PenLineJoin.Round};
+        guideIcon.SetBinding(System.Windows.Shapes.Shape.StrokeProperty,new System.Windows.Data.Binding(nameof(Control.Foreground)){Source=guide});guide.Content=guideIcon;
+        guide.Click+=(_,_)=>ClassGuideWindow.Open(overlay.Meter);_buttons.Children.Add(guide);
         _captureDot.Name="CaptureStateDot";_header.Children.Add(_captureDot);
         _horizontalItems=_buttons.Children.Cast<UIElement>().ToArray();
         foreach(var item in _horizontalItems.OfType<FrameworkElement>().Concat([_personalButton,_petButton]))
@@ -169,6 +174,7 @@ internal sealed class MeterControlsWindow : Window
     }
     internal void RefreshText()
     {
+        if(_classGuideButton is not null)_classGuideButton.ToolTip=ControlPanelSettingsPanel.L("Class reference","Klassenhilfe");
         ApplyAppearance();
         SettingsButton.ToolTip=UiText.Current.TraySettings;
         RestoreButton.ToolTip=(_settings.OverlayVisible?UiText.Current.TrayHide:UiText.Current.Localize("Show DPS meter"))+" · "+_settings.HotkeyToggleOverlay;
@@ -200,7 +206,7 @@ internal sealed class MeterControlsWindow : Window
             _layout=_settings.ControlsLayout;
             var vertical=_layout==ControlsLayout.Grid;
             var rail=_layout==ControlsLayout.Vertical;
-            Width=vertical?112:rail?52:334;
+            Width=vertical?112:rail?52:352;
             _layoutRoot!.Orientation=rail?Orientation.Horizontal:Orientation.Vertical;
             _header.LayoutTransform=rail?new RotateTransform(90):Transform.Identity;
             _header.Width=rail?304:double.NaN;
@@ -271,7 +277,7 @@ internal sealed class MeterControlsWindow : Window
         FrameworkElement Item(string name)=>_horizontalItems.OfType<FrameworkElement>().Single(c=>c.Name==name);
         // Matching functional columns vertically and matching groups from left to right horizontally.
         var groups=new[]{
-            new[]{Item("DeathRecapButton"),_personalButton!,_petButton!,Item("ChecklistButton")},
+            new[]{Item("DeathRecapButton"),_personalButton!,_petButton!,Item("ChecklistButton"),Item("ClassGuideButton")},
             new[]{Item("CompactHistory"),Item("DetailsLink"),Item("BossRecordsButton"),Item("LastPlayedButton"),Item("ResourceOverviewButton")},
             new[]{RestoreButton,Item("BossTimersLink"),Item("SaveLastFightButton"),Item("ChatExportButton")},
             new[]{Item("RestartButton"),Item("LockButton"),Item("PatchNotesButton"),Item("CheckUpdatesButton")}

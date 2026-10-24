@@ -1,5 +1,8 @@
 # Release policy
 
+On 2026-10-24 the owner reviewed the actual class-reference, Pet and Soul Binding previews and English/German 4.1.0 draft notes, then explicitly approved publishing Stable 4.1.0 with all current Beta features and today's additions. Run complete release verification, publish main and latest Stable downloads, update GitHub documentation and keep the independent Light edition, private keys and paid archives unchanged. Preserve the strong optional Altgard experiment warning and passive operation.
+
+
 On 2026-10-24 the owner explicitly approved "okay dann machen wir mal nen beta update draus" after the local performance changes and verification results were reported. Publish v4.0.9-beta.17 after complete release checks, including reduced map tracking/projection work, presentation suspension, cache write-lock changes, live-preview comparisons, corrected map status and the reviewed off-screen companion recovery. Keep notes brief in English/German; distinguish processing benchmarks from actual game FPS. Preserve Stable, Light, paid assets and GitHub project presentation.
 
 On 2026-10-23 the owner explicitly approved "upload beta" after the supplied covered-heading screenshot was reproduced and recognized through the new UI-candidate plus independent terrain verification path. Publish v4.0.9-beta.16 after full checks. Restore recording exclusion for marker and filter windows and remove marker-area masking; keep localized headings and diagnostics. Distinguish the confirmed screenshot result from pending affected-user live validation. Preserve Stable, Light and GitHub project presentation.

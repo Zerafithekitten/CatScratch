@@ -1,0 +1,2893 @@
+{
+  "source": "https://wakayashi.gg/aion2#class-guides",
+  "author": "Wakayashi",
+  "retrieved": "2026-10-24",
+  "scope": "Global Season 1 · Leveling / PvE",
+  "macroDelayMs": 10,
+  "classes": [
+    {
+      "classId": "Gladiator",
+      "nameDe": "Gladiator",
+      "nameEn": "Gladiator",
+      "videoUrl": "https://www.youtube.com/watch?v=-AhdhhsU0oE",
+      "skills": [
+        {
+          "nameDe": "Scharfer Schlag",
+          "nameEn": "Keen Strike",
+          "kind": "mastery",
+          "targetLevel": 12,
+          "priority": null,
+          "specialtyOrder": [
+            4,
+            2
+          ],
+          "icon": "aion2-skill-gladiator-keen-strike.png"
+        },
+        {
+          "nameDe": "Zerreißender Schlag",
+          "nameEn": "Rending Blow",
+          "kind": "mastery",
+          "targetLevel": 20,
+          "priority": 2,
+          "specialtyOrder": [
+            3,
+            5,
+            4
+          ],
+          "icon": "aion2-skill-gladiator-rending-blow.png"
+        },
+        {
+          "nameDe": "Sprungangriff",
+          "nameEn": "Leaping Slam",
+          "kind": "mastery",
+          "targetLevel": 12,
+          "priority": null,
+          "specialtyOrder": [
+            3,
+            1
+          ],
+          "icon": "aion2-skill-gladiator-leaping-slam.png"
+        },
+        {
+          "nameDe": "Spottklinge",
+          "nameEn": "Mocking Blade",
+          "kind": "mastery",
+          "targetLevel": 16,
+          "priority": null,
+          "specialtyOrder": [
+            1,
+            5
+          ],
+          "icon": "aion2-skill-gladiator-mocking-blade.png"
+        },
+        {
+          "nameDe": "Abwärtsschlag",
+          "nameEn": "Overhead Slam",
+          "kind": "mastery",
+          "targetLevel": 20,
+          "priority": 1,
+          "specialtyOrder": [
+            5,
+            4,
+            3
+          ],
+          "icon": "aion2-skill-gladiator-overhead-slam.png"
+        },
+        {
+          "nameDe": "Klingenraserei",
+          "nameEn": "Sword Aura Rampage",
+          "kind": "mastery",
+          "targetLevel": 8,
+          "priority": null,
+          "specialtyOrder": [
+            1
+          ],
+          "icon": "aion2-skill-gladiator-sword-aura-rampage.png"
+        },
+        {
+          "nameDe": "Knöchelschnitt",
+          "nameEn": "Ankle Slice",
+          "kind": "mastery",
+          "targetLevel": 12,
+          "priority": null,
+          "specialtyOrder": [
+            3,
+            4
+          ],
+          "icon": "aion2-skill-gladiator-ankle-slice.png"
+        },
+        {
+          "nameDe": "Zerschmetternde Welle",
+          "nameEn": "Crushing Wave",
+          "kind": "mastery",
+          "targetLevel": 12,
+          "priority": null,
+          "specialtyOrder": [
+            4,
+            1
+          ],
+          "icon": "aion2-skill-gladiator-crushing-wave.png"
+        },
+        {
+          "nameDe": "Sturmhieb",
+          "nameEn": "Rush Strike",
+          "kind": "mastery",
+          "targetLevel": 12,
+          "priority": null,
+          "specialtyOrder": [
+            4,
+            2
+          ],
+          "icon": "aion2-skill-gladiator-rush-strike.png"
+        },
+        {
+          "nameDe": "Luftfesselung",
+          "nameEn": "Aerial Snare",
+          "kind": "mastery",
+          "targetLevel": 12,
+          "priority": null,
+          "specialtyOrder": [
+            3,
+            1
+          ],
+          "icon": "aion2-skill-gladiator-aerial-snare.png"
+        },
+        {
+          "nameDe": "Verheerender Schlag",
+          "nameEn": "Ruinous Blow",
+          "kind": "mastery",
+          "targetLevel": 20,
+          "priority": 3,
+          "specialtyOrder": [
+            4,
+            5,
+            3
+          ],
+          "icon": "aion2-skill-gladiator-ruinous-blow.png"
+        },
+        {
+          "nameDe": "Schockaufhebung",
+          "nameEn": "Defiance",
+          "kind": "mastery",
+          "targetLevel": 8,
+          "priority": null,
+          "specialtyOrder": [
+            3
+          ],
+          "icon": "aion2-skill-gladiator-defiance.png"
+        },
+        {
+          "nameDe": "Angriffsstellung",
+          "nameEn": "Lunge Stance",
+          "kind": "stigma",
+          "targetLevel": 20,
+          "priority": 1,
+          "specialtyOrder": [],
+          "icon": "aion2-skill-gladiator-lunge-stance.png"
+        },
+        {
+          "nameDe": "Zikels Segen",
+          "nameEn": "Zikel's Blessing",
+          "kind": "stigma",
+          "targetLevel": 20,
+          "priority": 2,
+          "specialtyOrder": [],
+          "icon": "aion2-skill-gladiator-zikels-blessing.png"
+        },
+        {
+          "nameDe": "Klinge des Lebensraubs",
+          "nameEn": "Lifestealing Blade",
+          "kind": "stigma",
+          "targetLevel": 15,
+          "priority": 3,
+          "specialtyOrder": [],
+          "icon": "aion2-skill-gladiator-lifestealing-blade.png"
+        },
+        {
+          "nameDe": "Furorausbruch",
+          "nameEn": "Rage Burst",
+          "kind": "stigma",
+          "targetLevel": 5,
+          "priority": 4,
+          "specialtyOrder": [],
+          "icon": "aion2-skill-gladiator-rage-burst.png"
+        },
+        {
+          "nameDe": "Erfahrener Konterangriff",
+          "nameEn": "Experienced Counterstrike",
+          "kind": "passive",
+          "targetLevel": null,
+          "priority": 1,
+          "specialtyOrder": [],
+          "icon": "aion2-skill-gladiator-experienced-counterstrike.png"
+        },
+        {
+          "nameDe": "Tödliche Eruption",
+          "nameEn": "Murderous Burst",
+          "kind": "passive",
+          "targetLevel": null,
+          "priority": 2,
+          "specialtyOrder": [],
+          "icon": "aion2-skill-gladiator-murderous-burst.png"
+        },
+        {
+          "nameDe": "Angriffsvorbereitung",
+          "nameEn": "Attack Preparation",
+          "kind": "passive",
+          "targetLevel": null,
+          "priority": 3,
+          "specialtyOrder": [],
+          "icon": "aion2-skill-gladiator-attack-preparation.png"
+        },
+        {
+          "nameDe": "Schocktreffer",
+          "nameEn": "Impact Hit",
+          "kind": "passive",
+          "targetLevel": null,
+          "priority": 4,
+          "specialtyOrder": [],
+          "icon": "aion2-skill-gladiator-impact-hit.png"
+        },
+        {
+          "nameDe": "Schwächenanalyse",
+          "nameEn": "Identify Weakness",
+          "kind": "passive",
+          "targetLevel": null,
+          "priority": 5,
+          "specialtyOrder": [],
+          "icon": "aion2-skill-gladiator-identify-weakness.png"
+        },
+        {
+          "nameDe": "Überlebenshaltung",
+          "nameEn": "Survival Stance",
+          "kind": "passive",
+          "targetLevel": null,
+          "priority": 6,
+          "specialtyOrder": [],
+          "icon": "aion2-skill-gladiator-survival-stance.png"
+        },
+        {
+          "nameDe": "Überlebenswille",
+          "nameEn": "Survival Willpower",
+          "kind": "passive",
+          "targetLevel": null,
+          "priority": 7,
+          "specialtyOrder": [],
+          "icon": "aion2-skill-gladiator-survival-willpower.png"
+        },
+        {
+          "nameDe": "Zerstörungsdrang",
+          "nameEn": "Destructive Impulse",
+          "kind": "passive",
+          "targetLevel": null,
+          "priority": 8,
+          "specialtyOrder": [],
+          "icon": "aion2-skill-gladiator-destructive-impulse.png"
+        },
+        {
+          "nameDe": "Blutabsorption",
+          "nameEn": "Blood Absorption",
+          "kind": "passive",
+          "targetLevel": null,
+          "priority": 9,
+          "specialtyOrder": [],
+          "icon": "aion2-skill-gladiator-blood-absorption.png"
+        },
+        {
+          "nameDe": "Schutzrüstung",
+          "nameEn": "Protection Armor",
+          "kind": "passive",
+          "targetLevel": null,
+          "priority": 10,
+          "specialtyOrder": [],
+          "icon": "aion2-skill-gladiator-protection-armor.png"
+        }
+      ],
+      "hotbar": [
+        {
+          "key": "1",
+          "skillIndices": [
+            2
+          ],
+          "manualAction": null
+        },
+        {
+          "key": "2",
+          "skillIndices": [
+            8
+          ],
+          "manualAction": null
+        },
+        {
+          "key": "3",
+          "skillIndices": [
+            3
+          ],
+          "manualAction": null
+        },
+        {
+          "key": "4",
+          "skillIndices": [
+            7
+          ],
+          "manualAction": null
+        },
+        {
+          "key": "5",
+          "skillIndices": [
+            12,
+            13
+          ],
+          "manualAction": null
+        },
+        {
+          "key": "8",
+          "skillIndices": [
+            6,
+            9
+          ],
+          "manualAction": null
+        },
+        {
+          "key": "Q",
+          "skillIndices": [],
+          "manualAction": "Block"
+        },
+        {
+          "key": "E",
+          "skillIndices": [
+            10,
+            4
+          ],
+          "manualAction": null
+        },
+        {
+          "key": "LMB",
+          "skillIndices": [
+            0
+          ],
+          "manualAction": null
+        },
+        {
+          "key": "R",
+          "skillIndices": [
+            15,
+            14,
+            5,
+            1
+          ],
+          "manualAction": null
+        }
+      ],
+      "macroKey": "RMB",
+      "macro": [
+        {
+          "key": "5",
+          "skillIndex": 12
+        },
+        {
+          "key": "E",
+          "skillIndex": 10
+        },
+        {
+          "key": "R",
+          "skillIndex": 15
+        }
+      ]
+    },
+    {
+      "classId": "Templar",
+      "nameDe": "Templer",
+      "nameEn": "Templar",
+      "videoUrl": "https://www.youtube.com/watch?v=ALI5DdzCd1c",
+      "skills": [
+        {
+          "nameDe": "Brutaler Schlag",
+          "nameEn": "Vicious Strike",
+          "kind": "mastery",
+          "targetLevel": 20,
+          "priority": null,
+          "specialtyOrder": [
+            1,
+            4,
+            5
+          ],
+          "icon": "aion2-skill-templar-vicious-strike.png"
+        },
+        {
+          "nameDe": "Tobende Hiebe",
+          "nameEn": "Pummel",
+          "kind": "mastery",
+          "targetLevel": 16,
+          "priority": null,
+          "specialtyOrder": [
+            1,
+            4
+          ],
+          "icon": "aion2-skill-templar-pummel.png"
+        },
+        {
+          "nameDe": "Fesseln",
+          "nameEn": "Poach",
+          "kind": "mastery",
+          "targetLevel": 12,
+          "priority": null,
+          "specialtyOrder": [
+            1,
+            3
+          ],
+          "icon": "aion2-skill-templar-poach.png"
+        },
+        {
+          "nameDe": "Schildhieb",
+          "nameEn": "Shield Smite",
+          "kind": "mastery",
+          "targetLevel": 12,
+          "priority": null,
+          "specialtyOrder": [
+            3,
+            4
+          ],
+          "icon": "aion2-skill-templar-shield-smite.png"
+        },
+        {
+          "nameDe": "Urteil",
+          "nameEn": "Judgment",
+          "kind": "mastery",
+          "targetLevel": 20,
+          "priority": null,
+          "specialtyOrder": [
+            3,
+            4,
+            5
+          ],
+          "icon": "aion2-skill-templar-judgment.png"
+        },
+        {
+          "nameDe": "Lichtraserei",
+          "nameEn": "Flash Rampage",
+          "kind": "mastery",
+          "targetLevel": 8,
+          "priority": null,
+          "specialtyOrder": [
+            1
+          ],
+          "icon": "aion2-skill-templar-flash-rampage.png"
+        },
+        {
+          "nameDe": "Lähmender Schlag",
+          "nameEn": "Debilitating Smash",
+          "kind": "mastery",
+          "targetLevel": 12,
+          "priority": null,
+          "specialtyOrder": [
+            2,
+            4
+          ],
+          "icon": "aion2-skill-templar-debilitating-smash.png"
+        },
+        {
+          "nameDe": "Behütender Schlag",
+          "nameEn": "Warding Strike",
+          "kind": "mastery",
+          "targetLevel": 16,
+          "priority": null,
+          "specialtyOrder": [
+            1,
+            5
+          ],
+          "icon": "aion2-skill-templar-warding-strike.png"
+        },
+        {
+          "nameDe": "Schildsturm",
+          "nameEn": "Shield Rush",
+          "kind": "mastery",
+          "targetLevel": 12,
+          "priority": null,
+          "specialtyOrder": [
+            4,
+            2
+          ],
+          "icon": "aion2-skill-templar-shield-rush.png"
+        },
+        {
+          "nameDe": "Vernichtung",
+          "nameEn": "Annihilate",
+          "kind": "mastery",
+          "targetLevel": 20,
+          "priority": null,
+          "specialtyOrder": [
+            3,
+            4,
+            1
+          ],
+          "icon": "aion2-skill-templar-annihilate.png"
+        },
+        {
+          "nameDe": "Bestrafung",
+          "nameEn": "Punishment",
+          "kind": "mastery",
+          "targetLevel": 20,
+          "priority": null,
+          "specialtyOrder": [
+            3,
+            4,
+            5
+          ],
+          "icon": "aion2-skill-templar-punishment.png"
+        },
+        {
+          "nameDe": "Schockaufhebung",
+          "nameEn": "Defiance",
+          "kind": "mastery",
+          "targetLevel": 8,
+          "priority": null,
+          "specialtyOrder": [
+            3
+          ],
+          "icon": "aion2-skill-templar-defiance.png"
+        },
+        {
+          "nameDe": "Edle Rüstung",
+          "nameEn": "Noble Armor",
+          "kind": "stigma",
+          "targetLevel": 15,
+          "priority": 1,
+          "specialtyOrder": [],
+          "icon": "aion2-skill-templar-noble-armor.png"
+        },
+        {
+          "nameDe": "Provokation",
+          "nameEn": "Taunt",
+          "kind": "stigma",
+          "targetLevel": 15,
+          "priority": 2,
+          "specialtyOrder": [],
+          "icon": "aion2-skill-templar-taunt.png"
+        },
+        {
+          "nameDe": "Wachtschild",
+          "nameEn": "Shield of Protection",
+          "kind": "stigma",
+          "targetLevel": 10,
+          "priority": 3,
+          "specialtyOrder": [],
+          "icon": "aion2-skill-templar-shield-of-protection.png"
+        },
+        {
+          "nameDe": "Schild des Verderbens",
+          "nameEn": "Doom Shield",
+          "kind": "stigma",
+          "targetLevel": 5,
+          "priority": 4,
+          "specialtyOrder": [],
+          "icon": "aion2-skill-templar-doom-shield.png"
+        },
+        {
+          "nameDe": "Kampfrausch",
+          "nameEn": "Fury",
+          "kind": "passive",
+          "targetLevel": null,
+          "priority": 1,
+          "specialtyOrder": [],
+          "icon": "aion2-skill-templar-fury.png"
+        },
+        {
+          "nameDe": "Gebrüll der Verachtung",
+          "nameEn": "Insulting Roar",
+          "kind": "passive",
+          "targetLevel": null,
+          "priority": 2,
+          "specialtyOrder": [],
+          "icon": "aion2-skill-templar-insulting-roar.png"
+        },
+        {
+          "nameDe": "Schocktreffer",
+          "nameEn": "Impact Hit",
+          "kind": "passive",
+          "targetLevel": null,
+          "priority": 3,
+          "specialtyOrder": [],
+          "icon": "aion2-skill-templar-impact-hit.png"
+        },
+        {
+          "nameDe": "Überlebenswille",
+          "nameEn": "Survival Willpower",
+          "kind": "passive",
+          "targetLevel": null,
+          "priority": 4,
+          "specialtyOrder": [],
+          "icon": "aion2-skill-templar-survival-willpower.png"
+        },
+        {
+          "nameDe": "Eisenwall-Verteidigung",
+          "nameEn": "Ironclad Defense",
+          "kind": "passive",
+          "targetLevel": null,
+          "priority": 5,
+          "specialtyOrder": [],
+          "icon": "aion2-skill-templar-ironclad-defense.png"
+        },
+        {
+          "nameDe": "Schmerzblockade",
+          "nameEn": "Block Pain",
+          "kind": "passive",
+          "targetLevel": null,
+          "priority": 6,
+          "specialtyOrder": [],
+          "icon": "aion2-skill-templar-block-pain.png"
+        },
+        {
+          "nameDe": "Gnade der Verdammnis",
+          "nameEn": "Punishing Benediction",
+          "kind": "passive",
+          "targetLevel": null,
+          "priority": 7,
+          "specialtyOrder": [],
+          "icon": "aion2-skill-templar-punishing-benediction.png"
+        },
+        {
+          "nameDe": "Vitalitätsverstärkung",
+          "nameEn": "Enhance Health",
+          "kind": "passive",
+          "targetLevel": null,
+          "priority": 8,
+          "specialtyOrder": [],
+          "icon": "aion2-skill-templar-enhance-health.png"
+        },
+        {
+          "nameDe": "Schutzsiegel",
+          "nameEn": "Guarding Seal",
+          "kind": "passive",
+          "targetLevel": null,
+          "priority": 9,
+          "specialtyOrder": [],
+          "icon": "aion2-skill-templar-guarding-seal.png"
+        },
+        {
+          "nameDe": "Behütungsschild",
+          "nameEn": "Warding Shield",
+          "kind": "passive",
+          "targetLevel": null,
+          "priority": 10,
+          "specialtyOrder": [],
+          "icon": "aion2-skill-templar-warding-shield.png"
+        }
+      ],
+      "hotbar": [
+        {
+          "key": "1",
+          "skillIndices": [
+            8
+          ],
+          "manualAction": null
+        },
+        {
+          "key": "2",
+          "skillIndices": [
+            2
+          ],
+          "manualAction": null
+        },
+        {
+          "key": "3",
+          "skillIndices": [
+            15,
+            13
+          ],
+          "manualAction": null
+        },
+        {
+          "key": "4",
+          "skillIndices": [
+            10
+          ],
+          "manualAction": null
+        },
+        {
+          "key": "5",
+          "skillIndices": [
+            5
+          ],
+          "manualAction": null
+        },
+        {
+          "key": "8",
+          "skillIndices": [
+            12,
+            9
+          ],
+          "manualAction": null
+        },
+        {
+          "key": "Q",
+          "skillIndices": [
+            14
+          ],
+          "manualAction": null
+        },
+        {
+          "key": "E",
+          "skillIndices": [
+            6
+          ],
+          "manualAction": null
+        },
+        {
+          "key": "LMB",
+          "skillIndices": [
+            0
+          ],
+          "manualAction": null
+        },
+        {
+          "key": "R",
+          "skillIndices": [
+            4,
+            7,
+            3,
+            1
+          ],
+          "manualAction": null
+        }
+      ],
+      "macroKey": "RMB",
+      "macro": [
+        {
+          "key": "R",
+          "skillIndex": 4
+        },
+        {
+          "key": "8",
+          "skillIndex": 12
+        }
+      ]
+    },
+    {
+      "classId": "Assassin",
+      "nameDe": "Assassine",
+      "nameEn": "Assassin",
+      "videoUrl": "https://www.youtube.com/watch?v=jRil2j7eqws",
+      "skills": [
+        {
+          "nameDe": "Schneller Schnitt",
+          "nameEn": "Quick Slice",
+          "kind": "mastery",
+          "targetLevel": 20,
+          "priority": 1,
+          "specialtyOrder": [
+            4,
+            5,
+            3
+          ],
+          "icon": "aion2-skill-assassin-quick-slice.png"
+        },
+        {
+          "nameDe": "Gebrüll der Bestie",
+          "nameEn": "Savage Roar",
+          "kind": "mastery",
+          "targetLevel": 20,
+          "priority": 2,
+          "specialtyOrder": [
+            2,
+            3,
+            4
+          ],
+          "icon": "aion2-skill-assassin-savage-roar.png"
+        },
+        {
+          "nameDe": "Schattenschlag",
+          "nameEn": "Shadowstrike",
+          "kind": "mastery",
+          "targetLevel": 12,
+          "priority": null,
+          "specialtyOrder": [
+            2,
+            3
+          ],
+          "icon": "aion2-skill-assassin-shadowstrike.png"
+        },
+        {
+          "nameDe": "Hinterhalt",
+          "nameEn": "Ambush",
+          "kind": "mastery",
+          "targetLevel": 16,
+          "priority": null,
+          "specialtyOrder": [
+            2,
+            5
+          ],
+          "icon": "aion2-skill-assassin-ambush.png"
+        },
+        {
+          "nameDe": "Herzstoß",
+          "nameEn": "Heart Gore",
+          "kind": "mastery",
+          "targetLevel": 20,
+          "priority": 3,
+          "specialtyOrder": [
+            5,
+            4,
+            1
+          ],
+          "icon": "aion2-skill-assassin-heart-gore.png"
+        },
+        {
+          "nameDe": "Sturmwirbel",
+          "nameEn": "Storm Rampage",
+          "kind": "mastery",
+          "targetLevel": 8,
+          "priority": null,
+          "specialtyOrder": [
+            1
+          ],
+          "icon": "aion2-skill-assassin-storm-rampage.png"
+        },
+        {
+          "nameDe": "Wirbelschnitt",
+          "nameEn": "Whirlwind Slice",
+          "kind": "mastery",
+          "targetLevel": 12,
+          "priority": null,
+          "specialtyOrder": [
+            3,
+            1
+          ],
+          "icon": "aion2-skill-assassin-whirlwind-slice.png"
+        },
+        {
+          "nameDe": "Blitzhafter Schnitt",
+          "nameEn": "Flash Slice",
+          "kind": "mastery",
+          "targetLevel": 12,
+          "priority": null,
+          "specialtyOrder": [
+            2,
+            4
+          ],
+          "icon": "aion2-skill-assassin-flash-slice.png"
+        },
+        {
+          "nameDe": "Infiltration",
+          "nameEn": "Infiltrate",
+          "kind": "mastery",
+          "targetLevel": 12,
+          "priority": null,
+          "specialtyOrder": [
+            2,
+            1
+          ],
+          "icon": "aion2-skill-assassin-infiltrate.png"
+        },
+        {
+          "nameDe": "Schattenfall",
+          "nameEn": "Shadow Fall",
+          "kind": "mastery",
+          "targetLevel": 12,
+          "priority": null,
+          "specialtyOrder": [
+            3,
+            1
+          ],
+          "icon": "aion2-skill-assassin-shadow-fall.png"
+        },
+        {
+          "nameDe": "Glyphenexplosion",
+          "nameEn": "Insignia Explosion",
+          "kind": "mastery",
+          "targetLevel": 20,
+          "priority": 4,
+          "specialtyOrder": [
+            5,
+            2,
+            3
+          ],
+          "icon": "aion2-skill-assassin-insignia-explosion.png"
+        },
+        {
+          "nameDe": "Schockaufhebung",
+          "nameEn": "Defiance",
+          "kind": "mastery",
+          "targetLevel": 8,
+          "priority": null,
+          "specialtyOrder": [
+            3
+          ],
+          "icon": "aion2-skill-assassin-defiance.png"
+        },
+        {
+          "nameDe": "Illusion",
+          "nameEn": "Illusive Clone",
+          "kind": "stigma",
+          "targetLevel": 20,
+          "priority": 1,
+          "specialtyOrder": [],
+          "icon": "aion2-skill-assassin-illusive-clone.png"
+        },
+        {
+          "nameDe": "Pakt der Flinkheit",
+          "nameEn": "Swift Contract",
+          "kind": "stigma",
+          "targetLevel": 20,
+          "priority": 2,
+          "specialtyOrder": [],
+          "icon": "aion2-skill-assassin-swift-contract.png"
+        },
+        {
+          "nameDe": "Reißzahn der Bestie",
+          "nameEn": "Savage Fang",
+          "kind": "stigma",
+          "targetLevel": 15,
+          "priority": 3,
+          "specialtyOrder": [],
+          "icon": "aion2-skill-assassin-savage-fang.png"
+        },
+        {
+          "nameDe": "Triniels Dolch",
+          "nameEn": "Triniel's Dagger",
+          "kind": "stigma",
+          "targetLevel": 10,
+          "priority": 4,
+          "specialtyOrder": [],
+          "icon": "aion2-skill-assassin-triniels-dagger.png"
+        },
+        {
+          "nameDe": "Rückhieb",
+          "nameEn": "Rear Smite",
+          "kind": "passive",
+          "targetLevel": null,
+          "priority": 1,
+          "specialtyOrder": [],
+          "icon": "aion2-skill-assassin-rear-smite.png"
+        },
+        {
+          "nameDe": "Sturmhaltung",
+          "nameEn": "Assault Stance",
+          "kind": "passive",
+          "targetLevel": null,
+          "priority": 2,
+          "specialtyOrder": [],
+          "icon": "aion2-skill-assassin-assault-stance.png"
+        },
+        {
+          "nameDe": "Schwachstellenfokus",
+          "nameEn": "Exploit Weakness",
+          "kind": "passive",
+          "targetLevel": null,
+          "priority": 3,
+          "specialtyOrder": [],
+          "icon": "aion2-skill-assassin-exploit-weakness.png"
+        },
+        {
+          "nameDe": "Schocktreffer",
+          "nameEn": "Impact Hit",
+          "kind": "passive",
+          "targetLevel": null,
+          "priority": 4,
+          "specialtyOrder": [],
+          "icon": "aion2-skill-assassin-impact-hit.png"
+        },
+        {
+          "nameDe": "Lauerhaltung",
+          "nameEn": "Ambush Stance",
+          "kind": "passive",
+          "targetLevel": null,
+          "priority": 5,
+          "specialtyOrder": [],
+          "icon": "aion2-skill-assassin-ambush-stance.png"
+        },
+        {
+          "nameDe": "Entschlossenheit",
+          "nameEn": "Determination",
+          "kind": "passive",
+          "targetLevel": null,
+          "priority": 6,
+          "specialtyOrder": [],
+          "icon": "aion2-skill-assassin-determination.png"
+        },
+        {
+          "nameDe": "Verteidigungsbruch",
+          "nameEn": "Defense Break",
+          "kind": "passive",
+          "targetLevel": null,
+          "priority": 7,
+          "specialtyOrder": [],
+          "icon": "aion2-skill-assassin-defense-break.png"
+        },
+        {
+          "nameDe": "Geschärfte Sinne",
+          "nameEn": "Heightened Sixth Sense",
+          "kind": "passive",
+          "targetLevel": null,
+          "priority": 8,
+          "specialtyOrder": [],
+          "icon": "aion2-skill-assassin-heightened-sixth-sense.png"
+        },
+        {
+          "nameDe": "Pakt der Revitalisierung",
+          "nameEn": "Revitalization Contract",
+          "kind": "passive",
+          "targetLevel": null,
+          "priority": 9,
+          "specialtyOrder": [],
+          "icon": "aion2-skill-assassin-revitalization-contract.png"
+        },
+        {
+          "nameDe": "Klingengift",
+          "nameEn": "Apply Poison",
+          "kind": "passive",
+          "targetLevel": null,
+          "priority": 10,
+          "specialtyOrder": [],
+          "icon": "aion2-skill-assassin-apply-poison.png"
+        }
+      ],
+      "hotbar": [
+        {
+          "key": "1",
+          "skillIndices": [
+            2
+          ],
+          "manualAction": null
+        },
+        {
+          "key": "2",
+          "skillIndices": [
+            8,
+            9
+          ],
+          "manualAction": null
+        },
+        {
+          "key": "3",
+          "skillIndices": [
+            7
+          ],
+          "manualAction": null
+        },
+        {
+          "key": "4",
+          "skillIndices": [
+            13,
+            12
+          ],
+          "manualAction": null
+        },
+        {
+          "key": "Q",
+          "skillIndices": [
+            3,
+            6
+          ],
+          "manualAction": null
+        },
+        {
+          "key": "8",
+          "skillIndices": [
+            10,
+            14,
+            15
+          ],
+          "manualAction": null
+        },
+        {
+          "key": "E",
+          "skillIndices": [
+            5
+          ],
+          "manualAction": null
+        },
+        {
+          "key": "LMB",
+          "skillIndices": [
+            0
+          ],
+          "manualAction": null
+        },
+        {
+          "key": "R",
+          "skillIndices": [
+            4,
+            1
+          ],
+          "manualAction": null
+        }
+      ],
+      "macroKey": "RMB",
+      "macro": [
+        {
+          "key": "R",
+          "skillIndex": 4
+        },
+        {
+          "key": "8",
+          "skillIndex": 10
+        }
+      ]
+    },
+    {
+      "classId": "Ranger",
+      "nameDe": "Jäger",
+      "nameEn": "Ranger",
+      "videoUrl": "https://www.youtube.com/watch?v=ITM6ujWwEcE",
+      "skills": [
+        {
+          "nameDe": "Scharfschuss",
+          "nameEn": "Snipe",
+          "kind": "mastery",
+          "targetLevel": 20,
+          "priority": 4,
+          "specialtyOrder": [
+            4,
+            5,
+            3
+          ],
+          "icon": "aion2-skill-ranger-snipe.png"
+        },
+        {
+          "nameDe": "Schnellschuss",
+          "nameEn": "Tempest Shot",
+          "kind": "mastery",
+          "targetLevel": 16,
+          "priority": null,
+          "specialtyOrder": [
+            3,
+            2
+          ],
+          "icon": "aion2-skill-ranger-tempest-shot.png"
+        },
+        {
+          "nameDe": "Schlingenpfeil",
+          "nameEn": "Snare Shot",
+          "kind": "mastery",
+          "targetLevel": 12,
+          "priority": null,
+          "specialtyOrder": [
+            3,
+            2
+          ],
+          "icon": "aion2-skill-ranger-snare-shot.png"
+        },
+        {
+          "nameDe": "Markierungsschuss",
+          "nameEn": "Marking Shot",
+          "kind": "mastery",
+          "targetLevel": 12,
+          "priority": null,
+          "specialtyOrder": [
+            1,
+            3
+          ],
+          "icon": "aion2-skill-ranger-marking-shot.png"
+        },
+        {
+          "nameDe": "Bohrpfeil",
+          "nameEn": "Drill Dart",
+          "kind": "mastery",
+          "targetLevel": 20,
+          "priority": 3,
+          "specialtyOrder": [
+            5,
+            3,
+            4
+          ],
+          "icon": "aion2-skill-ranger-drill-dart.png"
+        },
+        {
+          "nameDe": "Pfeilhagel",
+          "nameEn": "Arrow Scattershot",
+          "kind": "mastery",
+          "targetLevel": 8,
+          "priority": null,
+          "specialtyOrder": [
+            1
+          ],
+          "icon": "aion2-skill-ranger-arrow-scattershot.png"
+        },
+        {
+          "nameDe": "Orkanpfeil",
+          "nameEn": "Gale Arrow",
+          "kind": "mastery",
+          "targetLevel": 20,
+          "priority": 2,
+          "specialtyOrder": [
+            4,
+            5,
+            3
+          ],
+          "icon": "aion2-skill-ranger-gale-arrow.png"
+        },
+        {
+          "nameDe": "Explosionsfalle",
+          "nameEn": "Explosion Trap",
+          "kind": "mastery",
+          "targetLevel": 12,
+          "priority": null,
+          "specialtyOrder": [
+            1,
+            3
+          ],
+          "icon": "aion2-skill-ranger-explosion-trap.png"
+        },
+        {
+          "nameDe": "Sprengpfeil",
+          "nameEn": "Burst Arrow",
+          "kind": "mastery",
+          "targetLevel": 16,
+          "priority": null,
+          "specialtyOrder": [
+            4,
+            3
+          ],
+          "icon": "aion2-skill-ranger-burst-arrow.png"
+        },
+        {
+          "nameDe": "Unterdrückungspfeil",
+          "nameEn": "Suppressing Arrow",
+          "kind": "mastery",
+          "targetLevel": 12,
+          "priority": null,
+          "specialtyOrder": [
+            3,
+            1
+          ],
+          "icon": "aion2-skill-ranger-suppressing-arrow.png"
+        },
+        {
+          "nameDe": "Zielpfeil",
+          "nameEn": "Deadshot",
+          "kind": "mastery",
+          "targetLevel": 20,
+          "priority": 1,
+          "specialtyOrder": [
+            5,
+            2,
+            4
+          ],
+          "icon": "aion2-skill-ranger-deadshot.png"
+        },
+        {
+          "nameDe": "Schockaufhebung",
+          "nameEn": "Defiance",
+          "kind": "mastery",
+          "targetLevel": 8,
+          "priority": null,
+          "specialtyOrder": [
+            3
+          ],
+          "icon": "aion2-skill-ranger-defiance.png"
+        },
+        {
+          "nameDe": "Vaizels Hoheit",
+          "nameEn": "Vaizel's Authority",
+          "kind": "stigma",
+          "targetLevel": 20,
+          "priority": 1,
+          "specialtyOrder": [],
+          "icon": "aion2-skill-ranger-vaizels-authority.png"
+        },
+        {
+          "nameDe": "Segensbogen",
+          "nameEn": "Bow of Blessing",
+          "kind": "stigma",
+          "targetLevel": 20,
+          "priority": 2,
+          "specialtyOrder": [],
+          "icon": "aion2-skill-ranger-bow-of-blessing.png"
+        },
+        {
+          "nameDe": "Unterstützungsfeuer",
+          "nameEn": "Supporting Fire",
+          "kind": "stigma",
+          "targetLevel": 15,
+          "priority": 3,
+          "specialtyOrder": [],
+          "icon": "aion2-skill-ranger-supporting-fire.png"
+        },
+        {
+          "nameDe": "Greifenpfeil",
+          "nameEn": "Griffon Arrow",
+          "kind": "stigma",
+          "targetLevel": 5,
+          "priority": 4,
+          "specialtyOrder": [],
+          "icon": "aion2-skill-ranger-griffon-arrow.png"
+        },
+        {
+          "nameDe": "Fokussiertes Auge",
+          "nameEn": "Focused Eye",
+          "kind": "passive",
+          "targetLevel": null,
+          "priority": 1,
+          "specialtyOrder": [],
+          "icon": "aion2-skill-ranger-focused-eye.png"
+        },
+        {
+          "nameDe": "Entschlossenheit des Jägers",
+          "nameEn": "Hunter's Resolve",
+          "kind": "passive",
+          "targetLevel": null,
+          "priority": 2,
+          "specialtyOrder": [],
+          "icon": "aion2-skill-ranger-hunters-resolve.png"
+        },
+        {
+          "nameDe": "Jägerseele",
+          "nameEn": "Hunter's Soul",
+          "kind": "passive",
+          "targetLevel": null,
+          "priority": 3,
+          "specialtyOrder": [],
+          "icon": "aion2-skill-ranger-hunters-soul.png"
+        },
+        {
+          "nameDe": "Fokussiertes Feuer",
+          "nameEn": "Concentrated Fire",
+          "kind": "passive",
+          "targetLevel": null,
+          "priority": 4,
+          "specialtyOrder": [],
+          "icon": "aion2-skill-ranger-concentrated-fire.png"
+        },
+        {
+          "nameDe": "Fesselndes Auge",
+          "nameEn": "Rooting Eye",
+          "kind": "passive",
+          "targetLevel": null,
+          "priority": 5,
+          "specialtyOrder": [],
+          "icon": "aion2-skill-ranger-rooting-eye.png"
+        },
+        {
+          "nameDe": "Achtsames Auge",
+          "nameEn": "Vigilant Eye",
+          "kind": "passive",
+          "targetLevel": null,
+          "priority": 6,
+          "specialtyOrder": [],
+          "icon": "aion2-skill-ranger-vigilant-eye.png"
+        },
+        {
+          "nameDe": "Nahschuss",
+          "nameEn": "Melee Fire",
+          "kind": "passive",
+          "targetLevel": null,
+          "priority": 7,
+          "specialtyOrder": [],
+          "icon": "aion2-skill-ranger-melee-fire.png"
+        },
+        {
+          "nameDe": "Elan des Windes",
+          "nameEn": "Wind Vigor",
+          "kind": "passive",
+          "targetLevel": null,
+          "priority": 8,
+          "specialtyOrder": [],
+          "icon": "aion2-skill-ranger-wind-vigor.png"
+        },
+        {
+          "nameDe": "Pakt der Revitalisierung",
+          "nameEn": "Revitalization Contract",
+          "kind": "passive",
+          "targetLevel": null,
+          "priority": 9,
+          "specialtyOrder": [],
+          "icon": "aion2-skill-ranger-revitalization-contract.png"
+        },
+        {
+          "nameDe": "Entschlossenheit des Widerstands",
+          "nameEn": "Unyielding Resolve",
+          "kind": "passive",
+          "targetLevel": null,
+          "priority": 10,
+          "specialtyOrder": [],
+          "icon": "aion2-skill-ranger-unyielding-resolve.png"
+        }
+      ],
+      "hotbar": [
+        {
+          "key": "1",
+          "skillIndices": [
+            3
+          ],
+          "manualAction": null
+        },
+        {
+          "key": "2",
+          "skillIndices": [
+            10
+          ],
+          "manualAction": null
+        },
+        {
+          "key": "3",
+          "skillIndices": [
+            12,
+            14,
+            13
+          ],
+          "manualAction": null
+        },
+        {
+          "key": "5",
+          "skillIndices": [
+            6,
+            15,
+            2
+          ],
+          "manualAction": null
+        },
+        {
+          "key": "7",
+          "skillIndices": [
+            7
+          ],
+          "manualAction": null
+        },
+        {
+          "key": "8",
+          "skillIndices": [
+            9
+          ],
+          "manualAction": null
+        },
+        {
+          "key": "E",
+          "skillIndices": [
+            5
+          ],
+          "manualAction": null
+        },
+        {
+          "key": "LMB",
+          "skillIndices": [
+            0
+          ],
+          "manualAction": null
+        },
+        {
+          "key": "R",
+          "skillIndices": [
+            4,
+            8,
+            1
+          ],
+          "manualAction": null
+        }
+      ],
+      "macroKey": "RMB",
+      "macro": [
+        {
+          "key": "R",
+          "skillIndex": 4
+        },
+        {
+          "key": "3",
+          "skillIndex": 12
+        },
+        {
+          "key": "5",
+          "skillIndex": 6
+        }
+      ]
+    },
+    {
+      "classId": "Sorcerer",
+      "nameDe": "Zauberer",
+      "nameEn": "Sorcerer",
+      "videoUrl": "https://www.youtube.com/watch?v=EWd0Pi-RPpY",
+      "skills": [
+        {
+          "nameDe": "Flammenschlag",
+          "nameEn": "Firestorm",
+          "kind": "mastery",
+          "targetLevel": 20,
+          "priority": 6,
+          "specialtyOrder": [
+            4,
+            2,
+            5
+          ],
+          "icon": "aion2-skill-sorcerer-firestorm.png"
+        },
+        {
+          "nameDe": "Flammenpfeil",
+          "nameEn": "Flame Arrow",
+          "kind": "mastery",
+          "targetLevel": 16,
+          "priority": 1,
+          "specialtyOrder": [
+            5,
+            4
+          ],
+          "icon": "aion2-skill-sorcerer-flame-arrow.png"
+        },
+        {
+          "nameDe": "Eiskette",
+          "nameEn": "Ice Chain",
+          "kind": "mastery",
+          "targetLevel": 12,
+          "priority": null,
+          "specialtyOrder": [
+            2,
+            3
+          ],
+          "icon": "aion2-skill-sorcerer-ice-chain.png"
+        },
+        {
+          "nameDe": "Bitterkalter Wind",
+          "nameEn": "Bittercold Wind",
+          "kind": "mastery",
+          "targetLevel": 20,
+          "priority": 5,
+          "specialtyOrder": [
+            1,
+            4,
+            2
+          ],
+          "icon": "aion2-skill-sorcerer-bittercold-wind.png"
+        },
+        {
+          "nameDe": "Flammenexplosion",
+          "nameEn": "Blaze",
+          "kind": "mastery",
+          "targetLevel": 16,
+          "priority": 2,
+          "specialtyOrder": [
+            5,
+            3
+          ],
+          "icon": "aion2-skill-sorcerer-blaze.png"
+        },
+        {
+          "nameDe": "Flammenfeuer",
+          "nameEn": "Flame Scattershot",
+          "kind": "mastery",
+          "targetLevel": 8,
+          "priority": null,
+          "specialtyOrder": [
+            1
+          ],
+          "icon": "aion2-skill-sorcerer-flame-scattershot.png"
+        },
+        {
+          "nameDe": "Einfrieren",
+          "nameEn": "Frost",
+          "kind": "mastery",
+          "targetLevel": null,
+          "priority": null,
+          "specialtyOrder": [],
+          "icon": "aion2-skill-sorcerer-frost.png"
+        },
+        {
+          "nameDe": "Winterbann",
+          "nameEn": "Winter's Shackles",
+          "kind": "mastery",
+          "targetLevel": 16,
+          "priority": null,
+          "specialtyOrder": [
+            3,
+            5
+          ],
+          "icon": "aion2-skill-sorcerer-winters-shackles.png"
+        },
+        {
+          "nameDe": "Eisexplosion",
+          "nameEn": "Frost Burst",
+          "kind": "mastery",
+          "targetLevel": 12,
+          "priority": null,
+          "specialtyOrder": [
+            1,
+            4
+          ],
+          "icon": "aion2-skill-sorcerer-frost-burst.png"
+        },
+        {
+          "nameDe": "Andacht der Konzentration",
+          "nameEn": "Wish of Concentration",
+          "kind": "mastery",
+          "targetLevel": 20,
+          "priority": 3,
+          "specialtyOrder": [
+            5,
+            4,
+            2
+          ],
+          "icon": "aion2-skill-sorcerer-wish-of-concentration.png"
+        },
+        {
+          "nameDe": "Höllenflamme",
+          "nameEn": "Hellfire",
+          "kind": "mastery",
+          "targetLevel": 20,
+          "priority": 4,
+          "specialtyOrder": [
+            1,
+            5,
+            3
+          ],
+          "icon": "aion2-skill-sorcerer-hellfire.png"
+        },
+        {
+          "nameDe": "Schockaufhebung",
+          "nameEn": "Defiance",
+          "kind": "mastery",
+          "targetLevel": 8,
+          "priority": null,
+          "specialtyOrder": [
+            3
+          ],
+          "icon": "aion2-skill-sorcerer-defiance.png"
+        },
+        {
+          "nameDe": "Elementarverstärkung",
+          "nameEn": "Element Enhancement",
+          "kind": "stigma",
+          "targetLevel": 20,
+          "priority": 1,
+          "specialtyOrder": [],
+          "icon": "aion2-skill-sorcerer-element-enhancement.png"
+        },
+        {
+          "nameDe": "Flammenbarriere",
+          "nameEn": "Fire Wall",
+          "kind": "stigma",
+          "targetLevel": 20,
+          "priority": 2,
+          "specialtyOrder": [],
+          "icon": "aion2-skill-sorcerer-fire-wall.png"
+        },
+        {
+          "nameDe": "Kältesturm",
+          "nameEn": "Cold Storm",
+          "kind": "stigma",
+          "targetLevel": 5,
+          "priority": 3,
+          "specialtyOrder": [],
+          "icon": "aion2-skill-sorcerer-cold-storm.png"
+        },
+        {
+          "nameDe": "Verzögerte Explosion",
+          "nameEn": "Delayed Explosion",
+          "kind": "stigma",
+          "targetLevel": 10,
+          "priority": 4,
+          "specialtyOrder": [],
+          "icon": "aion2-skill-sorcerer-delayed-explosion.png"
+        },
+        {
+          "nameDe": "Robe der Flamme",
+          "nameEn": "Robe of Flame",
+          "kind": "passive",
+          "targetLevel": null,
+          "priority": 1,
+          "specialtyOrder": [],
+          "icon": "aion2-skill-sorcerer-robe-of-flame.png"
+        },
+        {
+          "nameDe": "Robe der Erde",
+          "nameEn": "Robe of Earth",
+          "kind": "passive",
+          "targetLevel": null,
+          "priority": 2,
+          "specialtyOrder": [],
+          "icon": "aion2-skill-sorcerer-robe-of-earth.png"
+        },
+        {
+          "nameDe": "Feuerzeichen",
+          "nameEn": "Fire Mark",
+          "kind": "passive",
+          "targetLevel": null,
+          "priority": 3,
+          "specialtyOrder": [],
+          "icon": "aion2-skill-sorcerer-fire-mark.png"
+        },
+        {
+          "nameDe": "Gnade der Verstärkung",
+          "nameEn": "Grace of Enhancement",
+          "kind": "passive",
+          "targetLevel": null,
+          "priority": 4,
+          "specialtyOrder": [],
+          "icon": "aion2-skill-sorcerer-grace-of-enhancement.png"
+        },
+        {
+          "nameDe": "Entzug der Lebensenergie",
+          "nameEn": "Vitality Evaporation",
+          "kind": "passive",
+          "targetLevel": null,
+          "priority": 5,
+          "specialtyOrder": [],
+          "icon": "aion2-skill-sorcerer-vitality-evaporation.png"
+        },
+        {
+          "nameDe": "Beschwörung der Kälte",
+          "nameEn": "Cold Snap",
+          "kind": "passive",
+          "targetLevel": null,
+          "priority": 6,
+          "specialtyOrder": [],
+          "icon": "aion2-skill-sorcerer-cold-snap.png"
+        },
+        {
+          "nameDe": "Robe der Kälte",
+          "nameEn": "Robe of Cold",
+          "kind": "passive",
+          "targetLevel": null,
+          "priority": 7,
+          "specialtyOrder": [],
+          "icon": "aion2-skill-sorcerer-robe-of-cold.png"
+        },
+        {
+          "nameDe": "Essenzabsorption",
+          "nameEn": "Absorb Essence",
+          "kind": "passive",
+          "targetLevel": null,
+          "priority": 8,
+          "specialtyOrder": [],
+          "icon": "aion2-skill-sorcerer-absorb-essence.png"
+        },
+        {
+          "nameDe": "Pakt der Revitalisierung",
+          "nameEn": "Revitalization Contract",
+          "kind": "passive",
+          "targetLevel": null,
+          "priority": 9,
+          "specialtyOrder": [],
+          "icon": "aion2-skill-sorcerer-revitalization-contract.png"
+        },
+        {
+          "nameDe": "Gnade des Widerstands",
+          "nameEn": "Grace of Resistance",
+          "kind": "passive",
+          "targetLevel": null,
+          "priority": 10,
+          "specialtyOrder": [],
+          "icon": "aion2-skill-sorcerer-grace-of-resistance.png"
+        }
+      ],
+      "hotbar": [
+        {
+          "key": "1",
+          "skillIndices": [
+            4,
+            3,
+            0,
+            9
+          ],
+          "manualAction": null
+        },
+        {
+          "key": "3",
+          "skillIndices": [
+            10
+          ],
+          "manualAction": null
+        },
+        {
+          "key": "4",
+          "skillIndices": [
+            15,
+            7,
+            8
+          ],
+          "manualAction": null
+        },
+        {
+          "key": "Q",
+          "skillIndices": [
+            6
+          ],
+          "manualAction": null
+        },
+        {
+          "key": "E",
+          "skillIndices": [
+            5
+          ],
+          "manualAction": null
+        },
+        {
+          "key": "R",
+          "skillIndices": [
+            12,
+            13,
+            14
+          ],
+          "manualAction": null
+        },
+        {
+          "key": "LMB",
+          "skillIndices": [
+            1
+          ],
+          "manualAction": null
+        },
+        {
+          "key": "T",
+          "skillIndices": [
+            2
+          ],
+          "manualAction": null
+        }
+      ],
+      "macroKey": "RMB",
+      "macro": [
+        {
+          "key": "1",
+          "skillIndex": 4
+        },
+        {
+          "key": "4",
+          "skillIndex": 15
+        }
+      ]
+    },
+    {
+      "classId": "Elementalist",
+      "nameDe": "Beschwörer",
+      "nameEn": "Elementalist",
+      "videoUrl": "https://www.youtube.com/watch?v=6vJOYEIcQFQ",
+      "skills": [
+        {
+          "nameDe": "Kälteschock",
+          "nameEn": "Cold Shock",
+          "kind": "mastery",
+          "targetLevel": 16,
+          "priority": null,
+          "specialtyOrder": [
+            4,
+            3
+          ],
+          "icon": "aion2-skill-elementalist-cold-shock.png"
+        },
+        {
+          "nameDe": "Einäscherung",
+          "nameEn": "Combustion",
+          "kind": "mastery",
+          "targetLevel": 20,
+          "priority": 3,
+          "specialtyOrder": [
+            4,
+            2,
+            5
+          ],
+          "icon": "aion2-skill-elementalist-combustion.png"
+        },
+        {
+          "nameDe": "Beschwörung: Feuergeist",
+          "nameEn": "Summon: Fire Spirit",
+          "kind": "mastery",
+          "targetLevel": 20,
+          "priority": 2,
+          "specialtyOrder": [
+            5,
+            2,
+            3
+          ],
+          "icon": "aion2-skill-elementalist-summon-fire-spirit.png"
+        },
+        {
+          "nameDe": "Beschwörung: Wassergeist",
+          "nameEn": "Summon: Water Spirit",
+          "kind": "mastery",
+          "targetLevel": 16,
+          "priority": null,
+          "specialtyOrder": [
+            5,
+            2
+          ],
+          "icon": "aion2-skill-elementalist-summon-water-spirit.png"
+        },
+        {
+          "nameDe": "Koordinationsangriff: Fluch",
+          "nameEn": "Jointstrike: Curse",
+          "kind": "mastery",
+          "targetLevel": 20,
+          "priority": null,
+          "specialtyOrder": [
+            3,
+            4,
+            2
+          ],
+          "icon": "aion2-skill-elementalist-jointstrike-curse.png"
+        },
+        {
+          "nameDe": "Schnellfeuer",
+          "nameEn": "Rapid Scattershot",
+          "kind": "mastery",
+          "targetLevel": 8,
+          "priority": null,
+          "specialtyOrder": [
+            1
+          ],
+          "icon": "aion2-skill-elementalist-rapid-scattershot.png"
+        },
+        {
+          "nameDe": "Beschwörung: Erdgeist",
+          "nameEn": "Summon: Earth Spirit",
+          "kind": "mastery",
+          "targetLevel": 16,
+          "priority": null,
+          "specialtyOrder": [
+            5,
+            3
+          ],
+          "icon": "aion2-skill-elementalist-summon-earth-spirit.png"
+        },
+        {
+          "nameDe": "Raumbeherrschung",
+          "nameEn": "Dimensional Control",
+          "kind": "mastery",
+          "targetLevel": 12,
+          "priority": null,
+          "specialtyOrder": [
+            2,
+            3
+          ],
+          "icon": "aion2-skill-elementalist-dimensional-control.png"
+        },
+        {
+          "nameDe": "Beschwörung: Windgeist",
+          "nameEn": "Summon: Wind Spirit",
+          "kind": "mastery",
+          "targetLevel": null,
+          "priority": null,
+          "specialtyOrder": [],
+          "icon": "aion2-skill-elementalist-summon-wind-spirit.png"
+        },
+        {
+          "nameDe": "Seelenschrei",
+          "nameEn": "Soul's Cry",
+          "kind": "mastery",
+          "targetLevel": null,
+          "priority": null,
+          "specialtyOrder": [],
+          "icon": "aion2-skill-elementalist-souls-cry.png"
+        },
+        {
+          "nameDe": "Elementarfusion",
+          "nameEn": "Elemental Fusion",
+          "kind": "mastery",
+          "targetLevel": 20,
+          "priority": 1,
+          "specialtyOrder": [
+            3,
+            5,
+            2
+          ],
+          "icon": "aion2-skill-elementalist-elemental-fusion.png"
+        },
+        {
+          "nameDe": "Schockaufhebung",
+          "nameEn": "Defiance",
+          "kind": "mastery",
+          "targetLevel": 8,
+          "priority": null,
+          "specialtyOrder": [
+            3
+          ],
+          "icon": "aion2-skill-elementalist-defiance.png"
+        },
+        {
+          "nameDe": "Verstärkung: Gnade des Naturgeists",
+          "nameEn": "Enhance: Spirit's Benediction",
+          "kind": "stigma",
+          "targetLevel": 20,
+          "priority": 1,
+          "specialtyOrder": [],
+          "icon": "aion2-skill-elementalist-enhance-spirits-benediction.png"
+        },
+        {
+          "nameDe": "Beschwörung: Uralter Naturgeist",
+          "nameEn": "Summon: Ancient Spirit",
+          "kind": "stigma",
+          "targetLevel": 20,
+          "priority": 2,
+          "specialtyOrder": [],
+          "icon": "aion2-skill-elementalist-summon-ancient-spirit.png"
+        },
+        {
+          "nameDe": "Flammensegen",
+          "nameEn": "Flame Blessing",
+          "kind": "stigma",
+          "targetLevel": 15,
+          "priority": 3,
+          "specialtyOrder": [],
+          "icon": "aion2-skill-elementalist-flame-blessing.png"
+        },
+        {
+          "nameDe": "Koordinationsangriff: Korrosion",
+          "nameEn": "Jointstrike: Corrode",
+          "kind": "stigma",
+          "targetLevel": 5,
+          "priority": 4,
+          "specialtyOrder": [],
+          "icon": "aion2-skill-elementalist-jointstrike-corrode.png"
+        },
+        {
+          "nameDe": "Geisterschlag",
+          "nameEn": "Spirit Strike",
+          "kind": "passive",
+          "targetLevel": null,
+          "priority": 1,
+          "specialtyOrder": [],
+          "icon": "aion2-skill-elementalist-spirit-strike.png"
+        },
+        {
+          "nameDe": "Mentale Konzentration",
+          "nameEn": "Mental Focus",
+          "kind": "passive",
+          "targetLevel": null,
+          "priority": 2,
+          "specialtyOrder": [],
+          "icon": "aion2-skill-elementalist-mental-focus.png"
+        },
+        {
+          "nameDe": "Elementarvereinigung",
+          "nameEn": "Element Unification",
+          "kind": "passive",
+          "targetLevel": null,
+          "priority": 3,
+          "specialtyOrder": [],
+          "icon": "aion2-skill-elementalist-element-unification.png"
+        },
+        {
+          "nameDe": "Revitalisierung des Naturgeists",
+          "nameEn": "Spirit Revitalization",
+          "kind": "passive",
+          "targetLevel": null,
+          "priority": 4,
+          "specialtyOrder": [],
+          "icon": "aion2-skill-elementalist-spirit-revitalization.png"
+        },
+        {
+          "nameDe": "Erosion",
+          "nameEn": "Corrode",
+          "kind": "passive",
+          "targetLevel": null,
+          "priority": 5,
+          "specialtyOrder": [],
+          "icon": "aion2-skill-elementalist-corrode.png"
+        },
+        {
+          "nameDe": "Kontinuierlicher Rückfluss",
+          "nameEn": "Consecutive Countercurrent",
+          "kind": "passive",
+          "targetLevel": null,
+          "priority": 6,
+          "specialtyOrder": [],
+          "icon": "aion2-skill-elementalist-consecutive-countercurrent.png"
+        },
+        {
+          "nameDe": "Herabkunft des Naturgeists",
+          "nameEn": "Spirit's Descent",
+          "kind": "passive",
+          "targetLevel": null,
+          "priority": 7,
+          "specialtyOrder": [],
+          "icon": "aion2-skill-elementalist-spirits-descent.png"
+        },
+        {
+          "nameDe": "Naturgeistschutz",
+          "nameEn": "Spirit Protection",
+          "kind": "passive",
+          "targetLevel": null,
+          "priority": 8,
+          "specialtyOrder": [],
+          "icon": "aion2-skill-elementalist-spirit-protection.png"
+        },
+        {
+          "nameDe": "Pakt der Revitalisierung",
+          "nameEn": "Revitalization Contract",
+          "kind": "passive",
+          "targetLevel": null,
+          "priority": 9,
+          "specialtyOrder": [],
+          "icon": "aion2-skill-elementalist-revitalization-contract.png"
+        },
+        {
+          "nameDe": "Geisterbindung",
+          "nameEn": "Spirit Communion",
+          "kind": "passive",
+          "targetLevel": null,
+          "priority": 10,
+          "specialtyOrder": [],
+          "icon": "aion2-skill-elementalist-spirit-communion.png"
+        }
+      ],
+      "hotbar": [
+        {
+          "key": "1",
+          "skillIndices": [
+            8,
+            6,
+            3,
+            2
+          ],
+          "manualAction": null
+        },
+        {
+          "key": "3",
+          "skillIndices": [
+            10,
+            12,
+            14,
+            13
+          ],
+          "manualAction": null
+        },
+        {
+          "key": "E",
+          "skillIndices": [
+            5
+          ],
+          "manualAction": null
+        },
+        {
+          "key": "LMB",
+          "skillIndices": [
+            0
+          ],
+          "manualAction": null
+        },
+        {
+          "key": "R",
+          "skillIndices": [
+            4,
+            15,
+            7,
+            1
+          ],
+          "manualAction": null
+        }
+      ],
+      "macroKey": "RMB",
+      "macro": [
+        {
+          "key": "3",
+          "skillIndex": 10
+        },
+        {
+          "key": "R",
+          "skillIndex": 4
+        },
+        {
+          "key": "1",
+          "skillIndex": 8
+        }
+      ]
+    },
+    {
+      "classId": "Cleric",
+      "nameDe": "Kleriker",
+      "nameEn": "Cleric",
+      "videoUrl": "https://www.youtube.com/watch?v=o3BBRQSFH8w",
+      "skills": [
+        {
+          "nameDe": "Rache der Erde",
+          "nameEn": "Earth's Retribution",
+          "kind": "mastery",
+          "targetLevel": 12,
+          "priority": null,
+          "specialtyOrder": [
+            4,
+            2
+          ],
+          "icon": "aion2-skill-cleric-earths-retribution.png"
+        },
+        {
+          "nameDe": "Blitz des Urteils",
+          "nameEn": "Judgment Thunder",
+          "kind": "mastery",
+          "targetLevel": 20,
+          "priority": 3,
+          "specialtyOrder": [
+            5,
+            2,
+            1
+          ],
+          "icon": "aion2-skill-cleric-judgment-thunder.png"
+        },
+        {
+          "nameDe": "Mal der Schwächung",
+          "nameEn": "Debilitating Mark",
+          "kind": "mastery",
+          "targetLevel": 12,
+          "priority": null,
+          "specialtyOrder": [
+            4,
+            2
+          ],
+          "icon": "aion2-skill-cleric-debilitating-mark.png"
+        },
+        {
+          "nameDe": "Heilige Aura",
+          "nameEn": "Divine Aura",
+          "kind": "mastery",
+          "targetLevel": 16,
+          "priority": null,
+          "specialtyOrder": [
+            5,
+            3
+          ],
+          "icon": "aion2-skill-cleric-divine-aura.png"
+        },
+        {
+          "nameDe": "Kette des Schmerzes",
+          "nameEn": "Chain of Torment",
+          "kind": "mastery",
+          "targetLevel": 12,
+          "priority": null,
+          "specialtyOrder": [
+            4,
+            2
+          ],
+          "icon": "aion2-skill-cleric-chain-of-torment.png"
+        },
+        {
+          "nameDe": "Blitzfeuer",
+          "nameEn": "Lightning Strike Scattershot",
+          "kind": "mastery",
+          "targetLevel": 8,
+          "priority": null,
+          "specialtyOrder": [
+            1
+          ],
+          "icon": "aion2-skill-cleric-lightning-strike-scattershot.png"
+        },
+        {
+          "nameDe": "Licht der Regeneration",
+          "nameEn": "Light of Regeneration",
+          "kind": "mastery",
+          "targetLevel": 16,
+          "priority": null,
+          "specialtyOrder": [
+            5,
+            4
+          ],
+          "icon": "aion2-skill-cleric-light-of-regeneration.png"
+        },
+        {
+          "nameDe": "Verdammnis",
+          "nameEn": "Condemnation",
+          "kind": "mastery",
+          "targetLevel": 20,
+          "priority": 2,
+          "specialtyOrder": [
+            4,
+            2,
+            5
+          ],
+          "icon": "aion2-skill-cleric-condemnation.png"
+        },
+        {
+          "nameDe": "Licht der Heilung",
+          "nameEn": "Healing Light",
+          "kind": "mastery",
+          "targetLevel": 20,
+          "priority": 3,
+          "specialtyOrder": [
+            4,
+            1,
+            5
+          ],
+          "icon": "aion2-skill-cleric-healing-light.png"
+        },
+        {
+          "nameDe": "Glanz der Genesung",
+          "nameEn": "Radiant Recovery",
+          "kind": "mastery",
+          "targetLevel": 20,
+          "priority": 1,
+          "specialtyOrder": [
+            5,
+            2,
+            3
+          ],
+          "icon": "aion2-skill-cleric-radiant-recovery.png"
+        },
+        {
+          "nameDe": "Donnerschlag",
+          "nameEn": "Bolt",
+          "kind": "mastery",
+          "targetLevel": 16,
+          "priority": null,
+          "specialtyOrder": [
+            3,
+            4
+          ],
+          "icon": "aion2-skill-cleric-bolt.png"
+        },
+        {
+          "nameDe": "Schockaufhebung",
+          "nameEn": "Defiance",
+          "kind": "mastery",
+          "targetLevel": 8,
+          "priority": null,
+          "specialtyOrder": [
+            3
+          ],
+          "icon": "aion2-skill-cleric-defiance.png"
+        },
+        {
+          "nameDe": "Licht des Schutzes",
+          "nameEn": "Light of Protection",
+          "kind": "stigma",
+          "targetLevel": 20,
+          "priority": 1,
+          "specialtyOrder": [],
+          "icon": "aion2-skill-cleric-light-of-protection.png"
+        },
+        {
+          "nameDe": "Strafe der Erde",
+          "nameEn": "Earth Punishment",
+          "kind": "stigma",
+          "targetLevel": 20,
+          "priority": 2,
+          "specialtyOrder": [],
+          "icon": "aion2-skill-cleric-earth-punishment.png"
+        },
+        {
+          "nameDe": "Gebet der Verstärkung",
+          "nameEn": "Prayer of Amplification",
+          "kind": "stigma",
+          "targetLevel": 15,
+          "priority": 3,
+          "specialtyOrder": [],
+          "icon": "aion2-skill-cleric-prayer-of-amplification.png"
+        },
+        {
+          "nameDe": "Edle Aura",
+          "nameEn": "Noble Aura",
+          "kind": "stigma",
+          "targetLevel": 5,
+          "priority": 4,
+          "specialtyOrder": [],
+          "icon": "aion2-skill-cleric-noble-aura.png"
+        },
+        {
+          "nameDe": "Segen des Gebieters",
+          "nameEn": "Empyrean Lord's Grace",
+          "kind": "passive",
+          "targetLevel": null,
+          "priority": 1,
+          "specialtyOrder": [],
+          "icon": "aion2-skill-cleric-empyrean-lords-grace.png"
+        },
+        {
+          "nameDe": "Segen der Erde",
+          "nameEn": "Earth's Grace",
+          "kind": "passive",
+          "targetLevel": null,
+          "priority": 2,
+          "specialtyOrder": [],
+          "icon": "aion2-skill-cleric-earths-grace.png"
+        },
+        {
+          "nameDe": "Heilungsverstärkung",
+          "nameEn": "Healing Enhancement",
+          "kind": "passive",
+          "targetLevel": null,
+          "priority": 3,
+          "specialtyOrder": [],
+          "icon": "aion2-skill-cleric-healing-enhancement.png"
+        },
+        {
+          "nameDe": "Warme Gnade",
+          "nameEn": "Warm Benediction",
+          "kind": "passive",
+          "targetLevel": null,
+          "priority": 4,
+          "specialtyOrder": [],
+          "icon": "aion2-skill-cleric-warm-benediction.png"
+        },
+        {
+          "nameDe": "Schleier der Unsterblichkeit",
+          "nameEn": "Immortal Veil",
+          "kind": "passive",
+          "targetLevel": null,
+          "priority": 5,
+          "specialtyOrder": [],
+          "icon": "aion2-skill-cleric-immortal-veil.png"
+        },
+        {
+          "nameDe": "Überlebenswille",
+          "nameEn": "Survival Willpower",
+          "kind": "passive",
+          "targetLevel": null,
+          "priority": 6,
+          "specialtyOrder": [],
+          "icon": "aion2-skill-cleric-survival-willpower.png"
+        },
+        {
+          "nameDe": "Gebet der Konzentration",
+          "nameEn": "Prayer of Concentration",
+          "kind": "passive",
+          "targetLevel": null,
+          "priority": 7,
+          "specialtyOrder": [],
+          "icon": "aion2-skill-cleric-prayer-of-concentration.png"
+        },
+        {
+          "nameDe": "Strahlende Gnade",
+          "nameEn": "Radiant Benediction",
+          "kind": "passive",
+          "targetLevel": null,
+          "priority": 8,
+          "specialtyOrder": [],
+          "icon": "aion2-skill-cleric-radiant-benediction.png"
+        },
+        {
+          "nameDe": "Gnade des Gebieters",
+          "nameEn": "Empyrean Lords' Benediction",
+          "kind": "passive",
+          "targetLevel": null,
+          "priority": 9,
+          "specialtyOrder": [],
+          "icon": "aion2-skill-cleric-empyrean-lords-benediction.png"
+        },
+        {
+          "nameDe": "Regenerationsblockade",
+          "nameEn": "Heal Block",
+          "kind": "passive",
+          "targetLevel": null,
+          "priority": 10,
+          "specialtyOrder": [],
+          "icon": "aion2-skill-cleric-heal-block.png"
+        }
+      ],
+      "hotbar": [
+        {
+          "key": "1",
+          "skillIndices": [
+            3
+          ],
+          "manualAction": null
+        },
+        {
+          "key": "2",
+          "skillIndices": [
+            15
+          ],
+          "manualAction": null
+        },
+        {
+          "key": "3",
+          "skillIndices": [
+            10
+          ],
+          "manualAction": null
+        },
+        {
+          "key": "4",
+          "skillIndices": [
+            9
+          ],
+          "manualAction": null
+        },
+        {
+          "key": "6",
+          "skillIndices": [
+            12
+          ],
+          "manualAction": null
+        },
+        {
+          "key": "7",
+          "skillIndices": [
+            14,
+            13,
+            7,
+            4
+          ],
+          "manualAction": null
+        },
+        {
+          "key": "Q",
+          "skillIndices": [
+            8
+          ],
+          "manualAction": null
+        },
+        {
+          "key": "E",
+          "skillIndices": [
+            5
+          ],
+          "manualAction": null
+        },
+        {
+          "key": "LMB",
+          "skillIndices": [
+            0
+          ],
+          "manualAction": null
+        },
+        {
+          "key": "R",
+          "skillIndices": [
+            2,
+            6,
+            1
+          ],
+          "manualAction": null
+        }
+      ],
+      "macroKey": "RMB",
+      "macro": [
+        {
+          "key": "7",
+          "skillIndex": 14
+        },
+        {
+          "key": "R",
+          "skillIndex": 2
+        }
+      ]
+    },
+    {
+      "classId": "Chanter",
+      "nameDe": "Kantor",
+      "nameEn": "Chanter",
+      "videoUrl": "https://www.youtube.com/watch?v=sThZpdeW07U",
+      "skills": [
+        {
+          "nameDe": "Zerschmetterungsschlag",
+          "nameEn": "Onslaught",
+          "kind": "mastery",
+          "targetLevel": 20,
+          "priority": 4,
+          "specialtyOrder": [
+            4,
+            5,
+            3
+          ],
+          "icon": "aion2-skill-chanter-onslaught.png"
+        },
+        {
+          "nameDe": "Gleißschlag",
+          "nameEn": "Incandescent Blow",
+          "kind": "mastery",
+          "targetLevel": 16,
+          "priority": null,
+          "specialtyOrder": [
+            3,
+            5
+          ],
+          "icon": "aion2-skill-chanter-incandescent-blow.png"
+        },
+        {
+          "nameDe": "Sturmschlag",
+          "nameEn": "Rushing Smash",
+          "kind": "mastery",
+          "targetLevel": 16,
+          "priority": null,
+          "specialtyOrder": [
+            4,
+            5
+          ],
+          "icon": "aion2-skill-chanter-rushing-smash.png"
+        },
+        {
+          "nameDe": "Wuchtschlag",
+          "nameEn": "Impactful Crush",
+          "kind": "mastery",
+          "targetLevel": 12,
+          "priority": null,
+          "specialtyOrder": [
+            3,
+            4
+          ],
+          "icon": "aion2-skill-chanter-impactful-crush.png"
+        },
+        {
+          "nameDe": "Finsterbruch",
+          "nameEn": "Dark Crush",
+          "kind": "mastery",
+          "targetLevel": 20,
+          "priority": 1,
+          "specialtyOrder": [
+            5,
+            4,
+            3
+          ],
+          "icon": "aion2-skill-chanter-dark-crush.png"
+        },
+        {
+          "nameDe": "Sturmraserei",
+          "nameEn": "Gust Rampage",
+          "kind": "mastery",
+          "targetLevel": 8,
+          "priority": null,
+          "specialtyOrder": [
+            1
+          ],
+          "icon": "aion2-skill-chanter-gust-rampage.png"
+        },
+        {
+          "nameDe": "Hitzewellenschlag",
+          "nameEn": "Heat Wave Blow",
+          "kind": "mastery",
+          "targetLevel": 12,
+          "priority": null,
+          "specialtyOrder": [
+            4,
+            3
+          ],
+          "icon": "aion2-skill-chanter-heat-wave-blow.png"
+        },
+        {
+          "nameDe": "Zauber der Genesung",
+          "nameEn": "Recuperation",
+          "kind": "mastery",
+          "targetLevel": 20,
+          "priority": 3,
+          "specialtyOrder": [
+            4,
+            1,
+            5
+          ],
+          "icon": "aion2-skill-chanter-recuperation.png"
+        },
+        {
+          "nameDe": "Erschütterungsschlag",
+          "nameEn": "Tremor Crush",
+          "kind": "mastery",
+          "targetLevel": 12,
+          "priority": null,
+          "specialtyOrder": [
+            2,
+            3
+          ],
+          "icon": "aion2-skill-chanter-tremor-crush.png"
+        },
+        {
+          "nameDe": "Wellenschlag",
+          "nameEn": "Wave Blow",
+          "kind": "mastery",
+          "targetLevel": 12,
+          "priority": null,
+          "specialtyOrder": [
+            4,
+            1
+          ],
+          "icon": "aion2-skill-chanter-wave-blow.png"
+        },
+        {
+          "nameDe": "Wirbelschlag",
+          "nameEn": "Spinning Strike",
+          "kind": "mastery",
+          "targetLevel": 20,
+          "priority": 2,
+          "specialtyOrder": [
+            1,
+            3,
+            2
+          ],
+          "icon": "aion2-skill-chanter-spinning-strike.png"
+        },
+        {
+          "nameDe": "Schockaufhebung",
+          "nameEn": "Defiance",
+          "kind": "mastery",
+          "targetLevel": 8,
+          "priority": null,
+          "specialtyOrder": [
+            3
+          ],
+          "icon": "aion2-skill-chanter-defiance.png"
+        },
+        {
+          "nameDe": "Invokation der Unbesiegbarkeit",
+          "nameEn": "Undefeated Mantra",
+          "kind": "stigma",
+          "targetLevel": 20,
+          "priority": 1,
+          "specialtyOrder": [],
+          "icon": "aion2-skill-chanter-undefeated-mantra.png"
+        },
+        {
+          "nameDe": "Hoheit des Sturmwinds",
+          "nameEn": "Power of the Storm",
+          "kind": "stigma",
+          "targetLevel": 20,
+          "priority": 2,
+          "specialtyOrder": [],
+          "icon": "aion2-skill-chanter-power-of-the-storm.png"
+        },
+        {
+          "nameDe": "Invokation des Sprints",
+          "nameEn": "Sprint Mantra",
+          "kind": "stigma",
+          "targetLevel": 15,
+          "priority": 3,
+          "specialtyOrder": [],
+          "icon": "aion2-skill-chanter-sprint-mantra.png"
+        },
+        {
+          "nameDe": "Marchutans Zorn",
+          "nameEn": "Marchutan's Wrath",
+          "kind": "stigma",
+          "targetLevel": 5,
+          "priority": 4,
+          "specialtyOrder": [],
+          "icon": "aion2-skill-chanter-marchutans-wrath.png"
+        },
+        {
+          "nameDe": "Angriffsvorbereitung",
+          "nameEn": "Attack Preparation",
+          "kind": "passive",
+          "targetLevel": null,
+          "priority": 1,
+          "specialtyOrder": [],
+          "icon": "aion2-skill-chanter-attack-preparation.png"
+        },
+        {
+          "nameDe": "Gelübde des Windes",
+          "nameEn": "Wind's Promise",
+          "kind": "passive",
+          "targetLevel": null,
+          "priority": 2,
+          "specialtyOrder": [],
+          "icon": "aion2-skill-chanter-winds-promise.png"
+        },
+        {
+          "nameDe": "Schocktreffer",
+          "nameEn": "Impact Hit",
+          "kind": "passive",
+          "targetLevel": null,
+          "priority": 3,
+          "specialtyOrder": [],
+          "icon": "aion2-skill-chanter-impact-hit.png"
+        },
+        {
+          "nameDe": "Zauber der Eingebung",
+          "nameEn": "Inspiring Spell",
+          "kind": "passive",
+          "targetLevel": null,
+          "priority": 4,
+          "specialtyOrder": [],
+          "icon": "aion2-skill-chanter-inspiring-spell.png"
+        },
+        {
+          "nameDe": "Gelübde der Erde",
+          "nameEn": "Earth's Promise",
+          "kind": "passive",
+          "targetLevel": null,
+          "priority": 5,
+          "specialtyOrder": [],
+          "icon": "aion2-skill-chanter-earths-promise.png"
+        },
+        {
+          "nameDe": "Segen des Lebens",
+          "nameEn": "Blessing of Life",
+          "kind": "passive",
+          "targetLevel": null,
+          "priority": 6,
+          "specialtyOrder": [],
+          "icon": "aion2-skill-chanter-blessing-of-life.png"
+        },
+        {
+          "nameDe": "Schutzformation",
+          "nameEn": "Protection Circle",
+          "kind": "passive",
+          "targetLevel": null,
+          "priority": 7,
+          "specialtyOrder": [],
+          "icon": "aion2-skill-chanter-protection-circle.png"
+        },
+        {
+          "nameDe": "Überlebenswille",
+          "nameEn": "Survival Willpower",
+          "kind": "passive",
+          "targetLevel": null,
+          "priority": 8,
+          "specialtyOrder": [],
+          "icon": "aion2-skill-chanter-survival-willpower.png"
+        },
+        {
+          "nameDe": "Zauber des Furors",
+          "nameEn": "Raging Spell",
+          "kind": "passive",
+          "targetLevel": null,
+          "priority": 9,
+          "specialtyOrder": [],
+          "icon": "aion2-skill-chanter-raging-spell.png"
+        },
+        {
+          "nameDe": "Kreuzverteidigung",
+          "nameEn": "Crossguard",
+          "kind": "passive",
+          "targetLevel": null,
+          "priority": 10,
+          "specialtyOrder": [],
+          "icon": "aion2-skill-chanter-crossguard.png"
+        }
+      ],
+      "hotbar": [
+        {
+          "key": "1",
+          "skillIndices": [
+            2
+          ],
+          "manualAction": null
+        },
+        {
+          "key": "2",
+          "skillIndices": [
+            8
+          ],
+          "manualAction": null
+        },
+        {
+          "key": "3",
+          "skillIndices": [
+            7
+          ],
+          "manualAction": null
+        },
+        {
+          "key": "4",
+          "skillIndices": [
+            13
+          ],
+          "manualAction": null
+        },
+        {
+          "key": "5",
+          "skillIndices": [
+            10
+          ],
+          "manualAction": null
+        },
+        {
+          "key": "7",
+          "skillIndices": [
+            14
+          ],
+          "manualAction": null
+        },
+        {
+          "key": "8",
+          "skillIndices": [
+            12
+          ],
+          "manualAction": null
+        },
+        {
+          "key": "E",
+          "skillIndices": [
+            5
+          ],
+          "manualAction": null
+        },
+        {
+          "key": "LMB",
+          "skillIndices": [
+            0
+          ],
+          "manualAction": null
+        },
+        {
+          "key": "R",
+          "skillIndices": [
+            4,
+            3,
+            15,
+            1
+          ],
+          "manualAction": null
+        }
+      ],
+      "macroKey": "RMB",
+      "macro": [
+        {
+          "key": "R",
+          "skillIndex": 4
+        }
+      ]
+    }
+  ]
+}

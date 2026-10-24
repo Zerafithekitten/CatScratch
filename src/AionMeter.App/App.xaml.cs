@@ -45,7 +45,7 @@ public partial class App : Application
     private readonly WindowVisibilityGroup _windowVisibility=new();
     private MapOverlayService? _mapModule;
     internal string MapModuleStatus=>_mapModule?.Status??MapWords.L("Disabled","Ausgeschaltet");
-    private IEnumerable<Window> MapHudWindows()=>Windows.Cast<Window>().Where(w=>w is OverlayWindow or MeterControlsWindow or BossTimingWindow or DeathRecapWindow or HiddenCubeWindow or SupporterCatWindow or ChecklistWindow or ResourcesWindow or DungeonEntriesWindow or TimerHubWindow or BossTimersWindow or PetTrackerWindow or ResourceOverviewWindow or EventScheduleWindow or TimerCardWindow or CompanionUpdateBubble);
+    private IEnumerable<Window> MapHudWindows()=>Windows.Cast<Window>().Where(w=>w is OverlayWindow or MeterControlsWindow or BossTimingWindow or DeathRecapWindow or HiddenCubeWindow or SupporterCatWindow or ChecklistWindow or ResourcesWindow or DungeonEntriesWindow or TimerHubWindow or BossTimersWindow or PetTrackerWindow or ResourceOverviewWindow or ClassGuideWindow or EventScheduleWindow or TimerCardWindow or CompanionUpdateBubble);
     private void SyncMapModule()
     {
         if(_shutdownStarted||_meter is null)return;
@@ -129,6 +129,13 @@ public partial class App : Application
         {
             try{MapModuleChecks.Run(mapResult);Shutdown();}
             catch(Exception error){File.WriteAllText(mapResult,error.ToString());Shutdown(1);}
+            return;
+        }
+        if(ArgValue(e.Args,"--check-class-guides") is {} guideResult)
+        {
+            Log.Enabled=false;
+            try{ClassGuideChecks.Run(guideResult);Shutdown();}
+            catch(Exception error){File.WriteAllText(guideResult,error.ToString());Shutdown(1);}
             return;
         }
         if (ArgValue(e.Args, "--check-update-start") is { } packagePath)
@@ -1316,6 +1323,7 @@ public partial class App : Application
             if(window is OverlayWindow overlay&&ReferenceEquals(overlay.Meter,owner)){overlay.ApplyAppearance();overlay.Refresh();}
             else if(window is IDisplayAppearance)window.Opacity=Math.Clamp(settings.WindowOpacity,.4,1);
             if(window is ResourcesWindow resources)resources.Refresh();
+            if(window is ClassGuideWindow guides)guides.RefreshLanguage();
             if(window is DungeonEntriesWindow entries)entries.Refresh();
             if(window is ChecklistWindow checklist)checklist.ApplyPreferences();
             if(window is PetTrackerWindow pets){pets.Width=Math.Clamp(settings.PetModuleWidth,150,1600);pets.Refresh();}

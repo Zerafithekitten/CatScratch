@@ -46,7 +46,7 @@ jobs:
           if ($LASTEXITCODE) { throw 'Publish failed' }
           Copy-Item LICENSE dist/payload
           Copy-Item INSTALL.txt dist/payload
-          foreach ($file in @('CatScratch.GameWatcher.exe', 'map-engine/CatScratch.MapEngine.exe', 'data/map/points.json', 'data/map/altgard.webp', 'data/map/altgard-title.png', 'data/map/map-close.png', 'data/map/reference-poses.json', 'data/map/alignment.json', 'data/map/categories.json', 'sounds/Chime.wav', 'sounds/Bell.wav', 'sounds/Ping.wav', 'data/audio/kitty-meow.wav', 'data/patchnotes-en.md', 'data/patchnotes-de.md', 'data/pets/catalog.json', 'data/pets/locations.json')) {
+          foreach ($file in @('CatScratch.GameWatcher.exe', 'map-engine/CatScratch.MapEngine.exe', 'data/class-guides/wakayashi-pve.json', 'data/class-guides/soul-binding.json', 'data/map/points.json', 'data/map/altgard.webp', 'data/map/altgard-title.png', 'data/map/map-close.png', 'data/map/reference-poses.json', 'data/map/alignment.json', 'data/map/categories.json', 'sounds/Chime.wav', 'sounds/Bell.wav', 'sounds/Ping.wav', 'data/audio/kitty-meow.wav', 'data/patchnotes-en.md', 'data/patchnotes-de.md', 'data/pets/catalog.json', 'data/pets/locations.json')) {
             if (-not (Test-Path -LiteralPath "dist/payload/$file")) { throw "Required app resource missing: $file" }
           }
           Compress-Archive -Path dist/payload/* -DestinationPath dist/CatScratch-win-x64.zip
@@ -54,14 +54,14 @@ jobs:
       - name: Verify event panels and complete shutdown
         shell: pwsh
         run: |
-          foreach ($check in @('interaction', 'shutdown', 'performance', 'event-audio', 'release250', 'boss-records', 'beta4', 'checklist', 'panel', 'enhancements', 'placement', 'boss-timing', 'clickthrough-startup', 'world-boss-events', 'pet-live', 'topmost', 'resources', 'resource-tools', 'supporter', 'supporter-cat', 'cube-banner', 'branding', 'live-settings', 'map')) {
+          foreach ($check in @('interaction', 'shutdown', 'performance', 'event-audio', 'release250', 'boss-records', 'beta4', 'checklist', 'panel', 'class-guides', 'enhancements', 'placement', 'boss-timing', 'clickthrough-startup', 'world-boss-events', 'pet-live', 'topmost', 'resources', 'resource-tools', 'supporter', 'supporter-cat', 'cube-banner', 'branding', 'live-settings', 'map')) {
             $result = "$env:RUNNER_TEMP/meter-$check.txt"
             $process = Start-Process "$PWD/dist/payload/CatScratch.exe" -ArgumentList @("--check-$check",("`"$result`"")) -WindowStyle Hidden -PassThru
             if (-not $process.WaitForExit(20000)) { Stop-Process -Id $process.Id; throw "$check verification timed out" }
             Get-Content $result
             $process.Refresh()
             if ($process.ExitCode) { throw "$check verification failed" }
-            if ($check -in @('interaction', 'event-audio', 'release250', 'boss-records', 'beta4', 'checklist', 'panel', 'enhancements', 'placement', 'boss-timing', 'clickthrough-startup', 'world-boss-events', 'pet-live', 'topmost', 'resources', 'resource-tools', 'supporter', 'supporter-cat', 'cube-banner', 'branding', 'live-settings', 'map')) { $null = Get-Content $result -Raw | ConvertFrom-Json -ErrorAction Stop }
+            if ($check -in @('interaction', 'event-audio', 'release250', 'boss-records', 'beta4', 'checklist', 'panel', 'class-guides', 'enhancements', 'placement', 'boss-timing', 'clickthrough-startup', 'world-boss-events', 'pet-live', 'topmost', 'resources', 'resource-tools', 'supporter', 'supporter-cat', 'cube-banner', 'branding', 'live-settings', 'map')) { $null = Get-Content $result -Raw | ConvertFrom-Json -ErrorAction Stop }
           }
           # Diagnostics may create their own empty cache folders. Never include them in Setup.
           $payload = [IO.Path]::GetFullPath("$PWD/dist/payload").TrimEnd('\') + '\'

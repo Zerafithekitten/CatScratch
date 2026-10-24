@@ -1,3 +1,126 @@
+## CatScratch v4.1.0
+
+A few new tricks up my paw. 🐾
+
+This update brings together the work from the recent Betas, along with a new class reference I've been putting together. There are a few bigger additions to explore, but I've also spent time on the things you notice every day: changing a setting, clearing the meter, keeping track of keys and giving CatScratch a little less work to do while you play.
+
+Thank you for the recordings, screenshots and patient testing. I'm still just one cat behind this project, and your feedback has helped shape a lot of what you'll find below. 💜
+
+### What's inside
+
+- [A reference for every class](#class-reference)
+- [Genius Pet and Soul Binding](#pet-and-soul-binding)
+- [Try your settings as you change them](#live-settings)
+- [The Altgard map experiment](#altgard-map)
+- [Hidden Cubes and your keys](#hidden-cubes)
+- [A fresh display without losing your capture](#dps-reset)
+- [Boss timers and Pet Tracker](#timers-and-pets)
+- [A little housekeeping](#housekeeping)
+- [Less work behind the scenes](#performance)
+
+<a id="class-reference"></a>
+### 📖 A reference for every class
+
+There's a new book button in the control panel. It opens a compact reference for all eight classes: Gladiator, Templar, Assassin, Ranger, Sorcerer, Elementalist, Cleric and Chanter.
+
+You can browse recommended active skills, stigmas and passives, with their original game icons, target levels, upgrade priorities and specialty-slot order. The Hotbar & Macro tab adds an example layout and a copyable sequence to help you find your bearings.
+
+This is a starting point for your own setup. Adjust it to your level, group and playstyle; CatScratch doesn't press keys or run macros for you.
+
+The reference uses [Wakayashi's class guides](https://wakayashi.gg/aion2#class-guides), with a visible source and snapshot date. Its bundled contents are available without loading a website each time you open the window. German follows the German app setting; other app languages use English.
+
+![Class reference](https://raw.githubusercontent.com/Zerafithekitten/CatScratch/v4.1.0/docs/images/class-guide-skills-en-v4.1.0.png)
+
+<a id="pet-and-soul-binding"></a>
+### 🐾 Genius Pet and Soul Binding
+
+Two more tabs keep the related advice close by:
+
+- **Genius Pet:** the nine analysis slots, their priorities and the Cognia, Fera, Natura, Varia and Specia boards, including the special Slot 4 choices.
+- **Soul Binding:** priorities for all 13 equipment slots. Recommended passives and skill-level effects follow the class you've selected, with matching ability icons.
+
+Both tabs are available in German and English, with direct links to [Pet species knowledge](https://wakayashi.gg/aion2#pet) and [Soul Binding](https://wakayashi.gg/aion2#soul-binding). These are saved guide recommendations, rather than a live check of your equipment or pet boards.
+
+![Soul binding](https://raw.githubusercontent.com/Zerafithekitten/CatScratch/v4.1.0/docs/images/class-guide-soul-en-v4.1.0.png)
+
+<a id="live-settings"></a>
+### 🎨 Try your settings as you change them
+
+You can now see supported appearance and module changes while Settings is still open: layouts, visibility, selections, size, opacity, colours, language and sound preferences.
+
+**Save** keeps the preview and leaves Settings open. If you make more changes afterwards, closing the window discards only those later unsaved changes.
+
+Capture settings, startup integration and hotkeys still take effect with Save. Previewing combat options keeps the current fight intact, and live progress and checklist entries keep their own saved state.
+
+<a id="altgard-map"></a>
+### 🗺️ The Altgard map experiment
+
+**HIGHLY EXPERIMENTAL — optional, disabled by default, and currently Altgard only. Recognition and marker positions can be wrong or delayed.**
+
+CatScratch can place location icons over the open in-game Altgard map. The image engine is included in the app, so there's no separate program to install.
+
+- Change marker filters directly on the map, without opening Settings.
+- Find filters in six collapsible groups, with a count of your selected categories.
+- Tell ores and gemstones apart through their original material icons. Different materials stay separate when nearby locations are grouped.
+- Keep the map clear of material-name labels. Feather and Kibelisk markers have been removed.
+
+The locations come from Questlog map data. They show possible locations, **not confirmed live spawns**.
+
+While the map is open, the other CatScratch modules step aside. Closing it restores the modules you had visible, with capture and progress tracking continuing in the background.
+
+I've also worked on movement and zoom tracking, covered map headings, localised recognition, game-window detection and clearer status messages. Screen capture was reworked following the cursor-flicker reports. Map markers and filters are excluded from desktop recordings again.
+
+Everything remains passive: this uses screen images, with no game-memory access or automated game input. Please keep sending feedback on the experiment; it still needs testing across different setups.
+
+<a id="hidden-cubes"></a>
+### 🔑 Hidden Cubes and your keys
+
+A confirmed nearby cube disappearance now gets its own short **“Cube disappeared”** banner. Our puzzled little mascot takes over for this one, and the key counter stays out of the message.
+
+You can also select **Key: Hidden Cube (Bound)** in Resources, complete with its original game icon, supported live inventory updates and an optional low-stock warning. The recorded stock appears in the character overview too.
+
+The existing distinction between confirmed, cached and unknown values remains, so an older count doesn't quietly become a confirmed zero.
+
+<a id="dps-reset"></a>
+### 🧹 A fresh display without losing your capture
+
+The new eraser button clears the DPS display when you want the old rows out of the way. The default shortcut is **Shift+F2**, and you can change it in Settings.
+
+This keeps capture running, preserves existing fights and retains confirmed group identities. If you need a full capture restart instead, right-click the button.
+
+I also corrected the own-character marker for players who share a name on different servers, and expanded the group checks to cover six members, healing-only members, pet damage attribution, row limits and repeated rosters.
+
+<a id="timers-and-pets"></a>
+### ⏱️ Boss timers and Pet Tracker
+
+Selected schedule bosses now keep their next time visible even when it's more than an hour away, including in separate timer windows.
+
+Watcher Kaira can use the labelled community schedule when live timing is missing. Received boss data takes priority. New times, sightings and kills now refresh Upcoming, Started and separate boss windows directly.
+
+I've checked all 24 selectable field bosses, along with Pet Tracker soul counts, level-ups, cached progress and character switching. When a boss has neither timing data nor a matching schedule, its time still stays unknown.
+
+<a id="housekeeping"></a>
+### 🧰 A little housekeeping
+
+- Old supporter packages can be removed in Settings → Patreon. Removal happens with Save; you can undo it before saving or discard it by closing Settings. The original downloaded file is kept.
+- Sounds from a removed package use a matching remaining package or a built-in fallback.
+- Improved optional update reminders and compact overlay sizing.
+- Improved off-screen position recovery. A recovered position stays put when you close Settings, without saving unrelated preview changes.
+- The temporary Alpha experiment has ended. Stable and Beta remain available; saved Alpha preferences return to Beta.
+
+<a id="performance"></a>
+### ⚙️ Less work behind the scenes
+
+Performance matters to me, especially for something that sits beside your game for an entire session.
+
+I've reduced repeated map-image processing, unnecessary marker and filter rebuilding, and temporary allocations during marker calculations. Modules hidden behind the map skip unnecessary drawing; resources, dungeon entries and pet progress catch up immediately when it closes.
+
+Settings previews do less repeated work, and saving resource and pet progress holds up the rest of the app for less time. Data collection and pet level notifications continue while the map is open.
+
+Local processing tests improved. How much that helps on your PC will depend on your setup, especially with the experimental map enabled.
+
+Thanks for helping me keep this little cat on its paws. 💜
+
 ## CatScratch v4.0.9-beta.17
 
 Spent some time untangling the busy bits underneath CatScratch. Less unnecessary work, more room for the game. 🐾

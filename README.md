@@ -8,13 +8,31 @@ A separate, always-on-top Windows DPS meter for **AION 2**, by Zerafithekitten. 
 
 | Channel | Current version | What it includes |
 | --- | --- | --- |
-| **Stable** | **[v4.0.8](https://github.com/Zerafithekitten/CatScratch/releases/tag/v4.0.8)** | Shared mascot, lettering and cat-profile watermarks across the app, plus Hidden Cube key counts and all previous Stable features. |
-| **Beta** | **[v3.0.12-beta.22](https://github.com/Zerafithekitten/CatScratch/releases/tag/v3.0.12-beta.22)** | Previous test build; its features are included in Stable 4.0.0, with final fixes. Beta subscribers move to Stable when 4.0.0 starts. |
+| **Stable** | **[v4.1.0](https://github.com/Zerafithekitten/CatScratch/releases/tag/v4.1.0)** | Class reference, Pet and Soul Binding guidance, live Settings previews, optional experimental Altgard map, cube-key resources and performance improvements. |
+| **Beta** | **[v4.0.9-beta.17](https://github.com/Zerafithekitten/CatScratch/releases/tag/v4.0.9-beta.17)** | Previous test build; its features are included in Stable 4.1.0. Beta subscribers return to Stable when the promoted build starts. |
 | **Light** | [v1.0.0](https://github.com/Zerafithekitten/CatScratch/releases/tag/light-v1.0.0) | Separate **DPS meter only** edition with essential settings. Independent ZIP download and settings; no additional CatScratch modules or automatic updater. |
 
 **CatScratch light** is installed separately from the full version. [Download its ZIP](https://github.com/Zerafithekitten/CatScratch/releases/download/light-v1.0.0/CatScratch-light-win-x64.zip) and extract it into its own folder. Light is maintained and updated **only on the owner's explicit request**; normal development continues on full CatScratch.
 
-English is the default. German, Russian and French are also available. Screenshots use synthetic sample data; names and numbers are examples. All features described below are included in **Stable v4.0.8** unless a limitation is stated.
+English is the default. German, Russian and French are also available. Screenshots use synthetic sample data; names and numbers are examples. All features described below are included in **Stable v4.1.0** unless a limitation is stated.
+
+## New in 4.1.0
+
+Use the book button in the control panel for all eight class references: original ability icons, skill priorities, specialty slots, example hotbars and copyable macro sequences. Genius Pet species-knowledge priorities and Soul Binding recommendations have their own tabs, including class-specific passives and skill effects. This is orientation only: CatScratch performs no game inputs. The bundled [Wakayashi](https://wakayashi.gg/aion2) snapshot shows its source and date. German follows the German app language; other languages use English.
+
+![Class reference](docs/images/class-guide-skills-en-v4.1.0.png)
+
+![Soul Binding reference](docs/images/class-guide-soul-en-v4.1.0.png)
+
+Settings now preview supported module and appearance changes live. Save keeps the preview and leaves the window open; closing discards later unsaved changes. Capture, startup integration and hotkeys apply with Save. The DPS eraser clears displayed rows without restarting capture (default Shift+F2); right-click it for a full capture restart. Bound Hidden Cube Keys are selectable in Resources, and a confirmed nearby disappearance shows a puzzled-mascot banner.
+
+### Optional Altgard map overlay — HIGHLY EXPERIMENTAL
+
+Disabled by default under Settings > Map overlay. Passive screen recognition places possible Questlog locations over the open Altgard map, with six grouped filter categories directly on the map and distinct material icons. These are static possible locations, not confirmed live spawns. Feather and Kibelisk markers are excluded. Recognition and positions may be wrong or delayed, especially during zoom; other maps are not supported yet.
+
+Other modules temporarily step aside while the map is open, then return without interrupting capture or saving temporary visibility. Markers and filter windows are excluded from desktop recordings. Recognition uses screen images, never game memory or automated game input. Local tracking and drawing work was reduced; no universal FPS improvement is promised.
+
+Boss schedules retain times beyond one hour, and received changes refresh timer windows directly. Pet progress, package removal, off-screen recovery and reduced background work are also covered in the [full release notes](data/patchnotes-en.md).
 
 ## A little more CatScratch
 

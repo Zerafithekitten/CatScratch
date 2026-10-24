@@ -8,6 +8,17 @@
     <SolidColorBrush x:Key="TextDim" Color="{colors:ThemeColor #BCC9D6}"/>
     <SolidColorBrush x:Key="TextMute" Color="{colors:ThemeColor #A9B8C7}"/>
     <FontFamily x:Key="TitleFont">Segoe UI</FontFamily>
+    <Style x:Key="CompactToolTab" TargetType="TabItem">
+        <Setter Property="Foreground" Value="{DynamicResource CustomBrush_A9B8C7}"/>
+        <Setter Property="FontSize" Value="11"/>
+        <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="TabItem">
+            <Border x:Name="Surface" Background="Transparent" CornerRadius="5" Padding="10,6" Margin="0,0,5,2"><ContentPresenter ContentSource="Header"/></Border>
+            <ControlTemplate.Triggers>
+                <Trigger Property="IsSelected" Value="True"><Setter TargetName="Surface" Property="Background" Value="{DynamicResource CustomBrush_30333D}"/><Setter Property="Foreground" Value="{DynamicResource CustomBrush_C49AF5}"/></Trigger>
+                <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Surface" Property="Background" Value="{DynamicResource CustomBrush_2B3038}"/></Trigger>
+            </ControlTemplate.Triggers>
+        </ControlTemplate></Setter.Value></Setter>
+    </Style>
     <Style x:Key="ReleaseTab" TargetType="RadioButton">
         <Setter Property="Foreground" Value="{DynamicResource CustomBrush_BCC9D6}"/>
         <Setter Property="Cursor" Value="Hand"/>
