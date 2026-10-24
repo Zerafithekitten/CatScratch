@@ -11,6 +11,7 @@ internal static class ChecklistChecks
 {
     internal static void Run(string output,Action<bool,string> check)
     {
+        ChecklistPlannerChecks.Run(output,check);
         var settings=new AppSettings {Transient=true,ShowChecklistModule=true};
         var window=new ChecklistWindow(settings){Left=-30000,Top=-30000};
         var path=Path.Combine(Path.GetDirectoryName(Path.GetFullPath(output))!,"checklist-"+Guid.NewGuid().ToString("N")+".json");

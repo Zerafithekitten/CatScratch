@@ -1,3 +1,49 @@
+## CatScratch v4.1.1
+
+A little less mental bookkeeping for your main and alts. 🐾 I've expanded the checklist into a compact manual planner, while keeping your original task list close by.
+
+<!-- contents -->
+### At a glance
+- [Your character, your progress](#planner-characters)
+- [Daily, weekly and everything in between](#planner-tasks)
+- [Forty Odyle at a time](#planner-odyle)
+- [Your original list stays yours](#planner-original)
+<!-- /contents -->
+
+<a id="planner-characters"></a>
+### 🐱 Your character, your progress
+
+Use the **Plan** button in the checklist header to switch to the new planner. It follows the confirmed active character, and you can browse recorded characters with the character button. The arrow button turns following back on.
+
+Character tasks have their own progress. Shared tasks use one counter for characters on the same server; different servers stay separate. Mark characters as Main or Alt to use different goals where appropriate. If the active character isn't confirmed, progress controls wait rather than assigning a click to the previous character.
+
+<a id="planner-tasks"></a>
+### 📋 Daily, weekly and everything in between
+
+The editable starting template has **16 tasks** across Daily, Weekly, Abyss and Optional. Use checkmarks or the **+ / −** buttons to record progress. This is a manual planner, not automatic activity detection or a live resource balance.
+
+Right-click a task to choose its section, character/server scope, Main and Alt targets, and daily, weekly or no reset. Names can be edited directly when click-through is off, and you can add or remove tasks. The starting values are examples to adjust for your own server and routine.
+
+Automatic resets remain opt-in through the existing checklist settings. Their configurable UTC hour and weekly day also apply to the planner. Tasks set to no reset keep their progress.
+
+![Checklist planner](https://raw.githubusercontent.com/Zerafithekitten/CatScratch/v4.1.1/docs/images/checklist-planner-en-v4.1.1.png)
+
+<a id="planner-odyle"></a>
+### ⚡ Forty Odyle at a time
+
+The Odyle task uses **+40 / −40** steps: **0 → 40 → 80 → 120**. Other starting tasks use single steps. Checkmarks and progress buttons remain clickable in global click-through mode without taking keyboard focus from the game.
+
+The narrower layout keeps counters closer to their task names. Character names respect stream mode.
+
+<a id="planner-original"></a>
+### 💜 Your original list stays yours
+
+The Plan button also takes you back to your existing free-text checklist. Its tasks and checkmarks are kept separately; they aren't overwritten or assigned to a character during this update.
+
+Planner tasks and progress save independently of layout profiles and Settings previews. Local records survive restarts, and reducing the original list's visible row count still keeps its hidden tasks.
+
+Thanks for helping me find a little more room on the screen — and a little less counting in my head. 💜
+
 ## CatScratch v4.1.0
 
 A few new tricks up my paw. 🐾

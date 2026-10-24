@@ -1,5 +1,8 @@
 # Release policy
 
+On 2026-10-24 the owner reviewed the compact character/server checklist planner and +40/-40 Odyle steps and explicitly approved Stable 4.1.1. Publish after full checks with personal English/German notes and a separate German Discord text. Every future Stable release must include a Discord-ready German text as a download, with messages under 2,000 UTF-16 characters; manual posting stays with the owner. Preserve existing checklist data, private supporter content and Light.
+
+
 On 2026-10-24 the owner reviewed the actual class-reference, Pet and Soul Binding previews and English/German 4.1.0 draft notes, then explicitly approved publishing Stable 4.1.0 with all current Beta features and today's additions. Run complete release verification, publish main and latest Stable downloads, update GitHub documentation and keep the independent Light edition, private keys and paid archives unchanged. Preserve the strong optional Altgard experiment warning and passive operation.
 
 

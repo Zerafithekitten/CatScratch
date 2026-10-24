@@ -17,9 +17,11 @@ internal sealed class ChecklistInputSurface : IDisposable
     private Canvas? _canvas;
     private bool _queued,_disposed;
     private readonly List<(CheckBox Original,CheckBox Input)> _boxes=[];
+    private readonly List<(Button Original,Button Input)> _buttons=[];
     internal nint Handle=>_source?.Handle??0;
     internal IReadOnlyList<CheckBox> Checkboxes=>_boxes.Select(pair=>pair.Input).ToArray();
     internal Canvas? Visual=>_canvas;
+    internal IReadOnlyList<Button> Buttons=>_buttons.Select(p=>p.Input).ToArray();
     internal ChecklistInputSurface(ChecklistWindow owner)=>_owner=owner;
     internal void Schedule()
     {
@@ -58,17 +60,28 @@ internal sealed class ChecklistInputSurface : IDisposable
         var size=from.Transform(new Vector(bounds.Width,bounds.Height));
         _canvas!.Width=size.X;_canvas.Height=size.Y;
         NativeMethods.SetWindowPos(_source.Handle,0,(int)bounds.Left,(int)bounds.Top,(int)bounds.Width,(int)bounds.Height,0x0014); // no activation or Z-order change
-        if(_boxes.Count!=_owner.Fields.Count || _boxes.Where((pair,i)=>pair.Original!=_owner.Fields[i].Check).Any())
+        if(_boxes.Count!=_owner.Fields.Count || _boxes.Where((pair,i)=>pair.Original!=_owner.Fields[i].Check).Any() || _buttons.Count!=_owner.PlannerActions.Count || _buttons.Where((pair,i)=>pair.Original!=_owner.PlannerActions[i]).Any())
         {
-            _canvas.Children.Clear();_boxes.Clear();
+            _canvas.Children.Clear();_boxes.Clear();_buttons.Clear();
             foreach(var field in _owner.Fields)
             {
                 var original=field.Check;
                 var input=new CheckBox {Style=original.Style,Padding=original.Padding,Focusable=false,IsTabStop=false,ToolTip=original.ToolTip};
+                input.SetBinding(CheckBox.IsEnabledProperty,new Binding(nameof(CheckBox.IsEnabled)){Source=original});
                 input.SetBinding(CheckBox.IsCheckedProperty,new Binding(nameof(CheckBox.IsChecked)){Source=original,Mode=BindingMode.TwoWay});
                 input.Click+=(_,_)=>original.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
                 _boxes.Add((original,input));_canvas.Children.Add(input);
             }
+        }
+        if(_buttons.Count==0)
+        foreach(var original in _owner.PlannerActions)
+        {
+            var input=new Button{Style=original.Style,Padding=original.Padding,FontSize=original.FontSize,Focusable=false,IsTabStop=false,ToolTip=original.ToolTip};
+            input.SetBinding(Button.ContentProperty,new Binding(nameof(Button.Content)){Source=original});
+            input.SetBinding(Button.IsEnabledProperty,new Binding(nameof(Button.IsEnabled)){Source=original});
+            input.SetBinding(Button.ForegroundProperty,new Binding(nameof(Button.Foreground)){Source=original});
+            input.Click+=(_,_)=>original.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            _buttons.Add((original,input));_canvas.Children.Add(input);
         }
         var viewport=_owner.TasksScroller;
         var viewStart=viewport.PointToScreen(new Point());
@@ -87,11 +100,18 @@ internal sealed class ChecklistInputSurface : IDisposable
             pair.Input.LayoutTransform=new ScaleTransform(sx,sy);
             Canvas.SetLeft(pair.Input,position.X);Canvas.SetTop(pair.Input,position.Y);
         }
+        foreach(var pair in _buttons)
+        {
+            var start=pair.Original.PointToScreen(new Point());
+            var point=from.Transform(new Point(start.X-bounds.Left,start.Y-bounds.Top));
+            pair.Input.Width=pair.Original.ActualWidth;pair.Input.Height=pair.Original.ActualHeight;
+            Canvas.SetLeft(pair.Input,point.X);Canvas.SetTop(pair.Input,point.Y);
+        }
         _canvas.Measure(new Size(size.X,size.Y));_canvas.Arrange(new Rect(0,0,size.X,size.Y));_canvas.UpdateLayout();
     }
     private void Close()
     {
-        _boxes.Clear();_canvas=null;_source?.Dispose();_source=null;
+        _boxes.Clear();_buttons.Clear();_canvas=null;_source?.Dispose();_source=null;
     }
     public void Dispose(){_disposed=true;Close();}
 }

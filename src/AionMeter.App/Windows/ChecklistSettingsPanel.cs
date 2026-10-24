@@ -41,6 +41,7 @@ internal sealed class ChecklistSettingsPanel : StackPanel
         if(_visibilityChanged)settings.ShowChecklistModule=_draft.ShowChecklistModule;
         if(settings.ChecklistAutoReset!=_draft.ChecklistAutoReset || settings.ChecklistResetHourUtc!=_draft.ChecklistResetHourUtc || settings.ChecklistWeeklyResetDay!=_draft.ChecklistWeeklyResetDay)
         {
+            ChecklistPlanner.For(settings).RebaseSchedule();
             settings.ChecklistDailyPeriod=0;settings.ChecklistWeeklyPeriod=0;
         }
         settings.ChecklistAutoReset=_draft.ChecklistAutoReset;settings.ChecklistResetHourUtc=_draft.ChecklistResetHourUtc;settings.ChecklistWeeklyResetDay=_draft.ChecklistWeeklyResetDay;

@@ -71,10 +71,15 @@ internal static class Beta4Checks
                 UiText.Use(code);var notesWindow=new PatchNotesWindow(notesMeter.Updates);
                 try
                 {
-                    notesWindow.Show();notesWindow.SelectRelease("v4.0.0");notesWindow.UpdateLayout();
+                    var notesPath=System.IO.Path.Combine(AppContext.BaseDirectory,"data",code=="de"?"patchnotes-de.md":"patchnotes-en.md");
+                    var expected=ReleaseNotePage.Latest(ReleaseNotePage.Bundled(File.ReadAllText(notesPath)),UpdateChannel.Stable).First();
+                    var intro=expected.OwnMarkdown.Split('\n').Select(line=>line.Trim()).First(line=>line.Length>0&&!line.StartsWith("#")&&!line.StartsWith("[")&&!line.StartsWith("<!--"));
+                    var body=System.Text.RegularExpressions.Regex.Replace(expected.OwnMarkdown,@"(?s)<!-- contents -->.*?<!-- /contents -->","");
+                    var destinations=System.Text.RegularExpressions.Regex.Matches(body,@"(?m)^#{3,6}\s+").Count;
+                    notesWindow.Show();notesWindow.SelectRelease(expected.Tag);notesWindow.UpdateLayout();
                     var text=string.Join(" ",FindNotesText(notesWindow));
-                    Check(text.Contains(code=="de"?"Mehr Überblick, weniger Hin und Her":"A little more cat, a lot more overview"),"Bundled 4.0.0 notes use the correct language for "+code);
-                    Check(notesWindow.SelectedRelease=="v4.0.0" && notesWindow.ContentsCount==11,"4.0.0 provides eleven working contents destinations for "+code);
+                    Check(text.Contains(intro),"Latest bundled Stable notes use the correct language for "+code);
+                    Check(notesWindow.SelectedRelease==expected.Tag && notesWindow.ContentsCount==destinations,"Latest Stable provides all working contents destinations for "+code);
                     Check(!text.Contains("<!--") && !text.Contains("<a id="),"Patch-note markup stays hidden for "+code);
                 }
                 finally{notesWindow.Close();}

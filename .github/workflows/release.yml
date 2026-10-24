@@ -122,6 +122,13 @@ jobs:
           $notesFile = Join-Path $env:RUNNER_TEMP 'release-notes.md'
           Set-Content -LiteralPath $notesFile -Value $section.Groups[1].Value.Trim() -Encoding utf8
           $releaseArgs = @('release','create',$env:RELEASE_TAG,'dist/CatScratch-Setup.exe','dist/CatScratch-win-x64.zip','dist/CatScratch-source.zip','--verify-tag','--notes-file',$notesFile)
-          if ($env:IS_BETA -eq 'True') { $releaseArgs += @('--prerelease','--latest=false') } else { $releaseArgs += '--latest' }
+          if ($env:IS_BETA -eq 'True') { $releaseArgs += @('--prerelease','--latest=false') } else {
+            $discord = "docs/releases/CatScratch-$env:RELEASE_TAG-discord-de.txt"
+            if (-not (Test-Path -LiteralPath $discord)) { throw 'German Discord notes required for Stable' }
+            foreach ($message in ((Get-Content -LiteralPath $discord -Raw) -split '--- NÄCHSTE NACHRICHT ---')) {
+              if ($message.Trim().Length -gt 2000) { throw 'Discord message exceeds 2,000 characters' }
+            }
+            $releaseArgs += @($discord,'--latest')
+          }
           gh @releaseArgs
           if ($LASTEXITCODE) { throw 'Release publication failed' }

@@ -8,13 +8,23 @@ A separate, always-on-top Windows DPS meter for **AION 2**, by Zerafithekitten. 
 
 | Channel | Current version | What it includes |
 | --- | --- | --- |
-| **Stable** | **[v4.1.0](https://github.com/Zerafithekitten/CatScratch/releases/tag/v4.1.0)** | Class reference, Pet and Soul Binding guidance, live Settings previews, optional experimental Altgard map, cube-key resources and performance improvements. |
+| **Stable** | **[v4.1.1](https://github.com/Zerafithekitten/CatScratch/releases/tag/v4.1.1)** | Class reference, Pet and Soul Binding guidance, live Settings previews, optional experimental Altgard map, cube-key resources and performance improvements. |
 | **Beta** | **[v4.0.9-beta.17](https://github.com/Zerafithekitten/CatScratch/releases/tag/v4.0.9-beta.17)** | Previous test build; its features are included in Stable 4.1.0. Beta subscribers return to Stable when the promoted build starts. |
 | **Light** | [v1.0.0](https://github.com/Zerafithekitten/CatScratch/releases/tag/light-v1.0.0) | Separate **DPS meter only** edition with essential settings. Independent ZIP download and settings; no additional CatScratch modules or automatic updater. |
 
 **CatScratch light** is installed separately from the full version. [Download its ZIP](https://github.com/Zerafithekitten/CatScratch/releases/download/light-v1.0.0/CatScratch-light-win-x64.zip) and extract it into its own folder. Light is maintained and updated **only on the owner's explicit request**; normal development continues on full CatScratch.
 
-English is the default. German, Russian and French are also available. Screenshots use synthetic sample data; names and numbers are examples. All features described below are included in **Stable v4.1.0** unless a limitation is stated.
+English is the default. German, Russian and French are also available. Screenshots use synthetic sample data; names and numbers are examples. All features described below are included in **Stable v4.1.1** unless a limitation is stated.
+
+## New in 4.1.1
+
+The checklist's **Plan** button opens a manual character/server planner with 16 editable starting tasks across Daily, Weekly, Abyss and Optional. Follow the confirmed active character or browse recorded ones; personal counts stay separate and shared counts use the same server bucket. Main/Alt roles support different goals. Checkmarks and progress buttons remain clickable in global click-through. Odyle uses +40/-40 steps.
+
+Right-click tasks to edit their section, scope, goals and reset cycle. Automatic resets remain opt-in through the existing checklist reset preferences. The original free-text checklist remains separate and unchanged; planner progress is stored independently of layout profiles and Settings previews. Starting values are editable examples, not automatically detected activity or live balances.
+
+![Compact checklist planner](docs/images/checklist-planner-en-v4.1.1.png)
+
+Stable releases also include a separate German Discord-ready patch-note download for manual posting.
 
 ## New in 4.1.0
 

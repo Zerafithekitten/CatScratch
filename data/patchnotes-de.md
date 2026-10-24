@@ -1,3 +1,49 @@
+## CatScratch v4.1.1
+
+Ein bisschen weniger im Kopf mitzählen – für euren Main und die Alts. 🐾 Die Checkliste bekommt einen kompakten manuellen Planer. Eure bisherige Aufgabenliste bleibt dabei erhalten.
+
+<!-- contents -->
+### Das ist drin
+- [Eigener Fortschritt pro Charakter](#planer-charaktere)
+- [Täglich, wöchentlich und alles dazwischen](#planer-aufgaben)
+- [Odyle in 40er-Schritten](#planer-odyle)
+- [Eure bisherige Liste bleibt erhalten](#planer-bisherige-liste)
+<!-- /contents -->
+
+<a id="planer-charaktere"></a>
+### 🐱 Eigener Fortschritt pro Charakter
+
+Über **Plan** im Kopf der Checkliste wechselt ihr zum neuen Planer. Er folgt dem bestätigten aktiven Charakter. Mit dem Charakter-Button könnt ihr gespeicherte Charaktere durchgehen; der Pfeil schaltet das automatische Folgen wieder ein.
+
+Persönliche Aufgaben haben getrennte Stände. Gemeinsame Aufgaben teilen sich einen Zähler auf demselben Server; verschiedene Server bleiben getrennt. Die Kennzeichnung Main oder Alt erlaubt unterschiedliche Ziele. Ist der aktive Charakter nicht bestätigt, warten die Fortschritts-Buttons, statt den Klick dem vorherigen Charakter zuzuordnen.
+
+<a id="planer-aufgaben"></a>
+### 📋 Täglich, wöchentlich und alles dazwischen
+
+Die bearbeitbare Startvorlage enthält **16 Aufgaben** in den Bereichen Täglich, Wöchentlich, Abyss und Optional. Tragt Fortschritt über Häkchen oder **+ / −** ein. Der Planer wird manuell geführt; er erkennt Aktivitäten nicht automatisch und zeigt keinen Live-Ressourcenbestand.
+
+Per Rechtsklick könnt ihr Bereich, Charakter-/Server-Zuordnung, Main-/Alt-Ziele und tägliches, wöchentliches oder kein Zurücksetzen wählen. Namen lassen sich bei ausgeschaltetem Durchklickmodus direkt ändern; Aufgaben könnt ihr hinzufügen und entfernen. Die Startwerte sind Beispiele für eure eigene Routine und euren Server.
+
+Automatische Resets bleiben optional und verwenden die vorhandenen Checklisten-Einstellungen mit einstellbarer UTC-Uhrzeit und Wochentag. Aufgaben ohne Reset behalten ihren Fortschritt.
+
+![Checklisten-Planer](https://raw.githubusercontent.com/Zerafithekitten/CatScratch/v4.1.1/docs/images/checklist-planner-de-v4.1.1.png)
+
+<a id="planer-odyle"></a>
+### ⚡ Odyle in 40er-Schritten
+
+Odyle zählt mit **+40 / −40**: **0 → 40 → 80 → 120**. Die anderen Startaufgaben bleiben bei Einzelschritten. Häkchen und Fortschritts-Buttons funktionieren auch im globalen Durchklickmodus, ohne dem Spiel den Tastaturfokus zu nehmen.
+
+Die schmalere Gestaltung bringt Zahlen und Aufgabentext näher zusammen. Charakternamen berücksichtigen den Stream-Modus.
+
+<a id="planer-bisherige-liste"></a>
+### 💜 Eure bisherige Liste bleibt erhalten
+
+Mit Plan kommt ihr auch zurück zur bisherigen Freitext-Checkliste. Ihre Aufgaben und Häkchen bleiben separat erhalten. Das Update überschreibt sie nicht und weist sie keinem Charakter zu.
+
+Planer-Aufgaben und Fortschritt werden unabhängig von Layout-Profilen und Einstellungsvorschauen gespeichert und überstehen einen Neustart. Auch die bisherige Liste behält ausgeblendete Aufgaben, wenn ihr ihre sichtbare Zeilenanzahl reduziert.
+
+Danke fürs Mitgestalten – ein bisschen weniger Luft zwischen den Zahlen, ein bisschen weniger Chaos im Katzenkopf. 💜
+
 ## CatScratch v4.1.0
 
 Ein paar neue Tricks unter der Pfote. 🐾

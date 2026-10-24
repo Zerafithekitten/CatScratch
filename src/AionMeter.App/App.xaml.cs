@@ -189,7 +189,7 @@ public partial class App : Application
             _timersWindow = new BossTimersWindow(_meter);
             _soundWindow = new EventSoundsWindow(_timerCards, (_, _) => { });
             _patchNotes = new PatchNotesWindow(_meter.Updates);
-            _checklistWindow=new ChecklistWindow(_meter.Settings);
+            _checklistWindow=new ChecklistWindow(_meter.Settings,()=>_meter.LiveIdentity.Current,_meter.Data.ServerName);
             _resourcesWindow=new ResourcesWindow(_meter);
             _dungeonEntriesWindow=new DungeonEntriesWindow(_meter);
             foreach (var window in new Window[] { _overlay, _timerHub, _startedEvents, _timersWindow, _soundWindow, _patchNotes, _checklistWindow, _resourcesWindow, _dungeonEntriesWindow })
@@ -734,7 +734,7 @@ public partial class App : Application
         if(!_meter.Settings.ShowChecklistModule){_checklistWindow?.Close();return;}
         if(_checklistWindow is not null){_checklistWindow.ApplyPreferences();return;}
         if(_windowVisibility.Hidden)return;
-        var window=_checklistWindow=new ChecklistWindow(_meter.Settings);
+        var window=_checklistWindow=new ChecklistWindow(_meter.Settings,()=>_meter.LiveIdentity.Current,_meter.Data.ServerName);
         WindowClickThrough.Attach(window,()=>_meter.Settings.ClickThrough,()=>_meter.Settings.WindowOpacity);
         window.Closed+=(_,_)=>{if(ReferenceEquals(_checklistWindow,window))_checklistWindow=null;};
         window.Show();_windowVisibility.Track(window);

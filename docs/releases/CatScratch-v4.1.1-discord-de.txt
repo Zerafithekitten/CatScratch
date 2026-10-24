@@ -1,0 +1,40 @@
+# 🐾 CatScratch 4.1.1
+**Weniger im Kopf mitzählen – für Main und Alts.**
+
+Die Checkliste bekommt einen kompakten manuellen Planer. Eure bisherigen Aufgaben und Häkchen bleiben erhalten. 💜
+
+## 🐱 1/2 · Charaktere & gemeinsame Aufgaben
+• Über **Plan** im Kopf der Checkliste zum Planer wechseln – und wieder zurück zur bisherigen Liste.
+• Der Planer folgt dem bestätigten aktiven Charakter. Der Charakter-Button blättert durch gespeicherte Charaktere; der Pfeil schaltet das Folgen wieder ein.
+• Persönliche Aufgaben haben getrennte Fortschrittsstände.
+• Gemeinsame Aufgaben teilen sich einen Zähler auf demselben Server. Andere Server bleiben getrennt.
+• Charaktere lassen sich als **Main oder Alt** kennzeichnen, mit unterschiedlichen Zielen.
+• Ist der aktive Charakter noch nicht bestätigt, wird kein Fortschritt dem vorherigen Charakter zugewiesen.
+
+## 📋 Eure Aufgaben, eure Routine
+Die bearbeitbare Vorlage enthält **16 Aufgaben** in **Täglich, Wöchentlich, Abyss und Optional**.
+
+Per Rechtsklick könnt ihr Bereich, Charakter-/Server-Zuordnung, Main-/Alt-Ziele und Reset wählen. Namen sind direkt bearbeitbar, wenn der Durchklickmodus aus ist. Aufgaben lassen sich hinzufügen und entfernen.
+
+**Der Fortschritt wird manuell eingetragen.** Die Startwerte sind anpassbare Beispiele, keine automatisch erkannten Aktivitäten oder Live-Bestände.
+
+--- NÄCHSTE NACHRICHT ---
+
+## ⚡ CatScratch 4.1.1 · 2/2
+**Odyle in 40er-Schritten**
+Ein Klick auf **+40** zählt eine weitere Verwendung: **0 → 40 → 80 → 120**. Mit **−40** könnt ihr korrigieren. Andere Startaufgaben nutzen Einzelschritte.
+
+## 🖱️ Auch im Durchklickmodus
+Häkchen und Plus/Minus bleiben bedienbar, ohne dem Spiel den Tastaturfokus zu nehmen. Die Checkliste ist schmaler, und die Zahlen stehen näher am Aufgabentext. Charakternamen berücksichtigen den Stream-Modus.
+
+## ↻ Resets nach euren Einstellungen
+Automatische Resets bleiben **optional**. Der Planer verwendet die vorhandene UTC-Uhrzeit und den gewählten wöchentlichen Reset-Tag. Pro Aufgabe ist täglich, wöchentlich oder kein Reset einstellbar.
+
+## 💜 Bestehende Aufgaben bleiben erhalten
+• Die bisherige Freitext-Liste bleibt separat verfügbar.
+• Ihre Aufgaben werden nicht überschrieben oder ungefragt einem Charakter zugeordnet.
+• Planer-Aufgaben und Fortschritt werden unabhängig von Layout-Profilen und Einstellungsvorschauen gespeichert und bleiben nach einem Neustart erhalten.
+
+Danke fürs Mitgestalten – ein bisschen weniger Luft zwischen den Zahlen, ein bisschen weniger Chaos im Katzenkopf. 🐾
+
+**Download:** https://github.com/Zerafithekitten/CatScratch/releases/tag/v4.1.1

@@ -15,18 +15,23 @@ internal sealed class ChecklistWindow : Window,IDisplayAppearance
     private readonly DispatcherTimer _save=new(){Interval=TimeSpan.FromMilliseconds(450)};
     private readonly List<(CheckBox Check,TextBox Text)> _fields=[];
     private bool _displayOnly;
+    private ChecklistPlannerPanel? _planner;
+    private bool _plannerMode;
+    private readonly Func<AionMeter.Core.Events.SelfIdentifiedEvent?>? _identity;
+    private readonly Func<int,string>? _serverName;
+    internal IReadOnlyList<Button> PlannerActions=>_plannerMode?_planner?.Actions??[]:[];
     private readonly DispatcherTimer _resetClock=new(){Interval=TimeSpan.FromSeconds(1)};
     private readonly Dictionary<bool,TextBlock> _countdowns=[];
     private readonly ChecklistInputSurface _input;
     internal bool DisplayOnly=>_displayOnly;
     internal ChecklistInputSurface InputSurface=>_input;
-    internal IReadOnlyList<(CheckBox Check,TextBox Text)> Fields=>_fields;
+    internal IReadOnlyList<(CheckBox Check,TextBox Text)> Fields=>_plannerMode?_planner?.Fields??_fields:_fields;
     internal string[] SectionHeaders=>_rows.Children.OfType<DockPanel>().SelectMany(p=>p.Children.OfType<TextBlock>().Where(t=>!_countdowns.Values.Contains(t))).Select(t=>t.Text).ToArray();
     internal ScrollViewer TasksScroller {get;}
     internal Button CloseButton {get;}
-    internal ChecklistWindow(AppSettings settings)
+    internal ChecklistWindow(AppSettings settings,Func<AionMeter.Core.Events.SelfIdentifiedEvent?>? identity=null,Func<int,string>? serverName=null)
     {
-        _settings=settings;ChecklistState.Normalize(settings);_input=new(this);
+        _settings=settings;_identity=identity;_serverName=serverName;ChecklistState.Normalize(settings);_input=new(this);
         Title="CatScratch · "+UiText.Current.Localize("Checklist");
         Width=settings.ChecklistWidth;MinWidth=220;MaxWidth=650;SizeToContent=SizeToContent.Height;
         WindowStyle=WindowStyle.None;ResizeMode=ResizeMode.NoResize;AllowsTransparency=true;Background=Brushes.Transparent;
@@ -37,6 +42,8 @@ internal sealed class ChecklistWindow : Window,IDisplayAppearance
         CloseButton=new Button {Content="\uE711",Style=(Style)FindResource("IconButton"),Width=20,Height=20,ToolTip=UiText.Current.TipClose};
         CloseButton.Click+=(_,_)=>{settings.ShowChecklistModule=false;Close();};
         DockPanel.SetDock(CloseButton,Dock.Right);_header.Children.Add(CloseButton);
+        var mode=new Button{Content="Plan",FontFamily=new("Segoe UI"),FontSize=10,Style=(Style)FindResource("IconButton"),Width=34,Height=20,ToolTip=ControlPanelSettingsPanel.L("Switch planner / original tasks","Planer / bisherige Aufgaben wechseln")};
+        mode.Click+=(_,_)=>SetPlannerMode(!_plannerMode);DockPanel.SetDock(mode,Dock.Right);_header.Children.Add(mode);
         var pin=WindowPinning.CreateButton(this,settings,"checklist");pin.Width=20;pin.Height=20;DockPanel.SetDock(pin,Dock.Right);_header.Children.Add(pin);
         var paw=new Image {Source=AppIcon.Image,Width=12,Height=12,Margin=new(0,0,5,0)};DockPanel.SetDock(paw,Dock.Left);_header.Children.Add(paw);
         _header.Children.Add(new TextBlock {Text=UiText.Current.Localize("Checklist"),FontSize=11,Foreground=ThemeColors.Brush("#C49AF5"),VerticalAlignment=VerticalAlignment.Center});
@@ -55,6 +62,16 @@ internal sealed class ChecklistWindow : Window,IDisplayAppearance
         TasksScroller.ScrollChanged+=(_,_)=>_input.Schedule();
         Closed+=(_,_)=>{_input.Dispose();_save.Stop();_resetClock.Stop();SavePlacement();AppHost.Current.ResumeHotkeys();};
         ApplyPreferences();
+        if(ChecklistPlanner.For(settings).Data.Enabled)SetPlannerMode(true);
+    }
+    internal void SetPlannerMode(bool enabled)
+    {
+        _plannerMode=enabled;
+        if(enabled)_planner??=new ChecklistPlannerPanel(_settings,_identity,()=>_input.Schedule(),_serverName);
+        TasksScroller.Content=enabled?_planner:_rows;
+        TasksScroller.MaxHeight=enabled?700:double.PositiveInfinity;
+        ChecklistPlanner.For(_settings).Data.Enabled=enabled;ChecklistPlanner.For(_settings).Save();
+        SetDisplayOnly(_displayOnly);_input.Schedule();
     }
     internal void ApplyPreferences()
     {
@@ -98,6 +115,7 @@ internal sealed class ChecklistWindow : Window,IDisplayAppearance
     }
     internal void RefreshResetClock()
     {
+        if(_plannerMode){_planner?.Tick();return;}
         var now=DateTimeOffset.UtcNow;
         ChecklistSchedule.Update(_settings,now);
         foreach(var (weekly,text) in _countdowns)
@@ -128,6 +146,7 @@ internal sealed class ChecklistWindow : Window,IDisplayAppearance
     {
         _displayOnly=enabled;_headerFrame.Visibility=enabled?Visibility.Hidden:Visibility.Visible;
         foreach(var field in _fields)field.Text.IsReadOnly=enabled;
+        _planner?.SetDisplayOnly(enabled);
         _input.Sync();_input.Schedule();
     }
 }
