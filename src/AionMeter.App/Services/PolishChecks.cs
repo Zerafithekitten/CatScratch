@@ -188,11 +188,11 @@ internal static class PolishChecks
             meter.Settings.ControlsLayout=ControlsLayout.Grid;permanentPanel.ApplyAppearance();permanentPanel.UpdateLayout();
             check(permanentPanel.Width==112 && exitButton.IsVisible && permanentPanel.SettingsButton.IsVisible,"Compact vertical panel retains Settings and Exit controls");
             var actionGrid=permanentPanel.VerticalActions!;
-            check(actionGrid.Children.Count==20 && actionGrid.ColumnDefinitions.Count==4 && actionGrid.RowDefinitions.Count==5
+            check(actionGrid.Children.Count==21 && actionGrid.ColumnDefinitions.Count==4 && actionGrid.RowDefinitions.Count==5
                 && actionGrid.Children.OfType<System.Windows.Controls.Primitives.ButtonBase>().All(c=>c.ActualWidth==20 && c.ActualHeight==18)
-                && actionGrid.Children.OfType<System.Windows.Controls.Primitives.ButtonBase>().Select(c=>(Grid.GetRow(c),Grid.GetColumn(c))).Distinct().Count()==17
+                && actionGrid.Children.OfType<System.Windows.Controls.Primitives.ButtonBase>().Select(c=>(Grid.GetRow(c),Grid.GetColumn(c))).Distinct().Count()==18
                 && actionGrid.Children.OfType<Border>().Count(c=>!c.IsHitTestVisible && Grid.GetRowSpan(c)==5)==3,
-                "Vertical panel uses equally sized actions in a four-column grid with the character overview without the DPS meter pin");
+                "Vertical panel uses equally sized actions in a four-column grid with the character overview and class reference without the DPS meter pin");
             checklistButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             check(Window.GetWindow(checklistButton)==permanentPanel && checklistButton.IsVisible && meter.Settings.ShowChecklistModule!=checklistWasOpen,
                 "Checklist remains accessible in the compact vertical panel during global click-through");
@@ -204,7 +204,7 @@ internal static class PolishChecks
             check(WindowPinning.IsPinned(detachedOverlay)!=meterPinned && WindowPinning.IsPinned(permanentPanel)==panelPinned,"DPS meter pin locks only the meter and leaves the panel pin unchanged");
             meterPin.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             meter.Settings.ControlsLayout=ControlsLayout.Horizontal;permanentPanel.ApplyAppearance();permanentPanel.UpdateLayout();
-            check(permanentPanel.Width==334,"Panel can return to the compact horizontal layout");
+            check(permanentPanel.Width==352,"Panel can return to the compact horizontal layout");
             for(var i=0;i<2;i++)
             {
                 meter.Settings.ControlsLayout=ControlsLayout.Vertical;permanentPanel.ApplyAppearance();permanentPanel.UpdateLayout();
