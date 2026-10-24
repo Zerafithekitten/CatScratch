@@ -9,6 +9,7 @@ internal sealed class ResourceProgressCache:IDisposable
     private readonly ResourceBalances _resources;
     private readonly string _path;
     private readonly object _gate=new();
+    private readonly object _writeGate=new();
     private Dictionary<string,ResourceProgress> _records=[];
     private readonly System.Threading.Timer _timer;
     private bool _disposed,_awaitingIdentity=true;
@@ -53,10 +54,16 @@ internal sealed class ResourceProgressCache:IDisposable
     }
     private void Save()
     {
-        lock(_gate)
+        lock(_writeGate)
         {
-            if(_records.Count==0)return;
-            try{JsonSettingsFile.Write(_path,_records);}
+            Dictionary<string,ResourceProgress> snapshot;
+            lock(_gate)
+            {
+                if(_records.Count==0)return;
+                // Records are replaced by SavedProgress snapshots, never edited in place.
+                snapshot=new(_records);
+            }
+            try{JsonSettingsFile.Write(_path,snapshot);}
             catch(Exception e) when(e is IOException or UnauthorizedAccessException){Log.Error("Resource cache could not be saved",e);}
         }
     }

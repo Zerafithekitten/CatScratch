@@ -10,7 +10,7 @@ using AionMeter.Core.Game;
 namespace AionMeter.App.Windows;
 
 /// <summary>Compact nearby and current-region pet recommendations, with an attacked-target fallback.</summary>
-public sealed class PetTrackerWindow:Window,IDisplayAppearance
+public sealed class PetTrackerWindow:Window,IDisplayAppearance,IMapPresentation
 {
     private readonly MeterService _meter;
     private readonly IReadOnlyList<PetDefinition> _catalog;
@@ -97,6 +97,7 @@ public sealed class PetTrackerWindow:Window,IDisplayAppearance
                 (_sounds??=new()).Play(new EventSoundPreference{Enabled=true,Sound=_meter.Settings.PetSound},_meter.Settings.PetSoundVolume);
             _lastLevels=states.ToDictionary(p=>p.Key,p=>p.Value.Level);
         }
+        if(IsLoaded&&(!IsVisible||MapHudSuppression.IsSuppressed(this)))return;
         var codes=_meter.Pets.AttackedNpcCodes();
         var now=DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
         var seen=_meter.Pets.Nearby().Npcs.Where(n=>n.TimeMs<=now && now-n.TimeMs<=30000).OrderByDescending(n=>n.TimeMs).Select(n=>n.NpcCode).Distinct().ToArray();
@@ -137,5 +138,6 @@ public sealed class PetTrackerWindow:Window,IDisplayAppearance
 
         SizeToContent=SizeToContent.Height;
     }
+    void IMapPresentation.SetMapPresentationSuspended(bool suspended){if(!suspended&&IsVisible)Refresh();}
     private static SolidColorBrush Brush(string hex){return ThemeColors.Brush(hex);}
 }

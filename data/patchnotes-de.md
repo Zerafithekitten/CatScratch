@@ -1,3 +1,14 @@
+## CatScratch v4.0.9-beta.17
+
+Ich habe unter der Haube etwas aufgeräumt. Weniger unnötige Arbeit für CatScratch, mehr Luft fürs Spiel. 🐾
+
+- Die Karte folgt Bewegung und Zoom mit weniger wiederholter Bildverarbeitung. Unveränderte Marker und Filter werden nicht ständig neu aufgebaut, und die Markerberechnung erzeugt deutlich weniger kurzlebige Objekte.
+- Hinter der Karte ausgeblendete Module sparen unnötige Darstellungsarbeit. Ressourcen, Dungeon-Eintritte und Pet-Fortschritt zeigen beim Schließen der Karte sofort den aktuellen Stand; Datenerfassung und Pet-Levelhinweise laufen weiter.
+- Die Live-Vorschau der Einstellungen arbeitet sparsamer. Beim Speichern von Ressourcen und Pets bleiben die Daten kürzer gesperrt. Der Kartenstatus meldet keinen Abgleich mehr, bevor eine offene Karte bestätigt wurde.
+- Das Zurückholen einer Position außerhalb des Bildschirms in den Einstellungen verbessert. Die zurückgeholte Position bleibt beim Schließen erhalten, ohne andere ungespeicherte Vorschauänderungen zu übernehmen.
+
+Das Altgard-Kartenoverlay bleibt stark experimentell. Die lokalen Verarbeitungstests sind schneller geworden; denselben FPS-Gewinn auf jedem PC kann ich damit nicht versprechen. Die vollständige Kartensuche behält ihre bisherigen Prüfungen.
+
 ## CatScratch v4.0.9-beta.16
 
 Noch einen kleinen Stau an der Kartenüberschrift gefunden. 🐾
@@ -457,4 +468,3 @@ Neue Installationen verwenden den ausgewählten Katzenlaut als Standardton. Eure
 Alle Änderungen der 3.0.12-Beta-Reihe sind enthalten, zusammen mit den abschließenden Schnellwechsel- und Tabellenkorrekturen. CatScratch light bleibt seine eigenständige Edition.
 
 Danke fürs Testen, fürs genaue Hinsehen und für die Geduld. Viel Spaß mit 4.0.0 – und möge der nächste Cube laut genug miauen. 🐾
-

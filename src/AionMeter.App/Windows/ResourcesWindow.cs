@@ -4,7 +4,7 @@ using System.Windows.Media;
 using AionMeter.App.Services;
 namespace AionMeter.App.Windows;
 
-internal sealed class ResourcesWindow:Window,IDisplayAppearance
+internal sealed class ResourcesWindow:Window,IDisplayAppearance,IMapPresentation
 {
     internal static readonly (string Key,string Name,int Item)[] Entries=[("odyle","Odyle Energy",0),("abyss","Abyss Points",930100003),("centuryroot","Centuryroot Token",930100011),("passcoin","Deava Pass Shop Coin",930100024),("fragment","Phantasmal Fragment",930100017),("oath","Oath Coins",930100019),("cube-keys","Hidden Cube Keys (bound)",-1)];
     private readonly MeterService _meter;
@@ -32,6 +32,7 @@ internal sealed class ResourcesWindow:Window,IDisplayAppearance
     }
     internal void Refresh()
     {
+        if(IsLoaded&&(!IsVisible||MapHudSuppression.IsSuppressed(this)))return;
         var layout=_meter.Settings.ResourcesLayout is "Strip" or "Grid"?_meter.Settings.ResourcesLayout:"List";
         var configuredWidth=double.IsFinite(_meter.Settings.ResourcesWidth)?Math.Clamp(_meter.Settings.ResourcesWidth,220,600):300;
         var values=_meter.Resources.Read();
@@ -78,5 +79,6 @@ internal sealed class ResourcesWindow:Window,IDisplayAppearance
         }
         if(_rows.Children.Count==0)_rows.Children.Add(new TextBlock{Text=ControlPanelSettingsPanel.L("Select resources in Settings.","Ressourcen in den Einstellungen auswählen."),Margin=new Thickness(6),Foreground=ThemeColors.Brush("#A9B8C7")});
     }
+    void IMapPresentation.SetMapPresentationSuspended(bool suspended){if(!suspended&&IsVisible)Refresh();}
     public void SetDisplayOnly(bool enabled)=>_header.Visibility=enabled?Visibility.Hidden:Visibility.Visible;
 }

@@ -36,8 +36,14 @@ internal static class PetLiveChecks
             meter.Pets.Observe(new SelfIdentifiedEvent(1,1,"Pet live A",2305,GameClass.Cleric));
             meter.Pets.Observe(new PetCollectionEvent(2,new Dictionary<int,PetState>{{1193,new(1193,1,10)}}));Attack(3);Flush();
             Check(Progress()=="10/25","Live baseline reaches the window without manual Refresh");
-            Task.Run(()=>meter.Pets.Observe(new PetSoulEvent(4,new Dictionary<int,int>{{1193,1}}))).GetAwaiter().GetResult();Flush();
-            Check(Progress()=="11/25","Capture-thread soul delta updates the window immediately through its dispatcher");
+            using(var suppression=new MapHudSuppression())
+            {
+                suppression.Apply(true,[window]);
+                Task.Run(()=>meter.Pets.Observe(new PetSoulEvent(4,new Dictionary<int,int>{{1193,1}}))).GetAwaiter().GetResult();Flush();
+                Check(Progress()=="10/25"&&meter.Pets.Snapshot().Single().Souls==11,"Map suppression pauses pet drawing while capture-thread progress continues");
+                suppression.Apply(false,[window]);
+                Check(Progress()=="11/25","Closing the map immediately displays accumulated pet progress without waiting for the next timer");
+            }
             meter.Pets.Observe(new PetSoulEvent(5,new Dictionary<int,int>{{1193,14}}));Flush();
             Check(Progress()=="0/75","Level-up replaces both soul count and next-level requirement live");
             var saved=meter.Pets.SavedProgress()!;
@@ -52,6 +58,21 @@ internal static class PetLiveChecks
             Check(Progress()=="2/75","Fresh full progress replaces cached counters and removes the estimate marker live");
             meter.Pets.Observe(new PetSoulEvent(11,new Dictionary<int,int>{{1193,73}}));Flush();
             Check(list.Items.Count==0,"Max-level pet disappears immediately after the final souls");
+            var cacheDirectory=Path.Combine(Path.GetTempPath(),"CatScratch-pet-persist-"+Guid.NewGuid().ToString("N"));
+            Directory.CreateDirectory(cacheDirectory);
+            try
+            {
+                var pets=new PetCollection();var own=new SelfIdentifiedEvent(1,1,"Cache verification",2305,GameClass.Cleric);
+                using(var cache=new PetProgressCache(pets,meter.Data,cacheDirectory))
+                {
+                    pets.Observe(own);pets.Observe(new PetCollectionEvent(2,new Dictionary<int,PetState>{{1193,new(1193,1,10)}}));
+                    pets.Observe(new PetSoulEvent(3,new Dictionary<int,int>{{1193,2}}));
+                }
+                var restored=new PetCollection();restored.Observe(own);
+                using(var cache=new PetProgressCache(restored,meter.Data,cacheDirectory))cache.Identity(own);
+                Check(restored.Confirmed&&restored.FromCache&&restored.Snapshot().Single().Souls==12,"Shutdown flush persists the latest pet snapshot and restores it for the matching character");
+            }
+            finally{foreach(var file in Directory.GetFiles(cacheDirectory))File.Delete(file);Directory.Delete(cacheDirectory);}
             File.WriteAllText(output,JsonSerializer.Serialize(passed));
         }
         finally{window.Close();}

@@ -46,6 +46,16 @@ internal static class LiveSettingsChecks
             Check(JsonDocument.Parse(File.ReadAllText(file)).RootElement.GetProperty("ResourcesLayout").GetString()=="Grid","Save commits the visible layout to disk");
             using(var preview=new SettingsPreviewSession(state)){var draft=state.CreateDraft();draft.ResourcesLayout="Strip";preview.Apply(draft,["ResourcesLayout"]);}
             Check(state.ResourcesLayout=="Grid","Further unsaved edits return to the latest saved checkpoint");
+            using(var preview=new SettingsPreviewSession(state))
+            {
+                var draft=state.CreateDraft();draft.WindowOpacity=.4;preview.Apply(draft,[nameof(AppSettings.WindowOpacity)]);
+                state.SupporterCatLeft=430;state.SupporterCatTop=210;state.SupporterCatPositionSaved=true;
+                preview.PreserveGeometry(nameof(AppSettings.SupporterCatLeft),nameof(AppSettings.SupporterCatTop),nameof(AppSettings.SupporterCatPositionSaved));
+                state.SaveTo(file);
+                using var recovered=JsonDocument.Parse(File.ReadAllText(file));
+                Check(recovered.RootElement.GetProperty("SupporterCatLeft").GetDouble()==430&&recovered.RootElement.GetProperty("WindowOpacity").GetDouble()!=.4,"Immediate companion recovery persists without committing unrelated preview preferences");
+            }
+            Check(state.SupporterCatLeft==430&&state.SupporterCatTop==210&&state.SupporterCatPositionSaved&&state.WindowOpacity!=.4,"Discard keeps explicitly recovered companion geometry and restores unrelated preferences");
 
             var settings=new AppSettings{Transient=true,DownloadIcons=false,CheckUpdates=false,ShowResourcesModule=true,ResourcesLayout="List",ResourcesWidth=300,ChecklistItems=[new(){Text="Keep this task",Completed=true}]};
             using var meter=new MeterService(settings,null,historyDirectory:directory);

@@ -14,6 +14,7 @@ internal sealed class PetProgressCache:IDisposable
     private readonly string _path;
     private readonly string _directory;
     private readonly object _gate=new();
+    private readonly object _writeGate=new();
     private Dictionary<string,PetProgress> _records=[];
     private readonly HashSet<string> _recovering=[];
     private readonly CancellationTokenSource _stop=new();
@@ -86,13 +87,18 @@ internal sealed class PetProgressCache:IDisposable
     }
     private void Save()
     {
-        lock(_gate)
+        lock(_writeGate)
         {
-            if(_records.Count==0)return;
+            Dictionary<string,PetProgress> snapshot;
+            lock(_gate)
+            {
+                if(_records.Count==0)return;
+                snapshot=new(_records);
+            }
             try
             {
                 Directory.CreateDirectory(_directory);
-                File.WriteAllText(_path+".tmp",JsonSerializer.Serialize(_records));File.Move(_path+".tmp",_path,true);
+                File.WriteAllText(_path+".tmp",JsonSerializer.Serialize(snapshot));File.Move(_path+".tmp",_path,true);
             }
             catch(Exception e) when(e is IOException or UnauthorizedAccessException){Log.Error("Pet progress cache could not be saved",e);}
         }

@@ -4,7 +4,7 @@ using System.Windows.Media;
 using AionMeter.App.Services;
 namespace AionMeter.App.Windows;
 
-internal sealed class DungeonEntriesWindow:Window,IDisplayAppearance
+internal sealed class DungeonEntriesWindow:Window,IDisplayAppearance,IMapPresentation
 {
     internal static readonly (string Key,string Name,uint Id)[] Entries=[("daily","Daily Dungeon",101),("nightmare","Nightmare",4),("shugo","Shugo Festival",1)];
     private readonly MeterService _meter;
@@ -32,6 +32,7 @@ internal sealed class DungeonEntriesWindow:Window,IDisplayAppearance
     }
     internal void Refresh()
     {
+        if(IsLoaded&&(!IsVisible||MapHudSuppression.IsSuppressed(this)))return;
         var layout=_meter.Settings.DungeonEntriesLayout is "Strip" or "Grid"?_meter.Settings.DungeonEntriesLayout:"List";
         var width=double.IsFinite(_meter.Settings.DungeonEntriesWidth)?Math.Clamp(_meter.Settings.DungeonEntriesWidth,220,600):300;
         var values=_meter.Resources.ReadEntries();
@@ -75,6 +76,7 @@ internal sealed class DungeonEntriesWindow:Window,IDisplayAppearance
         }
         if(_rows.Children.Count==0)_rows.Children.Add(new TextBlock{Text=ControlPanelSettingsPanel.L("Select dungeons in Settings.","Dungeons in den Einstellungen auswählen."),Margin=new Thickness(6)});
     }
+    void IMapPresentation.SetMapPresentationSuspended(bool suspended){if(!suspended&&IsVisible)Refresh();}
 
     public void SetDisplayOnly(bool enabled)=>_header.Visibility=enabled?Visibility.Hidden:Visibility.Visible;
 }

@@ -114,6 +114,19 @@ internal static class WindowPresentation
         Math.Clamp(window.Left,area.Left,Math.Max(area.Left,area.Right-window.Width)),
         Math.Clamp(window.Top,area.Top,Math.Max(area.Top,area.Bottom-window.Height)),
         Math.Min(window.Width,area.Width), Math.Min(window.Height,area.Height));
+    internal static Rect RecoveryBounds(Rect bounds,Rect area)=>Clamp(new Rect(
+        area.Left+(area.Width-bounds.Width)/2,area.Top+(area.Height-bounds.Height)/2,bounds.Width,bounds.Height),area);
+    internal static void RecoverTo(Window window,Window owner)
+    {
+        window.UpdateLayout();
+        var handle=new WindowInteropHelper(window).EnsureHandle();
+        var screen=System.Windows.Forms.Screen.FromHandle(new WindowInteropHelper(owner).EnsureHandle());
+        var area=screen.WorkingArea;var bounds=PhysicalBounds(window);
+        if(bounds.IsEmpty)return;
+        var target=RecoveryBounds(bounds,new Rect(area.X,area.Y,area.Width,area.Height));
+        NativeMethods.SetWindowPos(handle,0,(int)Math.Round(target.Left),(int)Math.Round(target.Top),0,0,0x0015);
+        Constrain(window);
+    }
     public static void SetScale(double value)
     {
         Scale=double.IsFinite(value)?Math.Clamp(value,.75,1.5):1;
@@ -132,13 +145,14 @@ internal static class WindowPresentation
             root.LayoutTransform=scale;previous=root;
         }
         window.Loaded+=(_,_)=>{Layout();PlaceOnPreferredScreen(window);Constrain(window);QueueTopmostRecovery();};
-        window.IsVisibleChanged+=(_,_)=>{if(window.IsVisible)QueueTopmostRecovery();};
+        window.IsVisibleChanged+=(_,_)=>{if(window.IsVisible){Constrain(window);QueueTopmostRecovery();}};
         window.SizeChanged+=(_,_)=>Constrain(window);
         window.LocationChanged+=(_,_)=>Constrain(window);
         window.Closed+=(_,_)=>{Windows.Remove(window);Limits.Remove(window);NativeDragging.Remove(window);};
         window.SourceInitialized+=(_,_)=>HwndSource.FromHwnd(new WindowInteropHelper(window).Handle)?.AddHook((nint hwnd,int msg,nint wp,nint lp,ref bool handled)=>
         {
             // Recover promptly after app deactivation, a display change or native topmost demotion.
+            if(msg is 0x007E or 0x02E0)window.Dispatcher.BeginInvoke(()=>{if(window.IsLoaded)Constrain(window);});
             if(msg==0x001C && wp==0 || msg==0x007E || msg==0x0047 && window.Topmost &&
                 ((long)NativeMethods.GetWindowLongPtr(hwnd,NativeMethods.GWL_EXSTYLE)&8)==0)QueueTopmostRecovery();
             if(msg==0x0231)NativeDragging.Add(window);

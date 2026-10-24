@@ -1,3 +1,14 @@
+## CatScratch v4.0.9-beta.17
+
+Spent some time untangling the busy bits underneath CatScratch. Less unnecessary work, more room for the game. 🐾
+
+- The map follows movement and zoom with less repeated image processing. Unchanged markers and filters no longer keep rebuilding themselves, and marker calculations create far fewer temporary objects.
+- Modules hidden behind the map skip unnecessary drawing. Resources, dungeon entries and pet progress catch up immediately when the map closes; data collection and pet level notifications keep running.
+- Reduced work in live Settings previews and shortened the data locks used when saving resource and pet progress. Fixed the map status claiming a search before an open map was confirmed.
+- Improved off-screen position recovery in Settings. A recovered position stays put when you close Settings, without saving unrelated preview changes.
+
+The Altgard map overlay is still highly experimental. Local processing tests improved, but this is not a promise of the same FPS gain on every PC; full map reacquisition keeps its existing checks.
+
 ## CatScratch v4.0.9-beta.16
 
 Found another little traffic jam at the map heading. 🐾

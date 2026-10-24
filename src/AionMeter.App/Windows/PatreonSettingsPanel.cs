@@ -17,7 +17,7 @@ internal sealed class PatreonSettingsPanel:StackPanel
     private EventSoundPlayer? _preview;
     private readonly HashSet<string> _pendingRemoval=[];
     private static string L(string en,string de)=>ControlPanelSettingsPanel.L(en,de);
-    internal PatreonSettingsPanel(AppSettings draft,Action<ThemePreferences> setTheme)
+    internal PatreonSettingsPanel(AppSettings draft,Action<ThemePreferences> setTheme,Action<SupporterCatWindow>? recovered=null)
     {
         _draft=draft;_setTheme=setTheme;
         Resources.MergedDictionaries.Add(new(){Source=new Uri("/CatScratch;component/Theme/MeterPreferences.xaml",UriKind.Relative)});
@@ -43,6 +43,19 @@ internal sealed class PatreonSettingsPanel:StackPanel
         void ScaleLabel()=>scaleLabel.Text=L("Cat size","Katzengröße")+" · "+Math.Round(_catScale.Value*100)+"%";
         _catScale.ValueChanged+=(_,_)=>{_draft.SupporterCatScale=_catScale.Value;ScaleLabel();};ScaleLabel();
         Children.Add(scaleLabel);Children.Add(_catScale);
+        var recover=new Button{Tag="recover-supporter-cat",Content=L("Bring cat back onto this screen","Katze auf diesen Bildschirm zurückholen"),Style=(Style)FindResource("GhostButton"),HorizontalAlignment=HorizontalAlignment.Left,Margin=new(0,0,0,8)};
+        recover.Click+=(_,_)=>
+        {
+            var cat=Application.Current.Windows.OfType<SupporterCatWindow>().FirstOrDefault();
+            if(cat is null||Window.GetWindow(this) is not {} owner){Status(L("Enable the cat companion first.","Bitte den Katzenbegleiter zuerst einblenden."));return;}
+            cat.RecoverPosition(owner,()=>
+            {
+                _draft.SupporterCatLeft=cat.Left;_draft.SupporterCatTop=cat.Top;_draft.SupporterCatPositionSaved=true;
+                recovered?.Invoke(cat);Status(L("Cat position recovered and saved.","Katzenposition zurückgeholt und gespeichert."));
+            });
+        };
+        Children.Add(recover);
+        Hint(L("Position recovery applies immediately, including in click-through mode. Size and visibility stay unchanged.","Das Zurückholen gilt sofort, auch im Durchklick-Modus. Größe und Sichtbarkeit bleiben erhalten."));
         Hint(L("The cat is a separate optional package. Drag it into place; its animation pauses while hidden. Global click-through and show/hide apply to it too.","Die Katze ist ein eigenes optionales Paket. Ziehe sie an ihren Platz; ausgeblendet pausiert ihre Animation. Globaler Durchklick-Modus und Ein-/Ausblenden gelten auch für sie."));
         Children.Add(_status);Children.Add(_catalog);
         Hint(L("Development notes and occasional polls live on Patreon. Package downloads stay usable after your membership ends; the public app keeps its existing features.","Entwicklungs-Einblicke und gelegentliche Abstimmungen findest du auf Patreon. Heruntergeladene Pakete bleiben nach dem Ende einer Mitgliedschaft nutzbar; die öffentliche App behält ihre bisherigen Funktionen."));

@@ -287,6 +287,7 @@ public partial class OverlayWindow : Window, IDisplayAppearance
         DeathRecapButton.Foreground = _settings.ShowDeathRecapModule ? ClickableCursorBrush : Brushes.Gray;
         ApplyNarrowLayout();
         SaveLastFightButton.IsEnabled = _meter.CanSaveLastFight;
+        if(MapHudSuppression.IsSuppressed(this))return;
         SetDisplayOnly(_settings.ClickThrough);
         _vm.WallClock = TimerCards.Berlin(DateTimeOffset.UtcNow).ToString("HH:mm", System.Globalization.CultureInfo.InvariantCulture);
         var uptime = Environment.TickCount64;

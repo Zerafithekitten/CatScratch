@@ -17,6 +17,8 @@ internal static class SupporterCatChecks
         {
             Check(SupporterPacks.CatPack is null,"No cat is enabled without its separate signed package");
             Check(SupporterCatWindow.NormalizeScale(double.NaN)==1&&SupporterCatWindow.NormalizeScale(99)==2&&SupporterCatWindow.NormalizeScale(.1)==.5,"Cat scale is bounded and invalid settings fall back to 100 percent");
+            foreach(var area in new[]{new Rect(0,0,1920,1080),new Rect(-2560,120,2560,1440),new Rect(1920,-1080,1920,1080)})
+                Check(area.Contains(WindowPresentation.RecoveryBounds(new Rect(50000,-50000,320,344),area)),"Recovery centers the companion inside a real monitor, including negative and vertically offset coordinates: "+area);
             if(package is null){File.WriteAllText(output,JsonSerializer.Serialize(results));return;}
             if(previousPackage is not null)SupporterPacks.Import(previousPackage);
             var pack=SupporterPacks.Import(package);
@@ -74,6 +76,7 @@ internal static class SupporterCatChecks
                 bubble.UpdateButton.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Button.ClickEvent));
                 Check(updateClicks==1,"The speech bubble invokes the existing update action exactly once");
                 WindowClickThrough.ApplyAll(false);
+
                 SaveUpdatePreview(cat,bubble,Path.Combine(Path.GetDirectoryName(output)!,"companion-update-preview.png"));
                 cat.Hide();Check(!cat.UpdateNoticeVisible&&!bubble.IsVisible,"Hiding the cat hides its update bubble");cat.Show();
                 cat.SetUpdateNotice(null,()=>updateClicks++);
@@ -89,6 +92,17 @@ internal static class SupporterCatChecks
                 cat.Hide();var paused=cat.FrameIndex;Check(!cat.AnimationRunning,"Hidden cat stops its animation timer");
                 await Task.Delay(200);Check(cat.FrameIndex==paused,"Hidden animation does not keep advancing");
                 cat.Show();Check(cat.AnimationRunning,"Showing the cat resumes animation");
+                using(var suppression=new MapHudSuppression())
+                {
+                    suppression.Apply(true,[cat]);var frame=cat.FrameIndex;
+                    cat.SetUpdateNotice("v99.1.0",()=>{});
+                    Check(!cat.AttentionRunning,"An update arriving during map suppression does not restart the hidden attention animation");
+                    await Task.Delay(200);
+                    Check(cat.IsVisible&&MapHudSuppression.IsSuppressed(cat)&&!cat.AnimationRunning&&cat.FrameIndex==frame,"Map cloaking pauses the companion animation without changing visibility or frame");
+                    suppression.Apply(false,[cat]);
+                    Check(cat.AnimationRunning&&!MapHudSuppression.IsSuppressed(cat),"Closing the map resumes the existing companion animation");
+                    cat.SetUpdateNotice(null,()=>{});
+                }
                 WindowClickThrough.ApplyAll(false);cat.UpdateLayout();Check(cat.Left==left&&cat.Top==top,"Unlocking restores controls at the same position");
                 settings.ShowSupporterCat=true;
                 var handle=new System.Windows.Interop.WindowInteropHelper(cat).Handle;
@@ -105,6 +119,39 @@ internal static class SupporterCatChecks
                     }
                 }
                 WindowClickThrough.ApplyAll(false);
+                var recovered=false;
+                var recoveryPanel=new PatreonSettingsPanel(draft,_=>{},_=>recovered=true);
+                var recoveryOwner=new Window{Content=recoveryPanel,Width=600,Height=700,ShowActivated=false};
+                try
+                {
+                    WindowClickThrough.ApplyAll(true);
+                    WindowPresentation.Enabled=false;cat.Left=50000;cat.Top=-50000;WindowPresentation.Enabled=true;
+                    recoveryPanel.Children.OfType<Button>().Single(b=>Equals(b.Tag,"recover-supporter-cat")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                    await Task.Delay(100);cat.UpdateLayout();
+                    var screen=System.Windows.Forms.Screen.FromHandle(new System.Windows.Interop.WindowInteropHelper(recoveryOwner).Handle).WorkingArea;
+                    var area=new Rect(screen.X,screen.Y,screen.Width,screen.Height);
+                    Check(recovered&&area.Contains(WindowPresentation.PhysicalBounds(cat)),"The Settings recovery button brings an offscreen companion fully onto the Settings monitor in click-through mode");
+                    Check(settings.SupporterCatPositionSaved&&settings.SupporterCatLeft==cat.Left&&settings.SupporterCatTop==cat.Top,"Explicit recovery immediately saves the corrected position");
+                    Check(cat.CatSize==160&&cat.AnimationRunning&&new System.Windows.Interop.WindowInteropHelper(cat).Handle==handle,"Recovery preserves artwork size, animation and the existing cat window");
+                }
+                finally{recoveryOwner.Close();WindowClickThrough.ApplyAll(false);WindowPresentation.Enabled=true;}
+                using(var recoveryMeter=new MeterService(settings,null,historyDirectory:Path.Combine(root,"recovery-history")))
+                using(var recoveryCards=new TimerCards(recoveryMeter,directory:Path.Combine(root,"recovery-events")))
+                {
+                    WindowPresentation.Enabled=false;cat.Left=50000;cat.Top=-50000;WindowPresentation.Enabled=true;
+                    var preferences=new SettingsWindow(recoveryMeter,recoveryCards){ShowActivated=false};
+                    try
+                    {
+                        preferences.Show();preferences.SelectTab("patreon");preferences.UpdateLayout();
+                        var tabs=(TabControl)preferences.FindName("SettingsTabs");
+                        var content=(ScrollViewer)tabs.Items.OfType<TabItem>().Single(t=>Equals(t.Tag,"patreon")).Content;
+                        ((PatreonSettingsPanel)content.Content).Children.OfType<Button>().Single(b=>Equals(b.Tag,"recover-supporter-cat")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                        await Task.Delay(100);var position=new Point(cat.Left,cat.Top);
+                        preferences.Close();
+                        Check(new Point(cat.Left,cat.Top)==position&&settings.SupporterCatLeft==position.X&&settings.SupporterCatTop==position.Y,"Closing real Settings preserves both recovered companion coordinates and its saved checkpoint");
+                    }
+                    finally{preferences.Close();}
+                }
             }
             finally{cat.Close();}
             Check(!cat.AnimationRunning&&settings.SupporterCatPositionSaved,"Closing releases the timer and retains placement");

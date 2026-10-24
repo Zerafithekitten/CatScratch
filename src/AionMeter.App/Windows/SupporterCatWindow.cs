@@ -9,7 +9,7 @@ using AionMeter.App.Services;
 
 namespace AionMeter.App.Windows;
 
-internal sealed class SupporterCatWindow : Window,IDisplayAppearance
+internal sealed class SupporterCatWindow : Window,IDisplayAppearance,IMapPresentation
 {
     private readonly AppSettings _settings;
     private readonly StackPanel _root;
@@ -64,7 +64,7 @@ internal sealed class SupporterCatWindow : Window,IDisplayAppearance
         _image=new Image{Width=size,Height=size,Source=_frames[0],Stretch=Stretch.Uniform,RenderTransform=_attention};root.Children.Add(_image);Content=root;
         _timer=new DispatcherTimer(DispatcherPriority.Background){Interval=TimeSpan.FromMilliseconds(mascot.FrameMilliseconds)};
         _timer.Tick+=(_,_)=>SetFrame((_frame+1)%_frames.Length);
-        IsVisibleChanged+=(_,_)=>{if(IsVisible)_timer.Start();else{_timer.Stop();_attention.BeginAnimation(TranslateTransform.YProperty,null);}RefreshUpdateNotice();};
+        IsVisibleChanged+=(_,_)=>{SetMapPresentationSuspended(MapHudSuppression.IsSuppressed(this));RefreshUpdateNotice();};
         LocationChanged+=(_,_)=>_updateBubble?.Follow(this);
         SizeChanged+=(_,_)=>_updateBubble?.Follow(this);
         if(settings.SupporterCatPositionSaved&&double.IsFinite(settings.SupporterCatLeft)&&double.IsFinite(settings.SupporterCatTop))
@@ -81,6 +81,22 @@ internal sealed class SupporterCatWindow : Window,IDisplayAppearance
         SizeToContent=SizeToContent.WidthAndHeight;
         WindowPresentation.Constrain(this);
     }
+    public void SetMapPresentationSuspended(bool suspended)
+    {
+        if(IsVisible&&!suspended)_timer.Start();
+        else{_timer.Stop();_attention.BeginAnimation(TranslateTransform.YProperty,null);}
+    }
+    internal void RecoverPosition(Window owner,Action? completed=null)
+    {
+        WindowPresentation.RecoverTo(this,owner);
+        Dispatcher.BeginInvoke(()=>
+        {
+            if(!IsLoaded)return;
+            WindowPresentation.Constrain(this);
+            _settings.SupporterCatLeft=Left;_settings.SupporterCatTop=Top;_settings.SupporterCatPositionSaved=true;
+            _updateBubble?.Follow(this);completed?.Invoke();_settings.Save();
+        });
+    }
     internal void SetUpdateNotice(string? tag,Action openUpdate)
     {
         _updateTag=tag;_openUpdate=openUpdate;RefreshUpdateNotice();
@@ -96,7 +112,7 @@ internal sealed class SupporterCatWindow : Window,IDisplayAppearance
         _updateBubble.Follow(this);
         if(!_updateBubble.IsVisible)_updateBubble.Show();
         _updateBubble.Follow(this);
-        if(_announcedTag!=_updateTag)
+        if(!MapHudSuppression.IsSuppressed(this)&&_announcedTag!=_updateTag)
         {
             _announcedTag=_updateTag;
             var bounce=new DoubleAnimation(0,-4,TimeSpan.FromMilliseconds(350)){AutoReverse=true,RepeatBehavior=new RepeatBehavior(2),FillBehavior=FillBehavior.Stop,EasingFunction=new SineEase {EasingMode=EasingMode.EaseInOut}};

@@ -29,6 +29,9 @@ internal sealed class MapOverlayService:IDisposable
     private bool? _lastPresence;
     private MapOverlayData? _data;
     private Pose? _pose;
+    private (MapTransform Transform,Size Size)? _projected;
+    private int _projectedVisible;
+    private bool _projectedLimited;
     private IReadOnlyList<MapMarker> _markers=[];
     private HashSet<string> _selected=[];
     private bool _enabled,_mapOpen,_disposed;
@@ -47,7 +50,7 @@ internal sealed class MapOverlayService:IDisposable
     {
         if(_disposed)return;
         var next=(_settings.MapCategories??["hidden-cube"]).ToHashSet(StringComparer.Ordinal);
-        if(!_selected.SetEquals(next)){_selected=next;Project();}
+        if(!_selected.SetEquals(next)){_selected=next;_projected=null;Project();}
         var enabled=_settings.ShowMapOverlay&&!_settings.Transient;
         if(enabled==_enabled)return;
         _enabled=enabled;
@@ -120,7 +123,7 @@ internal sealed class MapOverlayService:IDisposable
                     _gameBounds=new Rect(gameRect[0].GetDouble(),gameRect[1].GetDouble(),gameRect[2].GetDouble()-gameRect[0].GetDouble(),gameRect[3].GetDouble()-gameRect[1].GetDouble());
                 if(!_mapOpen){_pose=null;_drag.Reset();Status=source=="waiting-game"?MapWords.L("Ready · switch to AION 2.","Bereit · zu AION 2 wechseln."):MapWords.L("Game detected · waiting for the Altgard map.","Spiel erkannt · warte auf die Altgard-Karte.");}
                 if(!_mapOpen&&source=="waiting-game")Status+=MapWords.L(" Foreground: "," Vordergrund: ")+(foreground??MapWords.L("process name unavailable","Prozessname nicht verfügbar"));
-                else if(_pose is null)Status=MapWords.L("Map detected · locating the current view…","Karte erkannt · aktueller Ausschnitt wird abgeglichen …");
+                if(_mapOpen&&_pose is null)Status=MapWords.L("Map detected · locating the current view…","Karte erkannt · aktueller Ausschnitt wird abgeglichen …");
                 if(source=="waiting-map")_lastGameStatus=Status;
                 else if(source=="waiting-game"&&_lastGameStatus is {} previous)Status+=MapWords.L(" Last game status: "," Zuletzt im Spiel: ")+previous;
                 break;
@@ -139,8 +142,13 @@ internal sealed class MapOverlayService:IDisposable
     private void Project()
     {
         if(_pose is not {} pose||_data is null)return;
-        var result=_data.Project(pose.Transform,pose.Bounds.Width,pose.Bounds.Height,_selected);_markers=result.Markers;
-        Status=MapWords.L($"Altgard · {result.Visible:N0} locations / {_markers.Count} symbols",$"Altgard · {result.Visible:N0} Fundstellen / {_markers.Count} Symbole")+(result.Limited?MapWords.L(" · zoom in for more"," · für mehr Details hineinzoomen"):"");
+        var key=(pose.Transform,pose.Bounds.Size);
+        if(_projected!=key)
+        {
+            var result=_data.Project(pose.Transform,pose.Bounds.Width,pose.Bounds.Height,_selected);_markers=result.Markers;
+            _projected=key;_projectedVisible=result.Visible;_projectedLimited=result.Limited;
+        }
+        Status=MapWords.L($"Altgard · {_projectedVisible:N0} locations / {_markers.Count} symbols",$"Altgard · {_projectedVisible:N0} Fundstellen / {_markers.Count} Symbole")+(_projectedLimited?MapWords.L(" · zoom in for more"," · für mehr Details hineinzoomen"):"");
         _lastGameStatus=Status;
     }
     private void Tick()
@@ -178,7 +186,7 @@ internal sealed class MapOverlayService:IDisposable
     private void Stop()
     {
         ++_generation;_timer.Stop();_cancel?.Cancel();_cancel?.Dispose();_cancel=null;
-        _mapOpen=false;_pose=null;_drag.Reset();_suppression.Dispose();
+        _mapOpen=false;_pose=null;_projected=null;_drag.Reset();_suppression.Dispose();
         _window?.Close();_window=null;
         _filters?.Close();_filters=null;_gameBounds=null;
         if(_worker is {} process)

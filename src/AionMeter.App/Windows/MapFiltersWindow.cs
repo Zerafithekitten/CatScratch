@@ -13,6 +13,8 @@ internal sealed class MapFiltersWindow:Window
     private readonly StackPanel _body=new(){Visibility=Visibility.Collapsed};
     private readonly Action<IReadOnlyList<string>> _changed;
     private bool _syncing;
+    private readonly HashSet<string> _selection=new(StringComparer.Ordinal);
+    private bool _hasSelection;
     private Rect _placed=Rect.Empty;
     internal int NativePlacementCount {get;private set;}
     internal MapFiltersWindow(Action<IReadOnlyList<string>> changed)
@@ -49,13 +51,17 @@ internal sealed class MapFiltersWindow:Window
             HwndSource.FromHwnd(handle)?.AddHook((nint h,int message,nint w,nint l,ref bool handled)=>{if(message==0x0021){handled=true;return 3;}return 0;});
         };
     }
-    private void Notify(){if(!_syncing)_changed(_checks.Where(p=>p.Value.IsChecked==true).Select(p=>p.Key).ToArray());}
+    private void Notify(){if(!_syncing){_hasSelection=false;_changed(_checks.Where(p=>p.Value.IsChecked==true).Select(p=>p.Key).ToArray());}}
     internal void Present(Rect game,IReadOnlySet<string> selected,string status)
     {
-        _syncing=true;
-        try{foreach(var pair in _checks)pair.Value.IsChecked=selected.Contains(pair.Key);}
-        finally{_syncing=false;}
-        _status.Text=status;
+        if(!_hasSelection||!_selection.SetEquals(selected))
+        {
+            _syncing=true;
+            try{foreach(var pair in _checks)pair.Value.IsChecked=selected.Contains(pair.Key);}
+            finally{_syncing=false;}
+            _selection.Clear();_selection.UnionWith(selected);_hasSelection=true;
+        }
+        if(_status.Text!=status)_status.Text=status;
         var handle=new WindowInteropHelper(this).EnsureHandle();var dpi=VisualTreeHelper.GetDpi(this);
         var target=new Rect(game.Right-Width*dpi.DpiScaleX-26,game.Top+110*game.Height/1079,dpi.DpiScaleX,dpi.DpiScaleY);
         if(_placed!=target||!IsVisible)

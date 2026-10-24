@@ -6,6 +6,8 @@ $output=Join-Path $repo 'src/AionMeter.App/obj/map-engine'
 if ($LASTEXITCODE) { throw 'Map engine build dependencies failed' }
 & $Python (Join-Path $PSScriptRoot 'map-engine/check_presence.py') --data (Join-Path $repo 'data/map')
 if ($LASTEXITCODE) { throw 'Map heading regression checks failed' }
+& $Python (Join-Path $PSScriptRoot 'map-engine/check_tracking.py') --data (Join-Path $repo 'data/map')
+if ($LASTEXITCODE) { throw 'Map motion regression checks failed' }
 & $Python (Join-Path $PSScriptRoot 'map-engine/check_capture.py')
 if ($LASTEXITCODE) { throw 'Map capture scheduling checks failed' }
 & $Python (Join-Path $PSScriptRoot 'map-engine/check_game_window.py')

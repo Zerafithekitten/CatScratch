@@ -24,19 +24,46 @@ internal static class MapNative
 /// <summary>DWM-only suppression: WPF visibility, saved module state and global hide remain untouched.</summary>
 internal sealed class MapHudSuppression:IDisposable
 {
-    private readonly HashSet<nint> _cloaked=[];
+    private readonly Dictionary<nint,Window> _cloaked=[];
+    private readonly HashSet<nint> _wanted=[];
+    private readonly List<nint> _remove=[];
+    private static readonly DependencyProperty SuspendedProperty=DependencyProperty.RegisterAttached("MapPresentationSuspended",typeof(bool),typeof(MapHudSuppression),new PropertyMetadata(false,(d,e)=>
+    {
+        if(d is IMapPresentation presentation)presentation.SetMapPresentationSuspended((bool)e.NewValue);
+    }));
+    internal static bool IsSuppressed(Window window)=>(bool)window.GetValue(SuspendedProperty);
     internal bool Active {get;private set;}
     internal void Apply(bool active,IEnumerable<Window> windows)
     {
-        Active=active;
-        var wanted=active?windows.Where(w=>w.IsVisible).Select(w=>new WindowInteropHelper(w).Handle).Where(h=>h!=0).ToHashSet():[];
-        foreach(var handle in _cloaked.Except(wanted).ToArray())
+        if(!active&&!Active)return;
+        Active=active;_wanted.Clear();
+        if(active)foreach(var window in windows)
+        {
+            if(!window.IsVisible)continue;
+            var handle=new WindowInteropHelper(window).Handle;
+            if(handle==0)continue;
+            _wanted.Add(handle);
+            if(!_cloaked.ContainsKey(handle))
+            {
+                var on=1;
+                if(MapNative.DwmSetWindowAttribute(handle,13,ref on,4)==0)
+                {_cloaked.Add(handle,window);window.SetValue(SuspendedProperty,true);}
+            }
+        }
+        _remove.Clear();
+        foreach(var pair in _cloaked)if(!_wanted.Contains(pair.Key))_remove.Add(pair.Key);
+        foreach(var handle in _remove)
         {
             MapNative.GetWindowThreadProcessId(handle,out var process);
             if(process==(uint)Environment.ProcessId){var off=0;MapNative.DwmSetWindowAttribute(handle,13,ref off,4);}
+            _cloaked[handle].SetValue(SuspendedProperty,false);
             _cloaked.Remove(handle);
         }
-        foreach(var handle in wanted.Except(_cloaked)){var on=1;if(MapNative.DwmSetWindowAttribute(handle,13,ref on,4)==0)_cloaked.Add(handle);}
     }
     public void Dispose()=>Apply(false,[]);
+}
+
+internal interface IMapPresentation
+{
+    void SetMapPresentationSuspended(bool suspended);
 }

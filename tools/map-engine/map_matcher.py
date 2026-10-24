@@ -97,6 +97,7 @@ class Tracker:
  def reset(self):
   self.epoch+=1
   self.gray=None;self.points=None;self.result=None;self.confirmed=0
+  self.next_points=None;self.points_at=0;self.point_steps=0;self.stationary=False
   self.verification_at=0
   self.lost_since=None
   self.zoom_cache=[]
@@ -112,6 +113,12 @@ class Tracker:
    self.pending=[self.pool.submit(locate,frame.copy(),self.result['reference'] if self.result else None,self.result['matrix'] if self.result else None),self.epoch,gray.copy(),dict(self.result) if self.result else None,np.eye(3),points,True]
 
  def motion(self,previous,points,gray):
+  self.next_points=None;self.stationary=False
+  # Exact terrain equality is safe even when an animated cursor/header changes.
+  # Keep reference expiry and periodic independent validation unchanged.
+  if points is not None and len(points)>=30 and np.array_equal(previous[110:1040,330:1820],gray[110:1040,330:1820]):
+   self.next_points=points;self.stationary=True
+   return np.eye(3)
   step=self.flow_motion(previous,points,gray)
   if step is not None:return step
   step=self.orb_motion(previous,gray)
@@ -194,6 +201,9 @@ class Tracker:
   if not .7<np.hypot(step[0,0],step[1,0])<1.4:return None
   if cv2.contourArea(cv2.convexHull(new[inliers.ravel().astype(bool)]))<=15000:return None
   if abs(np.degrees(np.arctan2(step[1,0],step[0,0])))>=.4:return None
+  retained=new[inliers.ravel().astype(bool)].reshape(-1,2)
+  retained=retained[(retained[:,0]>=330)&(retained[:,0]<1820)&(retained[:,1]>=110)&(retained[:,1]<1040)]
+  self.next_points=retained.reshape(-1,1,2).astype(np.float32)
   return np.vstack([step,[0,0,1]])
 
  def update(self,frame,map_candidate=False):
@@ -271,8 +281,14 @@ class Tracker:
   self.result=result
   if now-self.verification_at>3:self.schedule(normalized,gray)
   self.gray=gray
-  mask=np.zeros_like(gray);mask[110:1040,330:1820]=255
-  self.points=self.track_points(gray)
+  # Flow already supplied independently checked feature positions. Replenish
+  # periodically or after descriptor recovery instead of finding 160 new
+  # corners after every accepted frame.
+  if self.next_points is not None and (self.stationary or (len(self.next_points)>=80 and self.point_steps<5 and now-self.points_at<.25)):
+   self.points=self.next_points
+   if not self.stationary:self.point_steps+=1
+  else:
+   self.points=self.track_points(gray);self.points_at=now;self.point_steps=0
   self.result=result
   output=dict(result)
   m=np.array(result['matrix']);m[0]*=w/1919;m[1]*=h/1079

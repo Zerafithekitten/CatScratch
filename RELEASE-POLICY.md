@@ -1,5 +1,7 @@
 # Release policy
 
+On 2026-10-24 the owner explicitly approved "okay dann machen wir mal nen beta update draus" after the local performance changes and verification results were reported. Publish v4.0.9-beta.17 after complete release checks, including reduced map tracking/projection work, presentation suspension, cache write-lock changes, live-preview comparisons, corrected map status and the reviewed off-screen companion recovery. Keep notes brief in English/German; distinguish processing benchmarks from actual game FPS. Preserve Stable, Light, paid assets and GitHub project presentation.
+
 On 2026-10-23 the owner explicitly approved "upload beta" after the supplied covered-heading screenshot was reproduced and recognized through the new UI-candidate plus independent terrain verification path. Publish v4.0.9-beta.16 after full checks. Restore recording exclusion for marker and filter windows and remove marker-area masking; keep localized headings and diagnostics. Distinguish the confirmed screenshot result from pending affected-user live validation. Preserve Stable, Light and GitHub project presentation.
 
 On 2026-10-23 the owner explicitly approved "okay ab in die beta" after the local overlay-feedback, localized Altgard-heading and remote-status changes were described and tested. Publish v4.0.9-beta.15 after full verification. Keep desktop-recording visibility, passive capture and strict map validation; describe affected-user and German-client confirmation as pending. Preserve Stable, Light and GitHub project presentation.

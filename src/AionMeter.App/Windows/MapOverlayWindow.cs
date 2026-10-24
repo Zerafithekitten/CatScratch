@@ -56,7 +56,11 @@ internal sealed class MapCanvas:FrameworkElement
     private MapTransform _transform;
     private IReadOnlyList<MapMarker> _markers=[];
     private Size _physical;
-    internal void Set(MapTransform transform,IReadOnlyList<MapMarker> markers,Size physical){_transform=transform;_markers=markers;_physical=physical;InvalidateVisual();}
+    internal void Set(MapTransform transform,IReadOnlyList<MapMarker> markers,Size physical)
+    {
+        if(_transform==transform&&ReferenceEquals(_markers,markers)&&_physical==physical)return;
+        _transform=transform;_markers=markers;_physical=physical;InvalidateVisual();
+    }
     protected override void OnRender(DrawingContext dc)
     {
         base.OnRender(dc);
