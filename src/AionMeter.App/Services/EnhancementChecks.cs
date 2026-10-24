@@ -27,7 +27,7 @@ internal static class EnhancementChecks
         ChecklistSchedule.Update(settings,before.AddDays(7));
         Check(settings.ChecklistItems[0].Completed,"Clock rollback never repeats a reset");
         var window=new ChecklistWindow(settings){Left=-30000,Top=-30000};
-        try{window.Show();window.RefreshResetClock();window.UpdateLayout();Check(window.SectionHeaders.Length==2,"Countdowns preserve compact daily and weekly headings");}finally{window.Close();}
+        try{window.Show();window.RefreshResetClock();window.UpdateLayout();Check(window.SectionHeaders.Length==4,"Planner includes daily, weekly, Abyss and optional headings");}finally{window.Close();}
         using(var meter=new MeterService(new AppSettings{Transient=true},null))
         {
             var preferences=new SettingsWindow(meter);

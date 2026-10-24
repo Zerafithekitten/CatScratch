@@ -24,6 +24,8 @@ internal sealed class ChecklistPlannerPanel:StackPanel
     internal PlannerCharacter? Selected {get;private set;}
     private bool _live=true,_displayOnly;
     private string? _language;
+    private bool _editing;
+    private readonly Stack<(PlannerTask Task,int Index)> _removed=[];
     private static string L(string en,string de)=>ControlPanelSettingsPanel.L(en,de);
     internal ChecklistPlannerPanel(AppSettings settings,Func<SelfIdentifiedEvent?>? identity,Action changed,Func<int,string>? serverName=null)
     {
@@ -70,6 +72,12 @@ internal sealed class ChecklistPlannerPanel:StackPanel
             foreach(var task in tasks)AddRow(task);
         }
         var add=Action(L("+ Add task","+ Aufgabe"),()=>{_store.Data.Tasks.Add(new(){Name=L("New task","Neue Aufgabe")});_store.Save();Rebuild();});_rowButtons.Add(add);_tasks.Children.Add(add);
+        var edit=Action(_editing?L("Done","Fertig"):L("Edit","Bearbeiten"),()=>{_editing=!_editing;Rebuild();});edit.Tag="planner-edit";_rowButtons.Add(edit);_tasks.Children.Add(edit);
+        if(_removed.Count>0)
+        {
+            var undo=Action(L("Undo removal","Entfernen rückgängig"),()=>{var removed=_removed.Pop();_store.Data.Tasks.Insert(Math.Min(removed.Index,_store.Data.Tasks.Count),removed.Task);_store.Save();Rebuild();});
+            undo.Tag="planner-undo";_rowButtons.Add(undo);_tasks.Children.Add(undo);
+        }
         SetDisplayOnly(_displayOnly);foreach(var refresh in _refresh)refresh();_changed();
     }
     private void AddRow(PlannerTask task)
@@ -78,6 +86,12 @@ internal sealed class ChecklistPlannerPanel:StackPanel
         var check=new CheckBox{Style=(Style)FindResource("DarkCheck"),VerticalAlignment=VerticalAlignment.Center,Margin=new(4,0,4,0)};DockPanel.SetDock(check,Dock.Left);row.Children.Add(check);
         var plus=Action(task.Step==1?"+":"+"+task.Step,()=>Adjust(1));var minus=Action(task.Step==1?"−":"−"+task.Step,()=>Adjust(-1));_rowButtons.Add(plus);_rowButtons.Add(minus);
         foreach(var b in new[]{plus,minus}){b.Width=task.Step==1?18:28;DockPanel.SetDock(b,Dock.Right);row.Children.Add(b);}
+        if(_editing)
+        {
+            var trash=Action("×",()=>Remove(task));trash.Tag="planner-remove:"+task.Id;trash.Width=18;trash.Foreground=ThemeColors.Brush("#ECA5AA");
+            trash.ToolTip=L("Remove this task for all characters; Undo is available below.","Aufgabe für alle Charaktere entfernen; unten kannst du dies rückgängig machen.");
+            _rowButtons.Add(trash);DockPanel.SetDock(trash,Dock.Right);row.Children.Add(trash);
+        }
         var amount=new TextBlock{FontSize=10,MinWidth=35,TextAlignment=TextAlignment.Center,VerticalAlignment=VerticalAlignment.Center};DockPanel.SetDock(amount,Dock.Right);row.Children.Add(amount);
         var label=new TextBox{Text=task.Label,MaxLength=100,FontSize=11,Padding=new(1),Background=Brushes.Transparent,BorderThickness=new(0),Foreground=ThemeColors.Brush("#EDF2F7"),VerticalContentAlignment=VerticalAlignment.Center};row.Children.Add(label);
         label.TextChanged+=(_,_)=>{task.Name=label.Text;task.NameDe="";_editSave.Stop();_editSave.Start();};
@@ -101,7 +115,7 @@ internal sealed class ChecklistPlannerPanel:StackPanel
             target.GotKeyboardFocus+=(_,_)=>AppHost.Current.SuspendHotkeys();
             target.LostKeyboardFocus+=(_,_)=>{AppHost.Current.ResumeHotkeys();if(int.TryParse(target.Text,out var n)&&n is >=1 and <=9999){if(alt)task.AltTarget=n;else task.Target=n;_store.Save();Tick();}};
         }
-        var remove=new MenuItem{Header=L("Remove task","Aufgabe entfernen")};remove.Click+=(_,_)=>{_store.Data.Tasks.Remove(task);_store.Save();Rebuild();};menu.Items.Add(remove);box.ContextMenu=menu;
+        var remove=new MenuItem{Header=L("Remove task","Aufgabe entfernen")};remove.Click+=(_,_)=>Remove(task);menu.Items.Add(remove);box.ContextMenu=menu;
         void Adjust(int delta){if(Selected is null)return;_store.Set(task,Selected,_store.Count(task,Selected)+delta*task.Step);Tick();}
         check.Click+=(_,_)=>{if(Selected is null)return;_store.Set(task,Selected,check.IsChecked==true?_store.Target(task,Selected):0);Tick();};
         _refresh.Add(()=>
@@ -114,6 +128,11 @@ internal sealed class ChecklistPlannerPanel:StackPanel
             amount.Foreground=ThemeColors.Brush(task.Shared?"#E8C477":"#A9D1E5");
         });
         _tasks.Children.Add(box);Fields.Add((check,label));
+    }
+    private void Remove(PlannerTask task)
+    {
+        var index=_store.Data.Tasks.IndexOf(task);if(index<0)return;
+        _removed.Push((task,index));_store.Data.Tasks.RemoveAt(index);_store.Save();Rebuild();
     }
     internal void SetDisplayOnly(bool enabled){_displayOnly=enabled;foreach(var field in Fields)field.Text.IsReadOnly=enabled;}
 }

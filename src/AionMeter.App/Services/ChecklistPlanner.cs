@@ -33,7 +33,6 @@ public sealed class PlannerProgress
 }
 public sealed class PlannerData
 {
-    public bool Enabled {get;set;}
     public List<PlannerTask> Tasks {get;set;}=[];
     public List<PlannerCharacter> Characters {get;set;}=[];
     public Dictionary<string,PlannerProgress> Progress {get;set;}=[];
@@ -45,7 +44,17 @@ internal sealed class ChecklistPlanner
     private static readonly ConditionalWeakTable<AppSettings,ChecklistPlanner> Instances=new();
     private readonly string? _path;
     internal PlannerData Data {get;}
-    internal static ChecklistPlanner For(AppSettings settings)=>Instances.GetValue(settings,s=>new(s.Transient?null:Path.Combine(AppSettings.AppDataDir,"checklist-plan.json")));
+    internal static ChecklistPlanner For(AppSettings settings)=>Instances.GetValue(settings,s=>
+    {
+        var planner=new ChecklistPlanner(s.Transient?null:Path.Combine(AppSettings.AppDataDir,"checklist-plan.json"));
+        if(!s.Transient&&s.ChecklistItems.Count>0)
+        {
+            var backup=Path.Combine(AppSettings.AppDataDir,"checklist-legacy-backup.json");
+            try{if(!File.Exists(backup))JsonSettingsFile.Write(backup,s.ChecklistItems);}
+            catch(Exception error)when(error is IOException or UnauthorizedAccessException){Log.Error("Legacy checklist backup deferred",error);}
+        }
+        return planner;
+    });
     internal ChecklistPlanner(string? path)
     {
         _path=path;var loaded=path is null?null:JsonSettingsFile.Read<PlannerData>(path);Data=loaded??new();

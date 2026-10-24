@@ -1,3 +1,33 @@
+## CatScratch v4.1.2
+
+Ein kleiner Checklisten-Hotfix von mir. Der neue Planer soll direkt da sein – ohne erst nach einem Umschalter suchen zu müssen. 🐾
+
+<!-- contents -->
+### Das ist drin
+- [Nur noch die neue Checkliste](#checkliste-direkt)
+- [Aufgaben löschen und zurückholen](#checkliste-loeschen)
+<!-- /contents -->
+
+<a id="checkliste-direkt"></a>
+### 📋 Nur noch die neue Checkliste
+
+Die alte Freitext-Ansicht und der Plan-Umschalter sind entfernt. Beim Öffnen erscheint immer der neue Charakter-/Server-Planer, auch wenn zuvor die alte Ansicht gewählt war. Die alten Zeilenanzahl-Optionen und Hinweise wurden aus den Einstellungen entfernt.
+
+Bereits gespeicherter Planer-Fortschritt bleibt erhalten. Alte Freitext-Aufgaben bleiben ausschließlich als Sicherungsdaten erhalten; sie werden nicht ungefragt einem Charakter zugewiesen. Zusätzlich wird, sofern alte Einträge vorhanden sind, einmalig eine lokale Datei `userdata/checklist-legacy-backup.json` angelegt.
+
+<a id="checkliste-loeschen"></a>
+### 🧹 Aufgaben löschen und zurückholen
+
+Unter der Liste öffnet **Bearbeiten** den Bearbeiten-Modus. Dann erscheint neben jeder Aufgabe ein kleiner **×-Button** zum Entfernen. **Fertig** blendet die Löschknöpfe wieder aus. Löschen per Rechtsklick bleibt ebenfalls möglich.
+
+Aufgabendefinitionen gelten für den gesamten lokalen Planer: Entfernen betrifft deshalb die Aufgabe bei allen Charakteren. Mit **Entfernen rückgängig** könnt ihr die zuletzt entfernte Aufgabe wiederherstellen – samt vorhandenen Charakter- und Serverständen. Rückgängig steht im aktuell geöffneten Checklistenfenster zur Verfügung.
+
+Gelöschte Aufgaben bleiben nach einem Neustart gelöscht. Auch eine bewusst leere Liste wird nicht erneut mit der Startvorlage befüllt. Main-/Alt-Ziele, Server-Zähler, Odyle in 40er-Schritten und Durchklickbedienung bleiben erhalten.
+
+![Checkliste im Bearbeiten-Modus](https://raw.githubusercontent.com/Zerafithekitten/CatScratch/v4.1.2/docs/images/checklist-edit-de-v4.1.2.png)
+
+Danke für den schnellen Hinweis – jetzt ist die neue Liste wirklich die einzige. 💜
+
 ## CatScratch v4.1.1
 
 Ein bisschen weniger im Kopf mitzählen – für euren Main und die Alts. 🐾 Die Checkliste bekommt einen kompakten manuellen Planer. Eure bisherige Aufgabenliste bleibt dabei erhalten.

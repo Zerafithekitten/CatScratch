@@ -1,0 +1,23 @@
+# 🐾 CatScratch 4.1.2 · Checklisten-Hotfix
+
+Der neue Planer soll direkt da sein – ohne erst nach einem Umschalter suchen zu müssen.
+
+## 📋 Nur noch die neue Checkliste
+• Die alte Freitext-Ansicht und der **Plan-Umschalter sind entfernt**.
+• Die Checkliste öffnet immer den neuen Charakter-/Server-Planer.
+• Alte Zeilenanzahl-Optionen und Hinweise wurden aus den Einstellungen entfernt.
+• Euer bisheriger Planer-Fortschritt bleibt erhalten. Alte Freitext-Aufgaben werden nur als Sicherung behalten und keinem Charakter zugewiesen.
+
+## 🧹 Aufgaben löschen
+• **Bearbeiten** unter der Liste zeigt einen kleinen **×-Button** neben jeder Aufgabe.
+• **Fertig** blendet die Löschknöpfe wieder aus.
+• Rechtsklick → Entfernen funktioniert weiterhin.
+• Die Aufgabe wird aus dem gesamten lokalen Planer entfernt, also für alle Charaktere.
+• **Entfernen rückgängig** stellt die zuletzt entfernte Aufgabe mit ihren vorhandenen Fortschrittsständen wieder her, solange das Checklistenfenster offen bleibt.
+• Gelöschte Aufgaben bleiben auch nach einem Neustart gelöscht. Eine bewusst leere Liste bleibt leer.
+
+Main-/Alt-Ziele, gemeinsame Server-Zähler, Odyle in 40er-Schritten und Durchklickbedienung bleiben erhalten.
+
+Danke für den schnellen Hinweis – jetzt ist die neue Liste wirklich die einzige. 💜
+
+**Download:** https://github.com/Zerafithekitten/CatScratch/releases/tag/v4.1.2

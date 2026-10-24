@@ -1,3 +1,33 @@
+## CatScratch v4.1.2
+
+A small checklist hotfix from me. The new planner should be right there when you open it, without a switch to hunt for first. 🐾
+
+<!-- contents -->
+### At a glance
+- [One checklist, straight to the planner](#checklist-direct)
+- [Remove tasks and bring them back](#checklist-remove)
+<!-- /contents -->
+
+<a id="checklist-direct"></a>
+### 📋 One checklist, straight to the planner
+
+Removed the old free-text view and the Plan switch. Opening the checklist now always shows the character/server planner, including on installations that previously selected the old view. Retired row-count options and instructions were removed from Settings.
+
+Existing planner progress is preserved. Old free-text tasks remain backup data only; they aren't assigned to a character automatically. If old entries are present, a one-time local `userdata/checklist-legacy-backup.json` backup is also created.
+
+<a id="checklist-remove"></a>
+### 🧹 Remove tasks and bring them back
+
+Select **Edit** below the list to reveal a small **× button** beside each task. **Done** hides the delete controls again. The right-click removal option remains available too.
+
+Task definitions belong to the whole local planner, so removing a task removes it from every character's list. **Undo removal** restores the last removed task with its existing character and shared-server progress. Undo is available while the current checklist window remains open.
+
+Removed tasks stay removed after restart. An intentionally empty list no longer gets repopulated with the starting template. Main/Alt goals, shared counters, +40/-40 Odyle and click-through controls are retained.
+
+![Checklist edit mode](https://raw.githubusercontent.com/Zerafithekitten/CatScratch/v4.1.2/docs/images/checklist-edit-en-v4.1.2.png)
+
+Thanks for catching this quickly — the new list really is the only one now. 💜
+
 ## CatScratch v4.1.1
 
 A little less mental bookkeeping for your main and alts. 🐾 I've expanded the checklist into a compact manual planner, while keeping your original task list close by.

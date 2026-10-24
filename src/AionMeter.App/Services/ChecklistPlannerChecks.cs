@@ -42,6 +42,10 @@ internal static class ChecklistPlannerChecks
             check(store.Count(personal,main)==1,"Changing reset preferences rebases periods without clearing planner progress");
             var restored=new ChecklistPlanner(file);
             check(restored.Count(personal,restored.Data.Characters.Single(c=>c.Key==main.Key))==1,"Character progress survives a file round trip");
+            restored.Data.Tasks.RemoveAll(t=>t.Id=="nightmare");restored.Save();
+            check(!new ChecklistPlanner(file).Data.Tasks.Any(t=>t.Id=="nightmare"),"Removed tasks stay removed after restart");
+            restored.Data.Tasks.Clear();restored.Save();
+            check(new ChecklistPlanner(file).Data.Tasks.Count==0,"An intentionally empty planner never restores deleted starting tasks");
             foreach(var locale in new[]{"de","en"})
             {
                 UiText.Use(locale);
@@ -53,7 +57,7 @@ internal static class ChecklistPlannerChecks
                 var window=new ChecklistWindow(local,()=>active,id=>"Marchutan"){Left=-30000,Top=-30000};
                 try
                 {
-                    WindowClickThrough.Attach(window,()=>false);window.Show();window.SetPlannerMode(true);window.UpdateLayout();window.RefreshResetClock();
+                    WindowClickThrough.Attach(window,()=>false);window.Show();window.UpdateLayout();window.RefreshResetClock();
                     var odyle=data.Data.Tasks.Single(t=>t.Id=="odyle");
                     var plus=window.PlannerActions.Single(b=>Equals(b.Content,"+40"));
                     plus.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
@@ -70,10 +74,16 @@ internal static class ChecklistPlannerChecks
                     check(window.Fields.All(f=>!f.Check.IsEnabled),"Unknown current identity cannot change a previous character's progress: "+locale);
                     active=new(1,1,"Sample Main",2305,GameClass.Cleric);window.RefreshResetClock();
                     WindowClickThrough.ApplyAll(false);window.UpdateLayout();
+                    window.PlannerActions.Single(b=>Equals(b.Tag,"planner-edit")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                    var removedTask=data.Data.Tasks.Single(t=>t.Id=="odyle");
+                    window.PlannerActions.Single(b=>Equals(b.Tag,"planner-remove:odyle")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                    check(window.Fields.Count==15&&!data.Data.Tasks.Contains(removedTask),"Visible delete button removes a task: "+locale);
+                    window.PlannerActions.Single(b=>Equals(b.Tag,"planner-undo")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                    check(window.Fields.Count==16&&data.Count(removedTask,data.Data.Characters[0])==80,"Undo restores a removed task and all of its progress: "+locale);
+                    window.UpdateLayout();
                     var image=new RenderTargetBitmap((int)window.ActualWidth,(int)window.ActualHeight,96,96,PixelFormats.Pbgra32);image.Render(window);
                     var encoder=new PngBitmapEncoder();encoder.Frames.Add(BitmapFrame.Create(image));using(var stream=File.Create(Path.Combine(directory,"checklist-planner-"+locale+".png")))encoder.Save(stream);
-                    window.SetPlannerMode(false);
-                    check(local.ChecklistItems.Count==20&&window.Fields.Count==11,"Switching back preserves original tasks separately: "+locale);
+                    check(window.Fields.Count==16,"The new planner is always the only checklist view: "+locale);
                 }
                 finally{WindowClickThrough.ApplyAll(false);window.Close();}
             }

@@ -1,5 +1,8 @@
 # Release policy
 
+On 2026-10-24 the owner explicitly requested a Stable hotfix removing the old checklist view and retaining only the new planner, then requested deletion of added tasks. Publish Stable 4.1.2 with direct planner opening, removal of legacy controls, visible edit/delete actions, undo, preserved planner progress and legacy data archived without character assignment. Include English/German notes and a German Discord download; run full checks and preserve Light/private assets.
+
+
 On 2026-10-24 the owner reviewed the compact character/server checklist planner and +40/-40 Odyle steps and explicitly approved Stable 4.1.1. Publish after full checks with personal English/German notes and a separate German Discord text. Every future Stable release must include a Discord-ready German text as a download, with messages under 2,000 UTF-16 characters; manual posting stays with the owner. Preserve existing checklist data, private supporter content and Light.
 
 
