@@ -1,5 +1,7 @@
 # Release policy
 
+On 2026-10-25 the owner explicitly approved "hotfix stable" for the reproduced idle detached boss-timer watermark residue. Publish Stable 4.1.3 after full release checks, including complete-window transparency and visibility restoration coverage. Include personal English/German notes, a separate German Discord download and updated Stable documentation. Preserve Light and private assets.
+
 On 2026-10-24 the owner explicitly requested a Stable hotfix removing the old checklist view and retaining only the new planner, then requested deletion of added tasks. Publish Stable 4.1.2 with direct planner opening, removal of legacy controls, visible edit/delete actions, undo, preserved planner progress and legacy data archived without character assignment. Include English/German notes and a German Discord download; run full checks and preserve Light/private assets.
 
 

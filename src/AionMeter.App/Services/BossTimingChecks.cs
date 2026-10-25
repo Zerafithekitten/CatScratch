@@ -62,9 +62,12 @@ internal static class BossTimingChecks
             model.HasTimingBoss=false;timing.UpdateLayout();
             var root=(FrameworkElement)timing.Content;
             var bitmap=new System.Windows.Media.Imaging.RenderTargetBitmap((int)Math.Ceiling(root.ActualWidth),(int)Math.Ceiling(root.ActualHeight),96,96,System.Windows.Media.PixelFormats.Pbgra32);
-            bitmap.Render(root);var pixels=new byte[bitmap.PixelWidth*bitmap.PixelHeight*4];bitmap.CopyPixels(pixels,bitmap.PixelWidth*4,0);
-            Check(Enumerable.Range(0,pixels.Length/4).All(i=>pixels[i*4+3]==0),"Idle click-through timing is fully transparent, including the waiting message");
+            bitmap.Render(timing);var pixels=new byte[bitmap.PixelWidth*bitmap.PixelHeight*4];bitmap.CopyPixels(pixels,bitmap.PixelWidth*4,0);
+            Check(Enumerable.Range(0,pixels.Length/4).All(i=>pixels[i*4+3]==0),"Idle click-through timing is fully transparent across the complete window, including its branding adorner");
             model.HasTimingBoss=true;timing.UpdateLayout();
+            var activeBitmap=new System.Windows.Media.Imaging.RenderTargetBitmap((int)Math.Ceiling(timing.ActualWidth),(int)Math.Ceiling(timing.ActualHeight),96,96,System.Windows.Media.PixelFormats.Pbgra32);
+            activeBitmap.Render(timing);var activePixels=new byte[activeBitmap.PixelWidth*activeBitmap.PixelHeight*4];activeBitmap.CopyPixels(activePixels,activeBitmap.PixelWidth*4,0);
+            Check(Enumerable.Range(0,activePixels.Length/4).Any(i=>activePixels[i*4+3]>0),"A new active boss restores visible timing content after transparent idle");
             Check(((StackPanel)timing.FindName("TimingBody")).PointToScreen(new Point())==position,"Hiding timing controls does not shift its contents");
             WindowClickThrough.ApplyAll(false);timing.UpdateLayout();
             Check(((DockPanel)timing.FindName("Header")).Visibility==Visibility.Visible,"Unlocking restores timing controls");

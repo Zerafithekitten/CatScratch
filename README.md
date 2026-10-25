@@ -8,13 +8,17 @@ A separate, always-on-top Windows DPS meter for **AION 2**, by Zerafithekitten. 
 
 | Channel | Current version | What it includes |
 | --- | --- | --- |
-| **Stable** | **[v4.1.2](https://github.com/Zerafithekitten/CatScratch/releases/tag/v4.1.2)** | Class reference, Pet and Soul Binding guidance, live Settings previews, optional experimental Altgard map, cube-key resources and performance improvements. |
+| **Stable** | **[v4.1.3](https://github.com/Zerafithekitten/CatScratch/releases/tag/v4.1.3)** | Class reference, Pet and Soul Binding guidance, live Settings previews, optional experimental Altgard map, cube-key resources and performance improvements. |
 | **Beta** | **[v4.0.9-beta.17](https://github.com/Zerafithekitten/CatScratch/releases/tag/v4.0.9-beta.17)** | Previous test build; its features are included in Stable 4.1.0. Beta subscribers return to Stable when the promoted build starts. |
 | **Light** | [v1.0.0](https://github.com/Zerafithekitten/CatScratch/releases/tag/light-v1.0.0) | Separate **DPS meter only** edition with essential settings. Independent ZIP download and settings; no additional CatScratch modules or automatic updater. |
 
 **CatScratch light** is installed separately from the full version. [Download its ZIP](https://github.com/Zerafithekitten/CatScratch/releases/download/light-v1.0.0/CatScratch-light-win-x64.zip) and extract it into its own folder. Light is maintained and updated **only on the owner's explicit request**; normal development continues on full CatScratch.
 
-English is the default. German, Russian and French are also available. Screenshots use synthetic sample data; names and numbers are examples. All features described below are included in **Stable v4.1.2** unless a limitation is stated.
+English is the default. German, Russian and French are also available. Screenshots use synthetic sample data; names and numbers are examples. All features described below are included in **Stable v4.1.3** unless a limitation is stated.
+
+## New in 4.1.3
+
+Fixed a faint cat watermark remaining on an otherwise transparent, idle detached boss timer in click-through mode. The complete idle window is now checked for visible pixels; normal boss content returns when timing is available.
 
 ## New in 4.1.2
 

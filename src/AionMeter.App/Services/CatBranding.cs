@@ -18,6 +18,11 @@ public static class CatBranding
         var image=new BitmapImage();image.BeginInit();image.UriSource=new Uri("pack://application:,,,/CatScratch;component/Assets/Branding/"+file);image.DecodePixelWidth=pixels;image.CacheOption=BitmapCacheOption.OnLoad;image.EndInit();image.Freeze();return image;
     }
     private static readonly System.Runtime.CompilerServices.ConditionalWeakTable<Window,SignatureAdorner> Adornments=new();
+    private static readonly DependencyProperty SignatureVisibleProperty=DependencyProperty.RegisterAttached("SignatureVisible",typeof(bool),typeof(CatBranding),new PropertyMetadata(true,(owner,args)=>
+    {
+        if(owner is Window window&&Adornments.TryGetValue(window,out var adorner))adorner.Visibility=(bool)args.NewValue?Visibility.Visible:Visibility.Hidden;
+    }));
+    internal static void SetSignatureVisible(Window window,bool visible)=>window.SetValue(SignatureVisibleProperty,visible);
     private static bool _registered;
     internal static void Register()
     {
@@ -34,7 +39,7 @@ public static class CatBranding
         if(Adornments.TryGetValue(window,out _))return;
         root=Target(window)??root;
         if(AdornerLayer.GetAdornerLayer(root) is not {} layer)return;
-        var adorner=new SignatureAdorner(root,compact);layer.Add(adorner);Adornments.Add(window,adorner);
+        var adorner=new SignatureAdorner(root,compact){Visibility=(bool)window.GetValue(SignatureVisibleProperty)?Visibility.Visible:Visibility.Hidden};layer.Add(adorner);Adornments.Add(window,adorner);
         root.AddHandler(ScrollViewer.ScrollChangedEvent,new ScrollChangedEventHandler((_,_)=>adorner.InvalidateVisual()));
         if(window is SettingsWindow settings && settings.FindName("SettingsTabs") is TabControl tabs)
             tabs.SelectionChanged+=(_,_)=>adorner.InvalidateVisual();
@@ -59,7 +64,7 @@ public static class CatBranding
     }
     internal static void DrawPreview(Window window,DrawingContext drawing,Size size)
     {
-        if(window is HiddenCubeWindow or SupporterCatWindow || Target(window) is not {} target || window.Content is not FrameworkElement root)return;
+        if(!(bool)window.GetValue(SignatureVisibleProperty) || window is HiddenCubeWindow or SupporterCatWindow || Target(window) is not {} target || window.Content is not FrameworkElement root)return;
         var origin=target==root?new Point():target.TranslatePoint(new Point(),root);
         drawing.PushTransform(new TranslateTransform(origin.X,origin.Y));
         DrawSignature(drawing,target,window is IDisplayAppearance or OverlayWindow or MeterControlsWindow);

@@ -1,3 +1,21 @@
+## CatScratch v4.1.3
+
+A tiny ghost managed to stay behind on the screen. This hotfix gives it a proper goodbye. 🐾
+
+<!-- contents -->
+### At a glance
+- [No lingering cat silhouette](#transparent-boss-timer)
+<!-- /contents -->
+
+<a id="transparent-boss-timer"></a>
+### 🛠️ No lingering cat silhouette
+
+The empty detached boss timer could keep drawing its subtle cat watermark in click-through mode even though its frame and waiting message were already transparent. That could look like a leftover Hidden Cube notification.
+
+The watermark now disappears together with the idle timer. When boss timing becomes available again, the content and signature return normally. The check now covers the complete window, including its decoration, and verifies that the idle window leaves no visible pixels.
+
+Thanks for spotting the little shadow. 💜
+
 ## CatScratch v4.1.2
 
 A small checklist hotfix from me. The new planner should be right there when you open it, without a switch to hunt for first. 🐾

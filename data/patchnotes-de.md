@@ -1,3 +1,21 @@
+## CatScratch v4.1.3
+
+Ein kleiner Geist hat sich auf dem Bildschirm festgekrallt. Mit diesem Hotfix verabschiedet er sich jetzt richtig. 🐾
+
+<!-- contents -->
+### Das ist drin
+- [Keine zurückbleibende Katzensilhouette](#transparenter-boss-timer)
+<!-- /contents -->
+
+<a id="transparenter-boss-timer"></a>
+### 🛠️ Keine zurückbleibende Katzensilhouette
+
+Der leere, abgetrennte Boss-Timer konnte im Click-through-Modus weiterhin sein dezentes Katzenwasserzeichen zeichnen, obwohl Rahmen und Wartetext bereits transparent waren. Das konnte wie ein Rest einer Hidden-Cube-Meldung aussehen.
+
+Das Wasserzeichen verschwindet jetzt zusammen mit dem inaktiven Timer. Sobald wieder Bosszeiten vorliegen, erscheinen Inhalt und Signatur wie gewohnt. Die Prüfung erfasst nun das vollständige Fenster einschließlich Dekoration und kontrolliert, dass im Leerlauf keine sichtbaren Pixel zurückbleiben.
+
+Danke fürs Entdecken des kleinen Schattens. 💜
+
 ## CatScratch v4.1.2
 
 Ein kleiner Checklisten-Hotfix von mir. Der neue Planer soll direkt da sein – ohne erst nach einem Umschalter suchen zu müssen. 🐾

@@ -7,10 +7,12 @@ public partial class BossTimingWindow : Window,IDisplayAppearance
 {
     private readonly AppSettings _settings;
     private readonly Action _changed;
+    private bool _displayOnly;
     internal BossTimingWindow(AppSettings settings,object model,Action changed)
     {
         _settings=settings;_changed=changed;
         InitializeComponent();DataContext=model;
+        TimingBody.IsVisibleChanged+=(_,_)=>RefreshSignature();
         Title="CatScratch · "+UiText.Current.Localize("Boss timing");
         Caption.Text=UiText.Current.Localize("Boss timing");
         Waiting.Text=UiText.Current.Localize("Waiting for a boss fight");
@@ -33,8 +35,10 @@ public partial class BossTimingWindow : Window,IDisplayAppearance
     {
         _settings.DetachBossTiming=false;SavePlacement();_changed();Close();
     }
+    private void RefreshSignature()=>CatBranding.SetSignatureVisible(this,!_displayOnly||TimingBody.Visibility==Visibility.Visible);
     public void SetDisplayOnly(bool enabled)
     {
+        _displayOnly=enabled;RefreshSignature();
         Header.Visibility=enabled?Visibility.Hidden:Visibility.Visible;
         Waiting.Opacity=enabled?0:1;
         if(enabled)

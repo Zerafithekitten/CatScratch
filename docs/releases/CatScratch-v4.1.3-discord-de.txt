@@ -1,0 +1,10 @@
+🐾 **CatScratch 4.1.3 — Stable-Hotfix**
+
+Ein kleiner Schatten weniger auf eurem Bildschirm. 💜
+
+**🛠️ Zurückbleibendes Katzenwasserzeichen behoben**
+Der leere, abgetrennte Boss-Timer konnte im Click-through-Modus noch eine schwache Katzensilhouette anzeigen, obwohl sein übriger Inhalt bereits unsichtbar war. Das konnte wie ein Überbleibsel einer Hidden-Cube-Meldung wirken.
+
+Das Wasserzeichen verschwindet nun zusammen mit dem inaktiven Timer. Sobald wieder Bosszeiten verfügbar sind, erscheint die normale Anzeige wieder. Die Transparenzprüfung erfasst jetzt auch die Dekoration des gesamten Fensters.
+
+📥 **Download:** https://github.com/Zerafithekitten/CatScratch/releases/tag/v4.1.3
