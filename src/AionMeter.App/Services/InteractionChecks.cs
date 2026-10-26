@@ -667,7 +667,7 @@ internal static class InteractionChecks
             Check(petList.Items.Count is >0 and <=5 && meter.Pets.AttackedTargetId==0
                 && petList.Items.OfType<Windows.PetTrackerWindow.Row>().All(p=>p.Progress!="MAX"),"The Pet tracker recommends incomplete current-region pets without any attack");
             meter.Pets.Observe(new Core.Events.NpcSeenEvent(DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),77,2400455));petWindow.Refresh();
-            Check(petList.Items.OfType<Windows.PetTrackerWindow.Row>().First().Definition.Id==1193,"Freshly seen pet monsters move their pet to the top without an attack");
+            Check(petList.Items.OfType<Windows.PetTrackerWindow.Row>().All(p=>!p.Name.StartsWith("⌖ ")),"An unmeasured received monster is never labeled nearby without own coordinates and a distance");
             meter.Settings.PetOnHitOnly=true;petWindow.Refresh();
             Check(petList.Items.Count==0,"Pet on hit does not populate rows from region or sightings alone");
             meter.Pets.Observe(new Core.Events.DamageEvent(DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),1,77,17010000,100,Core.Events.HitFlags.None));petWindow.Refresh();

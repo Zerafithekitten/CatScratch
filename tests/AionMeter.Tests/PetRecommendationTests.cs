@@ -15,16 +15,32 @@ public class PetRecommendationTests
     [Fact] public void SeenMonstersTakePriorityAndCompletedPetsAreExcluded()
     {
         var states=new Dictionary<int,PetState>{{1001,new(1001,3,0)},{1002,new(1002,1,10)}};
-        var result=PetRecommendations.Select(Locations,1010,states,true,new HashSet<int>{1002});
+        var result=PetRecommendations.Select(Locations,1010,states,true,new HashSet<int>{1002},guidance:new Dictionary<int,PetTargetGuidance>{{1002,new(1,1,1000,0,100,50)}});
         Assert.Equal(new[]{1002,1003},result.Select(r=>r.PetId));Assert.Equal(15,result[0].Needed);Assert.True(result[0].Nearby);
     }
     [Fact] public void UnknownMapDoesNotRecommendOtherRegions()=>Assert.Empty(PetRecommendations.Select(Locations,0,new Dictionary<int,PetState>(),true,new HashSet<int>()));
+    [Fact]public void ReceivedFarMonstersCannotDisplaceCloserFarmLocationsOrClaimNearby()
+    {
+        var guidance=new Dictionary<int,PetTargetGuidance>{{1001,new(7,7,100000,0,100,50)},{1003,new(0,8,1000,0,100,50,null,true)}};
+        var rows=PetRecommendations.Select(Locations,1010,new Dictionary<int,PetState>(),true,new HashSet<int>{1001},guidance:guidance);
+        Assert.Equal(1003,rows[0].PetId);Assert.All(rows,r=>Assert.False(r.Nearby));
+    }
+    [Theory][InlineData(9900,50,true)][InlineData(9990,50,false)][InlineData(50000,50,false)]
+    public void NearbyRequiresMeasuredDistanceIncludingUncertainty(double distance,double uncertainty,bool expected)
+        =>Assert.Equal(expected,PetNavigation.IsNearby(new(1,7,distance,0,100,uncertainty)));
+    [Fact]public void FarmAndHistoricalCoordinatesNeverEstablishNearby()
+    {
+        Assert.False(PetNavigation.IsNearby(new(0,7,100,0,100,50,null,true)));
+        Assert.False(PetNavigation.IsNearby(new(1,7,100,0,100,50,null,false,true)));
+        var rows=PetRecommendations.Select(Locations,1010,new Dictionary<int,PetState>(),true,new HashSet<int>{1001});
+        Assert.All(rows,r=>Assert.False(r.Nearby));
+    }
     [Theory][InlineData(5)][InlineData(256)]
     public void FivePetCapStillPrioritizesNearbyAndExcludesCompleted(int requested)
     {
         var locations=Enumerable.Range(1001,10).Select(id=>new PetMapLocation(id,1010,"Verteron","Source",[]));
         var states=new Dictionary<int,PetState>{{1001,new(1001,3,0)}};
-        var result=PetRecommendations.Select(locations,1010,states,true,new HashSet<int>{1010},requested);
+        var result=PetRecommendations.Select(locations,1010,states,true,new HashSet<int>{1010},requested,guidance:new Dictionary<int,PetTargetGuidance>{{1010,new(1,1,1000,0,100,50)}});
         Assert.Equal(5,result.Count);Assert.Equal(1010,result[0].PetId);Assert.DoesNotContain(result,r=>r.PetId==1001);
     }
     [Fact] public void ChangingRegionAndDisconnectingClearOldTargetsAndPositions()

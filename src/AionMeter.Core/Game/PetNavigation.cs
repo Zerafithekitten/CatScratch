@@ -13,6 +13,10 @@ public sealed record PetTargetGuidance(uint ActorId,int NpcCode,double DistanceU
 public sealed class PetNavigation
 {
     public const long FreshMs=1500,PredictionMs=750;
+    public const double NearbyRadiusUnits=10000;
+    public static bool IsNearby(PetTargetGuidance? target)=>target is {ActorId:>0,FarmLocation:false,LastKnown:false}&&
+        double.IsFinite(target.DistanceUnits)&&double.IsFinite(target.UncertaintyUnits)&&target.DistanceUnits>=0&&target.UncertaintyUnits>=0&&
+        target.DistanceUnits+target.UncertaintyUnits<=NearbyRadiusUnits;
     private readonly object _gate=new();
     private uint _self;
     private int _map;

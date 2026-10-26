@@ -89,7 +89,7 @@ internal sealed class ModulePreviewSession:IDisposable
             }
             if(window is OverlayWindow overlay)overlay.ApplyAppearance();
             if(window is ChecklistWindow checklist)checklist.ApplyPreferences();
-            if(window is PetTrackerWindow pets){pets.Width=Math.Clamp(_source.PetModuleWidth,150,1600);pets.Refresh();}
+            if(window is PetTrackerWindow pets){pets.ApplyWidth(_source.PetModuleWidth);pets.Refresh();}
         }
         foreach(var refresh in _refresh)refresh();
     }

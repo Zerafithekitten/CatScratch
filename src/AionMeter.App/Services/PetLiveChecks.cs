@@ -30,7 +30,14 @@ internal static class PetLiveChecks
         }
         try
         {
-            window.Show();
+            window.Show();Flush();
+            var grip=Nodes(window).OfType<System.Windows.Controls.Primitives.Thumb>().Single(t=>Equals(t.Tag,"pet-width-grip"));
+            window.UpdateLayout();var initialWidth=window.Width;
+            grip.RaiseEvent(new System.Windows.Controls.Primitives.DragDeltaEventArgs(100,0){RoutedEvent=System.Windows.Controls.Primitives.Thumb.DragDeltaEvent});window.UpdateLayout();
+            Check(Math.Abs(window.ActualWidth-initialWidth-100)<2&&Math.Abs(meter.Settings.PetModuleWidth-window.Width)<1,"The full custom grip changes actual Pet width and its saved preference");
+            window.SetDisplayOnly(true);window.ApplyWidth(260);window.Refresh();window.UpdateLayout();
+            Check(Math.Abs(window.ActualWidth-260)<2,"Programmatic Settings width still applies while display-only mode hides the grip");
+            window.SetDisplayOnly(false);window.ApplyWidth(initialWidth);meter.Settings.PetModuleWidth=initialWidth;window.UpdateLayout();
             var list=Nodes(window).OfType<ListBox>().Single();
             string Progress()=>list.Items.OfType<PetTrackerWindow.Row>().Single().Progress;
             meter.Pets.Observe(new SelfIdentifiedEvent(1,1,"Pet live A",2305,GameClass.Cleric));
@@ -85,6 +92,7 @@ internal static class PetLiveChecks
             Flush();window.Refresh();window.UpdateLayout();
             var rows=list.Items.OfType<PetTrackerWindow.Row>().ToArray();
             Check(rows[0].Definition.Id==1193&&rows[0].Direction.Length==0&&rows[0].Distance.StartsWith("≈ "),"A missing character heading leaves distance available without substituting a world-axis arrow");
+            Check(rows[0].Name.StartsWith("⌖ ")&&Nodes(window).OfType<TextBlock>().Any(t=>t.Text.Contains("Confirmed nearby (≤100 m)")),"Only a freshly measured close source enables the nearby label");
             Check(rows[0].Distance=="≈ 14 m","The 1,414-world-unit diagonal is displayed as approximately 14 metres");
             Check(PetNavigationText.Distance(new(0,1,22559,0,0,50,null,true,true))=="~ 226 m","Historical farm distances use the same metre conversion and retain their marker");
             SavePreview(window,Path.ChangeExtension(output,"png"));

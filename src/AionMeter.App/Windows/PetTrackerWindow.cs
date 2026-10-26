@@ -46,7 +46,7 @@ public sealed class PetTrackerWindow:Window,IDisplayAppearance,IMapPresentation
         WindowStyle=WindowStyle.None;ResizeMode=ResizeMode.CanResize;Topmost=true;ShowInTaskbar=false;Background=Brushes.Transparent;
         Resources.MergedDictionaries.Add(new(){Source=new Uri("/CatScratch;component/Theme/MeterPreferences.xaml",UriKind.Relative)});
         Foreground=Brush("#EDF2F7");FontSize=12;FontFamily=(FontFamily)FindResource("UiFont");
-        System.Windows.Shell.WindowChrome.SetWindowChrome(this,new(){CaptionHeight=28,ResizeBorderThickness=new(5),GlassFrameThickness=new(0)});
+        System.Windows.Shell.WindowChrome.SetWindowChrome(this,new(){CaptionHeight=28,ResizeBorderThickness=new(0),GlassFrameThickness=new(0)});
         var root=_root=new DockPanel{Margin=new(5)};
         var header=_header=new DockPanel{Margin=new(0,0,0,2)};DockPanel.SetDock(header,Dock.Top);root.Children.Add(header);
         _close=new(){Content="\uE711",Style=(Style)FindResource("IconButton"),Width=22,Height=22,FontSize=12};
@@ -69,11 +69,12 @@ public sealed class PetTrackerWindow:Window,IDisplayAppearance,IMapPresentation
         _shell=new(){Child=root,CornerRadius=new(8),Background=Brush("#DF20242A"),BorderBrush=Brush("#60616A76"),BorderThickness=new(1)};
         _shell.Child=null;
         var frame=new Grid();frame.Children.Add(root);
-        _resize=new Thumb {Width=12,Height=12,HorizontalAlignment=HorizontalAlignment.Right,VerticalAlignment=VerticalAlignment.Bottom,Cursor=Cursors.SizeWE};
+        _resize=new Thumb {Tag="pet-width-grip",Width=20,Height=20,HorizontalAlignment=HorizontalAlignment.Right,VerticalAlignment=VerticalAlignment.Bottom,Cursor=Cursors.SizeWE,ToolTip=T.Localize("Window width")};
+        System.Windows.Shell.WindowChrome.SetIsHitTestVisibleInChrome(_resize,true);
         _resize.Template=(ControlTemplate)XamlReader.Parse("""
-        <ControlTemplate xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" TargetType="Thumb"><Grid Background="Transparent"><Path Data="M 4,10 L 10,4 M 8,10 L 10,8" Stroke="#8099AABB" StrokeThickness="1"/></Grid></ControlTemplate>
+        <ControlTemplate xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" TargetType="Thumb"><Grid Background="Transparent"><Path Data="M 9,15 L 15,9 M 12,15 L 15,12" Stroke="#8099AABB" StrokeThickness="1"/></Grid></ControlTemplate>
         """);
-        _resize.DragDelta+=(_,e)=>{Width=Math.Clamp(ActualWidth+e.HorizontalChange,MinWidth,MaxWidth);meter.Settings.PetModuleWidth=Width;};
+        _resize.DragDelta+=(_,e)=>{ApplyWidth(Width+e.HorizontalChange);meter.Settings.PetModuleWidth=Width;};
         _resize.DragCompleted+=(_,_)=>meter.Settings.Save();
         frame.Children.Add(_resize);_shell.Child=frame;Content=_shell;
 
@@ -83,6 +84,14 @@ public sealed class PetTrackerWindow:Window,IDisplayAppearance,IMapPresentation
         Loaded+=(_,_)=>{if(IsVisible&&!MapHudSuppression.IsSuppressed(this))_locationRefresh.Start();};Closed+=(_,_)=>_locationRefresh.Stop();
         Closed+=(_,_)=>{_closed=true;meter.Pets.Changed-=Changed;meter.SetPetNavigationActive(false);_sounds?.Dispose();meter.Settings.PetModuleWidth=Width;meter.Settings.PetModuleLeft=Left;meter.Settings.PetModuleTop=Top;meter.Settings.Save();};
         meter.SetPetNavigationActive(true);Refresh();
+    }
+    public void ApplyWidth(double width)
+    {
+        var target=double.IsFinite(width)?Math.Clamp(width,MinWidth,MaxWidth):300;
+        // WPF auto-height can restore its cached native width during a width-only change.
+        SizeToContent=SizeToContent.Manual;
+        Width=target;
+        SizeToContent=SizeToContent.Height;
     }
     private void Changed()
     {
@@ -105,8 +114,6 @@ public sealed class PetTrackerWindow:Window,IDisplayAppearance,IMapPresentation
         var now=DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
         var vicinity=_meter.Pets.Nearby();
         var seen=vicinity.Npcs.Where(n=>n.TimeMs<=now && now-n.TimeMs<=30000).OrderByDescending(n=>n.TimeMs).Select(n=>n.NpcCode).Distinct().ToArray();
-        var seenCodes=seen.ToHashSet();
-        var nearbyPets=_catalog.Where(p=>p.Sources.Any(s=>seenCodes.Contains(s.NpcCode))||_meter.Pets.Farms(p.Id).Any(f=>seenCodes.Contains(f.NpcCode))).Select(p=>p.Id).ToHashSet();
         var position=confirmed&&!_meter.DemoRunning?_meter.PetNavigation.Snapshot(now):null;
         var lastPosition=confirmed&&!_meter.DemoRunning?_meter.PetNavigation.LastKnown(now):null;
         var guidance=new Dictionary<int,PetTargetGuidance>();
@@ -120,6 +127,7 @@ public sealed class PetTrackerWindow:Window,IDisplayAppearance,IMapPresentation
                 if(target is not null)guidance[pet.Id]=target;
             }
         var onHit=_meter.Settings.PetOnHitOnly;
+        var nearbyPets=guidance.Where(p=>PetNavigation.IsNearby(p.Value)).Select(p=>p.Key).ToHashSet();
         var suggestions=onHit?Array.Empty<PetRecommendation>():PetRecommendations.Select(_locations,_meter.Pets.MapId,states,confirmed,nearbyPets,guidance:guidance);
         var region=onHit?null:_locations.FirstOrDefault(l=>l.MapId==_meter.Pets.MapId)?.Region;
         var byId=_catalog.ToDictionary(p=>p.Id);
@@ -128,7 +136,7 @@ public sealed class PetTrackerWindow:Window,IDisplayAppearance,IMapPresentation
                 .DistinctBy(p=>p.Id).Where(p=>!confirmed || states.GetValueOrDefault(p.Id,new(p.Id,0,0)).Level<3).Take(3).ToArray();
         _status.Text=!confirmed?T.Localize("Pet progress data not received yet.")+" "+T.Localize("Briefly return to character selection or log in again."):
             onHit?T.Localize(pets.Length>0?"Pet on hit":"Attack a pet-source monster to see its progress."):
-            suggestions.Count>0?T.Localize(nearbyPets.Overlaps(suggestions.Select(s=>s.PetId))?"Nearby first":"Pets in this region")+(region is null?"":" · "+region):
+            suggestions.Count>0?(nearbyPets.Overlaps(suggestions.Select(s=>s.PetId))?(T.Code=="de"?"Bestätigt in der Nähe (≤100 m)":"Confirmed nearby (≤100 m)"):T.Localize("Pets in this region"))+(region is null?"":" · "+region):
             region is not null?T.Localize("No incomplete pets with known locations in this region."):
             pets.Length>0?"":T.Localize("Waiting for a known region or nearby monsters.");
         var historicalFarm=pets.Any(p=>guidance.GetValueOrDefault(p.Id)?.LastKnown==true)&&lastPosition is not null;

@@ -1,3 +1,13 @@
+## CatScratch v4.1.4-beta.4
+
+Ein genauerer Blick auf „in der Nähe“ – und mehr Platz zum Anpassen. 🐾
+
+- „Bestätigt in der Nähe“ verlangt jetzt einen frisch vermessenen aktuellen Gegner innerhalb von 100 Metern einschließlich Unsicherheitsbudget. Eine empfangene Gegnermeldung, bekannte Farmstelle oder alte Position genügt dafür nicht. Entfernte empfangene Quellen verdrängen nähere vermessene Ziele nicht mehr allein wegen ihrer Meldung.
+- Behoben: Die automatische Höhenanpassung setzte Breitenänderungen des Pet Trackers zurück. Ziehgriff, Einstellungen und Layout-Vorschau verwenden jetzt die korrigierte Größenänderung.
+- Neben dem Schieberegler gibt es ein direktes Breitenfeld für 150–1600 px sowie einen größeren Ziehgriff. Save übernimmt die Breite; das Schließen ungespeicherter Einstellungen stellt sie zurück.
+
+Die Position bleibt von Paketmeldungen abhängig. Diese Korrektur behebt die Nähe-Einstufung; eine durchgängige Minikartenortung ist noch nicht enthalten.
+
 ## CatScratch v4.1.4-beta.3
 
 Ein schnellerer Blick – mit vertrauten Einheiten. 🐾

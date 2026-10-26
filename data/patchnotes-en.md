@@ -1,3 +1,13 @@
+## CatScratch v4.1.4-beta.4
+
+A closer look at “nearby” — and a little room to resize. 🐾
+
+- “Confirmed nearby” now requires a freshly measured live source within 100 metres, including its uncertainty allowance. Merely received monsters, potential farm locations and historical positions cannot establish proximity. Distant received sources no longer outrank closer measured destinations just because their packet arrived.
+- Fixed Pet Tracker width changes snapping back through automatic height sizing. Dragging, Settings previews and layout previews use the corrected width update.
+- Added a direct 150–1600 px width field beside the Settings slider and a larger resize grip. Save retains the width; closing unsaved Settings restores it.
+
+Positions remain packet-dependent. This corrects proximity classification; continuous minimap positioning is not included.
+
 ## CatScratch v4.1.4-beta.3
 
 A quicker glance, in familiar units. 🐾

@@ -1153,7 +1153,7 @@ public partial class App : Application
         ShowSettings();_settingsWindow!.SelectEvents();
     }
     internal void PreviewEventSound(EventSoundPreference sound,double volume)=>(_eventSoundPlayer??=new()).Play(sound,volume,preview:true);
-    internal void RefreshPetSettings(){if(_petWindow is { } window){window.Width=Math.Clamp(_meter.Settings.PetModuleWidth,150,1600);window.Refresh();}}
+    internal void RefreshPetSettings(){if(_petWindow is { } window){window.ApplyWidth(_meter.Settings.PetModuleWidth);window.Refresh();}}
     internal void RefreshEventSettings()
     {
         _eventSchedule?.Reload();
@@ -1326,7 +1326,7 @@ public partial class App : Application
             if(window is ClassGuideWindow guides)guides.RefreshLanguage();
             if(window is DungeonEntriesWindow entries)entries.Refresh();
             if(window is ChecklistWindow checklist)checklist.ApplyPreferences();
-            if(window is PetTrackerWindow pets){pets.Width=Math.Clamp(settings.PetModuleWidth,150,1600);pets.Refresh();}
+            if(window is PetTrackerWindow pets){pets.ApplyWidth(settings.PetModuleWidth);pets.Refresh();}
             else if(window is MeterControlsWindow controls)controls.ApplyAppearance();
         }
         if(!ReferenceEquals(_meter,owner)||_overlay is null||_shutdownStarted)return;
