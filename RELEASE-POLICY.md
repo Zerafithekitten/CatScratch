@@ -1,5 +1,7 @@
 # Release policy
 
+On 2026-10-26 the owner reviewed the actual Pet distance preview and brief English/German notes, then explicitly approved "ja" for the Beta upload. Publish v4.1.4-beta.1 after full release checks with passive own-coordinate notifications, fresh approximate Pet distances, conservative expiry and context isolation. Live minimap positioning, its unimplemented calibration UI, character-facing adapters and unrelated local map/companion changes are excluded. Preserve Stable 4.1.3, Light, private assets and GitHub project presentation.
+
 On 2026-10-25 the owner explicitly approved "hotfix stable" for the reproduced idle detached boss-timer watermark residue. Publish Stable 4.1.3 after full release checks, including complete-window transparency and visibility restoration coverage. Include personal English/German notes, a separate German Discord download and updated Stable documentation. Preserve Light and private assets.
 
 On 2026-10-24 the owner explicitly requested a Stable hotfix removing the old checklist view and retaining only the new planner, then requested deletion of added tasks. Publish Stable 4.1.2 with direct planner opening, removal of legacy controls, visible edit/delete actions, undo, preserved planner progress and legacy data archived without character assignment. Include English/German notes and a German Discord download; run full checks and preserve Light/private assets.

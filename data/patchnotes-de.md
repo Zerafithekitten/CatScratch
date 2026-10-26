@@ -1,3 +1,13 @@
+## CatScratch v4.1.4-beta.1
+
+Etwas mehr Orientierung für deine Pet-Suche. 🐾
+
+- Der Pet Tracker nutzt zusätzliche passiv empfangene Positionsmeldungen der eigenen Figur.
+- Frische eigene und Quell-NPC-Koordinaten ermöglichen ungefähre Entfernungen in Spieleinheiten; nahe unvollständige Pets werden bevorzugt.
+- Veraltete oder fehlende Koordinaten blenden Entfernungen aus. Regionale Empfehlungen bleiben verfügbar. Charakter-, Karten- und Aufnahmewechsel verwerfen Ortungsdaten.
+
+Positionsmeldungen können zeitweise fehlen. Live-Minikartenortung und Richtungspfeile zur Figurenausrichtung sind in dieser Beta noch nicht enthalten.
+
 ## CatScratch v4.1.3
 
 Ein kleiner Geist hat sich auf dem Bildschirm festgekrallt. Mit diesem Hotfix verabschiedet er sich jetzt richtig. 🐾

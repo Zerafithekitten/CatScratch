@@ -73,8 +73,49 @@ internal static class PetLiveChecks
                 Check(restored.Confirmed&&restored.FromCache&&restored.Snapshot().Single().Souls==12,"Shutdown flush persists the latest pet snapshot and restores it for the matching character");
             }
             finally{foreach(var file in Directory.GetFiles(cacheDirectory))File.Delete(file);Directory.Delete(cacheDirectory);}
+            var now=DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+            void Feed(GameEvent value){meter.Pets.Observe(value);meter.PetNavigation.Observe(value);}
+            meter.Settings.PetOnHitOnly=false;
+            Feed(new SelfIdentifiedEvent(now-200,1,"Navigation sample",2305,GameClass.Cleric));
+            Feed(new ZoneChangedEvent(now-190,1110,"Altgard",false));
+            Feed(new PetCollectionEvent(now-180,new Dictionary<int,PetState>{{1193,new(1193,1,11)},{1176,new(1176,1,8)}}));
+            Feed(new ActorPositionEvent(now-10,1,10,20,30));
+            Feed(new NpcSeenEvent(now-10,7,2400455,X:1010,Y:1020,Z:30));
+            Feed(new NpcSeenEvent(now-10,8,2400707,X:-1990,Y:1020,Z:30));
+            Flush();window.Refresh();window.UpdateLayout();
+            var rows=list.Items.OfType<PetTrackerWindow.Row>().ToArray();
+            Check(rows[0].Definition.Id==1193&&rows[0].Direction.Length==0&&rows[0].Distance.StartsWith("≈ "),"A missing character heading leaves distance available without substituting a world-axis arrow");
+            SavePreview(window,Path.ChangeExtension(output,"png"));
+            Feed(new PetFacingEvent(DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),1,0));window.Refresh();
+            rows=list.Items.OfType<PetTrackerWindow.Row>().ToArray();
+            Check(rows[0].Direction=="↗","A fresh character orientation enables a character-relative arrow");
+            Check(rows[0].Tooltip.Contains("character facing")&&rows[0].Tooltip.Contains("not the camera")&&rows[0].Tooltip.Contains("not metres"),"Tooltips distinguish character orientation from camera orientation and world units from metres");
+            Feed(new PetFacingEvent(DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),1,90));
+            var turnFrame=new DispatcherFrame();var turnWait=new DispatcherTimer{Interval=TimeSpan.FromMilliseconds(550)};
+            turnWait.Tick+=(_,_)=>{turnWait.Stop();turnFrame.Continue=false;};turnWait.Start();Dispatcher.PushFrame(turnFrame);
+            Check(list.Items.OfType<PetTrackerWindow.Row>().Single(r=>r.Definition.Id==1193).Direction=="↖","Turning the character without moving rotates the arrow through the live timer");
+            var moveAt=DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+            Feed(new ActorPositionEvent(moveAt,7,-990,1020,30));
+            var frame=new DispatcherFrame();var wait=new DispatcherTimer{Interval=TimeSpan.FromMilliseconds(600)};
+            wait.Tick+=(_,_)=>{wait.Stop();frame.Continue=false;};wait.Start();Dispatcher.PushFrame(frame);
+            Check(list.Items.OfType<PetTrackerWindow.Row>().Single(r=>r.Definition.Id==1193).Direction=="↗","NPC movement updates its arrow through the live window timer without manual Refresh");
+            Thread.Sleep(1600);window.Refresh();
+            Check(list.Items.OfType<PetTrackerWindow.Row>().All(r=>r.Direction.Length==0&&r.Distance.Length==0),"Stale coordinates remove every arrow and distance while ordinary pet recommendations remain");
+            Check(list.Items.Count>0,"Loss of navigation does not remove the normal region recommendations");
+            Check(PetNavigationText.Arrow(0)=="→"&&PetNavigationText.Arrow(90)=="↑"&&PetNavigationText.Arrow(-90)=="↓"&&PetNavigationText.Arrow(double.NaN)=="","Arrow sectors handle signed angles and reject invalid bearings");
+            var fresh=DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();Feed(new ActorPositionEvent(fresh,1,10,20,30));
+            meter.SetPetNavigationActive(true);meter.SetPetNavigationActive(false);
+            Check(meter.PetNavigation.Snapshot(fresh) is not null,"Closing an additional preview keeps the remaining tracker navigation active");
+            window.Close();
+            Check(meter.PetNavigation.Snapshot(fresh) is null,"Closing the final tracker clears its position guidance");
             File.WriteAllText(output,JsonSerializer.Serialize(passed));
         }
         finally{window.Close();}
+    }
+    private static void SavePreview(Window window,string path)
+    {
+        var bitmap=new System.Windows.Media.Imaging.RenderTargetBitmap((int)Math.Ceiling(window.ActualWidth),(int)Math.Ceiling(window.ActualHeight),96,96,System.Windows.Media.PixelFormats.Pbgra32);
+        bitmap.Render(window);var png=new System.Windows.Media.Imaging.PngBitmapEncoder();png.Frames.Add(System.Windows.Media.Imaging.BitmapFrame.Create(bitmap));
+        using var file=File.Create(path);png.Save(file);
     }
 }

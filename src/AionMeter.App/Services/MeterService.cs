@@ -39,6 +39,7 @@ public sealed class MeterService : IDisposable
     public MeterService(AppSettings settings, Func<GameData, IEventSource>? captureFactory, PersonalBestStore? personalBests = null, LastPlayedWithStore? lastPlayedWith = null, string? historyDirectory = null)
     {
         Settings = settings;
+        _petNavigationActive=settings.ShowPetTrackerModule;
         if (!settings.Transient && !settings.BackgroundUpdateDefaultsApplied)
         {
             settings.CheckUpdates = true; settings.BackgroundUpdateDefaultsApplied = true; settings.Save();
@@ -147,7 +148,7 @@ public sealed class MeterService : IDisposable
     /// </summary>
     public void Replay(string path)
     {
-        HiddenCubes.Reset(); Resources.Reset();
+        HiddenCubes.Reset(); Resources.Reset(); PetNavigation.Reset();
         StopDemo();
         LastPlayedWith.Reset();
         LiveIdentity.Reset(); PartyPreview.Reset(); Tracker.InvalidateParty();
@@ -188,6 +189,7 @@ public sealed class MeterService : IDisposable
         }
         if(!_replaying)
         {
+            PetNavigation.Observe(identity ?? resolved);
             HiddenCubes.Observe(resolved); Resources.Observe(identity ?? resolved);
             _resourceProgress?.Observe(identity ?? resolved);
             _realPets.Observe(resolved);
@@ -198,10 +200,25 @@ public sealed class MeterService : IDisposable
         if (value is Core.Events.PlayerSeenEvent && identity is not null)
         {
             _realTracker.Process(identity);
+            PetNavigation.Observe(identity);
             _realPets.Observe(identity);
             _petProgress?.Identity(identity);
             PartyPreview.Observe(identity);
         }
+    }
+    public Core.Game.PetNavigation PetNavigation {get;}=new();
+    private bool _petNavigationActive;
+    private int _petNavigationWindows;
+    public void SetPetNavigationActive(bool active)
+    {
+        bool enabled;
+        lock(_captureGate)
+        {
+            _petNavigationWindows=Math.Max(0,_petNavigationWindows+(active?1:-1));
+            enabled=_petNavigationActive=_petNavigationWindows>0;
+            if(_capture is LiveCapture live)live.Pipeline.Parser.DecodePetPositions=enabled;
+        }
+        if(!enabled)PetNavigation.ClearPosition();
     }
     private readonly Core.Game.PetCollection _realPets=new();
     public Core.Game.PetCollection Pets => _testPets ?? _realPets;
@@ -216,11 +233,12 @@ public sealed class MeterService : IDisposable
             try
             {
                 _capture = CaptureFactory(Data);
+                if(_capture is LiveCapture live)live.Pipeline.Parser.DecodePetPositions=_petNavigationActive;
 
                 _capture.EventDecoded += ProcessLiveEvent;
                 _capture.StatusChanged += status =>
                 {
-                    LiveIdentity.ObserveCaptureStatus(status, () => { HiddenCubes.Reset(); Resources.Reset(); _resourceProgress?.Suspend(); _realPets.InvalidateLocation(); PartyPreview.Reset(); LastPlayedWith.Reset(); _realTracker.InvalidateParty(); });
+                    LiveIdentity.ObserveCaptureStatus(status, () => { HiddenCubes.Reset(); Resources.Reset(); _resourceProgress?.Suspend(); _realPets.InvalidateLocation(); PetNavigation.Reset(); PartyPreview.Reset(); LastPlayedWith.Reset(); _realTracker.InvalidateParty(); });
                 };
                 _capture.Start();
             }
@@ -255,7 +273,7 @@ public sealed class MeterService : IDisposable
             // Measurement reset retains the current session's already confirmed identity and party.
             // A settings-driven capture restart still requires fresh confirmation.
             if(!preserveSession){LiveIdentity.Suspend();PartyPreview.Reset();LastPlayedWith.Reset();_realTracker.InvalidateParty();_resourceProgress?.Suspend();}
-            HiddenCubes.Reset();Resources.MarkCached();_realPets.InvalidateLocation();
+            HiddenCubes.Reset();Resources.MarkCached();_realPets.InvalidateLocation(); PetNavigation.Reset();
             StartCapture();
         }
         finally
@@ -287,7 +305,7 @@ public sealed class MeterService : IDisposable
     public void StartDemo(int seconds = 45, bool animate = true)
     {
         if (_exiting || DemoRunning || _replaying) return;
-        HiddenCubes.Reset();
+        HiddenCubes.Reset(); PetNavigation.ClearPosition();
         _realTracker.Tick(DateTimeOffset.UtcNow.ToUnixTimeMilliseconds());
         _testTracker = new CombatTracker(Data,new MeterOptions { PartyOnly=false });
         _testPets = new();

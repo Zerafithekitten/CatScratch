@@ -88,6 +88,9 @@ public sealed class PacketParser
                         Emit(new Game.PetSoulDropEvent(TimeMs,BinaryPrimitives.ReadUInt32LittleEndian(body[29..]),item,amount));
                 }
                 break;
+            case 0x2A38:
+                if(DecodePetPositions && PetPositionPackets.Notification(TimeMs,body) is {} ownPosition)Emit(ownPosition);
+                break;
             case 0x1C37:
                 if(DecodePetPositions)
                 {
@@ -158,6 +161,15 @@ public sealed class PacketParser
                 break;
             case Opcodes.MapLoad:
                 ParseMapLoad(body);
+                break;
+            case Opcodes.Teleport:
+                // Confirmed 24-byte own-position shape in the owner's Global login recording.
+                if(DecodePetPositions&&body.Length==24&&body[..6].IndexOfAnyExcept((byte)0)<0)
+                {
+                    var x=BinaryPrimitives.ReadSingleLittleEndian(body[6..]);var y=BinaryPrimitives.ReadSingleLittleEndian(body[10..]);var z=BinaryPrimitives.ReadSingleLittleEndian(body[14..]);
+                    if(float.IsFinite(x)&&float.IsFinite(y)&&float.IsFinite(z)&&Math.Abs(x)<10000000&&Math.Abs(y)<10000000&&Math.Abs(z)<10000000)
+                        Emit(new PetPositionAnchorEvent(TimeMs,x,y,z));
+                }
                 break;
             case Opcodes.RemainHp:
                 ParseRemainHp(body);

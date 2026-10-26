@@ -15,7 +15,7 @@ public sealed class PetTrackerWindow:Window,IDisplayAppearance,IMapPresentation
     private readonly MeterService _meter;
     private readonly IReadOnlyList<PetDefinition> _catalog;
     private readonly IReadOnlyList<PetMapLocation> _locations;
-    private readonly System.Windows.Threading.DispatcherTimer _locationRefresh=new(){Interval=TimeSpan.FromSeconds(2)};
+    private readonly System.Windows.Threading.DispatcherTimer _locationRefresh=new(){Interval=TimeSpan.FromMilliseconds(500)};
     private readonly ListBox _list=new(){Background=Brushes.Transparent,BorderThickness=new(0),Padding=new(0),MaxHeight=150};
     private readonly TextBlock _status=new(){TextWrapping=TextWrapping.Wrap,Foreground=ThemeColors.Brush("#A9B8C7"),FontSize=11,Margin=new(0,2,0,0)};
 
@@ -30,7 +30,7 @@ public sealed class PetTrackerWindow:Window,IDisplayAppearance,IMapPresentation
 
     private bool _closed;
     private int _queued;
-    public sealed record Row(PetDefinition Definition,string Name,string Progress,double Fill,ImageSource Symbol,string Tooltip);
+    public sealed record Row(PetDefinition Definition,string Name,string Progress,double Fill,ImageSource Symbol,string Tooltip,string Direction="",string Distance="");
     private static UiText T=>UiText.Current;
 
     public PetTrackerWindow(MeterService meter)
@@ -56,7 +56,7 @@ public sealed class PetTrackerWindow:Window,IDisplayAppearance,IMapPresentation
         DockPanel.SetDock(_status,Dock.Top);root.Children.Add(_status);
         _list.SetValue(ScrollViewer.HorizontalScrollBarVisibilityProperty,ScrollBarVisibility.Disabled);
         _list.ItemTemplate=(DataTemplate)XamlReader.Parse("""
-        <DataTemplate xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"><Border Background="{DynamicResource CustomBrush_D0191D23}" CornerRadius="4" BorderBrush="{DynamicResource CustomBrush_30414A56}" BorderThickness="1" Padding="4,2" Margin="0,1,0,0" ToolTip="{Binding Tooltip}"><StackPanel><Grid><Grid.ColumnDefinitions><ColumnDefinition Width="20"/><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions><Image Source="{Binding Symbol}" Width="14" Height="14"/><TextBlock Grid.Column="1" Text="{Binding Name}" FontSize="11.5" FontWeight="SemiBold" Foreground="{DynamicResource CustomBrush_EDF2F7}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/><TextBlock Grid.Column="2" Text="{Binding Progress}" Foreground="{DynamicResource CustomBrush_C49AF5}" FontSize="11.5" FontWeight="SemiBold" Margin="6,0,0,0" VerticalAlignment="Center"/></Grid><ProgressBar Value="{Binding Fill}" Maximum="1" Height="2" Foreground="{DynamicResource CustomBrush_C49AF5}" Background="{DynamicResource CustomBrush_262C34}" BorderThickness="0" Margin="20,2,0,0"/></StackPanel></Border></DataTemplate>
+        <DataTemplate xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"><Border Background="{DynamicResource CustomBrush_D0191D23}" CornerRadius="4" BorderBrush="{DynamicResource CustomBrush_30414A56}" BorderThickness="1" Padding="4,2" Margin="0,1,0,0" ToolTip="{Binding Tooltip}"><StackPanel><Grid><Grid.ColumnDefinitions><ColumnDefinition Width="20"/><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions><Image Source="{Binding Symbol}" Width="14" Height="14"/><TextBlock Grid.Column="1" Text="{Binding Name}" FontSize="11.5" FontWeight="SemiBold" Foreground="{DynamicResource CustomBrush_EDF2F7}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/><StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" Margin="4,0,0,0"><StackPanel.Style><Style TargetType="StackPanel"><Setter Property="Visibility" Value="Visible"/><Style.Triggers><DataTrigger Binding="{Binding Distance}" Value=""><Setter Property="Visibility" Value="Collapsed"/></DataTrigger></Style.Triggers></Style></StackPanel.Style><TextBlock Text="{Binding Direction}" FontSize="15" Foreground="{DynamicResource CustomBrush_C49AF5}" Margin="0,0,3,0"/><TextBlock Text="{Binding Distance}" FontSize="10" VerticalAlignment="Center" Foreground="{DynamicResource CustomBrush_A9B8C7}"/></StackPanel><TextBlock Grid.Column="3" Text="{Binding Progress}" Foreground="{DynamicResource CustomBrush_C49AF5}" FontSize="11.5" FontWeight="SemiBold" Margin="6,0,0,0" VerticalAlignment="Center"/></Grid><ProgressBar Value="{Binding Fill}" Maximum="1" Height="2" Foreground="{DynamicResource CustomBrush_C49AF5}" Background="{DynamicResource CustomBrush_262C34}" BorderThickness="0" Margin="20,2,0,0"/></StackPanel></Border></DataTemplate>
         """);
         _list.ItemContainerStyle=new Style(typeof(ListBoxItem));
         _list.ItemContainerStyle.Setters.Add(new Setter(Control.HorizontalContentAlignmentProperty,HorizontalAlignment.Stretch));
@@ -77,9 +77,10 @@ public sealed class PetTrackerWindow:Window,IDisplayAppearance,IMapPresentation
 
         meter.Pets.Changed+=Changed;
         _locationRefresh.Tick+=(_,_)=>{if(IsVisible)Refresh();};
-        Loaded+=(_,_)=>_locationRefresh.Start();Closed+=(_,_)=>_locationRefresh.Stop();
-        Closed+=(_,_)=>{_closed=true;meter.Pets.Changed-=Changed;_sounds?.Dispose();meter.Settings.PetModuleWidth=Width;meter.Settings.PetModuleLeft=Left;meter.Settings.PetModuleTop=Top;meter.Settings.Save();};
-        Refresh();
+        IsVisibleChanged+=(_,_)=>{if(IsVisible&&!MapHudSuppression.IsSuppressed(this))_locationRefresh.Start();else _locationRefresh.Stop();};
+        Loaded+=(_,_)=>{if(IsVisible)_locationRefresh.Start();};Closed+=(_,_)=>_locationRefresh.Stop();
+        Closed+=(_,_)=>{_closed=true;meter.Pets.Changed-=Changed;meter.SetPetNavigationActive(false);_sounds?.Dispose();meter.Settings.PetModuleWidth=Width;meter.Settings.PetModuleLeft=Left;meter.Settings.PetModuleTop=Top;meter.Settings.Save();};
+        meter.SetPetNavigationActive(true);Refresh();
     }
     private void Changed()
     {
@@ -100,11 +101,22 @@ public sealed class PetTrackerWindow:Window,IDisplayAppearance,IMapPresentation
         if(IsLoaded&&(!IsVisible||MapHudSuppression.IsSuppressed(this)))return;
         var codes=_meter.Pets.AttackedNpcCodes();
         var now=DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
-        var seen=_meter.Pets.Nearby().Npcs.Where(n=>n.TimeMs<=now && now-n.TimeMs<=30000).OrderByDescending(n=>n.TimeMs).Select(n=>n.NpcCode).Distinct().ToArray();
+        var vicinity=_meter.Pets.Nearby();
+        var seen=vicinity.Npcs.Where(n=>n.TimeMs<=now && now-n.TimeMs<=30000).OrderByDescending(n=>n.TimeMs).Select(n=>n.NpcCode).Distinct().ToArray();
         var seenCodes=seen.ToHashSet();
         var nearbyPets=_catalog.Where(p=>p.Sources.Any(s=>seenCodes.Contains(s.NpcCode))||_meter.Pets.Farms(p.Id).Any(f=>seenCodes.Contains(f.NpcCode))).Select(p=>p.Id).ToHashSet();
+        var position=confirmed&&!_meter.DemoRunning?_meter.PetNavigation.Snapshot(now):null;
+        var guidance=new Dictionary<int,PetTargetGuidance>();
+        var freshNpcs=vicinity.Npcs.Where(n=>n.TimeMs<=now&&now-n.TimeMs<=PetNavigation.FreshMs).ToArray();
+        if(position is not null&&freshNpcs.Length>0)
+            foreach(var pet in _catalog.Where(p=>nearbyPets.Contains(p.Id)))
+            {
+                if(states.GetValueOrDefault(pet.Id,new(pet.Id,0,0)).Level>=3)continue;
+                var sources=pet.Sources.Select(s=>s.NpcCode).Concat(_meter.Pets.Farms(pet.Id).Select(s=>s.NpcCode)).ToHashSet();
+                if(PetNavigation.Nearest(position,_meter.Pets.MapId,freshNpcs,sources,now) is {} target)guidance[pet.Id]=target;
+            }
         var onHit=_meter.Settings.PetOnHitOnly;
-        var suggestions=onHit?Array.Empty<PetRecommendation>():PetRecommendations.Select(_locations,_meter.Pets.MapId,states,confirmed,nearbyPets);
+        var suggestions=onHit?Array.Empty<PetRecommendation>():PetRecommendations.Select(_locations,_meter.Pets.MapId,states,confirmed,nearbyPets,guidance:guidance);
         var region=onHit?null:_locations.FirstOrDefault(l=>l.MapId==_meter.Pets.MapId)?.Region;
         var byId=_catalog.ToDictionary(p=>p.Id);
         var pets=suggestions.Count>0?suggestions.Where(s=>byId.ContainsKey(s.PetId)).Select(s=>byId[s.PetId]).ToArray():
@@ -115,14 +127,19 @@ public sealed class PetTrackerWindow:Window,IDisplayAppearance,IMapPresentation
             suggestions.Count>0?T.Localize(nearbyPets.Overlaps(suggestions.Select(s=>s.PetId))?"Nearby first":"Pets in this region")+(region is null?"":" · "+region):
             region is not null?T.Localize("No incomplete pets with known locations in this region."):
             pets.Length>0?"":T.Localize("Waiting for a known region or nearby monsters.");
+        if(pets.Any(p=>guidance.ContainsKey(p.Id)))
+            _status.Text+=( _status.Text.Length==0?"":" · ")+(pets.Any(p=>guidance.GetValueOrDefault(p.Id)?.RelativeBearingDegrees is not null)?
+                (T.Code=="de"?"Figurenblickrichtung":"Character facing"):(T.Code=="de"?"Ausrichtung unbekannt":"Facing unknown"));
         _status.Visibility=_status.Text.Length==0?Visibility.Collapsed:Visibility.Visible;
         var nextRows=pets.Select(p=>
         {
             var state=states.GetValueOrDefault(p.Id,new(p.Id,0,0));
             var required=state.Level switch{0=>5,1=>25,2=>75,_=>0};
             var monster=PetFarmNames.Resolve(p,_meter.Data,_locations,onHit?0:_meter.Pets.MapId,onHit?[]:seen,codes,_meter.Pets.Farms(p.Id));
+            var target=guidance.GetValueOrDefault(p.Id);
+            if(target is not null&&_meter.Data.Npcs.TryGetValue(target.NpcCode,out var named)&&!string.IsNullOrWhiteSpace(named.Name))monster=named.Name;
             return new Row(p,(!onHit && nearbyPets.Contains(p.Id)?"⌖ ":"")+monster,!confirmed?"—":required==0?"MAX":(_meter.Pets.FromCache?"~":"")+$"{state.Souls}/{required}",
-                !confirmed?0:required==0?1:Math.Clamp((double)state.Souls/required,0,1),AppIcon.Image,p.Name);
+                !confirmed?0:required==0?1:Math.Clamp((double)state.Souls/required,0,1),AppIcon.Image,p.Name+(target is null?"":"\n"+PetNavigationText.Explanation(target)),target?.RelativeBearingDegrees is {} bearing?PetNavigationText.Arrow(bearing):"",target is null?"":PetNavigationText.Distance(target));
         }).ToArray();
         if(!_list.Items.OfType<Row>().SequenceEqual(nextRows))_list.ItemsSource=nextRows;
         SizeToContent=SizeToContent.Height;
@@ -138,6 +155,6 @@ public sealed class PetTrackerWindow:Window,IDisplayAppearance,IMapPresentation
 
         SizeToContent=SizeToContent.Height;
     }
-    void IMapPresentation.SetMapPresentationSuspended(bool suspended){if(!suspended&&IsVisible)Refresh();}
+    void IMapPresentation.SetMapPresentationSuspended(bool suspended){if(suspended)_locationRefresh.Stop();else if(IsVisible){_locationRefresh.Start();Refresh();}}
     private static SolidColorBrush Brush(string hex){return ThemeColors.Brush(hex);}
 }

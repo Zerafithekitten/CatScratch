@@ -1,3 +1,13 @@
+## CatScratch v4.1.4-beta.1
+
+A little more orientation for your pet hunt. 🐾
+
+- The Pet Tracker now uses additional passively received own-position notifications.
+- Fresh own and source-NPC coordinates enable approximate distances in game world units and help prioritize nearby incomplete pets.
+- Stale or missing coordinates remove distances; normal regional recommendations remain available. Character, map and capture changes clear navigation data.
+
+Position updates can be intermittent. Live minimap positioning and character-facing direction arrows are not included in this Beta.
+
 ## CatScratch v4.1.3
 
 A tiny ghost managed to stay behind on the screen. This hotfix gives it a proper goodbye. 🐾

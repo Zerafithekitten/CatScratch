@@ -168,9 +168,9 @@ public sealed class PetCollection
                 case HitNoticeEvent hit when _self!=0 && hit.ActorId==_self && hit.TargetId!=_self:
                     if(_attacked!=hit.TargetId){_attacked=hit.TargetId;changed=true;}break;
                 case DeathEvent death:if(_npcs.ContainsKey(death.ActorId))_dead.Add(death.ActorId);break;
-                case ActorPositionEvent pose:
-                    if(pose.ActorId==_self)_position=pose;
-                    else if(_npcs.TryGetValue(pose.ActorId,out var entity))_npcs[pose.ActorId]=entity with {TimeMs=pose.TimeMs,X=pose.X,Y=pose.Y,Z=pose.Z};
+                case ActorPositionEvent pose when float.IsFinite(pose.X)&&float.IsFinite(pose.Y)&&float.IsFinite(pose.Z):
+                    if(pose.ActorId==_self){if(_position is null||pose.TimeMs>=_position.TimeMs)_position=pose;}
+                    else if(_npcs.TryGetValue(pose.ActorId,out var entity)&&pose.TimeMs>=entity.TimeMs)_npcs[pose.ActorId]=entity with {TimeMs=pose.TimeMs,X=pose.X,Y=pose.Y,Z=pose.Z};
                     break;
                 case PetSoulDropEvent drop:
                     _drops.RemoveAll(d=>drop.TimeMs-d.TimeMs>2000);if(_drops.Count<32)_drops.Add(drop);break;
