@@ -1,3 +1,11 @@
+## CatScratch v4.1.4-beta.3
+
+Ein schnellerer Blick – mit vertrauten Einheiten. 🐾
+
+- Pet-Entfernungen erscheinen jetzt in Metern, auch bei Farmstellen und beim letzten bestätigten Positionsstand. Die Tooltips verwenden ebenfalls Meter.
+- Der sichtbare Pet Tracker aktualisiert sich alle 200 ms statt 500 ms. Ausgeblendet oder bei geöffneter Spielkarte pausiert die Aktualisierung.
+- Die schnellere Anzeige erhöht nicht die Häufigkeit empfangener Positionsmeldungen. Historische Entfernungen behalten ~ und das angezeigte Positionsalter.
+
 ## CatScratch v4.1.4-beta.2
 
 Die Pet-Suche braucht ein Ziel – auch wenn der passende Gegner gerade nicht empfangen wird. 🐾

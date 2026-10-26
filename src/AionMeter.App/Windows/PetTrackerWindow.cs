@@ -16,7 +16,7 @@ public sealed class PetTrackerWindow:Window,IDisplayAppearance,IMapPresentation
     private readonly IReadOnlyList<PetDefinition> _catalog;
     private readonly IReadOnlyList<PetMapLocation> _locations;
     private readonly PetFarmLocations _farmLocations;
-    private readonly System.Windows.Threading.DispatcherTimer _locationRefresh=new(){Interval=TimeSpan.FromMilliseconds(500)};
+    private readonly System.Windows.Threading.DispatcherTimer _locationRefresh=new(){Interval=TimeSpan.FromMilliseconds(200)};
     private readonly ListBox _list=new(){Background=Brushes.Transparent,BorderThickness=new(0),Padding=new(0),MaxHeight=150};
     private readonly TextBlock _status=new(){TextWrapping=TextWrapping.Wrap,Foreground=ThemeColors.Brush("#A9B8C7"),FontSize=11,Margin=new(0,2,0,0)};
 
@@ -78,9 +78,9 @@ public sealed class PetTrackerWindow:Window,IDisplayAppearance,IMapPresentation
         frame.Children.Add(_resize);_shell.Child=frame;Content=_shell;
 
         meter.Pets.Changed+=Changed;
-        _locationRefresh.Tick+=(_,_)=>{if(IsVisible)Refresh();};
+        _locationRefresh.Tick+=(_,_)=>{if(IsVisible&&!MapHudSuppression.IsSuppressed(this))Refresh();};
         IsVisibleChanged+=(_,_)=>{if(IsVisible&&!MapHudSuppression.IsSuppressed(this))_locationRefresh.Start();else _locationRefresh.Stop();};
-        Loaded+=(_,_)=>{if(IsVisible)_locationRefresh.Start();};Closed+=(_,_)=>_locationRefresh.Stop();
+        Loaded+=(_,_)=>{if(IsVisible&&!MapHudSuppression.IsSuppressed(this))_locationRefresh.Start();};Closed+=(_,_)=>_locationRefresh.Stop();
         Closed+=(_,_)=>{_closed=true;meter.Pets.Changed-=Changed;meter.SetPetNavigationActive(false);_sounds?.Dispose();meter.Settings.PetModuleWidth=Width;meter.Settings.PetModuleLeft=Left;meter.Settings.PetModuleTop=Top;meter.Settings.Save();};
         meter.SetPetNavigationActive(true);Refresh();
     }

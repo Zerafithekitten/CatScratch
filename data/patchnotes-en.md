@@ -1,3 +1,11 @@
+## CatScratch v4.1.4-beta.3
+
+A quicker glance, in familiar units. 🐾
+
+- Pet distances now display in metres, including farm locations and the last confirmed position. Tooltips use metres too.
+- The visible Pet Tracker refreshes every 200 ms instead of 500 ms. Refreshing pauses while hidden or suppressed by the game map.
+- The quicker display does not increase incoming position notifications. Historical distances retain their ~ marker and position age.
+
 ## CatScratch v4.1.4-beta.2
 
 The pet hunt needs a destination, even when its monsters are not currently received. 🐾

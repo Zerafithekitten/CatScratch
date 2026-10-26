@@ -85,11 +85,13 @@ internal static class PetLiveChecks
             Flush();window.Refresh();window.UpdateLayout();
             var rows=list.Items.OfType<PetTrackerWindow.Row>().ToArray();
             Check(rows[0].Definition.Id==1193&&rows[0].Direction.Length==0&&rows[0].Distance.StartsWith("≈ "),"A missing character heading leaves distance available without substituting a world-axis arrow");
+            Check(rows[0].Distance=="≈ 14 m","The 1,414-world-unit diagonal is displayed as approximately 14 metres");
+            Check(PetNavigationText.Distance(new(0,1,22559,0,0,50,null,true,true))=="~ 226 m","Historical farm distances use the same metre conversion and retain their marker");
             SavePreview(window,Path.ChangeExtension(output,"png"));
             Feed(new PetFacingEvent(DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),1,0));window.Refresh();
             rows=list.Items.OfType<PetTrackerWindow.Row>().ToArray();
             Check(rows[0].Direction=="↗","A fresh character orientation enables a character-relative arrow");
-            Check(rows[0].Tooltip.Contains("character facing")&&rows[0].Tooltip.Contains("not the camera")&&rows[0].Tooltip.Contains("not metres"),"Tooltips distinguish character orientation from camera orientation and world units from metres");
+            Check(rows[0].Tooltip.Contains("character facing")&&rows[0].Tooltip.Contains("not the camera")&&rows[0].Tooltip.Contains("100 world units = 1 m"),"Tooltips explain character orientation and the validated conversion to metres");
             Feed(new PetFacingEvent(DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),1,90));
             var turnFrame=new DispatcherFrame();var turnWait=new DispatcherTimer{Interval=TimeSpan.FromMilliseconds(550)};
             turnWait.Tick+=(_,_)=>{turnWait.Stop();turnFrame.Continue=false;};turnWait.Start();Dispatcher.PushFrame(turnFrame);
