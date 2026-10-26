@@ -157,7 +157,7 @@ public sealed class PetTrackerWindow:Window,IDisplayAppearance,IMapPresentation
             var target=guidance.GetValueOrDefault(p.Id);
             if(target is not null&&_meter.Data.Npcs.TryGetValue(target.NpcCode,out var named)&&!string.IsNullOrWhiteSpace(named.Name))monster=named.Name;
             return new Row(p,(target?.FarmLocation==true?"◇ ":!onHit && nearbyPets.Contains(p.Id)?"⌖ ":"")+monster,!confirmed?"—":required==0?"MAX":(_meter.Pets.FromCache?"~":"")+$"{state.Souls}/{required}",
-                !confirmed?0:required==0?1:Math.Clamp((double)state.Souls/required,0,1),AppIcon.Image,p.Name+(target is null?"\n"+missingExplanation:"\n"+PetNavigationText.Explanation(target)),target?.RelativeBearingDegrees is {} bearing?PetNavigationText.Arrow(bearing):"",target is null?"":PetNavigationText.Distance(target));
+                !confirmed?0:required==0?1:Math.Clamp((double)state.Souls/required,0,1),AppIcon.Image,p.Name+(target is null?"":"\n"+PetNavigationText.Explanation(target)),target?.RelativeBearingDegrees is {} bearing?PetNavigationText.Arrow(bearing):"",target is null?"":PetNavigationText.Distance(target));
         }).ToArray();
         if(!_list.Items.OfType<Row>().SequenceEqual(nextRows))_list.ItemsSource=nextRows;
         SizeToContent=SizeToContent.Height;
