@@ -1,3 +1,13 @@
+## CatScratch v4.1.4-beta.2
+
+Die Pet-Suche braucht ein Ziel – auch wenn der passende Gegner gerade nicht empfangen wird. 🐾
+
+- Altgard enthält jetzt bekannte Farmstellen für 188 vorhandene Pet-Quell-NPC-Typen. Der Pet Tracker zeigt ungefähre horizontale Entfernungen dorthin auch ohne aktuelle Gegnersichtung. ◇ kennzeichnet eine Farmstelle, keinen bestätigten Spawn.
+- Frische Positionen zeigen ≈ Entfernungen. Zwischen Positionsmeldungen verwenden ~ Entfernungen ausdrücklich die letzte bestätigte Position und zeigen deren Alter. Dieser letzte Stand verfällt nach 60 Sekunden und wird bei Charakter-, Karten- oder Aufnahmewechsel verworfen.
+- Fehlende eigene Positionen und nicht unterstützte Quellkoordinaten werden erklärt. Frische Daten haben Vorrang vor historischen Angaben.
+
+Wenn seit Aufnahmestart noch keine eigene Position vorliegt, einmal teleportieren. Farmstellen-Entfernungen unterstützen vorerst nur Altgard. Spieleinheiten sind keine Meter oder Wegstrecken. Live-Minikartenortung und Richtungspfeile zur Figurenausrichtung sind weiterhin nicht enthalten.
+
 ## CatScratch v4.1.4-beta.1
 
 Etwas mehr Orientierung für deine Pet-Suche. 🐾

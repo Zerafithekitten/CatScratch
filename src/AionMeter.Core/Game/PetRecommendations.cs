@@ -15,6 +15,7 @@ public static class PetRecommendations
             .Select(id=>states.GetValueOrDefault(id,new(id,0,0)))
             .Where(p=>p.Level<3)
             .OrderByDescending(p=>nearbyPets.Contains(p.Id))
+            .ThenBy(p=>guidance?.GetValueOrDefault(p.Id) is {} g?g.LastKnown?1:0:2)
             .ThenBy(p=>guidance?.GetValueOrDefault(p.Id)?.DistanceUnits??double.PositiveInfinity).ThenBy(p=>p.Level)
             .ThenBy(p=>p.Needed(Math.Min(3,p.Level+1))).ThenBy(p=>p.Id)
             .Take(Math.Clamp(limit,1,5)).Select(p=>new PetRecommendation(p.Id,nearbyPets.Contains(p.Id),p.Needed(p.Level+1))).ToArray();

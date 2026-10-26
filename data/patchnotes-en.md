@@ -1,3 +1,13 @@
+## CatScratch v4.1.4-beta.2
+
+The pet hunt needs a destination, even when its monsters are not currently received. 🐾
+
+- Altgard now includes known farm locations for 188 existing pet-source NPC types. The Pet Tracker shows approximate horizontal distances to these locations without requiring a live monster sighting. A ◇ marks a farm location, not a confirmed spawn.
+- Fresh positions show ≈ distances. Between position notifications, ~ distances explicitly use the last confirmed position and show its age. That historical origin expires after 60 seconds and clears on character, map or capture changes.
+- Missing own positions or unsupported source coordinates now have an explanation instead of silently blank distances. Fresh data takes precedence over historical guidance.
+
+If no own position has been received since starting capture, teleport once to establish it. Farm-location distances currently support Altgard only. World units are not displayed as metres or travel routes. Live minimap positioning and character-facing arrows remain excluded.
+
 ## CatScratch v4.1.4-beta.1
 
 A little more orientation for your pet hunt. 🐾

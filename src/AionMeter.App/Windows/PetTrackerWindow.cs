@@ -15,6 +15,7 @@ public sealed class PetTrackerWindow:Window,IDisplayAppearance,IMapPresentation
     private readonly MeterService _meter;
     private readonly IReadOnlyList<PetDefinition> _catalog;
     private readonly IReadOnlyList<PetMapLocation> _locations;
+    private readonly PetFarmLocations _farmLocations;
     private readonly System.Windows.Threading.DispatcherTimer _locationRefresh=new(){Interval=TimeSpan.FromMilliseconds(500)};
     private readonly ListBox _list=new(){Background=Brushes.Transparent,BorderThickness=new(0),Padding=new(0),MaxHeight=150};
     private readonly TextBlock _status=new(){TextWrapping=TextWrapping.Wrap,Foreground=ThemeColors.Brush("#A9B8C7"),FontSize=11,Margin=new(0,2,0,0)};
@@ -36,6 +37,7 @@ public sealed class PetTrackerWindow:Window,IDisplayAppearance,IMapPresentation
     public PetTrackerWindow(MeterService meter)
     {
         _meter=meter;_catalog=PetCatalog.Load(MeterService.DataDirectory);_locations=PetCatalog.Locations(MeterService.DataDirectory);
+        _farmLocations=PetCatalog.Farms(MeterService.DataDirectory);
         AppIcon.Apply(this);Title="CatScratch · "+T.Localize("Pet tracker");
         MinWidth=150;MaxWidth=1600;MinHeight=52;MaxHeight=340;SizeToContent=SizeToContent.Height;
         Width=double.IsFinite(meter.Settings.PetModuleWidth)?Math.Clamp(meter.Settings.PetModuleWidth,MinWidth,MaxWidth):300;
@@ -106,14 +108,16 @@ public sealed class PetTrackerWindow:Window,IDisplayAppearance,IMapPresentation
         var seenCodes=seen.ToHashSet();
         var nearbyPets=_catalog.Where(p=>p.Sources.Any(s=>seenCodes.Contains(s.NpcCode))||_meter.Pets.Farms(p.Id).Any(f=>seenCodes.Contains(f.NpcCode))).Select(p=>p.Id).ToHashSet();
         var position=confirmed&&!_meter.DemoRunning?_meter.PetNavigation.Snapshot(now):null;
+        var lastPosition=confirmed&&!_meter.DemoRunning?_meter.PetNavigation.LastKnown(now):null;
         var guidance=new Dictionary<int,PetTargetGuidance>();
         var freshNpcs=vicinity.Npcs.Where(n=>n.TimeMs<=now&&now-n.TimeMs<=PetNavigation.FreshMs).ToArray();
-        if(position is not null&&freshNpcs.Length>0)
-            foreach(var pet in _catalog.Where(p=>nearbyPets.Contains(p.Id)))
+        if(position is not null||lastPosition is not null)
+            foreach(var pet in _catalog)
             {
                 if(states.GetValueOrDefault(pet.Id,new(pet.Id,0,0)).Level>=3)continue;
                 var sources=pet.Sources.Select(s=>s.NpcCode).Concat(_meter.Pets.Farms(pet.Id).Select(s=>s.NpcCode)).ToHashSet();
-                if(PetNavigation.Nearest(position,_meter.Pets.MapId,freshNpcs,sources,now) is {} target)guidance[pet.Id]=target;
+                var target=PetNavigation.Nearest(position,_meter.Pets.MapId,freshNpcs,sources,now)??_farmLocations.Nearest(position,_meter.Pets.MapId,sources,now)??_farmLocations.Nearest(lastPosition,_meter.Pets.MapId,sources,now);
+                if(target is not null)guidance[pet.Id]=target;
             }
         var onHit=_meter.Settings.PetOnHitOnly;
         var suggestions=onHit?Array.Empty<PetRecommendation>():PetRecommendations.Select(_locations,_meter.Pets.MapId,states,confirmed,nearbyPets,guidance:guidance);
@@ -127,9 +131,23 @@ public sealed class PetTrackerWindow:Window,IDisplayAppearance,IMapPresentation
             suggestions.Count>0?T.Localize(nearbyPets.Overlaps(suggestions.Select(s=>s.PetId))?"Nearby first":"Pets in this region")+(region is null?"":" · "+region):
             region is not null?T.Localize("No incomplete pets with known locations in this region."):
             pets.Length>0?"":T.Localize("Waiting for a known region or nearby monsters.");
-        if(pets.Any(p=>guidance.ContainsKey(p.Id)))
+        var historicalFarm=pets.Any(p=>guidance.GetValueOrDefault(p.Id)?.LastKnown==true)&&lastPosition is not null;
+        if(pets.Any(p=>guidance.ContainsKey(p.Id))&&!historicalFarm)
             _status.Text+=( _status.Text.Length==0?"":" · ")+(pets.Any(p=>guidance.GetValueOrDefault(p.Id)?.RelativeBearingDegrees is not null)?
-                (T.Code=="de"?"Figurenblickrichtung":"Character facing"):(T.Code=="de"?"Ausrichtung unbekannt":"Facing unknown"));
+                (T.Code=="de"?"Figurenblickrichtung":"Character facing"):
+                pets.Any(p=>guidance.GetValueOrDefault(p.Id)?.FarmLocation==true)?(T.Code=="de"?"◇ Farmstellen":"◇ Farm locations"):
+                (T.Code=="de"?"NPC-Entfernung":"NPC distance"));
+        if(historicalFarm&&lastPosition is not null)
+            _status.Text+=(T.Code=="de"?"\n◇ Farmstellen · letzte Position vor ":"\n◇ Farm locations · last position ")+Math.Max(0,(now-lastPosition.AnchorMs)/1000)+(T.Code=="de"?" s":" s ago");
+        var missingDistance=position is null?
+            (T.Code=="de"?"Entfernung: eigene Position fehlt":"Distance: own position unavailable"):
+            (T.Code=="de"?"Entfernung: Quellkoordinaten fehlen":"Distance: source coordinates unavailable");
+        var missingExplanation=position is null?
+            (T.Code=="de"?"Es liegen keine ausreichend frischen bestätigten Koordinaten deiner Figur vor. Die Beta erhält diese nur zeitweise; die Minikartenortung ist noch nicht enthalten.":"No sufficiently fresh confirmed own-character coordinates are available. This Beta receives them intermittently; live minimap positioning is not included."):
+            (T.Code=="de"?"Für diese Pet-Quelle fehlen frische NPC-Koordinaten und unterstützte Farm-Weltkoordinaten. Die Farmstellen-Entfernung ist derzeit nur für Altgard verfügbar.":"Neither fresh NPC coordinates nor supported farm-world coordinates are available for this pet source. Farm-location distances currently support Altgard only.");
+        var noDistances=confirmed&&pets.Length>0&&!pets.Any(p=>guidance.ContainsKey(p.Id))&&!_meter.DemoRunning;
+        if(noDistances)_status.Text+=(_status.Text.Length==0?"":" · ")+missingDistance;
+        _status.ToolTip=noDistances?missingExplanation:null;
         _status.Visibility=_status.Text.Length==0?Visibility.Collapsed:Visibility.Visible;
         var nextRows=pets.Select(p=>
         {
@@ -138,8 +156,8 @@ public sealed class PetTrackerWindow:Window,IDisplayAppearance,IMapPresentation
             var monster=PetFarmNames.Resolve(p,_meter.Data,_locations,onHit?0:_meter.Pets.MapId,onHit?[]:seen,codes,_meter.Pets.Farms(p.Id));
             var target=guidance.GetValueOrDefault(p.Id);
             if(target is not null&&_meter.Data.Npcs.TryGetValue(target.NpcCode,out var named)&&!string.IsNullOrWhiteSpace(named.Name))monster=named.Name;
-            return new Row(p,(!onHit && nearbyPets.Contains(p.Id)?"⌖ ":"")+monster,!confirmed?"—":required==0?"MAX":(_meter.Pets.FromCache?"~":"")+$"{state.Souls}/{required}",
-                !confirmed?0:required==0?1:Math.Clamp((double)state.Souls/required,0,1),AppIcon.Image,p.Name+(target is null?"":"\n"+PetNavigationText.Explanation(target)),target?.RelativeBearingDegrees is {} bearing?PetNavigationText.Arrow(bearing):"",target is null?"":PetNavigationText.Distance(target));
+            return new Row(p,(target?.FarmLocation==true?"◇ ":!onHit && nearbyPets.Contains(p.Id)?"⌖ ":"")+monster,!confirmed?"—":required==0?"MAX":(_meter.Pets.FromCache?"~":"")+$"{state.Souls}/{required}",
+                !confirmed?0:required==0?1:Math.Clamp((double)state.Souls/required,0,1),AppIcon.Image,p.Name+(target is null?"\n"+missingExplanation:"\n"+PetNavigationText.Explanation(target)),target?.RelativeBearingDegrees is {} bearing?PetNavigationText.Arrow(bearing):"",target is null?"":PetNavigationText.Distance(target));
         }).ToArray();
         if(!_list.Items.OfType<Row>().SequenceEqual(nextRows))_list.ItemsSource=nextRows;
         SizeToContent=SizeToContent.Height;

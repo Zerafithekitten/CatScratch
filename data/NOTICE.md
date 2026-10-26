@@ -47,3 +47,6 @@ Pet farming location facts in pets/locations.json were retrieved from https://ai
 | Phantasmal Fragment | `Icon_Usable_Potion_Skillpoint_002.png` |
 
 Oath Coins: original NCSOFT `icon_season` game icon, retrieved from the [Oath Coin item entry](https://aion2maps.com/items/oath-coin/) / `https://aion2maps.com/map/assets/icons/items/icon_season.webp` on 2026-10-20. Converted losslessly from WebP to PNG for WPF display; no visual edits.
+
+
+Altgard Pet farm-world facts in `pets/farm-world.json` are a filtered subset of the Global-client spawn records publicly served at https://aion2maps.com/map/assets/maps/World_D_A/mapdata.json (retrieved 2026-10-26). Only map/NPC identifiers and horizontal coordinates for existing catalog sources are included; no site code, artwork, descriptions or models are copied. Source XYZ-metre axes were converted back to wire XY world units (source x * 100, source z * 100). Axis/sign/scale were checked against three received Guard positions (66–191 world-unit horizontal differences, compatible with moving guards). These are potential farm locations, not confirmed live spawns or guaranteed drops; no route or travel distance is implied. Original game data belongs to NCSOFT.

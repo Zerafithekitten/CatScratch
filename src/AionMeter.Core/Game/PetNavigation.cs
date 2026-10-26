@@ -6,8 +6,8 @@ namespace AionMeter.Core.Game;
 public sealed record PetPositionAnchorEvent(long TimeMs,float X,float Y,float Z):GameEvent(TimeMs);
 /// <summary>Own actor yaw in degrees in the game's XY plane. Emit only from a verified facing source, never velocity.</summary>
 public sealed record PetFacingEvent(long TimeMs,uint ActorId,double Degrees):GameEvent(TimeMs);
-public sealed record PetPositionEstimate(int MapId,double X,double Y,double Z,long AnchorMs,double UncertaintyUnits,double? FacingDegrees=null,long? FacingMs=null);
-public sealed record PetTargetGuidance(uint ActorId,int NpcCode,double DistanceUnits,double BearingDegrees,long SeenMs,double UncertaintyUnits,double? RelativeBearingDegrees=null);
+public sealed record PetPositionEstimate(int MapId,double X,double Y,double Z,long AnchorMs,double UncertaintyUnits,double? FacingDegrees=null,long? FacingMs=null,bool LastKnown=false);
+public sealed record PetTargetGuidance(uint ActorId,int NpcCode,double DistanceUnits,double BearingDegrees,long SeenMs,double UncertaintyUnits,double? RelativeBearingDegrees=null,bool FarmLocation=false,bool LastKnown=false);
 
 /// <summary>Short, conservative prediction from received own coordinates, never from map pixels or NPC averages.</summary>
 public sealed class PetNavigation
@@ -75,9 +75,19 @@ public sealed class PetNavigation
             return new(_map,p.X+_vx*seconds,p.Y+_vy*seconds,p.Z+_vz*seconds,p.TimeMs,50+age*(.2+speed/1000),facing?.Degrees,facing?.TimeMs);
         }
     }
+    /// <summary>Historical confirmed coordinates, without projection or facing. Never a current-position estimate.</summary>
+    public PetPositionEstimate? LastKnown(long nowMs)
+    {
+        lock(_gate)
+        {
+            if(_self==0||_map<=0||_anchor is not {} p||nowMs<p.TimeMs||nowMs-p.TimeMs>60000)return null;
+            return new(_map,p.X,p.Y,p.Z,p.TimeMs,50,null,null,true);
+        }
+    }
     public static PetTargetGuidance? Nearest(PetPositionEstimate? own,int mapId,IEnumerable<NpcSeenEvent> npcs,IReadOnlySet<int> sources,long nowMs)
     {
         if(own is null||!double.IsFinite(own.X)||!double.IsFinite(own.Y)||!double.IsFinite(own.Z)||own.MapId!=mapId||mapId<=0||nowMs<own.AnchorMs||nowMs-own.AnchorMs>FreshMs||!double.IsFinite(own.UncertaintyUnits)||own.UncertaintyUnits is <0 or >500)return null;
+        if(own.LastKnown)return null;
         PetTargetGuidance? nearest=null;
         foreach(var npc in npcs)
         {

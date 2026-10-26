@@ -100,10 +100,17 @@ internal static class PetLiveChecks
             wait.Tick+=(_,_)=>{wait.Stop();frame.Continue=false;};wait.Start();Dispatcher.PushFrame(frame);
             Check(list.Items.OfType<PetTrackerWindow.Row>().Single(r=>r.Definition.Id==1193).Direction=="↗","NPC movement updates its arrow through the live window timer without manual Refresh");
             Thread.Sleep(1600);window.Refresh();
-            Check(list.Items.OfType<PetTrackerWindow.Row>().All(r=>r.Direction.Length==0&&r.Distance.Length==0),"Stale coordinates remove every arrow and distance while ordinary pet recommendations remain");
+            Check(list.Items.OfType<PetTrackerWindow.Row>().All(r=>r.Direction.Length==0&&(r.Distance.Length==0||r.Distance.StartsWith("~ ")&&r.Tooltip.Contains("not the current position"))),"Stale coordinates remove live guidance; historical farm distances are explicitly labeled and never gain arrows");
             Check(list.Items.Count>0,"Loss of navigation does not remove the normal region recommendations");
+            Check(Nodes(window).OfType<TextBlock>().Any(t=>t.Text.Contains("last position")||t.Text.Contains("letzte Position")),"Historical farm distances show the age of their confirmed origin");
+            window.UpdateLayout();SavePreview(window,Path.ChangeExtension(output,"last-known.png"));
+            Feed(new ZoneChangedEvent(DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),1110,"Altgard",false,true));window.Refresh();
+            Check(Nodes(window).OfType<TextBlock>().Any(t=>t.Text.Contains("Distance: own position unavailable")||t.Text.Contains("Entfernung: eigene Position fehlt")),"Missing own coordinates are explained instead of silently omitting distances");
             Check(PetNavigationText.Arrow(0)=="→"&&PetNavigationText.Arrow(90)=="↑"&&PetNavigationText.Arrow(-90)=="↓"&&PetNavigationText.Arrow(double.NaN)=="","Arrow sectors handle signed angles and reject invalid bearings");
             var fresh=DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();Feed(new ActorPositionEvent(fresh,1,10,20,30));
+            window.Refresh();
+            Check(list.Items.OfType<PetTrackerWindow.Row>().Any(r=>r.Name.StartsWith("◇ ")&&r.Distance.StartsWith("≈ ")&&r.Tooltip.Contains("not a confirmed current spawn")),"Fresh own position shows clearly identified farm-location distance even without a received source NPC");
+            window.UpdateLayout();SavePreview(window,Path.ChangeExtension(output,"farm.png"));
             meter.SetPetNavigationActive(true);meter.SetPetNavigationActive(false);
             Check(meter.PetNavigation.Snapshot(fresh) is not null,"Closing an additional preview keeps the remaining tracker navigation active");
             window.Close();
