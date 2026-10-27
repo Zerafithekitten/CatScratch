@@ -1,3 +1,13 @@
+## CatScratch v4.1.4-beta.5
+
+Die Pet-Suche bleibt in deiner Nähe. 🐾
+
+- Neuer optionaler Filter unter Einstellungen → Pets: „Nur frisch erfasste Pet-Quellen im Nahbereich (100 m)“. Er blendet regionale Farmempfehlungen und Ziele ab alten Positionsständen aus, auch im Modus Pet auf Treffer.
+- Ohne bestätigte nahe Quelle oder frische eigene Position bleibt die Liste leer. Ausschalten stellt die bisherigen Empfehlungen wieder her.
+- Unterstützt Live-Vorschau, Save/Verwerfen und Overlay-Profile. Standardmäßig ausgeschaltet.
+
+Dies ist ein gemessener Nahbereichsfilter. Kamerasicht, Wände und begehbare Wege werden nicht geprüft. Eine durchgängige Minikartenortung ist weiterhin nicht enthalten.
+
 ## CatScratch v4.1.4-beta.4
 
 Ein genauerer Blick auf „in der Nähe“ – und mehr Platz zum Anpassen. 🐾

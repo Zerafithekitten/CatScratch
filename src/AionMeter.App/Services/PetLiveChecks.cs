@@ -121,6 +121,16 @@ internal static class PetLiveChecks
             window.Refresh();
             Check(list.Items.OfType<PetTrackerWindow.Row>().Any(r=>r.Name.StartsWith("◇ ")&&r.Distance.StartsWith("≈ ")&&r.Tooltip.Contains("not a confirmed current spawn")),"Fresh own position shows clearly identified farm-location distance even without a received source NPC");
             window.UpdateLayout();SavePreview(window,Path.ChangeExtension(output,"farm.png"));
+            meter.Settings.PetNearbyOnly=true;window.Refresh();
+            Check(list.Items.Count==0,"Nearby-only mode has no farm-location fallback when no source NPC is freshly measured");
+            var nearbyAt=DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();Feed(new NpcSeenEvent(nearbyAt,7,2400455,X:1010,Y:1020,Z:30));window.Refresh();
+            Check(list.Items.OfType<PetTrackerWindow.Row>().Single().Definition.Id==1193,"Nearby-only mode shows the freshly measured close pet source");
+            window.UpdateLayout();SavePreview(window,Path.ChangeExtension(output,"nearby-only.png"));
+            meter.Settings.PetOnHitOnly=true;Feed(new DamageEvent(nearbyAt,1,7,17010000,100,HitFlags.None));
+            Feed(new ActorPositionEvent(DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),7,100010,20,30));window.Refresh();
+            Check(list.Items.Count==0,"Pet on hit cannot bypass nearby-only filtering when its source moves out of range");
+            meter.Settings.PetNearbyOnly=false;meter.Settings.PetOnHitOnly=false;window.Refresh();
+            Check(list.Items.Count>0,"Disabling nearby-only mode restores the ordinary regional recommendations");
             meter.SetPetNavigationActive(true);meter.SetPetNavigationActive(false);
             Check(meter.PetNavigation.Snapshot(fresh) is not null,"Closing an additional preview keeps the remaining tracker navigation active");
             window.Close();

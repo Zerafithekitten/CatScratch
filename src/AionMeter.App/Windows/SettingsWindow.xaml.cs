@@ -87,6 +87,9 @@ public partial class SettingsWindow : Window
         petMode.SelectionChanged+=(_,_)=>_moduleDraft.PetOnHitOnly=petMode.SelectedIndex==1;
         modules.Children.Add(petMode);
         modules.Children.Add(new TextBlock {Text=T.Localize("Pet on hit shows only your three most recent incomplete attacked sources."),TextWrapping=TextWrapping.Wrap,Foreground=ThemeColors.Brush("#A9B8C7"),FontSize=11,Margin=new Thickness(0,0,0,12)});
+        var petNearbyOnly=new CheckBox {Tag="pet-nearby-only",Content=T.Code=="de"?"Nur frisch erfasste Pet-Quellen im Nahbereich (100 m)":"Only freshly detected pet sources nearby (100 m)",IsChecked=_moduleDraft.PetNearbyOnly,Style=(Style)FindResource("DarkCheck"),Margin=new Thickness(0,0,0,5)};
+        petNearbyOnly.Click+=(_,_)=>_moduleDraft.PetNearbyOnly=petNearbyOnly.IsChecked==true;modules.Children.Add(petNearbyOnly);
+        modules.Children.Add(new TextBlock {Text=T.Code=="de"?"Blendet regionale Farmstellen und alte Positionsstände aus, auch im Modus Pet auf Treffer. Ohne frische Koordinaten bleibt die Liste leer. Keine Prüfung von Kamerasicht, Wänden oder Laufwegen.":"Hides regional farm locations and old positions, including in Pet on hit mode. The list stays empty without fresh coordinates. Camera visibility, walls and walkable routes are not checked.",TextWrapping=TextWrapping.Wrap,Foreground=ThemeColors.Brush("#A9B8C7"),FontSize=11,Margin=new Thickness(0,0,0,12)});
         Module("Sound on collection / level up",meter.Settings.PetNotify,v=>_moduleDraft.PetNotify=v);
         modules.Children.Add(new PetSoundSettingsPanel(_moduleDraft,(sound,volume)=>{if(!meter.Settings.Transient)AppHost.Current.PreviewEventSound(sound,volume);}));
         var petWidthLine=new DockPanel {Margin=new Thickness(0,6,0,4)};
@@ -403,6 +406,7 @@ public partial class SettingsWindow : Window
         var petVisibilityChanged=s.ShowPetTrackerModule!=_moduleDraft.ShowPetTrackerModule;
         s.PetNotify=_moduleDraft.PetNotify;
         s.PetOnHitOnly=_moduleDraft.PetOnHitOnly;
+        s.PetNearbyOnly=_moduleDraft.PetNearbyOnly;
         _livePreview?.RestoreForCommit("ChecklistAutoReset","ChecklistResetHourUtc","ChecklistWeeklyResetDay");
         _checklistPreferences.ApplyTo(s);
         s.ShowDungeonEntriesModule=_moduleDraft.ShowDungeonEntriesModule;

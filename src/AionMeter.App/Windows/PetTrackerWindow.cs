@@ -115,7 +115,8 @@ public sealed class PetTrackerWindow:Window,IDisplayAppearance,IMapPresentation
         var vicinity=_meter.Pets.Nearby();
         var seen=vicinity.Npcs.Where(n=>n.TimeMs<=now && now-n.TimeMs<=30000).OrderByDescending(n=>n.TimeMs).Select(n=>n.NpcCode).Distinct().ToArray();
         var position=confirmed&&!_meter.DemoRunning?_meter.PetNavigation.Snapshot(now):null;
-        var lastPosition=confirmed&&!_meter.DemoRunning?_meter.PetNavigation.LastKnown(now):null;
+        var nearbyOnly=_meter.Settings.PetNearbyOnly;
+        var lastPosition=!nearbyOnly&&confirmed&&!_meter.DemoRunning?_meter.PetNavigation.LastKnown(now):null;
         var guidance=new Dictionary<int,PetTargetGuidance>();
         var freshNpcs=vicinity.Npcs.Where(n=>n.TimeMs<=now&&now-n.TimeMs<=PetNavigation.FreshMs).ToArray();
         if(position is not null||lastPosition is not null)
@@ -123,22 +124,27 @@ public sealed class PetTrackerWindow:Window,IDisplayAppearance,IMapPresentation
             {
                 if(states.GetValueOrDefault(pet.Id,new(pet.Id,0,0)).Level>=3)continue;
                 var sources=pet.Sources.Select(s=>s.NpcCode).Concat(_meter.Pets.Farms(pet.Id).Select(s=>s.NpcCode)).ToHashSet();
-                var target=PetNavigation.Nearest(position,_meter.Pets.MapId,freshNpcs,sources,now)??_farmLocations.Nearest(position,_meter.Pets.MapId,sources,now)??_farmLocations.Nearest(lastPosition,_meter.Pets.MapId,sources,now);
+                var target=PetNavigation.Nearest(position,_meter.Pets.MapId,freshNpcs,sources,now);
+                if(!nearbyOnly)target??=_farmLocations.Nearest(position,_meter.Pets.MapId,sources,now)??_farmLocations.Nearest(lastPosition,_meter.Pets.MapId,sources,now);
                 if(target is not null)guidance[pet.Id]=target;
             }
         var onHit=_meter.Settings.PetOnHitOnly;
         var nearbyPets=guidance.Where(p=>PetNavigation.IsNearby(p.Value)).Select(p=>p.Key).ToHashSet();
-        var suggestions=onHit?Array.Empty<PetRecommendation>():PetRecommendations.Select(_locations,_meter.Pets.MapId,states,confirmed,nearbyPets,guidance:guidance);
+        var suggestions=onHit?Array.Empty<PetRecommendation>():PetRecommendations.Select(_locations,_meter.Pets.MapId,states,confirmed,nearbyPets,guidance:guidance,nearbyOnly:nearbyOnly);
         var region=onHit?null:_locations.FirstOrDefault(l=>l.MapId==_meter.Pets.MapId)?.Region;
         var byId=_catalog.ToDictionary(p=>p.Id);
         var pets=suggestions.Count>0?suggestions.Where(s=>byId.ContainsKey(s.PetId)).Select(s=>byId[s.PetId]).ToArray():
             region is not null?[]:codes.SelectMany(npc=>_catalog.Where(p=>p.Sources.Any(s=>s.NpcCode==npc)||_meter.Pets.Farms(p.Id).Any(f=>f.NpcCode==npc)))
                 .DistinctBy(p=>p.Id).Where(p=>!confirmed || states.GetValueOrDefault(p.Id,new(p.Id,0,0)).Level<3).Take(3).ToArray();
+        if(nearbyOnly)pets=pets.Where(p=>nearbyPets.Contains(p.Id)).ToArray();
         _status.Text=!confirmed?T.Localize("Pet progress data not received yet.")+" "+T.Localize("Briefly return to character selection or log in again."):
             onHit?T.Localize(pets.Length>0?"Pet on hit":"Attack a pet-source monster to see its progress."):
             suggestions.Count>0?(nearbyPets.Overlaps(suggestions.Select(s=>s.PetId))?(T.Code=="de"?"Bestätigt in der Nähe (≤100 m)":"Confirmed nearby (≤100 m)"):T.Localize("Pets in this region"))+(region is null?"":" · "+region):
             region is not null?T.Localize("No incomplete pets with known locations in this region."):
             pets.Length>0?"":T.Localize("Waiting for a known region or nearby monsters.");
+        if(nearbyOnly&&confirmed&&pets.Length==0)
+            _status.Text=position is null?(T.Code=="de"?"Nahbereich: frische eigene Position fehlt.":"Nearby only: fresh own position unavailable."):
+                (T.Code=="de"?"Keine frisch erfassten Pet-Quellen innerhalb von 100 m.":"No freshly detected pet sources within 100 m.");
         var historicalFarm=pets.Any(p=>guidance.GetValueOrDefault(p.Id)?.LastKnown==true)&&lastPosition is not null;
         if(pets.Any(p=>guidance.ContainsKey(p.Id))&&!historicalFarm)
             _status.Text+=( _status.Text.Length==0?"":" · ")+(pets.Any(p=>guidance.GetValueOrDefault(p.Id)?.RelativeBearingDegrees is not null)?

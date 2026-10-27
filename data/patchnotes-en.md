@@ -1,3 +1,13 @@
+## CatScratch v4.1.4-beta.5
+
+Keep the pet hunt close. 🐾
+
+- New optional filter in Settings → Pets: “Only freshly detected pet sources nearby (100 m)”. It hides regional farm suggestions and historical-position targets, including in Pet on hit mode.
+- The list stays empty when no close source or fresh own position can be confirmed. Turning the option off restores the usual recommendations.
+- Supports live preview, Save/discard and overlay profiles. Off by default.
+
+This is a measured proximity filter, not camera visibility or a wall/path reachability check. Continuous minimap positioning is still not included.
+
 ## CatScratch v4.1.4-beta.4
 
 A closer look at “nearby” — and a little room to resize. 🐾

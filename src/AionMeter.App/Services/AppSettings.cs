@@ -93,6 +93,7 @@ public sealed class AppSettings
     public int PetGoal {get;set;}
     public bool PetNotify {get;set;}
     public bool PetOnHitOnly {get;set;}
+    public bool PetNearbyOnly {get;set;}
     public string? PreferredDisplay {get;set;}
     public bool ShowDungeonEntriesModule {get;set;}
     public bool ShowMapOverlay {get;set;}

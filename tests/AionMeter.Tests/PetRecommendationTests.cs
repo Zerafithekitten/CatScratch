@@ -35,6 +35,16 @@ public class PetRecommendationTests
         var rows=PetRecommendations.Select(Locations,1010,new Dictionary<int,PetState>(),true,new HashSet<int>{1001});
         Assert.All(rows,r=>Assert.False(r.Nearby));
     }
+    [Fact]public void NearbyOnlyHasNoRegionalFarmHistoricalOrUnmeasuredFallback()
+    {
+        PetMapLocation[] places=Enumerable.Range(1,5).Select(id=>new PetMapLocation(id,1110,"Altgard","A",[])).ToArray();
+        var guides=new Dictionary<int,PetTargetGuidance>{{1,new(7,7,1000,0,100,50)},{2,new(8,8,50000,0,100,50)},
+            {3,new(0,9,100,0,100,50,null,true)},{4,new(9,10,100,0,100,50,null,false,true)}};
+        var result=PetRecommendations.Select(places,1110,new Dictionary<int,PetState>(),true,new HashSet<int>{1,2,3,4,5},guidance:guides,nearbyOnly:true);
+        Assert.Equal(1,Assert.Single(result).PetId);
+        Assert.Empty(PetRecommendations.Select(places,1110,new Dictionary<int,PetState>(),true,new HashSet<int>(),nearbyOnly:true));
+        Assert.Equal(5,PetRecommendations.Select(places,1110,new Dictionary<int,PetState>(),true,new HashSet<int>()).Count);
+    }
     [Theory][InlineData(5)][InlineData(256)]
     public void FivePetCapStillPrioritizesNearbyAndExcludesCompleted(int requested)
     {

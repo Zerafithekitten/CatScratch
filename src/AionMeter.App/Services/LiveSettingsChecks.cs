@@ -91,12 +91,15 @@ internal static class LiveSettingsChecks
                 var widthBox=Nodes((DependencyObject)petTab.Content).OfType<TextBox>().Single(t=>Equals(t.Tag,"pet-width-value"));
                 widthBox.Text="420";Wait();pet.UpdateLayout();
                 Check(Math.Abs(pet.ActualWidth-420)<2&&Math.Abs(settings.PetModuleWidth-420)<1,"Typing Pet width updates the actual module through Settings live preview");
+                var nearbyBox=Nodes((DependencyObject)petTab.Content).OfType<CheckBox>().Single(t=>Equals(t.Tag,"pet-nearby-only"));
+                Change(nearbyBox,true);Wait();Check(settings.PetNearbyOnly,"Nearby-only filtering participates in Settings live preview");
                 var language=(ComboBox)window.FindName("LanguageBox");language.SelectedItem=language.Items.OfType<ComboBoxItem>().Single(item=>Equals(item.Tag,"de"));Wait();
                 Check(UiText.Current.Code=="de"&&((TextBlock)window.FindName("LivePreviewHint")).Text.StartsWith("Live-Vorschau"),"Language and preview guidance update live");
                 settings.ChecklistItems[0].Text="Edited in live module";
                 window.Close();resource.UpdateLayout();
                 Check(settings.ResourcesLayout=="List"&&Math.Abs(resource.Opacity-.88)<.001&&UiText.Current.Code=="en","Closing Settings restores the previous module layout and opacity");
                 Check(Math.Abs(pet.Width-petInitialWidth)<2,"Closing unsaved Settings restores Pet width as well");
+                Check(!settings.PetNearbyOnly,"Closing unsaved Settings discards the nearby-only filter");
                 Check(settings.ChecklistItems[0].Text=="Edited in live module"&&settings.ChecklistItems[0].Completed,"Closing Settings never rolls back checklist content or checkmarks");
             }
             finally{window.Close();}
@@ -108,12 +111,16 @@ internal static class LiveSettingsChecks
                 var savedPetTab=((TabControl)saved.FindName("SettingsTabs")).Items.OfType<TabItem>().Single(t=>Equals(t.Tag,"pets"));
                 var savedWidthBox=Nodes((DependencyObject)savedPetTab.Content).OfType<TextBox>().Single(t=>Equals(t.Tag,"pet-width-value"));
                 savedWidthBox.Text="360";Wait();
+                var savedNearbyBox=Nodes((DependencyObject)savedPetTab.Content).OfType<CheckBox>().Single(t=>Equals(t.Tag,"pet-nearby-only"));
+                Change(savedNearbyBox,true);Wait();
                 ((Button)saved.FindName("SaveSettingsButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));Wait();
                 Check(saved.IsVisible&&settings.PreviewActive&&Math.Abs(settings.WindowOpacity-.65)<.001,"Save keeps Settings open and begins a new preview checkpoint");
                 savedWidthBox.Text="440";Wait();
+                Change(savedNearbyBox,false);Wait();
                 ((Slider)saved.FindName("WindowOpacityValue")).Value=.5;Wait();saved.Close();
                 Check(Math.Abs(settings.WindowOpacity-.65)<.001,"Closing after a second edit restores the last saved value");
                 Check(Math.Abs(settings.PetModuleWidth-360)<1&&Math.Abs(pet.Width-360)<2,"Save commits Pet width and later discarded edits return to that saved width");
+                Check(settings.PetNearbyOnly,"Save retains nearby-only filtering and discards later unsaved toggles");
             }
             finally{saved.Close();resource.Close();pet.Close();}
             File.WriteAllText(output,JsonSerializer.Serialize(checks));

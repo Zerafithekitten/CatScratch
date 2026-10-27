@@ -8,13 +8,13 @@ public sealed record PetRecommendation(int PetId,bool Nearby,int Needed);
 public static class PetRecommendations
 {
     public static IReadOnlyList<PetRecommendation> Select(IEnumerable<PetMapLocation> locations,int mapId,
-        IReadOnlyDictionary<int,PetState> states,bool confirmed,IReadOnlySet<int> nearbyPets,int limit=5,IReadOnlyDictionary<int,PetTargetGuidance>? guidance=null)
+        IReadOnlyDictionary<int,PetState> states,bool confirmed,IReadOnlySet<int> nearbyPets,int limit=5,IReadOnlyDictionary<int,PetTargetGuidance>? guidance=null,bool nearbyOnly=false)
     {
         if(!confirmed)return [];
         bool Nearby(int id)=>nearbyPets.Contains(id)&&PetNavigation.IsNearby(guidance?.GetValueOrDefault(id));
         return locations.Where(l=>mapId>0 && l.MapId==mapId).Select(l=>l.PetId).Concat(nearbyPets).Distinct()
             .Select(id=>states.GetValueOrDefault(id,new(id,0,0)))
-            .Where(p=>p.Level<3)
+            .Where(p=>p.Level<3&&(!nearbyOnly||Nearby(p.Id)))
             .OrderByDescending(p=>Nearby(p.Id))
             .ThenBy(p=>guidance?.GetValueOrDefault(p.Id) is {} g?g.LastKnown?1:0:2)
             .ThenBy(p=>guidance?.GetValueOrDefault(p.Id)?.DistanceUnits??double.PositiveInfinity).ThenBy(p=>p.Level)

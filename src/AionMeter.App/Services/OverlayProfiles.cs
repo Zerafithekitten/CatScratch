@@ -13,7 +13,7 @@ public static class OverlayProfiles
     private static readonly string[] Fields=["SnapModules","ModuleSpacing","ControlsLayout","ControlsAnchor","ControlsLeft","ControlsTop","OverlayLeft","OverlayTop","OverlayWidth","OverlayHeight","CompactMode","UiScale",
         "WindowOpacity","BackgroundOpacity","Locked","ClickThrough","OverlayVisible","ShowDpsMeterModule","RowSize","MaxRows","ShowGear","ShowCombatPower",
         "ShowBossPanel","ShowPersonalCombatModule","PersonalCombatCollapsed","ShowHealingDone","ShowDeathRecapModule",
-        "ShowPetTrackerModule","PetOnHitOnly","PetModuleLeft","PetModuleTop","PetModuleWidth","PetModuleHeight",
+        "ShowPetTrackerModule","PetOnHitOnly","PetNearbyOnly","PetModuleLeft","PetModuleTop","PetModuleWidth","PetModuleHeight",
         "DetachBossTiming","BossTimingPositionSaved","BossTimingLeft","BossTimingTop",
         "ShowDungeonEntriesModule","DungeonEntriesLayout","DungeonEntriesWidth","DungeonEntriesPositionSaved","DungeonEntriesLeft","DungeonEntriesTop",
         "ShowResourcesModule","ResourcesLayout","ResourcesWidth","ResourcesPositionSaved","ResourcesLeft","ResourcesTop",
