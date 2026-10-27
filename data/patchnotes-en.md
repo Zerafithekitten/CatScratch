@@ -1,3 +1,13 @@
+## CatScratch v4.1.4-beta.6
+
+Standing still should not make a pet source disappear. 🐾
+
+- Fixed the optional detected-source filter removing entries after 1.5 seconds without new coordinates. List membership now follows the game's NPC presence notifications until removal, death or context reset.
+- Fresh own coordinates are no longer required just to keep an announced pet source listed. Distances and arrows retain their freshness checks; an old position cannot masquerade as a current measurement.
+- The option is now called “Only pet sources currently announced by the game” under Settings → Pets. Existing selections are retained. Regional farm suggestions remain excluded while it is enabled.
+
+Checked against the supplied approach/idle/leave recording and actual-window tests. This follows the game's reported area, not literal camera visibility, obstacle checks or a guaranteed 100 m radius.
+
 ## CatScratch v4.1.4-beta.5
 
 Keep the pet hunt close. 🐾

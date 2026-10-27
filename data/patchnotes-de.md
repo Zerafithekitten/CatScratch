@@ -1,3 +1,13 @@
+## CatScratch v4.1.4-beta.6
+
+Stillstehen soll eine Pet-Quelle nicht verschwinden lassen. 🐾
+
+- Behoben: Der optionale Erfassungsfilter entfernte Einträge schon nach 1,5 Sekunden ohne neue Koordinaten. Die Liste folgt jetzt den NPC-Anwesenheitsmeldungen des Spiels bis zur Abmeldung, zum Tod oder zum Kontextwechsel.
+- Frische eigene Koordinaten sind nicht mehr nötig, um eine gemeldete Pet-Quelle in der Liste zu halten. Entfernungen und Pfeile behalten ihre Frischeprüfung; alte Positionen werden nicht als aktuelle Messung ausgegeben.
+- Die Option heißt jetzt „Nur aktuell vom Spiel erfasste Pet-Quellen“ unter Einstellungen → Pets. Deine bisherige Auswahl bleibt erhalten. Regionale Farmempfehlungen bleiben bei aktiviertem Filter ausgeblendet.
+
+Mit der bereitgestellten Herangehen-/Stillstehen-/Weglaufen-Aufnahme und echten Fensterprüfungen kontrolliert. Maßgeblich ist der Erfassungsbereich des Spiels, keine wörtliche Kamerasicht, Hindernisprüfung oder garantierte 100-Meter-Grenze.
+
 ## CatScratch v4.1.4-beta.5
 
 Die Pet-Suche bleibt in deiner Nähe. 🐾

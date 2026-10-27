@@ -128,7 +128,14 @@ internal static class PetLiveChecks
             window.UpdateLayout();SavePreview(window,Path.ChangeExtension(output,"nearby-only.png"));
             meter.Settings.PetOnHitOnly=true;Feed(new DamageEvent(nearbyAt,1,7,17010000,100,HitFlags.None));
             Feed(new ActorPositionEvent(DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),7,100010,20,30));window.Refresh();
-            Check(list.Items.Count==0,"Pet on hit cannot bypass nearby-only filtering when its source moves out of range");
+            Check(list.Items.Count==1,"A received position change does not masquerade as an NPC leaving the game-reported area");
+            Feed(new NpcSeenEvent(DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()-20000,7,2400455,X:1010,Y:1020,Z:30));
+            meter.PetNavigation.ClearPosition();window.Refresh();
+            Check(list.Items.Count==1&&list.Items.OfType<PetTrackerWindow.Row>().Single().Distance.Length==0,"A stationary reported source stays listed after coordinate expiry without displaying a stale distance");
+            window.UpdateLayout();SavePreview(window,Path.ChangeExtension(output,"stationary.png"));
+            Feed(new DeathEvent(DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),7,AlreadyDead:true));window.Refresh();
+            Check(list.Items.Count==0,"An explicit game removal immediately removes the Pet on hit entry");
+            Feed(new ActorPositionEvent(fresh,1,10,20,30));
             meter.Settings.PetNearbyOnly=false;meter.Settings.PetOnHitOnly=false;window.Refresh();
             Check(list.Items.Count>0,"Disabling nearby-only mode restores the ordinary regional recommendations");
             meter.SetPetNavigationActive(true);meter.SetPetNavigationActive(false);

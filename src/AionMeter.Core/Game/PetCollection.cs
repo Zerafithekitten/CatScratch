@@ -123,6 +123,9 @@ public sealed class PetCollection
         lock(_gate)foreach(var (id,farms) in sources.Take(4096))
             if(id is >=1000 and <=100000)_farms[id]=(farms??[]).Where(f=>f is not null && f.NpcCode>0 && f.Zone is {Length:<=200} && f.Faction is "Elyos" or "Asmodians" or "Other").Distinct().Take(32).ToList();
     }
+    // Client-announced NPC presence persists independently of movement timestamps.
+    // The captured 0x4236 notification covers removal from the reported area too;
+    // DeathEvent removes either case, and a new spawn permits actor-ID reuse.
     public (ActorPositionEvent? Own,IReadOnlyList<NpcSeenEvent> Npcs) Nearby() {lock(_gate)return(_position,_npcs.Where(n=>!_dead.Contains(n.Key)).Select(n=>n.Value).ToArray());}
     public void Observe(GameEvent value)
     {

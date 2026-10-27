@@ -45,6 +45,25 @@ public class PetRecommendationTests
         Assert.Empty(PetRecommendations.Select(places,1110,new Dictionary<int,PetState>(),true,new HashSet<int>(),nearbyOnly:true));
         Assert.Equal(5,PetRecommendations.Select(places,1110,new Dictionary<int,PetState>(),true,new HashSet<int>()).Count);
     }
+    [Fact]public void ReportedPresenceSurvivesStillnessUntilEachSourceIsRemoved()
+    {
+        var collection=new PetCollection();collection.Observe(new SelfIdentifiedEvent(0,1,"Test",2304,GameClass.Cleric));
+        collection.Observe(new ZoneChangedEvent(1,1110,"Altgard",false));
+        collection.Observe(new NpcSeenEvent(1000,44966,2400734,X:233120,Y:-207296,Z:1391));
+        collection.Observe(new NpcSeenEvent(1100,46945,2400734,X:229965,Y:-209716,Z:1309));
+        var places=new[]{new PetMapLocation(1127,1110,"Altgard","Faded Odyle Spirit",[])};
+        IReadOnlyList<PetRecommendation> Rows()=>PetRecommendations.Select(places,1110,new Dictionary<int,PetState>(),true,new HashSet<int>(),nearbyOnly:true,
+            detectedPets:collection.Nearby().Npcs.Any(n=>n.NpcCode==2400734)?new HashSet<int>{1127}:new HashSet<int>());
+        Assert.Single(Rows());
+        // Twenty seconds without a new coordinate do not remove stationary sources.
+        Assert.All(collection.Nearby().Npcs,n=>Assert.True(21000-n.TimeMs>PetNavigation.FreshMs));Assert.Single(Rows());
+        var parser=new AionMeter.Core.Protocol.PacketParser(GameData.Empty,collection.Observe){TimeMs=22000};
+        parser.Handle(AionMeter.Core.Protocol.Opcodes.Death,Convert.FromHexString("A6DF020001")); // captured exact actor-removal layout, actor 44966
+        Assert.Single(Rows());Assert.DoesNotContain(collection.Nearby().Npcs,n=>n.ActorId==44966);
+        collection.Observe(new DeathEvent(23000,46945));Assert.Empty(Rows());
+        collection.Observe(new NpcSeenEvent(24000,44966,2400734,X:233120,Y:-207296,Z:1391));Assert.Single(Rows());
+        collection.InvalidateLocation();Assert.Empty(Rows());
+    }
     [Theory][InlineData(5)][InlineData(256)]
     public void FivePetCapStillPrioritizesNearbyAndExcludesCompleted(int requested)
     {
