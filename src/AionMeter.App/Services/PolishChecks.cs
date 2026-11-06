@@ -205,7 +205,7 @@ internal static class PolishChecks
             check(WindowPinning.IsPinned(detachedOverlay)!=meterPinned && WindowPinning.IsPinned(permanentPanel)==panelPinned,"DPS meter pin locks only the meter and leaves the panel pin unchanged");
             meterPin.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             meter.Settings.ControlsLayout=ControlsLayout.Horizontal;permanentPanel.ApplyAppearance();permanentPanel.UpdateLayout();
-            check(permanentPanel.Width==352,"Panel can return to the compact horizontal layout");
+            check(permanentPanel.Width==370,"Panel can return to the compact horizontal layout");
             for(var i=0;i<2;i++)
             {
                 meter.Settings.ControlsLayout=ControlsLayout.Vertical;permanentPanel.ApplyAppearance();permanentPanel.UpdateLayout();

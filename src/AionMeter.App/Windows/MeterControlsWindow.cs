@@ -210,7 +210,7 @@ internal sealed class MeterControlsWindow : Window
             _layout=_settings.ControlsLayout;
             var vertical=_layout==ControlsLayout.Grid;
             var rail=_layout==ControlsLayout.Vertical;
-            Width=vertical?112:rail?52:352;
+            Width=vertical?112:rail?52:370;
             _layoutRoot!.Orientation=rail?Orientation.Horizontal:Orientation.Vertical;
             _header.LayoutTransform=rail?new RotateTransform(90):Transform.Identity;
             _header.Width=rail?304:double.NaN;
