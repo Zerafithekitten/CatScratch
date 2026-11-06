@@ -148,7 +148,7 @@ public sealed class MeterService : IDisposable
     /// </summary>
     public void Replay(string path)
     {
-        HiddenCubes.Reset(); Resources.Reset(); PetNavigation.Reset();
+        Pvp.Reset(); HiddenCubes.Reset(); Resources.Reset(); PetNavigation.Reset();
         StopDemo();
         LastPlayedWith.Reset();
         LiveIdentity.Reset(); PartyPreview.Reset(); Tracker.InvalidateParty();
@@ -189,6 +189,7 @@ public sealed class MeterService : IDisposable
         }
         if(!_replaying)
         {
+            Pvp.Observe(identity ?? resolved);
             PetNavigation.Observe(identity ?? resolved);
             HiddenCubes.Observe(resolved); Resources.Observe(identity ?? resolved);
             _resourceProgress?.Observe(identity ?? resolved);
@@ -200,12 +201,14 @@ public sealed class MeterService : IDisposable
         if (value is Core.Events.PlayerSeenEvent && identity is not null)
         {
             _realTracker.Process(identity);
+            Pvp.Observe(identity);
             PetNavigation.Observe(identity);
             _realPets.Observe(identity);
             _petProgress?.Identity(identity);
             PartyPreview.Observe(identity);
         }
     }
+    public Core.Game.PvpCombat Pvp {get;}=new();
     public Core.Game.PetNavigation PetNavigation {get;}=new();
     private bool _petNavigationActive;
     private int _petNavigationWindows;
@@ -238,7 +241,7 @@ public sealed class MeterService : IDisposable
                 _capture.EventDecoded += ProcessLiveEvent;
                 _capture.StatusChanged += status =>
                 {
-                    LiveIdentity.ObserveCaptureStatus(status, () => { HiddenCubes.Reset(); Resources.Reset(); _resourceProgress?.Suspend(); _realPets.InvalidateLocation(); PetNavigation.Reset(); PartyPreview.Reset(); LastPlayedWith.Reset(); _realTracker.InvalidateParty(); });
+                    LiveIdentity.ObserveCaptureStatus(status, () => { Pvp.Reset(); HiddenCubes.Reset(); Resources.Reset(); _resourceProgress?.Suspend(); _realPets.InvalidateLocation(); PetNavigation.Reset(); PartyPreview.Reset(); LastPlayedWith.Reset(); _realTracker.InvalidateParty(); });
                 };
                 _capture.Start();
             }
@@ -273,7 +276,7 @@ public sealed class MeterService : IDisposable
             // Measurement reset retains the current session's already confirmed identity and party.
             // A settings-driven capture restart still requires fresh confirmation.
             if(!preserveSession){LiveIdentity.Suspend();PartyPreview.Reset();LastPlayedWith.Reset();_realTracker.InvalidateParty();_resourceProgress?.Suspend();}
-            HiddenCubes.Reset();Resources.MarkCached();_realPets.InvalidateLocation(); PetNavigation.Reset();
+            Pvp.Reset(); HiddenCubes.Reset();Resources.MarkCached();_realPets.InvalidateLocation(); PetNavigation.Reset();
             StartCapture();
         }
         finally

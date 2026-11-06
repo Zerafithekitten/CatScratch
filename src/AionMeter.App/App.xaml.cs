@@ -45,7 +45,7 @@ public partial class App : Application
     private readonly WindowVisibilityGroup _windowVisibility=new();
     private MapOverlayService? _mapModule;
     internal string MapModuleStatus=>_mapModule?.Status??MapWords.L("Disabled","Ausgeschaltet");
-    private IEnumerable<Window> MapHudWindows()=>Windows.Cast<Window>().Where(w=>w is OverlayWindow or MeterControlsWindow or BossTimingWindow or DeathRecapWindow or HiddenCubeWindow or SupporterCatWindow or ChecklistWindow or ResourcesWindow or DungeonEntriesWindow or TimerHubWindow or BossTimersWindow or PetTrackerWindow or ResourceOverviewWindow or ClassGuideWindow or EventScheduleWindow or TimerCardWindow or CompanionUpdateBubble);
+    private IEnumerable<Window> MapHudWindows()=>Windows.Cast<Window>().Where(w=>w is OverlayWindow or MeterControlsWindow or BossTimingWindow or DeathRecapWindow or HiddenCubeWindow or SupporterCatWindow or ChecklistWindow or ResourcesWindow or DungeonEntriesWindow or TimerHubWindow or BossTimersWindow or PetTrackerWindow or PvpWindow or ResourceOverviewWindow or ClassGuideWindow or EventScheduleWindow or TimerCardWindow or CompanionUpdateBubble);
     private void SyncMapModule()
     {
         if(_shutdownStarted||_meter is null)return;
@@ -70,6 +70,7 @@ public partial class App : Application
     private TimerHubWindow? _timerHub;
     private EventScheduleWindow? _eventSchedule;
     private TimerHubWindow? _startedEvents;
+    private PvpWindow? _pvpWindow;
     private PetTrackerWindow? _petWindow;
     private DeathRecapWindow? _deathRecapWindow;
     private HiddenCubeWindow? _hiddenCubeWindow;
@@ -346,6 +347,13 @@ public partial class App : Application
             catch(Exception error){File.WriteAllText(worldBossPath,error.ToString());Shutdown(1);}
             return;
         }
+        if(ArgValue(e.Args,"--check-pvp") is { } pvpPath)
+        {
+            Log.Enabled=false;
+            try{PvpChecks.Run(pvpPath);Shutdown();}
+            catch(Exception error){File.WriteAllText(pvpPath,error.ToString());Shutdown(1);}
+            return;
+        }
         if(ArgValue(e.Args,"--check-pet-live") is { } petLivePath)
         {
             Log.Enabled=false;
@@ -574,6 +582,7 @@ public partial class App : Application
         Dispatcher.BeginInvoke(() =>
         {
             if (!IsExiting && settings.ShowPetTrackerModule) TogglePetModule();
+            if (!IsExiting && settings.ShowPvpModule) TogglePvpModule();
         }, DispatcherPriority.ApplicationIdle);
 
         // Developer switches: --demo, --replay <file.pcap> (instant), --open-last (breakdown of the newest fight).
@@ -959,6 +968,7 @@ public partial class App : Application
     {
         _meter.SetLanguage(language);
         WindowPinning.RefreshAll();
+        var reopenPvp=_pvpWindow?.IsVisible==true;_pvpWindow?.Close();
         var reopenPets=_petWindow?.IsVisible==true;
         _petWindow?.Close();
         _hiddenCubeWindow?.Close();_supporterCatWindow?.Close();_resourcesWindow?.Close();_dungeonEntriesWindow?.Close();
@@ -983,6 +993,7 @@ public partial class App : Application
         _meterControls?.RefreshText();
         _overlay.OnLanguageChanged();
         if(reopenPets)TogglePetModule();
+        if(reopenPvp)TogglePvpModule();
     }
 
     public void ToggleTestMode()
@@ -1175,6 +1186,15 @@ public partial class App : Application
         _patchNotes.Closed += (_, _) => _patchNotes = null;
         _patchNotes.Show();
     }
+    public void TogglePvpModule()
+    {
+        if(_pvpWindow is not null){_pvpWindow.Close();return;}
+        _pvpWindow=new PvpWindow(_meter);
+        _meter.Settings.ShowPvpModule=true;_meter.Settings.Save();
+        WindowClickThrough.Attach(_pvpWindow,()=>_meter.Settings.ClickThrough,()=>_meter.Settings.WindowOpacity);
+        _pvpWindow.Closed+=(_,_)=>{_pvpWindow=null;if(!IsExiting){_meter.Settings.ShowPvpModule=false;_meter.Settings.Save();_meterControls?.RefreshText();}};
+        _pvpWindow.Show();_windowVisibility.Track(_pvpWindow);_meterControls?.RefreshText();
+    }
     public void TogglePetModule()
     {
         if(_petWindow is not null){_petWindow.Close();return;}
@@ -1206,7 +1226,7 @@ public partial class App : Application
         // Validate first. Discard the settings transaction before applying an explicit saved profile.
         OverlayProfiles.Apply(profile,new AppSettings(),new TimerCards.State());
         _settingsWindow?.Close();
-        _timerHub?.Close();_startedEvents?.Close();_petWindow?.Close();_hiddenCubeWindow?.Close();_supporterCatWindow?.Close();_resourcesWindow?.Close();_dungeonEntriesWindow?.Close();_bossTimingWindow?.Close();_timersWindow?.Close();_timerCards!.Dispose();
+        _timerHub?.Close();_startedEvents?.Close();_pvpWindow?.Close();_petWindow?.Close();_hiddenCubeWindow?.Close();_supporterCatWindow?.Close();_resourcesWindow?.Close();_dungeonEntriesWindow?.Close();_bossTimingWindow?.Close();_timersWindow?.Close();_timerCards!.Dispose();
         OverlayProfiles.Apply(profile,_meter.Settings,_timerCards.Saved);
         ModuleSnapping.Configure(_meter.Settings);
         var placement=new Rect(_meter.Settings.OverlayLeft,_meter.Settings.OverlayTop,_meter.Settings.OverlayWidth,_meter.Settings.OverlayHeight);
@@ -1219,6 +1239,7 @@ public partial class App : Application
         if(profile.Upcoming)OpenTimerHub();
         if(profile.Started)OpenStartedEvents();
         if(_meter.Settings.ShowPetTrackerModule)TogglePetModule();
+        if(_meter.Settings.ShowPvpModule)TogglePvpModule();
         if(profile.BossTimers is {Open:true} boss){ShowBossTimers();_timersWindow!.Left=boss.Left;_timersWindow.Top=boss.Top;_timersWindow.Width=Math.Max(_timersWindow.MinWidth,boss.Width);_timersWindow.Height=Math.Max(_timersWindow.MinHeight,boss.Height);WindowPresentation.Constrain(_timersWindow);}
         SetOverlayVisible(_meter.Settings.OverlayVisible,updateModule:false);
         _meterControls?.RestorePosition();
@@ -1332,6 +1353,8 @@ public partial class App : Application
         if(!ReferenceEquals(_meter,owner)||_overlay is null||_shutdownStarted)return;
         var visible=settings.ShowDpsMeterModule&&settings.OverlayVisible&&!_windowVisibility.Hidden;
         if(_modulePreview is null){if(visible)_overlay.Show();else _overlay.Hide();}
+        if(settings.ShowPvpModule&&_pvpWindow is null&&!_windowVisibility.Hidden)TogglePvpModule();
+        else if(!settings.ShowPvpModule)_pvpWindow?.Close();
         if(settings.ShowPetTrackerModule&&_petWindow is null&&!_windowVisibility.Hidden)TogglePetModule();
         else if(!settings.ShowPetTrackerModule)_petWindow?.Close();
         ModuleSnapping.Configure(settings);

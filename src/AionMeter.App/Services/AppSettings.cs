@@ -28,6 +28,9 @@ public sealed class AppSettings
         Converters = { new JsonStringEnumConverter() },
     };
 
+    public bool ShowPvpModule {get;set;}
+    public double PvpLeft {get;set;}=450;
+    public double PvpTop {get;set;}=180;
     public bool ShowSupporterCat {get;set;}
     public double SupporterCatScale {get;set;}=1;
     public bool SupporterCatPositionSaved {get;set;}

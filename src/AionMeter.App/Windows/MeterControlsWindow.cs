@@ -120,6 +120,8 @@ internal sealed class MeterControlsWindow : Window
         var guideIcon=new System.Windows.Shapes.Path{Data=Geometry.Parse(ClassGuideWindow.ButtonGeometry),Width=13,Height=13,Stretch=Stretch.Uniform,StrokeThickness=1.1,StrokeLineJoin=PenLineJoin.Round};
         guideIcon.SetBinding(System.Windows.Shapes.Shape.StrokeProperty,new System.Windows.Data.Binding(nameof(Control.Foreground)){Source=guide});guide.Content=guideIcon;
         guide.Click+=(_,_)=>ClassGuideWindow.Open(overlay.Meter);_buttons.Children.Add(guide);
+        var pvp=new Button{Name="PvpButton",Content="\uE945",ToolTip=ControlPanelSettingsPanel.L("PvP combat overlay","PvP-Kampfmodul"),Style=(Style)FindResource("IconButton"),Width=18,Height=18,Padding=new(0)};
+        pvp.Click+=(_,_)=>AppHost.Current.TogglePvpModule();_buttons.Children.Add(pvp);
         _captureDot.Name="CaptureStateDot";_header.Children.Add(_captureDot);
         _horizontalItems=_buttons.Children.Cast<UIElement>().ToArray();
         foreach(var item in _horizontalItems.OfType<FrameworkElement>().Concat([_personalButton,_petButton]))
@@ -174,6 +176,8 @@ internal sealed class MeterControlsWindow : Window
     }
     internal void RefreshText()
     {
+        if(_horizontalItems.OfType<Button>().FirstOrDefault(b=>b.Name=="PvpButton") is {} pvp)
+        {pvp.Foreground=ThemeColors.Brush(_settings.ShowPvpModule?"#C49AF5":"#A9B8C7");pvp.ToolTip=ControlPanelSettingsPanel.L("PvP combat overlay","PvP-Kampfmodul");}
         if(_classGuideButton is not null)_classGuideButton.ToolTip=ControlPanelSettingsPanel.L("Class reference","Klassenhilfe");
         ApplyAppearance();
         SettingsButton.ToolTip=UiText.Current.TraySettings;
@@ -279,7 +283,7 @@ internal sealed class MeterControlsWindow : Window
         var groups=new[]{
             new[]{Item("DeathRecapButton"),_personalButton!,_petButton!,Item("ChecklistButton"),Item("ClassGuideButton")},
             new[]{Item("CompactHistory"),Item("DetailsLink"),Item("BossRecordsButton"),Item("LastPlayedButton"),Item("ResourceOverviewButton")},
-            new[]{RestoreButton,Item("BossTimersLink"),Item("SaveLastFightButton"),Item("ChatExportButton")},
+            new[]{RestoreButton,Item("BossTimersLink"),Item("SaveLastFightButton"),Item("ChatExportButton"),Item("PvpButton")},
             new[]{Item("RestartButton"),Item("LockButton"),Item("PatchNotesButton"),Item("CheckUpdatesButton")}
         };
         for(var column=0;column<groups.Length;column++)

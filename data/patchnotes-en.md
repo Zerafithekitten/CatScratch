@@ -1,3 +1,13 @@
+## CatScratch v4.1.4-beta.7
+
+A little space for player combat. 🐾
+
+- New optional PvP module with its own control-panel button: last directly fought player, confirmed remaining HP and dealt/taken session damage. Known party members are excluded.
+- Move and pin it independently, save its placement in overlay profiles and use global click-through. Its reset clears only the PvP session. Stream mode masks the opponent's name; the in-game map temporarily hides the module.
+- HP is shown only from received updates and expires after five seconds. The module follows the last combat opponent, not the selected target or a confirmed enemy faction. Stun timers, active effects and rank progress are not included yet.
+
+Checked with sample-data and actual-window tests; a paired live PvP recording is still needed for in-game validation.
+
 ## CatScratch v4.1.4-beta.6
 
 Standing still should not make a pet source disappear. 🐾

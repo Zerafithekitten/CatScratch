@@ -1,3 +1,13 @@
+## CatScratch v4.1.4-beta.7
+
+Ein kleiner Platz für Spielerkämpfe. 🐾
+
+- Neues optionales PvP-Modul mit eigenem Button im Bedienfeld: zuletzt direkt bekämpfter Spieler, bestätigte Rest-HP sowie ausgeteilter und erlittener Sitzungsschaden. Bekannte Gruppenmitglieder werden ausgeschlossen.
+- Frei platzierbar und anheftbar, mit gespeicherter Position in Layoutprofilen und globalem Click-through. Der Reset leert nur die PvP-Sitzung. Der Stream-Modus maskiert den Namen; die geöffnete Spielkarte blendet das Modul vorübergehend aus.
+- HP stammen ausschließlich aus empfangenen Updates und verfallen nach fünf Sekunden. Die Anzeige folgt dem letzten Kampfgegner, nicht dem ausgewählten Ziel oder einer bestätigten gegnerischen Fraktion. Stun-Timer, aktive Effekte und Rangfortschritt sind noch nicht enthalten.
+
+Mit Beispieldaten und echten Fensterprüfungen getestet; der Abgleich mit einer gemeinsamen PvP-Spielaufnahme und Paketaufzeichnung steht noch aus.
+
 ## CatScratch v4.1.4-beta.6
 
 Stillstehen soll eine Pet-Quelle nicht verschwinden lassen. 🐾
